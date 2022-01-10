@@ -67,7 +67,7 @@
    "columns": 1,
    "fetch_from": "item.description",
    "fieldname": "type",
-   "fieldtype": "Data",
+   "fieldtype": "Text Editor",
    "in_list_view": 1,
    "label": "Type"
   },
@@ -83,7 +83,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-12-24 07:39:42.798070",
+ "modified": "2022-01-08 14:44:23.035909",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",

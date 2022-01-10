@@ -138,7 +138,8 @@
   {
    "fieldname": "image",
    "fieldtype": "Attach Image",
-   "label": "Image"
+   "label": "Image",
+   "options": "image"
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -156,7 +157,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-12-24 07:43:29.044384",
+ "modified": "2022-01-08 14:43:39.377609",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

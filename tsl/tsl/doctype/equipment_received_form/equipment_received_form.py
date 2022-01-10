@@ -24,6 +24,7 @@ def create_workorder_data(order_no):
 		new_doc.quoted_date = doc.date
 		new_doc.sales_rep = doc.incharge
 		new_doc.equipment_recieved_form = doc.name
+		new_doc.image = i.image
 		new_doc.append("material_list",{
 			"item":i.item,
 			"mfg":i.manufacturer,

@@ -12,6 +12,7 @@
   "attn",
   "column_break_3",
   "date",
+  "wod_no",
   "amended_from",
   "section_break_7",
   "evaluation_details",
@@ -120,12 +121,18 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "EVAL-REP-.YYYY.-"
+  },
+  {
+   "fieldname": "wod_no",
+   "fieldtype": "Link",
+   "label": "WOD No",
+   "options": "Work Order Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-12-22 14:33:05.159143",
+ "modified": "2022-01-07 15:32:12.100816",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

@@ -1,10 +1,57 @@
 // Copyright (c) 2021, Tsl and contributors
 // For license information, please see license.txt
-
 frappe.ui.form.on('Part Sheet', {
 	refresh: function(frm) {
+		
 		// var df = frappe.meta.get_docfield("Employer Project Details","company_name", cur_frm.doc.name);
 		// df.options = ["Tech M", "Wipro", "TCS"];
+		console.log("called......")
+		console.log(frappe.session.user)
+		frappe.call({
+			method: "tsl.tsl.doctype.part_sheet.part_sheet.check_userrole",
+			args: {
+				"user":frappe.session.user
+			},
+			callback: function(r) {
+				if(r.message) {
+					console.log(r.message)
+					if(r.message == "Technician"){
+						var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
+						df.read_only = 1;
+						cur_frm.refresh_fields()
+					}
+					else if(r.message == "Purchase User"){
+						var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
+						df.read_only = 1;
+						cur_frm.refresh_fields()
+
+					}
+					else if(r.message=="No Role"){
+						var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
+						df.read_only = 1;
+						var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
+						df.read_only = 1;
+						cur_frm.refresh_fields()
+
+					}
+					
+				}
+			}
+		});
+		
+
 	}
 });
 
