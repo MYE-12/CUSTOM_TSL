@@ -27,28 +27,6 @@ def create_workorder_data(order_no):
 		return True
 	return False
 
-@frappe.whitelist()
-def get_work_order_data(source_name, target_doc=None):
-	print("\n\n\n\nget work called\n\n\n\n")
-	doclist = get_mapped_doc("Work Order Data", source_name, {
-		"Work Order Data": {
-			"doctype": "Quotation",
-			"field_map": {
-				
-				"name": "enq_no",
-			}
-		},
-		"Material List": {
-			"doctype": "Quotation Item",
-			"field_map": {
-				"item":"item_code",
-				"type":"description",
-				"quantity":"qty",
-			},
-			"add_if_empty": True
-		}
-	}, target_doc)
 
-	return doclist
 	
 

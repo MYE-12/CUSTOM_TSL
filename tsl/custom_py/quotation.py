@@ -5,8 +5,6 @@ import json
 @frappe.whitelist()
 def get_wod_items(wod):
 	wod = json.loads(wod)
-	print("\n\n\n\n")
-	print(wod)
 	l=[]
 	for k in list(wod):
 		d = {}
@@ -23,12 +21,7 @@ def get_wod_items(wod):
 				"sales_rep":doc.sales_rep
 
 			}))
-		print(l)
 	return l
-
-
-
-	return 1
 
 def on_update(self, method):
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
@@ -48,7 +41,6 @@ def on_update(self, method):
 					frappe.db.set_value("Work Order Data", i.wod_no, "status", "RNA-Return Not Approved")
 
 def before_submit(self,method):
-	frappe.msgprint("works..........")
 	for i in self.get("items"):
 		if i.wod_no:
 			frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
