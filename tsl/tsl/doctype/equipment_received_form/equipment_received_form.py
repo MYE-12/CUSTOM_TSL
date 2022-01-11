@@ -14,7 +14,7 @@ def create_workorder_data(order_no):
 	l=[]
 	doc = frappe.get_doc("Equipment Received Form",order_no)
 	for i in doc.get("received_equipment"):
-		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item=%s""",(order_no,i.item))
+		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item=%s and ml.quantity=%s""",(order_no,i.item, i.qty))
 		if wod:
 			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item))
 			continue
@@ -24,7 +24,6 @@ def create_workorder_data(order_no):
 		new_doc.quoted_date = doc.date
 		new_doc.sales_rep = doc.incharge
 		new_doc.equipment_recieved_form = doc.name
-		
 		new_doc.append("material_list",{
 			"item":i.item,
 			"mfg":i.manufacturer,
@@ -35,5 +34,9 @@ def create_workorder_data(order_no):
 		new_doc.save(ignore_permissions = True)
 		l.append(new_doc.name)
 	if l:
+		link = []
+		for i in l:
+			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
+		frappe.msgprint("Work Order created: "+', '.join(link))
 		return True
 	return False

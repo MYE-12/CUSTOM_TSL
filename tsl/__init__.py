@@ -4,7 +4,6 @@ import frappe
 
 @frappe.whitelist()
 def create_workorder_data(order_no):
-#	frappe.msgprint("function called..........")
 	l=[]
 	if frappe.db.exists("Work Order Data",{"reference_doctype":order_no}):
 		frappe.throw("Order Already Created")
@@ -26,3 +25,5 @@ def create_workorder_data(order_no):
 	if l:
 		return True
 	return False
+
+
