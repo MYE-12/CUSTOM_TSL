@@ -41,8 +41,6 @@ def get_work_order_data(source_name, target_doc=None):
 		"Material List": {
 			"doctype": "Quotation Item",
 			"field_map": {
-				"parent": "prevdoc_docname",
-				"parenttype": "prevdoc_doctype",
 				"item":"item_code",
 				"type":"description",
 				"quantity":"qty",
