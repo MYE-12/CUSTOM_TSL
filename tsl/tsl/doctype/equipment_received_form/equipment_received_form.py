@@ -24,12 +24,13 @@ def create_workorder_data(order_no):
 		new_doc.quoted_date = doc.date
 		new_doc.sales_rep = doc.incharge
 		new_doc.equipment_recieved_form = doc.name
-		new_doc.image = i.image
+		
 		new_doc.append("material_list",{
 			"item":i.item,
 			"mfg":i.manufacturer,
 			"serial_no":i.serial_no,
-			"quantity":i.qty
+			"quantity":i.qty,
+			"item_image":i.image
 		})
 		new_doc.save(ignore_permissions = True)
 		l.append(new_doc.name)

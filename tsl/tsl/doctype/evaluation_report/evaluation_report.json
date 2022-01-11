@@ -111,8 +111,10 @@
    "label": "Item Photo"
   },
   {
+   "fetch_from": "wod_no.image",
+   "fetch_if_empty": 1,
    "fieldname": "item_photo",
-   "fieldtype": "Attach Image",
+   "fieldtype": "HTML",
    "label": "Item Photo"
   },
   {
@@ -132,7 +134,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-07 15:32:12.100816",
+ "modified": "2022-01-10 16:31:25.687045",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

@@ -37,5 +37,18 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			});
 		}
-	}
+		
+	},
+	onload_post_render(frm){
+		for(var i=0;i<frm.doc.material_list.length;i++){
+			var image = frm.doc.material_list[i]["item_image"];
+			cur_frm.set_df_property("image", "options","<img src="+image+"></img>");
+			cur_frm.refresh_fields();
+			
+		}
+	},
+	
+		
+	
+	
 });

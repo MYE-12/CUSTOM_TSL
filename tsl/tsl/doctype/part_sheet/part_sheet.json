@@ -1,11 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2021-12-22 22:56:50.752594",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "customer",
   "customer_name",
   "technician",
@@ -13,6 +15,7 @@
   "column_break_3",
   "date",
   "work_order_data",
+  "parts_availability",
   "manufacturer",
   "model",
   "section_break_6",
@@ -82,7 +85,7 @@
    "fieldname": "technician",
    "fieldtype": "Link",
    "label": "Technician",
-   "options": "Employee",
+   "options": "User",
    "reqd": 1
   },
   {
@@ -124,12 +127,27 @@
    "fieldtype": "Currency",
    "label": "Total Amount",
    "read_only": 1
+  },
+  {
+   "default": "Yes",
+   "fieldname": "parts_availability",
+   "fieldtype": "Select",
+   "label": "Parts Availability",
+   "options": "Yes\nNo"
+  },
+  {
+   "default": "PS-.YYYY.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "PS-.YYYY.-"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-03 22:47:37.463154",
+ "modified": "2022-01-10 16:57:17.179343",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet",

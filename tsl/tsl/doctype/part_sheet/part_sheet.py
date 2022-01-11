@@ -16,4 +16,18 @@ def check_userrole(user):
 	return "No Role"
 
 class PartSheet(Document):
-	pass
+	def on_submit(self):
+		if self.parts_availability == "Yes":
+			frappe.db.set_value("Work Order Data",{"name":self.work_order_data},"status","AP-Available Parts")
+		else:
+			frappe.db.set_value("Work Order Data",{"name":self.work_order_data},"status","SP-Searching Parts")
+
+	def before_save(self):
+		f=0
+		for i in self.get("items"):
+			if i.parts_availability == "No":
+				f=1
+		if f==1:
+			self.parts_availability = "No"
+		else:
+			self.parts_availability = "Yes"

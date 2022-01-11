@@ -18,6 +18,7 @@
   "column_break_7",
   "image",
   "technician",
+  "status",
   "payment_terms",
   "purchase_order_no",
   "dn_no",
@@ -33,7 +34,7 @@
    "fieldname": "sales_rep",
    "fieldtype": "Link",
    "label": "Sales Rep",
-   "options": "Employee"
+   "options": "User"
   },
   {
    "fetch_from": "customer.customer_name",
@@ -137,9 +138,8 @@
   },
   {
    "fieldname": "image",
-   "fieldtype": "Attach Image",
-   "label": "Image",
-   "options": "image"
+   "fieldtype": "HTML",
+   "label": "Image"
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -151,13 +151,20 @@
    "fieldname": "technician",
    "fieldtype": "Link",
    "label": "Technician",
-   "options": "Employee"
+   "options": "User"
+  },
+  {
+   "default": "NE-Need Evaluation",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nRNP-Return No Parts\nA-Approved\nRNA-Return Not Approved\nTR-Technician Repair\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nP-Paid"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-08 14:43:39.377609",
+ "modified": "2022-01-10 14:39:42.864001",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
