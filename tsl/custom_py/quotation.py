@@ -1,5 +1,34 @@
 
 import frappe
+import json
+
+@frappe.whitelist()
+def get_wod_items(wod):
+	wod = json.loads(wod)
+	print("\n\n\n\n")
+	print(wod)
+	l=[]
+	for k in list(wod):
+		d = {}
+		doc = frappe.get_doc("Work Order Data",k)
+		for i in doc.get("material_list"):
+			l.append(frappe._dict({
+				"item" :i.item,
+				"item_name" : i.item_name,
+				"wod": k,
+				"type": i.type,
+				"model_no": i.model_no,
+				"serial_no": i.serial_no,
+				"qty": i.quantity,
+				"sales_rep":doc.sales_rep
+
+			}))
+		print(l)
+	return l
+
+
+
+	return 1
 
 def on_update(self, method):
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:

@@ -12,6 +12,7 @@
   "customer_name",
   "mobile",
   "email",
+  "is_quotation_created",
   "column_break_3",
   "date",
   "incharge",
@@ -100,12 +101,19 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "ERF-.YYYY.-"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_quotation_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Quotation Created"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-10 13:09:19.303713",
+ "modified": "2022-01-11 15:28:26.201687",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

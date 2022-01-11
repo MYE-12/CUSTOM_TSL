@@ -98,7 +98,10 @@ doc_events = {
 	"Quotation":{
 		"on_update": [
 			"tsl.custom_py.quotation.on_update"
-		]
+		],
+		"before_submit":[
+			"tsl.custom_py.quotation.before_submit"
+		],
 	}
 }
 
