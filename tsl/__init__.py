@@ -27,7 +27,6 @@ def create_workorder_data(order_no):
 		return True
 	return False
 
-<<<<<<< HEAD
 @frappe.whitelist()
 def get_work_order_data(source_name, target_doc=None):
 	print("\n\n\n\nget work called\n\n\n\n")
@@ -54,6 +53,4 @@ def get_work_order_data(source_name, target_doc=None):
 
 	return doclist
 	
-=======
 
->>>>>>> 9f605024606e7edd18cec1d274876f8ec2ba9b89
