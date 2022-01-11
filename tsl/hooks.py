@@ -89,13 +89,18 @@ doctype_js = {"Quotation" : "custom/custom.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
+doc_events = {
 # 	"*": {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
 #	}
-# }
+	"Quotation":{
+		"on_update": [
+			"tsl.custom_py.quotation.on_update"
+		]
+	}
+}
 
 # Scheduled Tasks
 # ---------------

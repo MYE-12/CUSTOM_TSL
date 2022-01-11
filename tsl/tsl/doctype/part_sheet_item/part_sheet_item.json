@@ -54,6 +54,7 @@
    "label": "Price EA"
   },
   {
+   "columns": 1,
    "fieldname": "total",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -61,17 +62,20 @@
    "read_only": 1
   },
   {
+   "columns": 1,
    "default": "Yes",
    "fieldname": "parts_availability",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Parts Availability",
-   "options": "Yes\nNo"
+   "options": "\nYes\nNo",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-01-10 09:59:30.009219",
+ "modified": "2022-01-11 07:26:40.381846",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

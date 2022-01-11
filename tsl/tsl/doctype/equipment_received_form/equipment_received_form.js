@@ -12,7 +12,7 @@ frappe.ui.form.on('Equipment Received Form', {
 					},
 					'callback':function(res){
 						if(res.message){
-							frappe.msgprint("Work order data created")
+//							frappe.msgprint("Work order data created")
 						}
 					}
 					})
