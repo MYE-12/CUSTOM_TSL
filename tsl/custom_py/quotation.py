@@ -10,10 +10,18 @@ def on_update(self, method):
 
 	if not self.quotation_type == "Internal Quotation":
 		for i in self.items:
-			if i.prevdoc_doctype == "Work Order Data" and i.prevdoc_docname:
+			if i.prevdoc_doctype == "Work Order Data" and i.wod_no:
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
-					frappe.db.set_value("Work Order Data", i.prevdoc_docname, "status", "Q-Quoted")
+					frappe.db.set_value("Work Order Data", i.wod_no, "status", "Q-Quoted")
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
-					frappe.db.set_value("Work Order Data", i.prevdoc_docname, "status", "A-Approved")
+					frappe.db.set_value("Work Order Data", i.wod_no, "status", "A-Approved")
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
-					frappe.db.set_value("Work Order Data", i.prevdoc_docname, "status", "RNA-Return Not Approved")
+					frappe.db.set_value("Work Order Data", i.wod_no, "status", "RNA-Return Not Approved")
+
+def before_submit(self,method):
+	frappe.msgprint("works..........")
+	for i in self.get("items"):
+		if i.wod_no:
+			frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
+
+
