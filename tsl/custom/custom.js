@@ -1,4 +1,20 @@
 frappe.ui.form.on('Quotation', {
+    onload:function(frm){
+        if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
+		frm.add_custom_button(__('Customer Quotation'), function(){
+                                var new_doc = frappe.model.copy_doc(frm.doc);
+                                new_doc.quotation_type = "Customer Quotation"
+                                frappe.set_route('Form', 'Quotation', new_doc.name);
+                        }, ('Create'))
+	}
+	if(frm.doc.quotation_type == "Customer Quotation" && frm.doc.workflow_state=="Rejected by Customer"){ 
+                frm.add_custom_button(__('Revised Quotation'), function(){
+                                var new_doc = frappe.model.copy_doc(frm.doc);
+                                new_doc.quotation_type = "Revised Quotation"
+                                frappe.set_route('Form', 'Quotation', new_doc.name);
+                        }, ('Create'))
+        }
+    },
     refresh:function(frm){
         if (frm.doc.docstatus==0) {
 			frm.add_custom_button(__('Work Order Data'),
