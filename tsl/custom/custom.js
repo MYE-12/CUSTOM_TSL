@@ -9,16 +9,14 @@ frappe.ui.form.on('Quotation', {
 						setters: {
 							customer:frm.doc.customer_name ,
 						},
-						
 						add_filters_group: 1,
 						// date_field: "transaction_date",
 						get_query() {
 							return {
-								filters: { is_quotation_created: 0 }
+								filters: { is_quotation_created: 0, docstatus:1 }
 							}
 						},
 						action(selections) {
-							console.log(selections);
 							frappe.call({
 								method: "tsl.custom_py.quotation.get_wod_items",
 								args: {
@@ -37,11 +35,11 @@ frappe.ui.form.on('Quotation', {
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["type"],
+											childTable.uom  = r.message[i]["uom"],
 											childTable.qty = r.message[i]["qty"],
 											cur_frm.refresh_fields("items");
 
 										}
-										
 									}
 								}
 							});

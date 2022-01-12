@@ -7,16 +7,20 @@ def get_data():
 	return {
 		'fieldname': 'work_order_data',
 		'non_standard_fieldnames': {
-			'Quotation': 'prevdoc_docname',
+			'Quotation': 'wod_no',
 		},
 		'transactions': [
 			{
 				'label': _(''),
 				'items': ['Quotation']
 			},
-			{ 
+			{
                                 'label': _(''),
                                 'items': ['Part Sheet']
-                        }
+                        },
+			{
+				'label': _(''),
+				'items': ['Evaluation Report']
+			}
 		]
 	}

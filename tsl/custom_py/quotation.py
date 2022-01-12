@@ -17,6 +17,7 @@ def get_wod_items(wod):
 				"type": i.type,
 				"model_no": i.model_no,
 				"serial_no": i.serial_no,
+				"uom": i.uom,
 				"qty": i.quantity,
 				"sales_rep":doc.sales_rep
 

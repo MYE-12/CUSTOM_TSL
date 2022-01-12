@@ -42,4 +42,6 @@ def create_evaluation_report(doc_no):
 class WorkOrderData(Document):
 	def before_submit(self):
 		if not self.technician:
-			frappe.throw("Assign a Technician to submit")
+			frappe.throw("Assign a Technician to Submit")
+		if not self.department:
+			frappe.throw("Set Department to Submit")

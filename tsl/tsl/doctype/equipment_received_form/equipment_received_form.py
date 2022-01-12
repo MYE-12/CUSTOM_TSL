@@ -29,6 +29,7 @@ def create_workorder_data(order_no):
 			"mfg":i.manufacturer,
 			"serial_no":i.serial_no,
 			"quantity":i.qty,
+			"uom": i.uom,
 			"item_image":i.image
 		})
 		new_doc.save(ignore_permissions = True)

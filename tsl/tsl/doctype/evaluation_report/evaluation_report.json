@@ -12,7 +12,7 @@
   "attn",
   "column_break_3",
   "date",
-  "wod_no",
+  "work_order_data",
   "amended_from",
   "section_break_7",
   "evaluation_details",
@@ -125,16 +125,16 @@
    "options": "EVAL-REP-.YYYY.-"
   },
   {
-   "fieldname": "wod_no",
+   "fieldname": "work_order_data",
    "fieldtype": "Link",
-   "label": "WOD No",
+   "label": "Work Order Data",
    "options": "Work Order Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-10 16:31:25.687045",
+ "modified": "2022-01-12 08:05:33.475671",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

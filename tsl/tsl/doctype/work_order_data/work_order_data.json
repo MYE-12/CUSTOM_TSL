@@ -18,6 +18,7 @@
   "column_break_7",
   "image",
   "technician",
+  "department",
   "status",
   "payment_terms",
   "purchase_order_no",
@@ -161,12 +162,18 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nRNP-Return No Parts\nA-Approved\nRNA-Return Not Approved\nTR-Technician Repair\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nP-Paid"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Cost Center"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-11 11:17:41.280442",
+ "modified": "2022-01-12 08:01:10.424069",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

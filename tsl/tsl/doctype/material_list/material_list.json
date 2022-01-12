@@ -13,6 +13,7 @@
   "mfg",
   "model_no",
   "serial_no",
+  "uom",
   "quantity",
   "item_image"
  ],
@@ -29,6 +30,7 @@
   {
    "fieldname": "wo",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "WO"
   },
   {
@@ -85,12 +87,21 @@
    "fieldtype": "Attach Image",
    "label": "Item Image",
    "options": "image"
+  },
+  {
+   "columns": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-01-10 11:38:14.221729",
+ "modified": "2022-01-12 08:00:26.306848",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",
