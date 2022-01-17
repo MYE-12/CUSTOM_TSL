@@ -14,8 +14,7 @@
   "model_no",
   "serial_no",
   "uom",
-  "quantity",
-  "item_image"
+  "quantity"
  ],
  "fields": [
   {
@@ -83,12 +82,6 @@
    "label": "Item Name"
   },
   {
-   "fieldname": "item_image",
-   "fieldtype": "Attach Image",
-   "label": "Item Image",
-   "options": "image"
-  },
-  {
    "columns": 1,
    "fieldname": "uom",
    "fieldtype": "Link",
@@ -101,7 +94,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-01-12 08:00:26.306848",
+ "modified": "2022-01-16 21:39:34.769904",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",

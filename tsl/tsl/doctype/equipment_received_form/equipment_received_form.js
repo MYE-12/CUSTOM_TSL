@@ -19,6 +19,39 @@ frappe.ui.form.on('Equipment Received Form', {
 
 			})
 		}
-
+		if(frm.doc.received_equipment){
+			let options = []
+			for(let i in frm.doc.received_equipment){
+				if(!options.includes(frm.doc.received_equipment[i].item)){
+					options.push(frm.doc.received_equipment[i].item)
+				}
+			}
+			frm.fields_dict['images'].grid.get_field('item').get_query = function(doc){
+				return{
+					filters:{
+						"name": ["in", options]
+					}
+				}
+			}
+		}
+	},
+});
+frappe.ui.form.on('Recieved Equipment Image', {
+	images_add:function(frm){
+		if(frm.doc.received_equipment){
+			let options = []
+			for(let i in frm.doc.received_equipment){
+				if(!options.includes(frm.doc.received_equipment[i].item)){
+					options.push(frm.doc.received_equipment[i].item)
+				}
+			}
+			frm.fields_dict['images'].grid.get_field('item').get_query = function(doc){
+				return{
+					filters:{
+						"name": ["in", options]
+						}
+				}
+			}
+		}
 	}
 });

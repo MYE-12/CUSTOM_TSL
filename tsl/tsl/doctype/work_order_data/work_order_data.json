@@ -16,7 +16,8 @@
   "delivery",
   "equipment_recieved_form",
   "column_break_7",
-  "image",
+  "received_date",
+  "posting_date",
   "technician",
   "department",
   "status",
@@ -46,7 +47,8 @@
   {
    "fieldname": "quoted_date",
    "fieldtype": "Date",
-   "label": "Quoted Date"
+   "label": "Quoted Date",
+   "read_only": 1
   },
   {
    "fieldname": "warranty",
@@ -138,12 +140,6 @@
    "options": "WOD-.YYYY.-"
   },
   {
-   "fieldname": "image",
-   "fieldtype": "HTML",
-   "hidden": 1,
-   "label": "Image"
-  },
-  {
    "fieldname": "equipment_recieved_form",
    "fieldtype": "Link",
    "label": "Equipment Recieved Form",
@@ -168,12 +164,24 @@
    "fieldtype": "Link",
    "label": "Department",
    "options": "Cost Center"
+  },
+  {
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-12 08:01:10.424069",
+ "modified": "2022-01-17 00:05:47.012107",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

@@ -1,9 +1,14 @@
 frappe.ui.form.on('Quotation', {
-    onload:function(frm){
+    refresh:function(frm){
         if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
+				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+				let inc_rate = diff / frm.doc.total_qty
                                 var new_doc = frappe.model.copy_doc(frm.doc);
                                 new_doc.quotation_type = "Customer Quotation"
+				for(let i in new_doc.items){
+					new_doc.items[i].rate += inc_rate
+				}
                                 frappe.set_route('Form', 'Quotation', new_doc.name);
                         }, ('Create'))
 	}
@@ -14,8 +19,6 @@ frappe.ui.form.on('Quotation', {
                                 frappe.set_route('Form', 'Quotation', new_doc.name);
                         }, ('Create'))
         }
-    },
-    refresh:function(frm){
         if (frm.doc.docstatus==0) {
 			frm.add_custom_button(__('Work Order Data'),
 				function() {
@@ -40,19 +43,20 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										console.log(r.message)
 										cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										for(var i=0;i<r.message.length;i++){
 											var childTable = cur_frm.add_child("items");
-											childTable.item_code = r.message[i]["item"],
-											childTable.item_name = r.message[i]["item_name"],
-											childTable.wod_no = r.message[i]["wod"],
-											childTable.model_no = r.message[i]["model_no"],
-											childTable.serial_no = r.message[i]["serial_no"],
-											childTable.description = r.message[i]["type"],
-											childTable.uom  = r.message[i]["uom"],
-											childTable.qty = r.message[i]["qty"],
+											childTable.item_code = r.message[i]["item"];
+											childTable.item_name = r.message[i]["item_name"];
+											childTable.wod_no = r.message[i]["wod"];
+											childTable.model_no = r.message[i]["model_no"];
+											childTable.serial_no = r.message[i]["serial_no"];
+											childTable.description = r.message[i]["type"];
+											childTable.uom  = r.message[i]["uom"];
+											childTable.qty = r.message[i]["qty"];
+											childTable.rate = r.message[i]["rate"];
+											childTable.amount = r.message[i]["rate"] * r.message[i]["qty"]
 											cur_frm.refresh_fields("items");
 
 										}
@@ -65,5 +69,19 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
+		if(frm.doc.edit_final_approved_price){ 
+			frm.set_df_property("final_approved_price", "read_only", 0)
+		}
+		else{ 
+			frm.set_df_property("final_approved_price", "read_only", 1)
+		}
     },
+    edit_final_approved_price:function(frm){
+        if(frm.doc.edit_final_approved_price){
+            frm.set_df_property("final_approved_price", "read_only", 0)
+        }
+        else{
+            frm.set_df_property("final_approved_price", "read_only", 1)
+        }
+    }
 });

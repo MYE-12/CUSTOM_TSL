@@ -9,6 +9,9 @@ def get_wod_items(wod):
 	for k in list(wod):
 		d = {}
 		doc = frappe.get_doc("Work Order Data",k)
+		rate = frappe.db.get_value("Part Sheet", {"work_order_data":k, "docstatus":1}, "total_amount")
+		if not rate:
+			rate = 0
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
 				"item" :i.item,
@@ -19,8 +22,8 @@ def get_wod_items(wod):
 				"serial_no": i.serial_no,
 				"uom": i.uom,
 				"qty": i.quantity,
-				"sales_rep":doc.sales_rep
-
+				"sales_rep":doc.sales_rep,
+				"rate": rate
 			}))
 	return l
 
@@ -47,3 +50,6 @@ def before_submit(self,method):
 			frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
 
 
+def validate(self, method):
+	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation":
+		self.final_approved_price = self.rounded_total*302.8/100+self.rounded_total

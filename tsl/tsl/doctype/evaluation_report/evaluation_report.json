@@ -38,7 +38,7 @@
    "fieldname": "attn",
    "fieldtype": "Link",
    "label": "Attn",
-   "options": "Employee"
+   "options": "User"
   },
   {
    "fieldname": "column_break_3",
@@ -134,7 +134,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-12 08:05:33.475671",
+ "modified": "2022-01-16 18:18:38.020906",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

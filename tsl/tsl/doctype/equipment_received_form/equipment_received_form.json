@@ -9,16 +9,18 @@
  "field_order": [
   "naming_series",
   "customer",
-  "customer_name",
+  "customer_branch_name",
   "mobile",
   "email",
   "is_quotation_created",
   "column_break_3",
-  "date",
+  "received_date",
   "incharge",
   "incharge_name",
   "section_break_9",
   "received_equipment",
+  "attach_image_section",
+  "images",
   "amended_from"
  ],
  "fields": [
@@ -29,13 +31,6 @@
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
-  },
-  {
-   "fetch_from": "customer.customer_name",
-   "fieldname": "customer_name",
-   "fieldtype": "Data",
-   "label": "Customer Name",
-   "read_only": 1
   },
   {
    "fetch_from": "customer.mobile_no",
@@ -54,12 +49,6 @@
   {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "Today",
-   "fieldname": "date",
-   "fieldtype": "Date",
-   "label": "Date"
   },
   {
    "fieldname": "incharge",
@@ -108,12 +97,36 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Is Quotation Created"
+  },
+  {
+   "fetch_from": "customer.branch_name",
+   "fieldname": "customer_branch_name",
+   "fieldtype": "Data",
+   "label": "Customer Branch Name",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date"
+  },
+  {
+   "fieldname": "attach_image_section",
+   "fieldtype": "Section Break",
+   "label": "Attach Image"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Recieved Equipment Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-11 15:28:26.201687",
+ "modified": "2022-01-16 21:44:51.244342",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

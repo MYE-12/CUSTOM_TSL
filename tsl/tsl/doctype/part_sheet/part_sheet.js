@@ -2,11 +2,6 @@
 // For license information, please see license.txt
 frappe.ui.form.on('Part Sheet', {
 	refresh: function(frm) {
-		
-		// var df = frappe.meta.get_docfield("Employer Project Details","company_name", cur_frm.doc.name);
-		// df.options = ["Tech M", "Wipro", "TCS"];
-		console.log("called......")
-		console.log(frappe.session.user)
 		frappe.call({
 			method: "tsl.tsl.doctype.part_sheet.part_sheet.check_userrole",
 			args: {
@@ -46,12 +41,9 @@ frappe.ui.form.on('Part Sheet', {
 						cur_frm.refresh_fields()
 
 					}
-					
 				}
 			}
 		});
-		
-
 	}
 });
 
