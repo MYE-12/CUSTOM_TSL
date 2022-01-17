@@ -13,7 +13,7 @@ frappe.ui.form.on('Part Sheet', {
 					if(r.message == "Technician"){
 						var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
 						df.read_only = 1;
-						cur_frm.refresh_fields()
+						cur_frm.refresh_fields();
 					}
 					else if(r.message == "Purchase User"){
 						var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
@@ -24,7 +24,7 @@ frappe.ui.form.on('Part Sheet', {
 						df.read_only = 1;
 						var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
 						df.read_only = 1;
-						cur_frm.refresh_fields()
+						cur_frm.refresh_fields();
 
 					}
 					else if(r.message=="No Role"){
@@ -38,7 +38,7 @@ frappe.ui.form.on('Part Sheet', {
 						df.read_only = 1;
 						var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
 						df.read_only = 1;
-						cur_frm.refresh_fields()
+						cur_frm.refresh_fields();
 
 					}
 				}
@@ -48,8 +48,28 @@ frappe.ui.form.on('Part Sheet', {
 });
 
 frappe.ui.form.on('Part Sheet Item', {
-	price_ea:function(frm, cdt, cdn){
+	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
+		if(row.part){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
+			args :{
+				"doc" : cur_frm.doc,
+				"item" :row.part,
+				
+			},
+			callback :function(r){
+				if(r.message){
+					console.log(r.message)
+					frappe.model.set_value(cdt, cdn, "price_ea", r.message);
+					frm.refresh_fields();
+
+				}
+			}
+	
+		})
+	
+		}
 		row.total = row.qty * row.price_ea
 		let tot_qty = 0
 		let tot_amount = 0
@@ -63,6 +83,25 @@ frappe.ui.form.on('Part Sheet Item', {
 	},
 	qty:function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
+		if(row.qty){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
+			args :{
+				"qty" : row.qty,
+				"item" :row.part,
+				
+			},
+			callback :function(r){
+				if(r.message){
+					console.log(r.message)
+					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
+					frm.refresh_fields();
+					
+				}
+			}
+	
+		})
+	   }
 		row.total = row.qty * row.price_ea
 		let tot_qty = 0
 		let tot_amount = 0
