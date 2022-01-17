@@ -6,7 +6,6 @@ from frappe.model.document import Document
 
 @frappe.whitelist()
 def check_userrole(user):
-	print("\n\n\ncheck calledd.......................\n\n\n")
 	if len(frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role in ("Technician","Purchase User") """.format(user),as_dict=1)) == 2:
 		return 2
 	if frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role = "Technician" """.format(user),as_dict=1):
@@ -14,6 +13,20 @@ def check_userrole(user):
 	if frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role = "Purchase User" """.format(user),as_dict=1):
 		return "Purchase User"
 	return "No Role"
+
+@frappe.whitelist()
+def get_valuation_rate(doc,item):
+	price = frappe.db.get_value("Bin",{"item_code":item},"valuation_rate")
+	return price
+
+	
+@frappe.whitelist()
+def get_availabilty(qty,item):
+	actual = frappe.db.get_value("Bin",{"item_code":item},"actual_qty")
+	if float(actual) >= float(qty):
+		return "Yes"
+	return "No"
+
 
 class PartSheet(Document):
 	def on_submit(self):

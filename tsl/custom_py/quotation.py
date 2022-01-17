@@ -7,7 +7,9 @@ def get_wod_items(wod):
 	wod = json.loads(wod)
 	l=[]
 	for k in list(wod):
-		d = {}
+		print(k)
+		
+		tot = frappe.db.get_value("Part Sheet",{"work_order_data":k},"total_amount")
 		doc = frappe.get_doc("Work Order Data",k)
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
@@ -19,7 +21,8 @@ def get_wod_items(wod):
 				"serial_no": i.serial_no,
 				"uom": i.uom,
 				"qty": i.quantity,
-				"sales_rep":doc.sales_rep
+				"sales_rep":doc.sales_rep,
+				"total_amt":float(tot)/float(i.quantity),
 
 			}))
 	return l
