@@ -9,7 +9,7 @@ frappe.ui.form.on('Evaluation Report', {
 		frappe.call({
 			method: "tsl.tsl.doctype.evaluation_report.evaluation_report.get_item_image",
 			args: {
-				"wod_no":frm.doc.wod_no,
+				"wod_no":frm.doc.work_order_data,
 			},
 			callback: function(r) {
 				if(r.message) {

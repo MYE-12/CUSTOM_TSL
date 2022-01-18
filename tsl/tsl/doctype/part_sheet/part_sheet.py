@@ -17,14 +17,18 @@ def check_userrole(user):
 @frappe.whitelist()
 def get_valuation_rate(doc,item):
 	price = frappe.db.get_value("Bin",{"item_code":item},"valuation_rate")
-	return price
+	sts = "Yes"
+	if not frappe.db.get_value("Bin",{"item_code":item},"name"):
+		sts = "No"
+	return [price,sts]
 
 	
 @frappe.whitelist()
 def get_availabilty(qty,item):
 	actual = frappe.db.get_value("Bin",{"item_code":item},"actual_qty")
-	if float(actual) >= float(qty):
-		return "Yes"
+	if actual:
+		if float(actual) >= float(qty):
+			return "Yes"
 	return "No"
 
 

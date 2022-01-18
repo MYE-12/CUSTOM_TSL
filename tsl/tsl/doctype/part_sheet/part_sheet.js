@@ -59,12 +59,11 @@ frappe.ui.form.on('Part Sheet Item', {
 				
 			},
 			callback :function(r){
-				if(r.message){
-					console.log(r.message)
-					frappe.model.set_value(cdt, cdn, "price_ea", r.message);
-					frm.refresh_fields();
-
-				}
+				console.log(r.message)
+				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
+				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
+				row.total = row.qty * r.message[0];
+				frm.refresh_fields();
 			}
 	
 		})

@@ -25,12 +25,9 @@ def get_wod_items(wod):
 				"uom": i.uom,
 				"qty": i.quantity,
 				"sales_rep":doc.sales_rep,
-<<<<<<< HEAD
-				"rate": rate
-=======
+				"rate": rate,
 				"total_amt":float(tot)/float(i.quantity),
 
->>>>>>> 3f0eec8134951bb22658439e871b0bed6a783183
 			}))
 	return l
 

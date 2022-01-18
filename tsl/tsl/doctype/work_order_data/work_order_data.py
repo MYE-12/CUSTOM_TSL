@@ -23,7 +23,7 @@ def create_evaluation_report(doc_no):
 	new_doc = frappe.new_doc("Evaluation Report")
 	new_doc.customer = doc.customer
 	new_doc.attn = doc.technician
-	new_doc.wod_no = doc.name
+	new_doc.work_order_data = doc.name
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_name,
