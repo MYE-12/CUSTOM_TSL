@@ -29,6 +29,9 @@
   "invoice_date",
   "section_break_14",
   "material_list",
+  "section_break_23",
+  "check_for_extra_partsheets",
+  "extra_part_sheets",
   "amended_from"
  ],
  "fields": [
@@ -176,12 +179,28 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "label": "Date"
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "extra_part_sheets",
+   "fieldtype": "Table",
+   "label": "Extra Part Sheets",
+   "options": "Extra Part Sheets"
+  },
+  {
+   "fieldname": "check_for_extra_partsheets",
+   "fieldtype": "Button",
+   "label": "Check For Extra PartSheets"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-17 00:05:47.012107",
+ "modified": "2022-01-21 07:43:35.420531",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

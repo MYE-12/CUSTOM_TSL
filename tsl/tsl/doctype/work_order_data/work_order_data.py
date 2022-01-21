@@ -36,6 +36,18 @@ def create_evaluation_report(doc_no):
 	new_doc.item_photo = doc.image
 	return new_doc
 
+@frappe.whitelist()
+def create_extra_ps(doc):
+	l=[]
+	extra_ps = frappe.db.sql('''select name,technician from `tabPart Sheet` where work_order_data = %s order by creation''',doc,as_dict=1)
+	for i in range(1,len(extra_ps)):
+		l.append(extra_ps[i])
+	return l
+
+	
+		
+
+
 	
 
 

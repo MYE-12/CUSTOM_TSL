@@ -36,5 +36,36 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			});
 		}
+	},
+	check_for_extra_partsheets:function(frm){
+		if(frm.doc.docstatus == 1) {
+			frappe.call({
+				method: "tsl.tsl.doctype.work_order_data.work_order_data.create_extra_ps",
+				args: {
+					"doc":frm.doc.name
+				},
+				callback: function(r) {
+					console.log("extra_ps............")
+					if(r.message) {
+						console.log(r.message)
+						cur_frm.clear_table("extra_part_sheets");
+						for(var i=0;i<r.message.length;i++){
+							var childTable = cur_frm.add_child("extra_part_sheets");
+							childTable.part_sheet_name = r.message[i]["name"],
+							childTable.technician = r.message[i]["technician"],
+							cur_frm.refresh_fields("extra_part_sheets");
+						}
+						
+						
+						cur_frm.doc.docstatus = 1;
+						cur_frm.refresh_fields();
+					}
+				}
+			})
+		}
+
 	}
+	
+		
+	
 });

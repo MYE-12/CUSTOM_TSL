@@ -1,6 +1,8 @@
 
+from pydoc import doc
 import frappe
 import json
+from frappe.model.mapper import get_mapped_doc
 
 @frappe.whitelist()
 def get_wod_items(wod):
@@ -30,6 +32,37 @@ def get_wod_items(wod):
 
 			}))
 	return l
+@frappe.whitelist()
+def get_quotation_history(source,rate = None,type = None):
+	target_doc = frappe.new_doc("Quotation")
+	doc = frappe.get_doc("Quotation",source)
+
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		target_doc.append("quotation_history",{
+			"quotation_type":doc.quotation_type,
+			"status":doc.workflow_state,
+			"quotation_name":doc.name,
+		})
+		# target_doc.save()
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			# "validation": {
+			# 	"docstatus": ["=", 1]
+			# }
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+		# "Quotation History" :{
+		# 	"doctype" : "Quotation History",
+
+		# },
+	}, target_doc, postprocess)
+	return doclist
 
 def on_update(self, method):
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:

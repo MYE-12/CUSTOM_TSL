@@ -1,22 +1,50 @@
 frappe.ui.form.on('Quotation', {
+
+	
     refresh:function(frm){
         if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				let inc_rate = diff / frm.doc.total_qty
-                                var new_doc = frappe.model.copy_doc(frm.doc);
-                                new_doc.quotation_type = "Customer Quotation"
-				for(let i in new_doc.items){
-					new_doc.items[i].rate += inc_rate
-				}
-                                frappe.set_route('Form', 'Quotation', new_doc.name);
+                frappe.call({
+					method: "tsl.custom_py.quotation.get_quotation_history",
+					args: {
+						"source": frm.doc.name,
+						
+						"rate":inc_rate,
+						"type":"Customer Quotation"
+					},
+					callback: function(r) {
+						if(r.message) {
+							console.log(r.message)
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+				
+				
+                               
                         }, ('Create'))
 	}
-	if(frm.doc.quotation_type == "Customer Quotation" && frm.doc.workflow_state=="Rejected by Customer"){ 
+	if((frm.doc.quotation_type == "Customer Quotation" || frm.doc.quotation_type == "Revised Quotation") && frm.doc.workflow_state=="Rejected by Customer" ){ 
                 frm.add_custom_button(__('Revised Quotation'), function(){
-                                var new_doc = frappe.model.copy_doc(frm.doc);
-                                new_doc.quotation_type = "Revised Quotation"
-                                frappe.set_route('Form', 'Quotation', new_doc.name);
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quotation_history",
+						args: {
+							"source": frm.doc.name,
+							"rate":null,
+							
+							"type":"Revised Quotation"
+						},
+						callback: function(r) {
+							if(r.message) {
+								console.log(r.message)
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							}
+						}
+					});
                         }, ('Create'))
         }
         if (frm.doc.docstatus==0) {
@@ -86,6 +114,72 @@ frappe.ui.form.on('Quotation', {
 		else{ 
 			frm.set_df_property("final_approved_price", "read_only", 1)
 		}
+		if(frm.doc.quotation_type != "Internal Quotation" && frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
+			
+			var d = new frappe.ui.Dialog({
+				
+				fields: [
+					{
+						label: 'Type Of Approval',
+						fieldname: 'type_of_approval',
+						fieldtype: 'Select',
+						options:["Email","Phone call","PO","Others"],
+						change: () => {
+							let template_type = d.get_value('type_of_approval');
+	
+							if (template_type === "Others") {
+								d.set_df_property('specify', 'hidden',0);
+							} 
+							if (template_type === "PO") {
+								d.set_df_property('po_no', 'hidden',0);
+								d.set_df_property('po_date', 'hidden',0);
+							} 
+							
+						}
+					},
+					{
+						label: "Specify",
+						fieldname: "specify",
+						fieldtype: "Data",
+						hidden:1,
+						
+					},
+					{
+						label: "PO No",
+						fieldname: "po_no",
+						fieldtype: "Data",
+						hidden:1,
+						
+					},
+					{
+						label: "PO Date",
+						fieldname: "po_date",
+						fieldtype: "Date",
+						hidden:1,
+						
+					}
+				],
+				primary_action: function() {
+					var data = d.get_values();
+	
+					console.log(data.type_of_approval)
+					frm.doc.type_of_approval = data.type_of_approval;
+					if(data.type_of_approval == "Others"){
+						frm.set_value("type_of_approval",data.specify)
+					}
+					if(data.type_of_approval == "PO"){
+						frm.set_value("purchase_order_no",data.po_no);
+						frm.set_value("purchase_order_date", data.po_date);
+					}
+					cur_frm.refresh_fields();
+	
+					d.hide();
+				},
+				primary_action_label: __('Submit')
+			});
+			d.show();
+	  }
+
     },
     edit_final_approved_price:function(frm){
         if(frm.doc.edit_final_approved_price){
@@ -95,9 +189,28 @@ frappe.ui.form.on('Quotation', {
             frm.set_df_property("final_approved_price", "read_only", 1)
         }
     },
+	// before_save:function(frm){
+	// 	console.log("before submit..........")
+	// 	if(frm.doc.quotation_type != "Internal Quotation"){
+	// 		frappe.prompt([
+	// 			{
+	// 				label: 'Type Of Approval',
+	// 				fieldname: 'type_of_approval',
+	// 				fieldtype: 'Select',
+	// 				options:["Email","Phone call","PO","Others"]
+	// 			},
+				
+	// 		], (values) => {
+	// 			console.log(values.type_of_approval);
+	// 		})
+	//   }
+
+	// },
 		    
 			
 });
+
+
 
 frappe.ui.form.on("Quotation Item",{ 
 	

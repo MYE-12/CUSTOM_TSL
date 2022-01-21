@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-01-20 09:50:23.686270",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "quotation_type",
+  "status",
+  "quotation_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "quotation_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Quotation Type",
+   "options": "\nInternal Quotation\nCustomer Quotation\nRevised Quotation"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Status"
+  },
+  {
+   "fieldname": "quotation_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Quotation Name",
+   "options": "Quotation"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-01-20 09:54:18.447179",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Quotation History",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

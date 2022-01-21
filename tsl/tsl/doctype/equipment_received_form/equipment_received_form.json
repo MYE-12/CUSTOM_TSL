@@ -12,11 +12,13 @@
   "customer_branch_name",
   "mobile",
   "email",
+  "incharge",
+  "incharge_name",
   "is_quotation_created",
   "column_break_3",
   "received_date",
-  "incharge",
-  "incharge_name",
+  "sales_person",
+  "customer_reference_number",
   "section_break_9",
   "received_equipment",
   "attach_image_section",
@@ -121,12 +123,23 @@
    "fieldtype": "Table",
    "label": "Images",
    "options": "Recieved Equipment Image"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "label": "Sales Person",
+   "options": "User"
+  },
+  {
+   "fieldname": "customer_reference_number",
+   "fieldtype": "Data",
+   "label": "Customer Reference Number"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-16 21:44:51.244342",
+ "modified": "2022-01-19 13:57:01.176793",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",
