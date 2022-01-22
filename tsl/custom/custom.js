@@ -2,7 +2,10 @@ frappe.ui.form.on('Quotation', {
 
 	
     refresh:function(frm){
-        if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
+		if(frm.doc.quotation_type && frm.doc.docstatus==0 ){
+            frm.trigger("quotation_type");
+        }
+		if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				let inc_rate = diff / frm.doc.total_qty
@@ -18,7 +21,9 @@ frappe.ui.form.on('Quotation', {
 						if(r.message) {
 							console.log(r.message)
 							var doc = frappe.model.sync(r.message);
+							doc[0].similar_items_quoted_before = [];
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
 						}
 					}
 				});
@@ -189,23 +194,19 @@ frappe.ui.form.on('Quotation', {
             frm.set_df_property("final_approved_price", "read_only", 1)
         }
     },
-	// before_save:function(frm){
-	// 	console.log("before submit..........")
-	// 	if(frm.doc.quotation_type != "Internal Quotation"){
-	// 		frappe.prompt([
-	// 			{
-	// 				label: 'Type Of Approval',
-	// 				fieldname: 'type_of_approval',
-	// 				fieldtype: 'Select',
-	// 				options:["Email","Phone call","PO","Others"]
-	// 			},
-				
-	// 		], (values) => {
-	// 			console.log(values.type_of_approval);
-	// 		})
-	//   }
+	quotation_type:function(frm){
+		var d = {
+	        "Internal Quotation":"INT-QTN-.YY.-",
+	        "Customer Quotation":"CUS-QTN-.YY.-",
+			"Revised Quotation":"REV-QTN-.YY.-"
+	    };
+		if(frm.doc.quotation_type){
+			frm.set_value("naming_series",d[frm.doc.quotation_type]);
 
-	// },
+		}
+	    
+	    
+	}
 		    
 			
 });

@@ -44,23 +44,16 @@ def get_quotation_history(source,rate = None,type = None):
 			"status":doc.workflow_state,
 			"quotation_name":doc.name,
 		})
-		# target_doc.save()
 
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Quotation",
-			# "validation": {
-			# 	"docstatus": ["=", 1]
-			# }
+			
 		},
 		"Quotation Item": {
 			"doctype": "Quotation Item",
 			
 		},
-		# "Quotation History" :{
-		# 	"doctype" : "Quotation History",
-
-		# },
 	}, target_doc, postprocess)
 	return doclist
 
@@ -82,9 +75,22 @@ def on_update(self, method):
 					frappe.db.set_value("Work Order Data", i.wod_no, "status", "RNA-Return Not Approved")
 
 def before_submit(self,method):
-	for i in self.get("items"):
-		if i.wod_no:
-			frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
+	print("before submit")
+	if self.quotation_type == "Internal Quotation":
+		for i in self.get("items"):
+			if i.wod_no:
+				frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
+			if i.item_name:
+				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
+				print(item)
+				for j in item:
+					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation":
+						self.append( "similar_items_quoted_before",{
+							"item":j['item_name'],
+							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
+							"price":j['rate'],
+
+						})
 
 
 def validate(self, method):
