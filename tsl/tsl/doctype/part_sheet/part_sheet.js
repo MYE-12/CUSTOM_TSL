@@ -112,5 +112,9 @@ frappe.ui.form.on('Part Sheet Item', {
 		frm.set_value("total_qty", tot_qty)
 		frm.set_value("total_amount", tot_amount)
 		frm.refresh();
-	}
+	},
+	price_ea:function(frm,cdt,cdn){
+		frm.script_manager.trigger("qty",cdt,cdn);
+
+	},
 })

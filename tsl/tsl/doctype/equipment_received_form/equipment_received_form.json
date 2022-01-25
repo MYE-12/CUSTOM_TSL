@@ -12,12 +12,16 @@
   "customer_branch_name",
   "mobile",
   "email",
+  "address",
   "incharge",
   "incharge_name",
+  "incharge_email",
+  "incharge_phone_no",
   "is_quotation_created",
   "column_break_3",
   "received_date",
   "sales_person",
+  "sales_person_name",
   "suggested_price",
   "customer_reference_number",
   "section_break_9",
@@ -58,11 +62,11 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Incharge",
-   "options": "User",
+   "options": "Contact",
    "reqd": 1
   },
   {
-   "fetch_from": "incharge.full_name",
+   "fetch_from": "incharge.first_name",
    "fieldname": "incharge_name",
    "fieldtype": "Data",
    "label": "Incharge Name",
@@ -141,12 +145,40 @@
    "fieldtype": "Currency",
    "label": "Suggested Price",
    "options": "currency"
+  },
+  {
+   "fetch_from": "incharge.email_id",
+   "fieldname": "incharge_email",
+   "fieldtype": "Data",
+   "label": "Incharge Email",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "incharge.phone",
+   "fieldname": "incharge_phone_no",
+   "fieldtype": "Data",
+   "label": "Incharge Phone No",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "sales_person.full_name",
+   "fieldname": "sales_person_name",
+   "fieldtype": "Data",
+   "label": "Sales Person Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.primary_address",
+   "fieldname": "address",
+   "fieldtype": "Text",
+   "label": "Address",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-21 11:46:35.710874",
+ "modified": "2022-01-24 10:52:12.822587",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

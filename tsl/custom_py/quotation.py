@@ -11,7 +11,7 @@ def get_wod_items(wod):
 	for k in list(wod):
 		print(k)
 		
-		tot = frappe.db.get_value("Part Sheet",{"work_order_data":k},"total_amount")
+		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
 		doc = frappe.get_doc("Work Order Data",k)
 		rate = frappe.db.get_value("Part Sheet", {"work_order_data":k, "docstatus":1}, "total_amount")
 		if not rate:
@@ -76,23 +76,34 @@ def on_update(self, method):
 
 def before_submit(self,method):
 	print("before submit")
+	l = []
 	if self.quotation_type == "Internal Quotation":
 		for i in self.get("items"):
 			if i.wod_no:
 				frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
-			if i.item_name:
-				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
-				print(item)
-				for j in item:
-					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation":
-						self.append( "similar_items_quoted_before",{
-							"item":j['item_name'],
-							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
-							"price":j['rate'],
 
-						})
+
 
 
 def validate(self, method):
 	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation":
 		self.final_approved_price = self.rounded_total*302.8/100+self.rounded_total
+	l = []
+	if self.quotation_type == "Internal Quotation":
+		for i in self.get("items"):
+			if i.item_name:
+				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
+				for j in item:
+					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation":
+						l.append({
+							"item":j['item_name'],
+							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
+							"price":j['rate'],
+
+						})
+		self.similar_items_quoted_before = []
+		for i in range(len(l)):
+			if i==3:
+				break
+			self.append("similar_items_quoted_before",l[i])
+		

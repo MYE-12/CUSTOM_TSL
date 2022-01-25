@@ -93,7 +93,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.rate = r.message[i]["total_amt"]
 											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
 											childTable.amount = amt,
-											childTable.final_approved_price = (amt*(302.9/100))+amt,
+											childTable.final_approved_price = (amt*(302.8/100))+amt,
 											tot_amt += amt;
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
@@ -162,15 +162,22 @@ frappe.ui.form.on('Quotation', {
 						fieldtype: "Date",
 						hidden:1,
 						
-					}
+					},
+					{
+						label: "Approval Date",
+						fieldname: "approval_date",
+						fieldtype: "Date",
+						
+						
+					},
 				],
 				primary_action: function() {
 					var data = d.get_values();
-	
-					console.log(data.type_of_approval)
-					frm.doc.type_of_approval = data.type_of_approval;
+					frm.set_value("type_of_approval",data.type_of_approval)
+					frm.set_value("approval_date",data.approval_date)
+					
 					if(data.type_of_approval == "Others"){
-						frm.set_value("type_of_approval",data.specify)
+						frm.set_value("specify",data.specify)
 					}
 					if(data.type_of_approval == "PO"){
 						frm.set_value("purchase_order_no",data.po_no);
