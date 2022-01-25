@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Work Order Data', {
 	refresh: function(frm) {
-		if(frm.doc.docstatus=1){
+		if(frm.doc.docstatus==1){
 			cur_frm.add_custom_button("Work Order Report", function(frm){
 				frappe.set_route("query-report", "Work Order Status");
 			});
