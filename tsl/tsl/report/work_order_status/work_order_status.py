@@ -270,16 +270,11 @@ def get_data(filters):
 				i["gross"] = j["amount"]
 				i["approved_date"] = frappe.db.get_value("Quotation",j['parent'],"approval_date")
 				i["q_unit_status"] = j["q_unit_status"]
-		contact = frappe.db.get_value("Contact Details",{"parent":i.customer},["name1","email_id","phone_number"])
-		i["contact_person_name"] = contact[0]
-		i["email_id"] = contact[1]
-		i["contact_no"] = contact[2]
-
-		
-
-
-
-		
+		contact = frappe.db.sql('''select name1,email_id,phone_number from `tabContact Details` where parent = %s and parenttype="Customer" ''',i.customer,as_dict=1)
+		if contact:
+			i["contact_person_name"] = contact[0]['name1']
+			i["email_id"] = contact[0]['email_id']
+			i["contact_no"] = contact[0]['phone_number']
 		data.append(i)
 
 	return data

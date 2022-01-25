@@ -203,9 +203,9 @@ frappe.ui.form.on('Quotation', {
     },
 	quotation_type:function(frm){
 		var d = {
-	        "Internal Quotation":"INT-QTN-.YY.-",
-	        "Customer Quotation":"CUS-QTN-.YY.-",
-			"Revised Quotation":"REV-QTN-.YY.-"
+	        "Internal Quotation":"QTN-INT-.YY.-",
+	        "Customer Quotation":"QTN-CUS-.YY.-",
+			"Revised Quotation":"QTN-REV-.YY.-"
 	    };
 		if(frm.doc.quotation_type){
 			frm.set_value("naming_series",d[frm.doc.quotation_type]);
