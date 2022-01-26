@@ -30,7 +30,7 @@
    "label": "Description"
   },
   {
-   "columns": 2,
+   "columns": 1,
    "fetch_from": "item.manufacturer",
    "fieldname": "manufacturer",
    "fieldtype": "Data",
@@ -54,8 +54,10 @@
    "label": "Serial No"
   },
   {
+   "columns": 1,
    "fieldname": "item",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Item",
    "options": "Item"
   }
@@ -63,7 +65,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-12-21 09:58:45.416010",
+ "modified": "2022-01-26 16:58:17.473594",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Item",

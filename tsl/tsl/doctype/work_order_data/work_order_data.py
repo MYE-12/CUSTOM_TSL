@@ -12,7 +12,7 @@ def create_part_sheet(work_order):
 	new_doc.customer = doc.customer
 	new_doc.customer_name = doc.customer_name
 	new_doc.technician = doc.technician
-	new_doc.item = doc.material_list[0].item
+	new_doc.item = doc.material_list[0].item_name
 	new_doc.manufacturer = doc.material_list[0].mfg
 	new_doc.model = doc.material_list[0].model_no
 	return new_doc
@@ -45,12 +45,6 @@ def create_extra_ps(doc):
 	return l
 
 	
-		
-
-
-	
-
-
 class WorkOrderData(Document):
 	def before_submit(self):
 		if not self.technician:

@@ -2,9 +2,7 @@ frappe.ui.form.on('Quotation', {
 
 	
     refresh:function(frm){
-		if(frm.doc.quotation_type && frm.doc.docstatus==0 ){
-            frm.trigger("quotation_type");
-        }
+		
 		if(frm.doc.quotation_type == "Internal Quotation" && frm.doc.docstatus==1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
@@ -113,6 +111,9 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
+		if(frm.doc.quotation_type && frm.doc.docstatus==0 ){
+            frm.trigger("quotation_type");
+        }
 		if(frm.doc.edit_final_approved_price){ 
 			frm.set_df_property("final_approved_price", "read_only", 0)
 		}

@@ -90,9 +90,8 @@
   },
   {
    "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item"
+   "fieldtype": "Data",
+   "label": "Item"
   },
   {
    "fetch_from": "item.manufacturer",
@@ -147,7 +146,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-10 16:57:17.179343",
+ "modified": "2022-01-26 16:52:39.068679",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet",

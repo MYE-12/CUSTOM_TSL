@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-01-25 17:36:36.318617",
+ "creation": "2022-01-25 17:14:59.265942",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
@@ -34,7 +34,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Address and Contact",
+   "label": "Address and Contacts",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -101,7 +101,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-01-25 17:42:45.089011",
+ "modified": "2022-01-25 17:30:43.198489",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",

@@ -50,21 +50,26 @@ frappe.ui.form.on('Work Order Data', {
 					"doc":frm.doc.name
 				},
 				callback: function(r) {
-					console.log("extra_ps............")
 					if(r.message) {
-						console.log(r.message)
-						cur_frm.clear_table("extra_part_sheets");
-						for(var i=0;i<r.message.length;i++){
-							var childTable = cur_frm.add_child("extra_part_sheets");
-							childTable.part_sheet_name = r.message[i]["name"],
-							childTable.technician = r.message[i]["technician"],
-							cur_frm.refresh_fields("extra_part_sheets");
+						if(r.message.length >0){
+							console.log(r.message)
+							cur_frm.clear_table("extra_part_sheets");
+							for(var i=0;i<r.message.length;i++){
+								var childTable = cur_frm.add_child("extra_part_sheets");
+								childTable.part_sheet_name = r.message[i]["name"],
+								childTable.technician = r.message[i]["technician"],
+								cur_frm.refresh_fields("extra_part_sheets");
+
+						    }
+							cur_frm.doc.docstatus = 1;
+						    cur_frm.refresh_fields();
+						}
+						else{
+							frappe.msgprint("No Extra Part Sheets for this Work Order");
 						}
 						
-						
-						cur_frm.doc.docstatus = 1;
-						cur_frm.refresh_fields();
 					}
+					
 				}
 			})
 		}
