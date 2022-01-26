@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Equipment Received Form', {
 	refresh: function(frm) {
+		
 		if(frm.doc.docstatus == 1){
 			frm.add_custom_button(__("Create Work Order Data"), function(frm){
 				frappe.call({
@@ -35,6 +36,20 @@ frappe.ui.form.on('Equipment Received Form', {
 			}
 		}
 	},
+});
+frappe.ui.form.on("Equipment Received Form", {
+	setup: function(frm) {
+		frm.set_query("address", function() {
+			return {
+				filters: [
+					["Dynamic Link","parenttype", "=", "Address"],
+					["Dynamic Link","link_name","=",frm.doc.customer],
+					["Dynamic Link","link_doctype","=","Customer"]
+					
+				]
+			}
+		});
+	}
 });
 frappe.ui.form.on('Recieved Equipment Image', {
 	images_add:function(frm){

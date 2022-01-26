@@ -58,6 +58,7 @@ def get_quotation_history(source,rate = None,type = None):
 	return doclist
 
 def on_update(self, method):
+	print(self.workflow_state)
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
 		if self.quotation_type == "Internal Quotation":
 			self.workflow_state = "Waiting For Approval"
@@ -65,8 +66,8 @@ def on_update(self, method):
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
 
 	if not self.quotation_type == "Internal Quotation":
-		for i in self.items:
-			if i.prevdoc_doctype == "Work Order Data" and i.wod_no:
+		for i in self.get("items"):
+			if i.wod_no:
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
 					frappe.db.set_value("Work Order Data", i.wod_no, "status", "Q-Quoted")
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":

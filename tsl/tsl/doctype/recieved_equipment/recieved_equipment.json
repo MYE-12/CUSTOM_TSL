@@ -41,30 +41,24 @@
   },
   {
    "columns": 2,
-   "fetch_from": "item.manufacturer",
    "fieldname": "manufacturer",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Manufacturer",
-   "read_only": 1
+   "label": "Manufacturer"
   },
   {
    "columns": 1,
-   "fetch_from": "item.model",
    "fieldname": "model",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Model",
-   "read_only": 1
+   "label": "Model"
   },
   {
    "columns": 1,
-   "fetch_from": "item.serial_no",
    "fieldname": "serial_no",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Serial No",
-   "read_only": 1
+   "label": "Serial No"
   },
   {
    "columns": 1,
@@ -155,7 +149,6 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item.description",
    "fieldname": "type",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
@@ -171,7 +164,6 @@
    "reqd": 1
   },
   {
-   "fetch_from": "item.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -185,7 +177,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-01-16 21:40:21.832680",
+ "modified": "2022-01-25 18:29:13.312412",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment",

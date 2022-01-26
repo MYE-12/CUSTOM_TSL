@@ -61,7 +61,7 @@
    "fieldname": "incharge",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Incharge",
+   "label": "Customer Representative",
    "options": "Contact",
    "reqd": 1
   },
@@ -69,7 +69,7 @@
    "fetch_from": "incharge.first_name",
    "fieldname": "incharge_name",
    "fieldtype": "Data",
-   "label": "Incharge Name",
+   "label": "Customer Representative Name",
    "read_only": 1
   },
   {
@@ -106,9 +106,9 @@
    "label": "Is Quotation Created"
   },
   {
-   "fetch_from": "customer.branch_name",
    "fieldname": "customer_branch_name",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Customer Branch Name",
    "read_only": 1
   },
@@ -150,14 +150,14 @@
    "fetch_from": "incharge.email_id",
    "fieldname": "incharge_email",
    "fieldtype": "Data",
-   "label": "Incharge Email",
+   "label": "Customer Representative Email",
    "read_only": 1
   },
   {
    "fetch_from": "incharge.phone",
    "fieldname": "incharge_phone_no",
    "fieldtype": "Data",
-   "label": "Incharge Phone No",
+   "label": "Customer Representative Phone No",
    "read_only": 1
   },
   {
@@ -168,17 +168,16 @@
    "read_only": 1
   },
   {
-   "fetch_from": "customer.primary_address",
    "fieldname": "address",
-   "fieldtype": "Text",
+   "fieldtype": "Link",
    "label": "Address",
-   "read_only": 1
+   "options": "Address"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-24 10:52:12.822587",
+ "modified": "2022-01-25 17:53:55.165375",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",
