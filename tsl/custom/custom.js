@@ -135,10 +135,13 @@ frappe.ui.form.on('Quotation', {
 	
 							if (template_type === "Others") {
 								d.set_df_property('specify', 'hidden',0);
+								d.set_df_property('po_no', 'hidden',1);
+								d.set_df_property('po_date', 'hidden',1);
 							} 
 							if (template_type === "PO") {
 								d.set_df_property('po_no', 'hidden',0);
 								d.set_df_property('po_date', 'hidden',0);
+								d.set_df_property('specify', 'hidden',1);
 							} 
 							
 						}
