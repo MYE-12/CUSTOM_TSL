@@ -22,7 +22,7 @@ def create_workorder_data(order_no):
 		new_doc = frappe.new_doc("Work Order Data")
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
-		new_doc.sales_rep = doc.incharge
+		new_doc.sales_rep = doc.sales_person
 		new_doc.equipment_recieved_form = doc.name
 		new_doc.append("material_list",{
 			"item":i.item,
