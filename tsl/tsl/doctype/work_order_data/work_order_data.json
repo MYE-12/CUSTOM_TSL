@@ -16,6 +16,7 @@
   "delivery",
   "equipment_recieved_form",
   "column_break_7",
+  "image",
   "received_date",
   "posting_date",
   "technician",
@@ -201,12 +202,18 @@
    "fieldname": "remarks",
    "fieldtype": "Data",
    "label": "Remarks"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "HTML",
+   "label": "Image",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-21 11:48:01.049639",
+ "modified": "2022-01-27 09:12:03.113295",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

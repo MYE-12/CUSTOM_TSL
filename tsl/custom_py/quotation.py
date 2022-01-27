@@ -12,6 +12,11 @@ def get_wod_items(wod):
 		print(k)
 		
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
+		if not tot:
+			link = []
+			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
+			frappe.throw("No Part Sheet created for this Work Order"+"-".join(link))
+			continue
 		doc = frappe.get_doc("Work Order Data",k)
 		rate = frappe.db.get_value("Part Sheet", {"work_order_data":k, "docstatus":1}, "total_amount")
 		if not rate:
@@ -31,6 +36,7 @@ def get_wod_items(wod):
 				"total_amt":float(tot)/float(i.quantity),
 
 			}))
+			
 	return l
 @frappe.whitelist()
 def get_quotation_history(source,rate = None,type = None):

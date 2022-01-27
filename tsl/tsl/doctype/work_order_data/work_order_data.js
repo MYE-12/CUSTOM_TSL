@@ -41,6 +41,21 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			});
 		}
+		if(!frm.doc.image){
+			frappe.call({
+				method: "tsl.tsl.doctype.work_order_data.work_order_data.get_item_image",
+				args: {
+					"erf_no":frm.doc.equipment_recieved_form,
+				},
+				callback: function(r) {
+					if(r.message) {
+						cur_frm.set_df_property("image", "options","<img src="+r.message+"></img>");
+						cur_frm.refresh_fields();
+					}
+				}
+			});
+
+		}
 	},
 	check_for_extra_partsheets:function(frm){
 		if(frm.doc.docstatus == 1) {

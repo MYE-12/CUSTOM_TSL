@@ -3,9 +3,12 @@
 
 import frappe
 from frappe.model.document import Document
+from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
+
 @frappe.whitelist()
 def get_item_image(wod_no):
-	image = frappe.db.get_value("Material List",{"parent":wod_no},"item_image")
+	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
+	image = img(erf_no)
 	return image
 
 class EvaluationReport(Document):

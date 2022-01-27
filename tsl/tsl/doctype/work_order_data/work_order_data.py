@@ -5,6 +5,12 @@ import frappe
 from frappe.model.document import Document
 
 @frappe.whitelist()
+def get_item_image(erf_no):
+	image = frappe.db.sql('''select image from `tabRecieved Equipment Image` where parent = %s order by idx limit 1''',erf_no,as_dict=1)
+	return image[0]['image']
+
+
+@frappe.whitelist()
 def create_part_sheet(work_order):
 	doc = frappe.get_doc("Work Order Data",work_order)
 	new_doc= frappe.new_doc("Part Sheet")
