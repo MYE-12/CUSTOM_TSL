@@ -34,6 +34,8 @@
   "section_break_23",
   "check_for_extra_partsheets",
   "extra_part_sheets",
+  "section_break_28",
+  "status_duration_details",
   "amended_from"
  ],
  "fields": [
@@ -208,12 +210,23 @@
    "fieldtype": "HTML",
    "label": "Image",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_28",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status_duration_details",
+   "fieldtype": "Table",
+   "label": "Status Duration Details",
+   "options": "Status Duration Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-27 09:12:03.113295",
+ "modified": "2022-01-27 17:27:03.170520",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

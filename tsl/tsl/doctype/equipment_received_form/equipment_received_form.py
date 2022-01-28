@@ -25,14 +25,12 @@ def create_workorder_data(order_no):
 		new_doc.sales_rep = doc.sales_person
 		new_doc.equipment_recieved_form = doc.name
 		new_doc.append("material_list",{
-			"item":i.item,
 			"item_name": i.item_name,
 			"type":i.type,
 			"model_no":i.model,
 			"mfg":i.manufacturer,
 			"serial_no":i.serial_no,
 			"quantity":i.qty,
-			"uom": i.uom,
 		})
 		new_doc.save(ignore_permissions = True)
 		l.append(new_doc.name)

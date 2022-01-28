@@ -1,4 +1,5 @@
 from . import __version__ as app_version
+from tsl import tsl
 
 app_name = "tsl"
 app_title = "Tsl"
@@ -106,6 +107,11 @@ doc_events = {
 			"tsl.custom_py.quotation.validate"
 		]
 	}
+	# "Work Order Data":{
+	# 	"on_update":[
+	# 		"tsl.tsl.doctype.work_order_data.work_order_data.on_update"
+	# 	]
+	# }
 }
 
 # Scheduled Tasks

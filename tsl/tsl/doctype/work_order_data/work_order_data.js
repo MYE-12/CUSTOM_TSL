@@ -3,12 +3,8 @@
 
 frappe.ui.form.on('Work Order Data', {
 	refresh: function(frm) {
-		if(frm.doc.docstatus==1){
-			cur_frm.add_custom_button("Work Order Report", function(frm){
-				frappe.set_route("query-report", "Work Order Status");
-			});
-		}
-		if(frm.doc.docstatus == 1) {
+		
+		if(frm.doc.docstatus === 1) {
 			frm.add_custom_button(__("Create Part Sheet"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_part_sheet",
@@ -24,7 +20,7 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			});
 		}
-		if(frm.doc.docstatus == 1) {
+		if(frm.doc.docstatus === 1) {
 			frm.add_custom_button(__("Create Evaluation Report"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_evaluation_report",
@@ -42,23 +38,25 @@ frappe.ui.form.on('Work Order Data', {
 			});
 		}
 		if(!frm.doc.image){
-			frappe.call({
-				method: "tsl.tsl.doctype.work_order_data.work_order_data.get_item_image",
-				args: {
-					"erf_no":frm.doc.equipment_recieved_form,
-				},
-				callback: function(r) {
-					if(r.message) {
-						cur_frm.set_df_property("image", "options","<img src="+r.message+"></img>");
-						cur_frm.refresh_fields();
+			if(frm.doc.equipment_recieved_form){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.get_item_image",
+					args: {
+						"erf_no":frm.doc.equipment_recieved_form,
+					},
+					callback: function(r) {
+						if(r.message) {
+							cur_frm.set_df_property("image", "options","<img src="+r.message+"></img>");
+							cur_frm.refresh_fields();
+						}
 					}
-				}
-			});
-
+				});
+			}
 		}
+		
 	},
 	check_for_extra_partsheets:function(frm){
-		if(frm.doc.docstatus == 1) {
+		if(frm.doc.docstatus === 1) {
 			frappe.call({
 				method: "tsl.tsl.doctype.work_order_data.work_order_data.create_extra_ps",
 				args: {

@@ -1,13 +1,28 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
+from pydoc import doc
 import frappe
 from frappe.model.document import Document
+from frappe.utils import getdate,today
+from datetime import datetime,date
+from frappe.utils.data import (
+	add_days,
+	add_months,
+	add_to_date,
+	date_diff,
+	flt,
+	get_date_str,
+	nowdate,
+)
+
+
 
 @frappe.whitelist()
 def get_item_image(erf_no):
 	image = frappe.db.sql('''select image from `tabRecieved Equipment Image` where parent = %s order by idx limit 1''',erf_no,as_dict=1)
-	return image[0]['image']
+	if image:
+		return image[0]['image']
 
 
 @frappe.whitelist()
@@ -50,10 +65,80 @@ def create_extra_ps(doc):
 		l.append(extra_ps[i])
 	return l
 
+@frappe.whitelist()
+def create_status_duration(wod):
+	print("\n\n\n\n")
+	print(wod)
+	doc = frappe.get_doc("Work Order Data",wod)
+	print(len(doc.status_duration_details))
+	return(doc.status_duration_details[len(doc.status_duration_details-1)])
+	
+
 	
 class WorkOrderData(Document):
+	# def on_update(self):
+	# 	print("\n\n\n\n")
+	# 	print("on_update..........")
+	# 	print(len(self.status_duration_details))
+	# 	# for i in range(len(self.status_duration_details)):
+	# 	now = datetime.now()
+	# 	current_time = now.strftime("%H:%M:%S")
+	# 	self.append("status_duration_details",{
+	# 		"status":self.status,
+	# 		"date":now,
+	# 		"time":current_time,
+		
+	# 	})
+	def on_change(self):
+		print("\n\n\n\n")
+		print("on_change")
+		print(self.status)
+		print(len(self.status_duration_details))
+		for i in self.get("status_duration_details"):
+			if i.idx == len(self.status_duration_details):
+				if i.status != self.status:
+					ldate = i.date
+					now = datetime.now()
+					self.append("status_duration_details",{
+						"status":self.status,
+						"date":now,
+					})
+					time_date = ldate.split(".")[0]
+					format_data = "%Y-%m-%d %H:%M:%S"
+					date = datetime.strptime(time_date, format_data)
+					duration = now - date
+					duration_in_s = duration.total_seconds()
+					minutes = divmod(duration_in_s, 60)[0]/60
+					data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
+					frappe.db.set_value("Status Duration Details",{"parent":self.name,"idx":len(self.status_duration_details)-1},"duration",data)
+					print(data)
+					self.save(ignore_permissions = True)
+					break
+		# for i in self.get("status_duration_details"):
+		# 	if i.idx == len(self.status_duration_details)-1:
+		# 		self.append("status_duration_details",{
+		# 				"duration":data,
+						
+		# 			})
+		# 		break
+		# self.save(ignore_permissions = True)
+		
+
+
+	
 	def before_submit(self):
+		print("before submit............")
 		if not self.technician:
 			frappe.throw("Assign a Technician to Submit")
 		if not self.department:
 			frappe.throw("Set Department to Submit")
+		now = datetime.now()
+		current_time = now.strftime("%H:%M:%S")
+		self.status_duration_details =[]
+		self.append("status_duration_details",{
+			"status":self.status,
+			"date":now,
+		})
+
+	
+

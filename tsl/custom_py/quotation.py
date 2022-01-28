@@ -23,13 +23,12 @@ def get_wod_items(wod):
 			rate = 0
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
-				"item" :i.item,
+				"item" :"Service Item",
 				"item_name" : i.item_name,
 				"wod": k,
 				"type": i.type,
 				"model_no": i.model_no,
 				"serial_no": i.serial_no,
-				"uom": i.uom,
 				"qty": i.quantity,
 				"sales_rep":doc.sales_rep,
 				"rate": rate,
