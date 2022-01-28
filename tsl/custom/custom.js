@@ -141,7 +141,17 @@ frappe.ui.form.on('Quotation', {
 								d.set_df_property('po_no', 'hidden',0);
 								d.set_df_property('po_date', 'hidden',0);
 								d.set_df_property('specify', 'hidden',1);
-							} 
+							}
+							if (template_type === "Email") {
+								d.set_df_property('specify', 'hidden',1);
+								d.set_df_property('po_no', 'hidden',1);
+								d.set_df_property('po_date', 'hidden',1);
+							}
+							if (template_type === "Phone call") {
+								d.set_df_property('specify', 'hidden',1);
+								d.set_df_property('po_no', 'hidden',1);
+								d.set_df_property('po_date', 'hidden',1);
+							}   
 							
 						}
 					},
@@ -186,13 +196,15 @@ frappe.ui.form.on('Quotation', {
 						frm.set_value("purchase_order_no",data.po_no);
 						frm.set_value("purchase_order_date", data.po_date);
 					}
+					
 					cur_frm.refresh_fields();
-	
+					cur_frm.save_or_update();
 					d.hide();
 				},
 				primary_action_label: __('Submit')
 			});
 			d.show();
+			
 	  }
 
     },

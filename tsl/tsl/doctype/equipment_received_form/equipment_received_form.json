@@ -19,6 +19,7 @@
   "incharge_phone_no",
   "is_quotation_created",
   "column_break_3",
+  "company",
   "received_date",
   "sales_person",
   "sales_person_name",
@@ -172,12 +173,18 @@
    "fieldtype": "Link",
    "label": "Address",
    "options": "Address"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-25 17:53:55.165375",
+ "modified": "2022-01-28 20:47:31.885599",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

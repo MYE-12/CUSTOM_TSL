@@ -10,7 +10,6 @@ def get_wod_items(wod):
 	l=[]
 	for k in list(wod):
 		print(k)
-		
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
 		if not tot:
 			link = []
@@ -73,12 +72,14 @@ def on_update(self, method):
 	if not self.quotation_type == "Internal Quotation":
 		for i in self.get("items"):
 			if i.wod_no:
+				doc = frappe.get_doc("Work Order Data",i.wod_no)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
-					frappe.db.set_value("Work Order Data", i.wod_no, "status", "Q-Quoted")
+					doc.status = "Q-Quoted"
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
-					frappe.db.set_value("Work Order Data", i.wod_no, "status", "A-Approved")
+					doc.status = "A-Approved"
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
-					frappe.db.set_value("Work Order Data", i.wod_no, "status", "RNA-Return Not Approved")
+					doc.status =  "RNA-Return Not Approved"
+				doc.save(ignore_permissions=True)
 
 def before_submit(self,method):
 	print("before submit")

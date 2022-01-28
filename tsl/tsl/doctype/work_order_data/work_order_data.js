@@ -87,8 +87,30 @@ frappe.ui.form.on('Work Order Data', {
 			})
 		}
 
-	}
+	},
+	branch:function(frm){
+		var d = {
+			"Dammam - TS":"WOD-D.YY.-",
+			"Riyadh - TS":"WOD-R.YY.-",
+			"Jenda - TS":"WOD-J.YY.-"
+		};
+		if(frm.doc.branch){
+			frm.set_value("naming_series",d[frm.doc.branch]);
+		}
+	},
 	
 		
 	
+});
+frappe.ui.form.on('Work Order Data', {
+	setup: function(frm) {
+		frm.set_query("branch", function() {
+			return {
+				filters: [
+					["Warehouse","company", "=", frm.doc.company],
+					
+				]
+			}
+		});
+	}
 });

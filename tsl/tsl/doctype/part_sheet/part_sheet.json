@@ -13,6 +13,7 @@
   "technician",
   "item",
   "column_break_3",
+  "company",
   "date",
   "work_order_data",
   "parts_availability",
@@ -141,12 +142,18 @@
    "hidden": 1,
    "label": "Naming Series",
    "options": "PS-.YYYY.-"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-26 16:52:39.068679",
+ "modified": "2022-01-28 21:14:23.617138",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet",

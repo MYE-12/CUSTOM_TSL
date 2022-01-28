@@ -18,7 +18,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Master Report",
-   "link_type": "DocType",
+   "link_type": "Page",
    "onboard": 0,
    "type": "Card Break"
   },
@@ -28,6 +28,23 @@
    "label": "Work Order Status",
    "link_to": "Work Order Status",
    "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Branches",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Branch List",
+   "link_to": "Warehouse",
+   "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   },
@@ -51,7 +68,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Contact Persons",
+   "label": "Contact",
    "link_to": "Contact",
    "link_type": "DocType",
    "onboard": 0,
@@ -101,7 +118,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-01-25 17:30:43.198489",
+ "modified": "2022-01-28 21:26:33.821777",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
@@ -110,6 +127,12 @@
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Company",
+   "link_to": "Company",
+   "type": "DocType"
+  },
   {
    "doc_view": "List",
    "label": "Customer Registration Form",

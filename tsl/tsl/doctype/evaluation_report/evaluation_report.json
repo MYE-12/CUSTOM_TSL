@@ -11,6 +11,7 @@
   "customer",
   "attn",
   "column_break_3",
+  "company",
   "date",
   "work_order_data",
   "amended_from",
@@ -129,12 +130,18 @@
    "fieldtype": "Link",
    "label": "Work Order Data",
    "options": "Work Order Data"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-16 18:18:38.020906",
+ "modified": "2022-01-28 21:14:57.445760",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

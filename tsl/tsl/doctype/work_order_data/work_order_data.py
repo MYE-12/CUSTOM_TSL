@@ -1,6 +1,7 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
+from codecs import ignore_errors
 from pydoc import doc
 import frappe
 from frappe.model.document import Document
@@ -76,44 +77,47 @@ def create_status_duration(wod):
 
 	
 class WorkOrderData(Document):
-	# def on_update(self):
-	# 	print("\n\n\n\n")
-	# 	print("on_update..........")
-	# 	print(len(self.status_duration_details))
-	# 	# for i in range(len(self.status_duration_details)):
-	# 	now = datetime.now()
-	# 	current_time = now.strftime("%H:%M:%S")
-	# 	self.append("status_duration_details",{
-	# 		"status":self.status,
-	# 		"date":now,
-	# 		"time":current_time,
-		
-	# 	})
-	def on_change(self):
+	def on_update_after_submit(self):
 		print("\n\n\n\n")
-		print("on_change")
-		print(self.status)
+		print("on_update..........")
 		print(len(self.status_duration_details))
-		for i in self.get("status_duration_details"):
-			if i.idx == len(self.status_duration_details):
-				if i.status != self.status:
-					ldate = i.date
-					now = datetime.now()
-					self.append("status_duration_details",{
-						"status":self.status,
-						"date":now,
-					})
-					time_date = ldate.split(".")[0]
-					format_data = "%Y-%m-%d %H:%M:%S"
-					date = datetime.strptime(time_date, format_data)
-					duration = now - date
-					duration_in_s = duration.total_seconds()
-					minutes = divmod(duration_in_s, 60)[0]/60
-					data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
-					frappe.db.set_value("Status Duration Details",{"parent":self.name,"idx":len(self.status_duration_details)-1},"duration",data)
-					print(data)
-					self.save(ignore_permissions = True)
-					break
+		if self.status != self.status_duration_details[-1].status:
+			ldate = self.status_duration_details[-1].date
+			now = datetime.now()
+			time_date = str(ldate).split(".")[0]
+			format_data = "%Y-%m-%d %H:%M:%S"
+			date = datetime.strptime(time_date, format_data)
+			duration = now - date
+			duration_in_s = duration.total_seconds()
+			minutes = divmod(duration_in_s, 60)[0]/60
+			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1]+"min"
+			frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
+			doc = frappe.get_doc("Work Order Data",self.name)
+			doc.append("status_duration_details",{
+				"status":self.status,
+				"date":now,
+			})
+			print(data)
+			doc.save(ignore_permissions=True)
+		# # for i in range(len(self.status_duration_details)):
+		# now = datetime.now()
+		# current_time = now.strftime("%H:%M:%S")
+		# self.append("status_duration_details",{
+		# 	"status":self.status,
+		# 	"date":now,
+		# 	"time":current_time,
+		
+		# })
+
+
+	# def on_change(self):
+	# 	print("\n\n\n\n")
+	# 	print("on_change")
+	# 	print(self.status)
+	# 	print(len(self.status_duration_details))
+		
+		
+			
 		# for i in self.get("status_duration_details"):
 		# 	if i.idx == len(self.status_duration_details)-1:
 		# 		self.append("status_duration_details",{
