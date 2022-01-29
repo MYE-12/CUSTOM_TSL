@@ -1,11 +1,26 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
+from pydoc import doc
+from typing_extensions import Self
 import frappe
 from frappe.model.document import Document
+# from tsl.tsl.custom_py.quotation import before_submit
 
 class EquipmentReceivedForm(Document):
-	pass
+	def before_submit(self):
+		if not self.branch:
+			frappe.throw("Assign a branch to Submit")
+
+	
+
+@frappe.whitelist()
+def get_contacts(customer):
+	doc = frappe.get_doc("Customer",customer)
+	l=[]
+	for i in doc.get("contact_details"):
+		l.append(i.name1)
+	return l
 
 
 
@@ -23,6 +38,7 @@ def create_workorder_data(order_no):
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
+		new_doc.branch = doc.branch
 		new_doc.equipment_recieved_form = doc.name
 		new_doc.append("material_list",{
 			"item_name": i.item_name,

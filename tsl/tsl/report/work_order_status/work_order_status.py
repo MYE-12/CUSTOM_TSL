@@ -3,6 +3,7 @@
 
 from pkgutil import get_data
 import frappe
+from datetime import datetime,date
 
 def execute(filters=None):
 	data = []
@@ -188,6 +189,7 @@ def get_columns(filters):
 		"fieldname":"remarks",
 		"label": "Remarks",
 		"fieldtype": "Data",
+		"width":150
 	},
 	{
 		"fieldname":"pr_no",
@@ -250,7 +252,7 @@ def get_columns(filters):
 def get_data(filters):
 	# work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks from `tabWork Order Data` where posting_date >= %s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	data = []
-	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department from `tabWork Order Data`''',as_dict=1)
+	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name from `tabWork Order Data`''',as_dict=1)
 	print(work_order_entries)
 	for i in work_order_entries:
 		print(i.wod_no)
@@ -270,6 +272,10 @@ def get_data(filters):
 				i["gross"] = j["amount"]
 				i["approved_date"] = frappe.db.get_value("Quotation",j['parent'],"approval_date")
 				i["q_unit_status"] = j["q_unit_status"]
+		if frappe.db.get_value("Status Duration Details",{"parent":i.wod_no,"status":"Q-Quoted","parenttype": "Work Order Data"},"date"):
+			i["quoted_date"] = frappe.db.get_value("Status Duration Details",{"parent":i.wod_no,"status":"Q-Quoted","parenttype": "Work Order Data"},"date").date()
+		
+
 		contact = frappe.db.sql('''select name1,email_id,phone_number from `tabContact Details` where parent = %s and parenttype="Customer" ''',i.customer,as_dict=1)
 		if contact:
 			i["contact_person_name"] = contact[0]['name1']

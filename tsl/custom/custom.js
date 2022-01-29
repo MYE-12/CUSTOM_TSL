@@ -50,6 +50,28 @@ frappe.ui.form.on('Quotation', {
 					});
                         }, ('Create'))
         }
+		if(frm.doc.quotation_type ==="Internal Quotation" && frm.doc.workflow_state==="Rejected"){
+			frm.add_custom_button(__('Internal Quotation'), function(){
+				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+				let inc_rate = diff / frm.doc.total_qty
+				frappe.call({
+					method: "tsl.custom_py.quotation.get_quotation_history",
+					args: {
+						"source": frm.doc.name,
+						"rate":inc_rate,
+						
+						"type":"Internal Quotation"
+					},
+					callback: function(r) {
+						if(r.message) {
+							console.log(r.message)
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+					}, ('Create'))
+		}
         if (frm.doc.docstatus==0) {
 			frm.add_custom_button(__('Work Order Data'),
 				function() {
@@ -57,13 +79,13 @@ frappe.ui.form.on('Quotation', {
 						doctype: "Work Order Data",
 						target: frm,
 						setters: {
-							customer:frm.doc.customer_name ,
+							customer:frm.doc.customer_name,
 						},
 						add_filters_group: 1,
 						// date_field: "transaction_date",
 						get_query() {
 							return {
-								filters: { is_quotation_created: 0, docstatus:1 }
+								filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name }
 							}
 						},
 						action(selections) {
@@ -79,6 +101,7 @@ frappe.ui.form.on('Quotation', {
 										var tot_amt = 0;
 										var tot_qty=0;
 										for(var i=0;i<r.message.length;i++){
+											
 											var childTable = cur_frm.add_child("items");
 											childTable.item_code = r.message[i]["item"],
 											childTable.item_name = r.message[i]["item_name"],
@@ -110,9 +133,20 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
-		if(frm.doc.quotation_type && frm.doc.docstatus===0 ){
-            frm.trigger("quotation_type");
-        }
+		// if(frm.doc.party_name && frm.doc.docstatus===0 ){
+        //     frm.doc.customer_name = frm.doc.party_name
+		// 	frm.refresh_fields()
+        // }
+		if(frm.doc.docstatus === 0 && frm.doc.quotation_type){
+			frm.trigger("branch_name")
+			console.log("called......................")
+			
+
+		}
+
+		// if(frm.doc.quotation_type && frm.doc.docstatus===0 ){
+        //     frm.trigger("quotation_type");
+        // }
 		if(frm.doc.edit_final_approved_price){ 
 			frm.set_df_property("final_approved_price", "read_only", 0)
 		}
@@ -128,7 +162,7 @@ frappe.ui.form.on('Quotation', {
 						label: 'Type Of Approval',
 						fieldname: 'type_of_approval',
 						fieldtype: 'Select',
-						options:["Email","Phone call","PO","Others"],
+						options:["Email","Phone Call","PO","Others"],
 						change: () => {
 							let template_type = d.get_value('type_of_approval');
 	
@@ -187,7 +221,7 @@ frappe.ui.form.on('Quotation', {
 				primary_action: function() {
 					var data = d.get_values();
 					frm.set_value("type_of_approval",data.type_of_approval)
-					frm.set_value("approval_date",data.approval_date)
+					
 					
 					if(data.type_of_approval == "Others"){
 						frm.set_value("specify",data.specify)
@@ -197,9 +231,10 @@ frappe.ui.form.on('Quotation', {
 						frm.set_value("purchase_order_date", data.po_date);
 					}
 					
-					cur_frm.refresh_fields();
-					cur_frm.save_or_update();
+					// cur_frm.refresh_fields();
+					frm.set_value("approval_date",data.approval_date)
 					d.hide();
+					
 				},
 				primary_action_label: __('Submit')
 			});
@@ -216,18 +251,24 @@ frappe.ui.form.on('Quotation', {
             frm.set_df_property("final_approved_price", "read_only", 1)
         }
     },
-	quotation_type:function(frm){
-		var d = {
-	        "Internal Quotation":"QTN-INT-.YY.-",
-	        "Customer Quotation":"QTN-CUS-.YY.-",
-			"Revised Quotation":"QTN-REV-.YY.-"
-	    };
-		if(frm.doc.quotation_type){
-			frm.set_value("naming_series",d[frm.doc.quotation_type]);
+	approval_date:function(frm){
+		frm.save_or_update();
+	},
+	branch_name:function(frm){
+		if(frm.doc.quotation_type && frm.doc.branch_name){
+			var d = {
+				"Internal Quotation":{"Kuwait - TSL":"QTN-INT-K.YY.-","Dammam - TS":"QTN-INT-D.YY.-","Riyadh - TS":"QTN-INT-R.YY.-","Jeddah - TS":"QTN-INT-J.YY.-"},
+				"Customer Quotation":{"Kuwait - TSL":"QTN-CUS-K.YY.-","Dammam - TS":"QTN-CUS-D.YY.-","Riyadh - TS":"QTN-CUS-R.YY.-","Jeddah - TS":"QTN-CUS-J.YY.-"},
+				"Revised Quotation":{"Kuwait - TSL":"QTN-REV-K.YY.-","Dammam - TS":"QTN-REV-D.YY.-","Riyadh - TS":"QTN-REV-R.YY.-","Jeddah - TS":"QTN-REV-J.YY.-"}
+					
+				}
+				frm.set_value("naming_series",d[frm.doc.quotation_type][frm.doc.branch_name])
+		
 
 		}
-	    
-	    
+	},
+	quotation_type:function(frm){
+		frm.trigger("branch_name");
 	}
 		    
 			
@@ -261,4 +302,16 @@ frappe.ui.form.on("Quotation Item",{
 	   }
 		
 	});
-
+	frappe.ui.form.on('Quotation', {
+		setup: function(frm) {
+			frm.set_query("branch_name", function() {
+				return {
+					filters: [
+						["Warehouse","company", "=", frm.doc.company],
+						["Warehouse","is_branch","=",1]
+						
+					]
+				}
+			});
+		}
+	});

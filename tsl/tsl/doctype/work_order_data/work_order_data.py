@@ -25,6 +25,15 @@ def get_item_image(erf_no):
 	if image:
 		return image[0]['image']
 
+@frappe.whitelist()
+def create_quotation(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc= frappe.new_doc("Quotation")
+	new_doc.party_name = doc.customer,
+	new_doc.branch_name = doc.branch
+	new_doc.quotation_type = "Internal Quotation"
+	new_doc.sales_rep = doc.sales_rep
+	return new_doc
 
 @frappe.whitelist()
 def create_part_sheet(work_order):
@@ -77,10 +86,21 @@ def create_status_duration(wod):
 
 	
 class WorkOrderData(Document):
+	def before_save(self):
+		print("\n\n\n\n\nbefore save....")
+		d = {
+			"Dammam - TS":"WOD-D.YY.-",
+			"Riyadh - TS":"WOD-R.YY.-",
+			"Jeddah - TS":"WOD-J.YY.-",
+			"Kuwait - TSL":"WOD-K.YY.-"
+		}
+		if self.branch:
+			self.naming_series = d[self.branch]
+			# frappe.db.set_value("Work Order Data",self.name,"naming_series",d[self.branch])
+
 	def on_update_after_submit(self):
 		print("\n\n\n\n")
 		print("on_update..........")
-		print(len(self.status_duration_details))
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()
@@ -90,48 +110,21 @@ class WorkOrderData(Document):
 			duration = now - date
 			duration_in_s = duration.total_seconds()
 			minutes = divmod(duration_in_s, 60)[0]/60
-			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1]+"min"
+			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
 			frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
 			doc = frappe.get_doc("Work Order Data",self.name)
 			doc.append("status_duration_details",{
 				"status":self.status,
 				"date":now,
 			})
+
+			# frappe.db.set_value("Status Duration Details",self.status_duration_details[-2].name,"duration",data)
 			print(data)
 			doc.save(ignore_permissions=True)
-		# # for i in range(len(self.status_duration_details)):
-		# now = datetime.now()
-		# current_time = now.strftime("%H:%M:%S")
-		# self.append("status_duration_details",{
-		# 	"status":self.status,
-		# 	"date":now,
-		# 	"time":current_time,
 		
-		# })
-
-
-	# def on_change(self):
-	# 	print("\n\n\n\n")
-	# 	print("on_change")
-	# 	print(self.status)
-	# 	print(len(self.status_duration_details))
-		
-		
-			
-		# for i in self.get("status_duration_details"):
-		# 	if i.idx == len(self.status_duration_details)-1:
-		# 		self.append("status_duration_details",{
-		# 				"duration":data,
-						
-		# 			})
-		# 		break
-		# self.save(ignore_permissions = True)
-		
-
-
-	
 	def before_submit(self):
-		print("before submit............")
+		if not self.branch:
+			frappe.throw("Assign a Branch to Submit")
 		if not self.technician:
 			frappe.throw("Assign a Technician to Submit")
 		if not self.department:

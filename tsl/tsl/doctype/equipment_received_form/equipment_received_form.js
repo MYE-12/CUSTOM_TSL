@@ -36,6 +36,43 @@ frappe.ui.form.on('Equipment Received Form', {
 			}
 		}
 	},
+	customer:function(frm){
+		if(!frm.doc.customer){
+				return
+		}
+		frappe.call({
+				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_contacts',
+				args: {
+						"customer": frm.doc.customer,
+				},
+				callback(r) {
+						if(r.message) {
+								frm.set_query("incharge", function() {
+										return {
+												"filters": {
+														"name":["in", r.message]
+												}
+										};
+								});
+						}
+				}
+		});
+		
+},
+address:function(frm){
+	if (frm.doc.address) {
+		frappe.call({
+			method: 'frappe.contacts.doctype.address.address.get_address_display',
+			args: {
+				"address_dict": frm.doc.address
+			},
+			callback: function(r) {
+				frm.set_df_property("customer_address","options", "Customer  Address <br><br>"+r.message+"<br>");
+				frm.refresh_fields();
+			}
+		});
+	}
+}
 });
 frappe.ui.form.on("Equipment Received Form", {
 	setup: function(frm) {
@@ -49,6 +86,7 @@ frappe.ui.form.on("Equipment Received Form", {
 				]
 			}
 		});
+		
 	}
 });
 frappe.ui.form.on('Recieved Equipment Image', {
@@ -68,5 +106,18 @@ frappe.ui.form.on('Recieved Equipment Image', {
 				}
 			}
 		}
+	}
+});
+frappe.ui.form.on('Equipment Received Form', {
+	setup: function(frm) {
+		frm.set_query("branch", function() {
+			return {
+				filters: [
+					["Warehouse","company", "=", frm.doc.company],
+					["Warehouse","is_branch","=",1]
+					
+				]
+			}
+		});
 	}
 });

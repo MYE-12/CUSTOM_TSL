@@ -34,10 +34,12 @@ def get_availabilty(qty,item):
 
 class PartSheet(Document):
 	def on_submit(self):
+		doc = frappe.get_doc("Work Order Data",self.work_order_data)
 		if self.parts_availability == "Yes":
-			frappe.db.set_value("Work Order Data",{"name":self.work_order_data},"status","AP-Available Parts")
+			doc.status = "AP-Available Parts"
 		else:
-			frappe.db.set_value("Work Order Data",{"name":self.work_order_data},"status","SP-Searching Parts")
+			doc.status = "SP-Searching Parts"
+		doc.save(ignore_permissions=True)
 
 	def before_save(self):
 		f=0

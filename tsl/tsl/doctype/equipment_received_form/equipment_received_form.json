@@ -13,6 +13,7 @@
   "mobile",
   "email",
   "address",
+  "customer_address",
   "incharge",
   "incharge_name",
   "incharge_email",
@@ -20,6 +21,7 @@
   "is_quotation_created",
   "column_break_3",
   "company",
+  "branch",
   "received_date",
   "sales_person",
   "sales_person_name",
@@ -179,12 +181,24 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "depends_on": "eval:(doc.address);",
+   "fieldname": "customer_address",
+   "fieldtype": "HTML",
+   "label": "Customer Address"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Warehouse"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-28 20:47:31.885599",
+ "modified": "2022-01-29 20:49:12.780263",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

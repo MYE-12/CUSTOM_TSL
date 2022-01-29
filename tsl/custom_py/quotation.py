@@ -17,6 +17,7 @@ def get_wod_items(wod):
 			frappe.throw("No Part Sheet created for this Work Order"+"-".join(link))
 			continue
 		doc = frappe.get_doc("Work Order Data",k)
+		branch = doc.branch
 		rate = frappe.db.get_value("Part Sheet", {"work_order_data":k, "docstatus":1}, "total_amount")
 		if not rate:
 			rate = 0
@@ -32,6 +33,7 @@ def get_wod_items(wod):
 				"sales_rep":doc.sales_rep,
 				"rate": rate,
 				"total_amt":float(tot)/float(i.quantity),
+				"branch":branch,
 
 			}))
 			
@@ -59,6 +61,9 @@ def get_quotation_history(source,rate = None,type = None):
 			
 		},
 	}, target_doc, postprocess)
+	if rate:
+		for i in range(len(doclist.items)):
+			doclist.items[i].rate += float(rate)
 	return doclist
 
 def on_update(self, method):
@@ -78,6 +83,7 @@ def on_update(self, method):
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
 					doc.status = "A-Approved"
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
+					frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",0)
 					doc.status =  "RNA-Return Not Approved"
 				doc.save(ignore_permissions=True)
 

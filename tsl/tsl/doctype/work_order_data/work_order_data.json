@@ -66,7 +66,7 @@
   },
   {
    "fieldname": "delivery",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Delivery"
   },
   {
@@ -146,7 +146,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-"
+   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-"
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -234,14 +234,13 @@
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
-   "options": "Warehouse",
-   "reqd": 1
+   "options": "Warehouse"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-28 21:03:29.032036",
+ "modified": "2022-01-29 22:44:31.521113",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

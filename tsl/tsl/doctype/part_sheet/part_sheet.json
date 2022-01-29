@@ -92,7 +92,8 @@
   {
    "fieldname": "item",
    "fieldtype": "Data",
-   "label": "Item"
+   "label": "Item",
+   "read_only": 1
   },
   {
    "fetch_from": "item.manufacturer",
@@ -153,7 +154,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-28 21:14:23.617138",
+ "modified": "2022-01-29 14:31:46.423072",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet",
