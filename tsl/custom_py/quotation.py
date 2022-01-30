@@ -80,12 +80,14 @@ def on_update(self, method):
 				doc = frappe.get_doc("Work Order Data",i.wod_no)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
 					doc.status = "Q-Quoted"
+					doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
 					doc.status = "A-Approved"
+					doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
-					frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",0)
+					# frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",0)
 					doc.status =  "RNA-Return Not Approved"
-				doc.save(ignore_permissions=True)
+					doc.save(ignore_permissions=True)
 
 def before_submit(self,method):
 	print("before submit")
