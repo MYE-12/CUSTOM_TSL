@@ -33,12 +33,20 @@ def create_workorder_data(order_no):
 		if wod:
 			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_name))
 			continue
+		d = {
+			"Dammam - TS":"WOD-D.YY.-",
+			"Riyadh - TS":"WOD-R.YY.-",
+			"Jeddah - TS":"WOD-J.YY.-",
+			"Kuwait - TSL":"WOD-K.YY.-"
+		}
 
 		new_doc = frappe.new_doc("Work Order Data")
+		
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
 		new_doc.branch = doc.branch
+		new_doc.naming_series = d[new_doc.branch]
 		new_doc.equipment_recieved_form = doc.name
 		new_doc.append("material_list",{
 			"item_name": i.item_name,

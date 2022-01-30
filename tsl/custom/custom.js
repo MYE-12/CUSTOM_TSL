@@ -30,6 +30,11 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
+	if(frm.doc.docstatus === 0 && frm.doc.party_name){
+		console.log("customer.........")
+		frm.refresh_field("customer_name");
+
+	}
 	if((frm.doc.quotation_type === "Customer Quotation" || frm.doc.quotation_type === "Revised Quotation") && frm.doc.workflow_state==="Rejected by Customer" ){ 
                 frm.add_custom_button(__('Revised Quotation'), function(){
 					frappe.call({
@@ -269,8 +274,8 @@ frappe.ui.form.on('Quotation', {
 	},
 	quotation_type:function(frm){
 		frm.trigger("branch_name");
-	}
-		    
+	},
+	
 			
 });
 

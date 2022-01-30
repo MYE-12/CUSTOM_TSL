@@ -4,6 +4,7 @@
 from codecs import ignore_errors
 from pydoc import doc
 import frappe
+import json
 from frappe.model.document import Document
 from frappe.utils import getdate,today
 from datetime import datetime,date
@@ -27,9 +28,13 @@ def get_item_image(erf_no):
 
 @frappe.whitelist()
 def create_quotation(wod):
+	print(type(wod))
 	doc = frappe.get_doc("Work Order Data",wod)
 	new_doc= frappe.new_doc("Quotation")
+	print(type(doc.customer),doc.customer)
 	new_doc.party_name = doc.customer,
+	new_doc.party_name = new_doc.party_name[0]
+	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation"
 	new_doc.sales_rep = doc.sales_rep
