@@ -48,6 +48,7 @@ frappe.ui.form.on('Work Order Data', {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
 						}
 					}
 				});
