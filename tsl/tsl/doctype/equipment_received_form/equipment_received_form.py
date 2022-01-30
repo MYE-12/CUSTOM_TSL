@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 from pydoc import doc
-from typing_extensions import Self
+#from typing_extensions import Self
 import frappe
 from frappe.model.document import Document
 # from tsl.tsl.custom_py.quotation import before_submit
