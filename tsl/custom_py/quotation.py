@@ -9,7 +9,6 @@ def get_wod_items(wod):
 	wod = json.loads(wod)
 	l=[]
 	for k in list(wod):
-		print(k)
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
 		if not tot:
 			link = []
@@ -38,6 +37,39 @@ def get_wod_items(wod):
 			}))
 			
 	return l
+
+def before_save(self,method):
+	self.item_price_details=[]
+	self.similar_items_quoted_before=[]
+	for i in self.get("items"):
+		part_sheet = frappe.db.sql('''select name from `tabPart Sheet` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
+		for j in part_sheet:
+			doc = frappe.get_doc("Part Sheet",j['name'])
+			for k in doc.get("items"):
+				if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
+					self.append("similar_items_quoted_before",{
+						"item":k.part_name,
+						"client":frappe.db.get_value("Item",k.part,"last_quoted_client"),
+						"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
+					})
+
+				if frappe.db.exists("Bin",{"item_code":k.part}):
+					if frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")>=0:
+						price = frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")
+					else:
+						price = k.price_ea
+					source = "TSL Inventory"
+				else:
+					price = k.price_ea
+					source = "Supplier"
+				
+				self.append("item_price_details",{
+					"item":k.part_name,
+					"item_source":source,
+					"price":price
+
+				})
+	
 @frappe.whitelist()
 def get_quotation_history(source,rate = None,type = None):
 	target_doc = frappe.new_doc("Quotation")
@@ -67,7 +99,6 @@ def get_quotation_history(source,rate = None,type = None):
 	return doclist
 
 def on_update(self, method):
-	print(self.workflow_state)
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
 		if self.quotation_type == "Internal Quotation":
 			self.workflow_state = "Waiting For Approval"
@@ -90,19 +121,23 @@ def on_update(self, method):
 					doc.save(ignore_permissions=True)
 
 def before_submit(self,method):
-	print("before submit")
 	l = []
 	if self.quotation_type == "Internal Quotation":
 		for i in self.get("items"):
 			if i.wod_no:
 				frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
+		if self.item_price_details:
+			for i in self.get("item_price_details"):
+				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
+				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
+
 
 
 
 
 def validate(self, method):
 	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation":
-		self.final_approved_price = self.rounded_total*302.8/100+self.rounded_total
+		self.final_approved_price = self.actual_price*302.8/100+self.actual_price
 	l = []
 	if self.quotation_type == "Internal Quotation":
 		for i in self.get("items"):

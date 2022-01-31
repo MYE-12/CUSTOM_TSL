@@ -105,6 +105,9 @@ doc_events = {
 		],
 		"validate":[
 			"tsl.custom_py.quotation.validate"
+		],
+		"before_save":[
+			"tsl.custom_py.quotation.before_save"
 		]
 	}
 	# "Work Order Data":{
