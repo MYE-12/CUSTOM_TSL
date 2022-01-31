@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 from codecs import ignore_errors
+from hashlib import new
 from pydoc import doc
 import frappe
 import json
@@ -33,6 +34,8 @@ def create_quotation(wod):
 	new_doc.party_name = doc.customer,
 	new_doc.party_name = new_doc.party_name[0]
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
+	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
+	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation"
 	new_doc.sales_rep = doc.sales_rep
