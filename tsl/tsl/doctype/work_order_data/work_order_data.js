@@ -107,9 +107,9 @@ frappe.ui.form.on('Work Order Data', {
 	},
 	branch:function(frm){
 		var d = {
-			"Dammam - TS":"WOD-D.YY.-",
-			"Riyadh - TS":"WOD-R.YY.-",
-			"Jeddah - TS":"WOD-J.YY.-",
+			"Dammam - TSL-SA":"WOD-D.YY.-",
+			"Riyadh - TSL-SA":"WOD-R.YY.-",
+			"Jeddah - TSL-SA":"WOD-J.YY.-",
 			"Kuwait - TSL":"WOD-K.YY.-"
 		};
 		if(frm.doc.branch){

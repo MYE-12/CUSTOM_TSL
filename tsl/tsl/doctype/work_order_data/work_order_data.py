@@ -88,9 +88,9 @@ def create_status_duration(wod):
 class WorkOrderData(Document):
 	def before_save(self):
 		d = {
-			"Dammam - TS":"WOD-D.YY.-",
-			"Riyadh - TS":"WOD-R.YY.-",
-			"Jeddah - TS":"WOD-J.YY.-",
+			"Dammam - TSL-SA":"WOD-D.YY.-",
+			"Riyadh - TSL-SA":"WOD-R.YY.-",
+			"Jeddah - TSL-SA":"WOD-J.YY.-",
 			"Kuwait - TSL":"WOD-K.YY.-"
 		}
 		if self.branch:
