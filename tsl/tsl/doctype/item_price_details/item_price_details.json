@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-01-30 17:22:56.417520",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "item_source",
+  "price"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item "
+  },
+  {
+   "fieldname": "item_source",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Item Source",
+   "options": "\nTSL Inventory\nSupplier"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-01-30 17:22:56.417520",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Item Price Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

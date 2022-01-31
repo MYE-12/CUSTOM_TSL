@@ -28,10 +28,8 @@ def get_item_image(erf_no):
 
 @frappe.whitelist()
 def create_quotation(wod):
-	print(type(wod))
 	doc = frappe.get_doc("Work Order Data",wod)
 	new_doc= frappe.new_doc("Quotation")
-	print(type(doc.customer),doc.customer)
 	new_doc.party_name = doc.customer,
 	new_doc.party_name = new_doc.party_name[0]
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
@@ -82,17 +80,13 @@ def create_extra_ps(doc):
 
 @frappe.whitelist()
 def create_status_duration(wod):
-	print("\n\n\n\n")
-	print(wod)
 	doc = frappe.get_doc("Work Order Data",wod)
-	print(len(doc.status_duration_details))
 	return(doc.status_duration_details[len(doc.status_duration_details-1)])
 	
 
 	
 class WorkOrderData(Document):
 	def before_save(self):
-		print("\n\n\n\n\nbefore save....")
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
 			"Riyadh - TSL-SA":"WOD-R.YY.-",
@@ -104,8 +98,6 @@ class WorkOrderData(Document):
 			# frappe.db.set_value("Work Order Data",self.name,"naming_series",d[self.branch])
 
 	def on_update_after_submit(self):
-		print("\n\n\n\n")
-		print("on_update..........")
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()
@@ -124,7 +116,6 @@ class WorkOrderData(Document):
 			})
 
 			# frappe.db.set_value("Status Duration Details",self.status_duration_details[-2].name,"duration",data)
-			print(data)
 			doc.save(ignore_permissions=True)
 		
 	def before_submit(self):

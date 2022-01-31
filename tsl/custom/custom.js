@@ -17,9 +17,8 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r.message)
 							var doc = frappe.model.sync(r.message);
-							doc[0].similar_items_quoted_before = [];
+							// doc[0].similar_items_quoted_before = [];
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							
 						}
@@ -31,7 +30,6 @@ frappe.ui.form.on('Quotation', {
                         }, ('Create'))
 	}
 	if(frm.doc.docstatus === 0 && frm.doc.party_name){
-		console.log("customer.........")
 		frm.refresh_field("customer_name");
 
 	}
@@ -47,7 +45,6 @@ frappe.ui.form.on('Quotation', {
 						},
 						callback: function(r) {
 							if(r.message) {
-								console.log(r.message)
 								var doc = frappe.model.sync(r.message);
 								frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							}
@@ -69,7 +66,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r.message)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 						}
@@ -77,7 +73,13 @@ frappe.ui.form.on('Quotation', {
 				});
 					}, ('Create'))
 		}
-        if (frm.doc.docstatus==0) {
+		// if(frm.doc.docstatus===0 && frm.doc.actual_price && frm.doc.workflow_state=="Waiting For Approval"){
+		// 	var act = (frm.doc.actual_price*(302.8/100))+ frm.doc.actual_price
+		// 	frm.set_value("final_approved_price",act);
+		//  	frm.refresh_fields();
+
+		// }
+        if (frm.doc.docstatus===0) {
 			frm.add_custom_button(__('Work Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({
@@ -126,7 +128,15 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.total = tot_amt;
 										frm.doc.total_qty = tot_qty;
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
-										frm.doc.final_approved_price = (frm.doc.grand_total*(302.8/100))+frm.doc.grand_total;
+										frm.doc.rounded_total = frm.doc.grand_total;
+										if(frm.doc.technician_hours_spent){
+											frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
+
+										}
+										else{
+											frm.doc.actual_price = frm.doc.rounded_total;
+										}
+										frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
 										cur_frm.refresh_fields();
 
 									}
@@ -144,7 +154,6 @@ frappe.ui.form.on('Quotation', {
         // }
 		if(frm.doc.docstatus === 0 && frm.doc.quotation_type){
 			frm.trigger("branch_name")
-			console.log("called......................")
 			
 
 		}
@@ -186,7 +195,7 @@ frappe.ui.form.on('Quotation', {
 								d.set_df_property('po_no', 'hidden',1);
 								d.set_df_property('po_date', 'hidden',1);
 							}
-							if (template_type === "Phone call") {
+							if (template_type === "Phone Call") {
 								d.set_df_property('specify', 'hidden',1);
 								d.set_df_property('po_no', 'hidden',1);
 								d.set_df_property('po_date', 'hidden',1);
@@ -275,7 +284,10 @@ frappe.ui.form.on('Quotation', {
 	quotation_type:function(frm){
 		frm.trigger("branch_name");
 	},
-	
+	is_internal_quotation:function(frm){
+		frm.doc.quotation_type = "Internal Quotation"
+		cur_frm.set_df_property("quotation_type","read_only",1)
+	}
 			
 });
 
@@ -298,16 +310,47 @@ frappe.ui.form.on("Quotation Item",{
 				frm.doc.total = tot_amt;
 				frm.doc.total_qty = tot_qty;
 				frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
-				frm.doc.final_approved_price = (frm.doc.grand_total*(302.8/100))+frm.doc.grand_total;
+				frm.doc.rounded_total = frm.doc.grand_total;
+				if(frm.doc.technician_hours_spent){
+					frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
+
+				}
+				else{
+					frm.doc.actual_price = frm.doc.rounded_total;
+				}
+				var act = (frm.doc.actual_price*(302.8/100))+ frm.doc.actual_price
+				frm.set_value("final_approved_price",act);
 				cur_frm.refresh_fields();
 
 				
 			}
 		   
+	   },
+	   rate:function(frm,cdt,cdn){
+		   frm.script_manager.trigger("qty",cdt,cdn);
 	   }
 		
 	});
-	frappe.ui.form.on('Quotation', {
+frappe.ui.form.on("Technician Hours Spent",{ 
+	value:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		if(item.value){
+			var tot_amt = 0;
+			for(var i=0 ;i< frm.doc.technician_hours_spent.length;i++){
+				tot_amt += frm.doc.technician_hours_spent[i]["value"];
+			}
+			frm.doc.actual_price = tot_amt +frm.doc.rounded_total;
+			frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
+			cur_frm.refresh_fields();
+
+		
+	}
+
+	}
+	
+
+});
+frappe.ui.form.on('Quotation', {
 		setup: function(frm) {
 			frm.set_query("branch_name", function() {
 				return {
