@@ -34,9 +34,9 @@ def create_workorder_data(order_no):
 			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_name))
 			continue
 		d = {
-			"Dammam - TS":"WOD-D.YY.-",
-			"Riyadh - TS":"WOD-R.YY.-",
-			"Jeddah - TS":"WOD-J.YY.-",
+			"Dammam - TSL-SA":"WOD-D.YY.-",
+			"Riyadh - TSL-SA":"WOD-R.YY.-",
+			"Jeddah - TSL-SA":"WOD-J.YY.-",
 			"Kuwait - TSL":"WOD-K.YY.-"
 		}
 

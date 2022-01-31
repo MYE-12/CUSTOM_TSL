@@ -262,9 +262,9 @@ frappe.ui.form.on('Quotation', {
 	branch_name:function(frm){
 		if(frm.doc.quotation_type && frm.doc.branch_name){
 			var d = {
-				"Internal Quotation":{"Kuwait - TSL":"QTN-INT-K.YY.-","Dammam - TS":"QTN-INT-D.YY.-","Riyadh - TS":"QTN-INT-R.YY.-","Jeddah - TS":"QTN-INT-J.YY.-"},
-				"Customer Quotation":{"Kuwait - TSL":"QTN-CUS-K.YY.-","Dammam - TS":"QTN-CUS-D.YY.-","Riyadh - TS":"QTN-CUS-R.YY.-","Jeddah - TS":"QTN-CUS-J.YY.-"},
-				"Revised Quotation":{"Kuwait - TSL":"QTN-REV-K.YY.-","Dammam - TS":"QTN-REV-D.YY.-","Riyadh - TS":"QTN-REV-R.YY.-","Jeddah - TS":"QTN-REV-J.YY.-"}
+				"Internal Quotation":{"Kuwait - TSL":"QTN-INT-K.YY.-","Dammam - TSL-SA":"QTN-INT-D.YY.-","Riyadh - TSL-SA":"QTN-INT-R.YY.-","Jeddah - TSL-SA":"QTN-INT-J.YY.-"},
+				"Customer Quotation":{"Kuwait - TSL":"QTN-CUS-K.YY.-","Dammam - TSL-SA":"QTN-CUS-D.YY.-","Riyadh - TSL-SA":"QTN-CUS-R.YY.-","Jeddah - TSL-SA":"QTN-CUS-J.YY.-"},
+				"Revised Quotation":{"Kuwait - TSL":"QTN-REV-K.YY.-","Dammam - TSL-SA":"QTN-REV-D.YY.-","Riyadh - TSL-SA":"QTN-REV-R.YY.-","Jeddah - TSL-SA":"QTN-REV-J.YY.-"}
 					
 				}
 				frm.set_value("naming_series",d[frm.doc.quotation_type][frm.doc.branch_name])
