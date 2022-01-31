@@ -54,13 +54,13 @@ frappe.ui.form.on('Quotation', {
         }
 		if(frm.doc.quotation_type ==="Internal Quotation" && frm.doc.workflow_state==="Rejected"){
 			frm.add_custom_button(__('Internal Quotation'), function(){
-				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
-				let inc_rate = diff / frm.doc.total_qty
+				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+				// let inc_rate = diff / frm.doc.total_qty
 				frappe.call({
 					method: "tsl.custom_py.quotation.get_quotation_history",
 					args: {
 						"source": frm.doc.name,
-						"rate":inc_rate,
+						"rate":null,
 						
 						"type":"Internal Quotation"
 					},
