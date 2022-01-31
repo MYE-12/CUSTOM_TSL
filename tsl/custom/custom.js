@@ -125,11 +125,14 @@ frappe.ui.form.on('Quotation', {
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
 										}
+										console.log("total qty")
 										frm.doc.total = tot_amt;
+										console.log(frm.doc.total)
 										frm.doc.total_qty = tot_qty;
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 										frm.doc.rounded_total = frm.doc.grand_total;
-										if(frm.doc.technician_hours_spent){
+										if(frm.doc.technician_hours_spent.length > 0){
+											console.log("technician")
 											frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
 
 										}
