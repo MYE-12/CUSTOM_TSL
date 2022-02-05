@@ -116,6 +116,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["type"],
+											childTable.q_unit_status = r.message[i]["q_unit_status"],
 											childTable.qty = r.message[i]["qty"],
 											childTable.rate = r.message[i]["total_amt"]
 											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
@@ -288,8 +289,15 @@ frappe.ui.form.on('Quotation', {
 		frm.trigger("branch_name");
 	},
 	is_internal_quotation:function(frm){
-		frm.doc.quotation_type = "Internal Quotation"
-		cur_frm.set_df_property("quotation_type","read_only",1)
+		if(frm.doc.is_internal_quotation){
+			frm.doc.quotation_type = "Internal Quotation"
+			cur_frm.set_df_property("quotation_type","read_only",1)
+
+		}
+		else{
+			cur_frm.set_df_property("quotation_type","read_only",0)
+		}
+		
 	}
 			
 });

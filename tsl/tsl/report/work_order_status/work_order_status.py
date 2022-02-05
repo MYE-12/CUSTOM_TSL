@@ -193,8 +193,9 @@ def get_columns(filters):
 	},
 	{
 		"fieldname":"pr_no",
-		"label": "PR No",
+		"label": "Customer Reference Number",
 		"fieldtype": "Data",
+		"width":200
 	},
 	{
 		"fieldname":"po_no",
@@ -254,6 +255,7 @@ def get_data(filters):
 	data = []
 	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name from `tabWork Order Data`''',as_dict=1)
 	for i in work_order_entries:
+		
 		i["sales_rep"] = frappe.db.get_value("User",i.sales_rep,"full_name")
 		i["company"] = frappe.defaults.get_user_default("Company")
 		i["city"] = frappe.db.get_value("Address",frappe.db.get_value("Customer",i.customer,"customer_primary_address"),"city")
@@ -264,6 +266,7 @@ def get_data(filters):
 			i["serial_no"] = j["serial_no"]
 			i["quantity"] = j["quantity"]
 		for j in frappe.db.sql('''select rate,amount,parent,q_unit_status from `tabQuotation Item` where wod_no = %s and parenttype = "Quotation"  ''',i.wod_no,as_dict=1):
+			i["pr_no"] = frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
 			if frappe.db.get_value("Quotation",j['parent'],"workflow_state") == "Approved By Customer":
 				i["quoted_price"] = j["amount"]
 				i["price_after_dis"] = j["amount"]

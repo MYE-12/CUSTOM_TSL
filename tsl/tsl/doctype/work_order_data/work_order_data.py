@@ -34,6 +34,13 @@ def create_quotation(wod):
 	new_doc.party_name = doc.customer,
 	new_doc.party_name = new_doc.party_name[0]
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
+	if frappe.db.get_value("Customer",doc.customer,"advance"):
+		pay_term = "Advance"
+	elif frappe.db.get_value("Customer",doc.customer,"cash_on_delivery"):
+		pay_term = "Cash on Delivery"
+	elif frappe.db.get_value("Customer",doc.customer,"credit"):
+		pay_term = "Credit"
+	new_doc.payment_term = pay_term	
 	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch

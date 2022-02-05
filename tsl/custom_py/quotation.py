@@ -10,6 +10,7 @@ def get_wod_items(wod):
 	l=[]
 	for k in list(wod):
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
+		q_sts = frappe.db.get_value("Evaluation Report",{"work_order_data":k},"test_result")
 		if not tot:
 			link = []
 			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
@@ -33,6 +34,7 @@ def get_wod_items(wod):
 				"rate": rate,
 				"total_amt":float(tot)/float(i.quantity),
 				"branch":branch,
+				"q_unit_status":q_sts
 
 			}))
 			
