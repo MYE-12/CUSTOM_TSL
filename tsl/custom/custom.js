@@ -11,7 +11,6 @@ frappe.ui.form.on('Quotation', {
 					method: "tsl.custom_py.quotation.get_quotation_history",
 					args: {
 						"source": frm.doc.name,
-						
 						"rate":inc_rate,
 						"type":"Customer Quotation"
 					},

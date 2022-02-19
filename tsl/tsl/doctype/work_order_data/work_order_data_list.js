@@ -66,6 +66,9 @@ frappe.listview_settings['Work Order Data'] = {
         else if (doc.status === "RNPC-Return No Parts Client") {
 			return [__("RNPC-Return No Parts Client"), "darkgrey", "status,=,RNPC-Return No Parts Client"];
         }
+        else if (doc.status === "UTR-Under Technician Repair") {
+              return [__("UTR-Under Technician Repair"), "orange", "status,=,UTR-Under Technician Repair"];
+        }
         // else if(doc.docstatus==0){
         //     return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
         // }

@@ -56,7 +56,7 @@ def before_save(self,method):
 					})
 
 				if frappe.db.get_value("Bin",{"item_code":k.part},"actual_qty"):
-					price = frappe.db.get_value("Item",{"item_code":k.part},"valuation_rate")
+					price = frappe.db.get_value("Item",{"item_code":k.part},"valuation_rate") or frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")
 					source = "TSL Inventory"
 					if k.parts_availability == "No":
 						source = "Supplier"

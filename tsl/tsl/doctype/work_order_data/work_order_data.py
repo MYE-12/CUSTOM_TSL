@@ -112,7 +112,7 @@ def create_stock_entry(wod):
 				"stock_uom":"Nos",
 				"conversion_factor":1,
 				"basic_rate":frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate"),
-				"basic_amount":float(j.qty) * float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate"))
+				"basic_amount":float(j.qty) * (float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea))
 			})
 	add = 0
 	for i in new_doc.get("items"):
