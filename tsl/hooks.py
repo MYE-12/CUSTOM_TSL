@@ -32,7 +32,12 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Quotation" : "custom/custom.js"}
+doctype_js = {
+	"Quotation" : "custom/custom.js",
+	"Request for Quotation" : "custom/request_for_quotation.js",
+	"Purchase Order":"custom/purchase_order.js"
+
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -109,12 +114,25 @@ doc_events = {
 		"before_save":[
 			"tsl.custom_py.quotation.before_save"
 		]
+	},
+	"Supplier Quotation":{
+		"on_submit":[
+			"tsl.custom_py.supplier_quotation.on_submit"
+		]
+
+	},
+	"Purchase Order":{
+		"on_submit":[
+			"tsl.custom_py.purchase_order.on_submit"
+		]
+	},
+	"Purchase Receipt":{
+		"on_submit":[
+			"tsl.custom_py.purchase_receipt.on_submit"
+		]
 	}
-	# "Work Order Data":{
-	# 	"on_update":[
-	# 		"tsl.tsl.doctype.work_order_data.work_order_data.on_update"
-	# 	]
-	# }
+		
+	
 }
 
 # Scheduled Tasks

@@ -35,6 +35,7 @@ frappe.ui.form.on('Equipment Received Form', {
 				}
 			}
 		}
+		
 	},
 	customer:function(frm){
 		if(!frm.doc.customer){
@@ -71,6 +72,34 @@ address:function(frm){
 				frm.refresh_fields();
 			}
 		});
+	}
+},
+work_order_data:function(frm){
+	if(frm.doc.work_order_data){
+		console.log(frm.doc.work_order_data)
+		frappe.call({
+			method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_wod_details',
+			args: {
+					"wod": frm.doc.work_order_data,
+			},
+			callback(r) {
+				if(r.message) {
+					cur_frm.clear_table("received_equipment")
+					for(var i=0;i<r.message.length;i++){
+						var childTable = cur_frm.add_child("received_equipment");
+						childTable.item_name = r.message[i]["item_name"],
+						childTable.manufacturer = r.message[i]["mfg"]
+						childTable.model = r.message[i]["model_no"],
+						childTable.serial_no = r.message[i]["serial_no"],
+						childTable.type = r.message[i]["type"],
+						frm.doc.sales_person = r.message[i]["sales_rep"],
+						childTable.qty = r.message[i]["qty"],
+						cur_frm.refresh_fields("received_equipment");
+					}
+				}
+			}
+		});
+
 	}
 }
 });

@@ -10,6 +10,8 @@
   "naming_series",
   "customer",
   "attn",
+  "status",
+  "specify",
   "column_break_3",
   "company",
   "date",
@@ -136,12 +138,24 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nReady\nNeed Parts\nReplacement\nDelivery for Testing\nSP Not Available\nOthers"
+  },
+  {
+   "depends_on": "eval:(doc.status == \"Others\");",
+   "fieldname": "specify",
+   "fieldtype": "Small Text",
+   "label": "Specify"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-28 21:14:57.445760",
+ "modified": "2022-02-12 14:50:01.392118",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

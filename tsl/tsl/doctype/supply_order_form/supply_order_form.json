@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2021-12-16 15:39:18.744296",
+ "creation": "2022-02-18 18:34:36.027493",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -29,6 +29,7 @@
   "customer_reference_number",
   "work_order_data",
   "section_break_9",
+  "equipments_in_stock",
   "received_equipment",
   "attach_image_section",
   "images",
@@ -36,12 +37,25 @@
  ],
  "fields": [
   {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SOF-.YYYY.-"
+  },
+  {
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
+  },
+  {
+   "fieldname": "customer_branch_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Branch Name",
+   "read_only": 1
   },
   {
    "fetch_from": "customer.mobile_no",
@@ -58,8 +72,16 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "depends_on": "eval:(doc.address);",
+   "fieldname": "customer_address",
+   "fieldtype": "HTML",
+   "label": "Customer Address"
   },
   {
    "fieldname": "incharge",
@@ -77,80 +99,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "received_equipment",
-   "fieldtype": "Table",
-   "label": "Received Equipment",
-   "options": "Recieved Equipment",
-   "reqd": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Equipment Received Form",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Naming Series",
-   "options": "ERF-.YYYY.-"
-  },
-  {
-   "default": "0",
-   "fieldname": "is_quotation_created",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Is Quotation Created"
-  },
-  {
-   "fieldname": "customer_branch_name",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Customer Branch Name",
-   "read_only": 1
-  },
-  {
-   "default": "Today",
-   "fieldname": "received_date",
-   "fieldtype": "Date",
-   "label": "Received Date"
-  },
-  {
-   "fieldname": "attach_image_section",
-   "fieldtype": "Section Break",
-   "label": "Attach Image"
-  },
-  {
-   "fieldname": "images",
-   "fieldtype": "Table",
-   "label": "Images",
-   "options": "Recieved Equipment Image"
-  },
-  {
-   "fieldname": "sales_person",
-   "fieldtype": "Link",
-   "label": "Sales Person",
-   "options": "User"
-  },
-  {
-   "fieldname": "customer_reference_number",
-   "fieldtype": "Data",
-   "label": "Customer Reference Number"
-  },
-  {
-   "fieldname": "suggested_price",
-   "fieldtype": "Currency",
-   "label": "Suggested Price",
-   "options": "currency"
-  },
-  {
    "fetch_from": "incharge.email_id",
    "fieldname": "incharge_email",
    "fieldtype": "Data",
@@ -165,17 +113,15 @@
    "read_only": 1
   },
   {
-   "fetch_from": "sales_person.full_name",
-   "fieldname": "sales_person_name",
-   "fieldtype": "Data",
-   "label": "Sales Person Name",
-   "read_only": 1
+   "default": "0",
+   "fieldname": "is_quotation_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Quotation Created"
   },
   {
-   "fieldname": "address",
-   "fieldtype": "Link",
-   "label": "Address",
-   "options": "Address"
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "company",
@@ -184,31 +130,93 @@
    "options": "Company"
   },
   {
-   "depends_on": "eval:(doc.address);",
-   "fieldname": "customer_address",
-   "fieldtype": "HTML",
-   "label": "Customer Address"
-  },
-  {
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Warehouse"
   },
   {
+   "default": "Today",
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Request Date"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "label": "Sales Person",
+   "options": "User"
+  },
+  {
+   "fetch_from": "sales_person.full_name",
+   "fieldname": "sales_person_name",
+   "fieldtype": "Data",
+   "label": "Sales Person Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "suggested_price",
+   "fieldtype": "Currency",
+   "label": "Suggested Price",
+   "options": "currency"
+  },
+  {
+   "fieldname": "customer_reference_number",
+   "fieldtype": "Data",
+   "label": "Customer Reference Number"
+  },
+  {
    "fieldname": "work_order_data",
    "fieldtype": "Link",
    "label": "Work Order Data",
    "options": "Work Order Data"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Supply Equipments"
+  },
+  {
+   "fieldname": "received_equipment",
+   "fieldtype": "Table",
+   "label": "Equipments Out Stock",
+   "options": "Recieved Equipment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attach_image_section",
+   "fieldtype": "Section Break",
+   "label": "Attach Image"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Recieved Equipment Image"
+  },
+  {
+   "fieldname": "equipments_in_stock",
+   "fieldtype": "Table",
+   "label": "Equipments In Stock",
+   "options": "Part Sheet Item"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Supply Order Form",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-17 19:05:33.119979",
+ "modified": "2022-02-18 18:39:47.155359",
  "modified_by": "Administrator",
  "module": "Tsl",
- "name": "Equipment Received Form",
+ "name": "Supply Order Form",
  "owner": "Administrator",
  "permissions": [
   {

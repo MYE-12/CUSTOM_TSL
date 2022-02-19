@@ -1,17 +1,19 @@
 frappe.listview_settings['Work Order Data'] = {
 	add_fields: ["status","name"],
 	get_indicator: function (doc) {
-		if (doc.status === "NE-Need Evaluation") {
-			return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
+		if (doc.status === "UE-Under Evaluation") {
+			return [__("UE-Under Evaluation"), "blue", "status,=,UE-Under Evaluation"];
 
 		} else if (doc.status === "AP-Available Parts") {
-			// on hold
 			return [__("AP-Available Parts"), "orange", "status,=,AP-Available Parts"];
 		} else if (doc.status === "SP-Searching Parts") {
 			return [__("SP-Searching Parts"), "yellow", "status,=,SP-Searching Parts"];
         }
         else if (doc.status === "Q-Quoted") {
 			return [__("Q-Quoted"), "green", "status,=,Q-Quoted"];
+        }
+        else if (doc.status === "IQ-Internally Quoted") {
+			return [__("IQ-Internally Quoted"), "cyan", "status,=,IQ-Internally Quoted"];
         }
         else if (doc.status === "RNP-Return No Parts") {
 			return [__("RNP-Return No Parts"), "grey", "status,=,RNP-Return No Parts"];
@@ -64,11 +66,9 @@ frappe.listview_settings['Work Order Data'] = {
         else if (doc.status === "RNPC-Return No Parts Client") {
 			return [__("RNPC-Return No Parts Client"), "darkgrey", "status,=,RNPC-Return No Parts Client"];
         }
-        else if(doc.docstatus==0){
-            return [__("Draft"), "red", "status,=,Draft"];
-
-
-        }
+        // else if(doc.docstatus==0){
+        //     return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
+        // }
  },
 	
 };

@@ -10,7 +10,7 @@ def get_wod_items(wod):
 	l=[]
 	for k in list(wod):
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
-		q_sts = frappe.db.get_value("Evaluation Report",{"work_order_data":k},"test_result")
+		# q_sts = frappe.db.get_value("Evaluation Report",{"work_order_data":k},"test_result")
 		if not tot:
 			link = []
 			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
@@ -34,7 +34,7 @@ def get_wod_items(wod):
 				"rate": rate,
 				"total_amt":float(tot)/float(i.quantity),
 				"branch":branch,
-				"q_unit_status":q_sts
+				# "q_unit_status":q_sts
 
 			}))
 			
@@ -55,12 +55,11 @@ def before_save(self,method):
 						"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
 					})
 
-				if frappe.db.exists("Bin",{"item_code":k.part}):
-					if frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")>=0:
-						price = frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")
-					else:
-						price = k.price_ea
+				if frappe.db.get_value("Bin",{"item_code":k.part},"actual_qty"):
+					price = frappe.db.get_value("Item",{"item_code":k.part},"valuation_rate")
 					source = "TSL Inventory"
+					if k.parts_availability == "No":
+						source = "Supplier"
 				else:
 					price = k.price_ea
 					source = "Supplier"
@@ -101,12 +100,23 @@ def get_quotation_history(source,rate = None,type = None):
 	return doclist
 
 def on_update(self, method):
-	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
+	# if self.quotation_type == "Site Visit Quotation":
+	# 	print("\n\n\n\ntrue")
+	# 	self.workflow_state = "Pending Approval"
+
+	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled","Pending Approval"]:
 		if self.quotation_type == "Internal Quotation":
 			self.workflow_state = "Waiting For Approval"
+		
 		else:
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
-
+	if self.quotation_type == "Internal Quotation":
+		for i in self.get("items"):
+			if i.wod_no:
+				doc = frappe.get_doc("Work Order Data",i.wod_no)
+				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved":
+					doc.status = "IQ-Internally Quoted"	
+				doc.save(ignore_permissions=True)
 	if not self.quotation_type == "Internal Quotation":
 		for i in self.get("items"):
 			if i.wod_no:

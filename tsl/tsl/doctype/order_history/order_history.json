@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-02-17 17:43:00.452926",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "order_type",
+  "status",
+  "order_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Order Type"
+  },
+  {
+   "fieldname": "order_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Order Name",
+   "options": "Purchase Order"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Approved\nRejected"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-02-17 17:48:30.487697",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Order History",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

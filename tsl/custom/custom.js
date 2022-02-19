@@ -29,10 +29,10 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
-	if(frm.doc.docstatus === 0 && frm.doc.party_name){
-		frm.refresh_field("customer_name");
+	// if(frm.doc.docstatus === 0 && frm.doc.party_name){
+	// 	frm.refresh_field("customer_name");
 
-	}
+	// }
 	if((frm.doc.quotation_type === "Customer Quotation" || frm.doc.quotation_type === "Revised Quotation") && frm.doc.workflow_state==="Rejected by Customer" ){ 
                 frm.add_custom_button(__('Revised Quotation'), function(){
 					frappe.call({
@@ -116,7 +116,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["type"],
-											childTable.q_unit_status = r.message[i]["q_unit_status"],
+											// childTable.q_unit_status = r.message[i]["q_unit_status"],
 											childTable.qty = r.message[i]["qty"],
 											childTable.rate = r.message[i]["total_amt"]
 											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
@@ -152,19 +152,13 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
-		// if(frm.doc.party_name && frm.doc.docstatus===0 ){
-        //     frm.doc.customer_name = frm.doc.party_name
-		// 	frm.refresh_fields()
-        // }
+		
 		if(frm.doc.docstatus === 0 && frm.doc.quotation_type){
 			frm.trigger("branch_name")
 			
 
 		}
 
-		// if(frm.doc.quotation_type && frm.doc.docstatus===0 ){
-        //     frm.trigger("quotation_type");
-        // }
 		if(frm.doc.edit_final_approved_price){ 
 			frm.set_df_property("final_approved_price", "read_only", 0)
 		}

@@ -54,6 +54,24 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			},__('Create'));
 		}
+		if(frm.doc.docstatus === 1 && frm.doc.status == "TR-Technician Repair") {
+			frm.add_custom_button(__("Stock Entry"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_stock_entry",
+					args: {
+						"wod": frm.doc.name
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
+						}
+					}
+				});
+			},__('Create'));
+
+		}
 		if(!frm.doc.image){
 			if(frm.doc.equipment_recieved_form){
 				frappe.call({
