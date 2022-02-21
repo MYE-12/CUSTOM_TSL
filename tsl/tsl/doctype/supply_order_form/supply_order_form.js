@@ -2,39 +2,39 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Supply Order Form', {
-	// refresh: function(frm) {
-	// 	if(frm.doc.docstatus == 1){
-	// 		frm.add_custom_button(__("Create Supply Order Data"), function(frm){
-	// 			frappe.call({
-	// 				'method': 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_workorder_data',
-	// 				'args':{
-	// 				'order_no':cur_frm.doc.name
-	// 				},
-	// 				'callback':function(res){
-	// 					if(res.message){
-	// 					}
-	// 				}
-	// 				})
+	refresh: function(frm) {
+		if(frm.doc.docstatus == 1){
+			frm.add_custom_button(__("Create Supply Order Data"), function(frm){
+				frappe.call({
+					'method': 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_supply_order_data',
+					'args':{
+					'order_no':cur_frm.doc.name
+					},
+					'callback':function(res){
+						if(res.message){
+						}
+					}
+					})
 
-	// 		})
-	// 	}
-	// 	if(frm.doc.received_equipment){
-	// 		let options = []
-	// 		for(let i in frm.doc.received_equipment){
-	// 			if(!options.includes(frm.doc.received_equipment[i].item)){
-	// 				options.push(frm.doc.received_equipment[i].item)
-	// 			}
-	// 		}
-	// 		frm.fields_dict['images'].grid.get_field('item').get_query = function(doc){
-	// 			return{
-	// 				filters:{
-	// 					"name": ["in", options]
-	// 				}
-	// 			}
-	// 		}
-	// 	}
+			})
+		}
+		if(frm.doc.received_equipment){
+			let options = []
+			for(let i in frm.doc.received_equipment){
+				if(!options.includes(frm.doc.received_equipment[i].item)){
+					options.push(frm.doc.received_equipment[i].item)
+				}
+			}
+			frm.fields_dict['images'].grid.get_field('item').get_query = function(doc){
+				return{
+					filters:{
+						"name": ["in", options]
+					}
+				}
+			}
+		}
 
-	// },
+	},
 	customer:function(frm){
 		if(!frm.doc.customer){
 				return
@@ -146,5 +146,53 @@ frappe.ui.form.on('Supply Order Form', {
 		});
 	}
 });
+frappe.ui.form.on('Part Sheet Item', {
+	part: function(frm, cdt, cdn){
+		let row = locals[cdt][cdn]
+		if(row.part){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
+			args :{
+				"item" :row.part,
+				"qty":row.qty
+				
+			},
+			callback :function(r){
+				console.log(r.message)
+				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
+				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
+				row.total = row.qty * row.price_ea
+				}
+		})
+		}
+		frm.refresh();
+	},
+	qty:function(frm, cdt, cdn){
+		let row = locals[cdt][cdn]
+		if(row.qty){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
+			args :{
+				"qty" : row.qty,
+				"item" :row.part,
+				
+			},
+			callback :function(r){
+				if(r.message){
+					console.log(r.message)
+					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
+					row.total = row.qty * row.price_ea
+					frm.refresh_fields();
+					
+				}
+			}
 	
+		})
+	   }
+	},
+	price_ea:function(frm,cdt,cdn){
+		frm.script_manager.trigger("qty",cdt,cdn);
+
+	},
+});
 

@@ -1,4 +1,4 @@
-frappe.listview_settings['Work Order Data'] = {
+frappe.listview_settings['Supply Order Data'] = {
 	add_fields: ["status","name"],
 	get_indicator: function (doc) {
 		if (doc.status === "UE-Under Evaluation") {

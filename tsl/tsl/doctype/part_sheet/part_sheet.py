@@ -20,7 +20,7 @@ def check_userrole(user,wod):
 @frappe.whitelist()
 def get_valuation_rate(item,qty):
 	sts = "No"
-	if frappe.db.get_value("Bin",{"item_code":item}):
+	if frappe.db.get_value("Bin",{"item_code":item},"actual_qty"):
 		price = frappe.db.get_value("Item",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")
 		if float(frappe.db.get_value("Bin",{"item_code":item},"actual_qty")) >= float(qty):		
 			sts = "Yes"

@@ -1,0 +1,237 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2022-02-19 11:09:55.836420",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "sales_rep",
+  "customer",
+  "customer_name",
+  "quoted_date",
+  "warranty",
+  "delivery",
+  "supply_order_form",
+  "column_break_7",
+  "image",
+  "received_date",
+  "company",
+  "branch",
+  "posting_date",
+  "department",
+  "status",
+  "remarks",
+  "payment_terms",
+  "purchase_order_no",
+  "dn_no",
+  "dn_date",
+  "invoice_no",
+  "invoice_date",
+  "section_break_14",
+  "in_stock",
+  "material_list",
+  "section_break_23",
+  "status_duration_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SOD-.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-"
+  },
+  {
+   "fieldname": "sales_rep",
+   "fieldtype": "Link",
+   "label": "Sales Rep",
+   "options": "User"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "quoted_date",
+   "fieldtype": "Date",
+   "label": "Quoted Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "warranty",
+   "fieldtype": "Data",
+   "label": "Warranty"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "delivery",
+   "fieldtype": "Date",
+   "label": "Delivery"
+  },
+  {
+   "fieldname": "supply_order_form",
+   "fieldtype": "Link",
+   "label": "Supply Order Form",
+   "options": "Supply Order Form"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "HTML",
+   "label": "Image",
+   "read_only": 1
+  },
+  {
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Warehouse"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Cost Center"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "NE-Need Evaluation",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nRNP-Return No Parts\nRNPC-Return No Parts Client\nA-Approved\nEP-Extra Parts\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nTR-Technician Repair\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nW-Working\nP-Paid\nC-Comparison\nCC-Comparison Client\nNER-Need Evaluation Return\nUE-Under Evaluation\nIQ-Internally Quoted\nUTR-Under Technician Repair\nRNF-Return No Fault\nRNFC-Return No Fault Client"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "payment_terms",
+   "fieldtype": "Data",
+   "label": "Payment Terms",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purchase_order_no",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "dn_no",
+   "fieldtype": "Link",
+   "label": "Delivery Note",
+   "options": "Delivery Note",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "dn_no.posting_date",
+   "fieldname": "dn_date",
+   "fieldtype": "Date",
+   "label": "Delivery Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "invoice_no",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "invoice_no.posting_date",
+   "fieldname": "invoice_date",
+   "fieldtype": "Date",
+   "label": "Invoice Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break",
+   "label": "Material List"
+  },
+  {
+   "fieldname": "material_list",
+   "fieldtype": "Table",
+   "label": "Out Stock",
+   "options": "Material List",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status_duration_details",
+   "fieldtype": "Table",
+   "label": "Status Duration Details",
+   "options": "Status Duration Details"
+  },
+  {
+   "fieldname": "in_stock",
+   "fieldtype": "Table",
+   "label": "In Stock",
+   "options": "Part Sheet Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2022-02-19 12:26:16.311731",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Supply Order Data",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

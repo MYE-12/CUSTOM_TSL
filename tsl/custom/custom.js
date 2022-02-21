@@ -3,7 +3,7 @@ frappe.ui.form.on('Quotation', {
 	
     refresh:function(frm){
 		
-		if(frm.doc.quotation_type === "Internal Quotation" && frm.doc.docstatus===1){
+		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				let inc_rate = diff / frm.doc.total_qty
@@ -12,12 +12,38 @@ frappe.ui.form.on('Quotation', {
 					args: {
 						"source": frm.doc.name,
 						"rate":inc_rate,
-						"type":"Customer Quotation"
+						"type":"Customer Quotation - Repair"
 					},
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							// doc[0].similar_items_quoted_before = [];
+							// for(var i=0 ; i<doc[0].items.length ; i++){
+							// 	doc[0].items[i].rate += inc_rate
+							// }
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
+						}
+					}
+				});
+				
+				
+                               
+                        }, ('Create'))
+	}
+	if(frm.doc.quotation_type === "Internal Quotation - Supply" && frm.doc.docstatus===1){
+		frm.add_custom_button(__('Customer Quotation'), function(){
+				
+                frappe.call({
+					method: "tsl.custom_py.quotation.get_quotation_history",
+					args: {
+						"source": frm.doc.name,
+						"rate":null,
+						"type":"Customer Quotation - Supply"
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							
 						}
@@ -32,7 +58,7 @@ frappe.ui.form.on('Quotation', {
 	// 	frm.refresh_field("customer_name");
 
 	// }
-	if((frm.doc.quotation_type === "Customer Quotation" || frm.doc.quotation_type === "Revised Quotation") && frm.doc.workflow_state==="Rejected by Customer" ){ 
+	if((frm.doc.quotation_type === "Customer Quotation - Repair" || frm.doc.quotation_type === "Revised Quotation - Repair") && frm.doc.workflow_state==="Rejected by Customer" ){ 
                 frm.add_custom_button(__('Revised Quotation'), function(){
 					frappe.call({
 						method: "tsl.custom_py.quotation.get_quotation_history",
@@ -40,7 +66,7 @@ frappe.ui.form.on('Quotation', {
 							"source": frm.doc.name,
 							"rate":null,
 							
-							"type":"Revised Quotation"
+							"type":"Revised Quotation - Repair"
 						},
 						callback: function(r) {
 							if(r.message) {
@@ -51,7 +77,26 @@ frappe.ui.form.on('Quotation', {
 					});
                         }, ('Create'))
         }
-		if(frm.doc.quotation_type ==="Internal Quotation" && frm.doc.workflow_state==="Rejected"){
+		if((frm.doc.quotation_type === "Customer Quotation - Supply" || frm.doc.quotation_type === "Revised Quotation - Supply") && frm.doc.workflow_state==="Rejected by Customer" ){ 
+			frm.add_custom_button(__('Revised Quotation'), function(){
+				frappe.call({
+					method: "tsl.custom_py.quotation.get_quotation_history",
+					args: {
+						"source": frm.doc.name,
+						"rate":null,
+						
+						"type":"Revised Quotation - Supply"
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+					}, ('Create'))
+	}
+		if(frm.doc.quotation_type ==="Internal Quotation - Repair" && frm.doc.workflow_state==="Rejected"){
 			frm.add_custom_button(__('Internal Quotation'), function(){
 				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				// let inc_rate = diff / frm.doc.total_qty
@@ -61,11 +106,33 @@ frappe.ui.form.on('Quotation', {
 						"source": frm.doc.name,
 						"rate":null,
 						
-						"type":"Internal Quotation"
+						"type":"Internal Quotation - Repair"
 					},
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
+							
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+					}, ('Create'))
+		}
+		if(frm.doc.quotation_type ==="Internal Quotation - Supply" && frm.doc.workflow_state==="Rejected"){
+			frm.add_custom_button(__('Internal Quotation'), function(){
+				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+				// let inc_rate = diff / frm.doc.total_qty
+				frappe.call({
+					method: "tsl.custom_py.quotation.get_quotation_history",
+					args: {
+						"source": frm.doc.name,
+						"rate":null,
+						"type":"Internal Quotation - Supply"
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 						}
 					}
@@ -164,7 +231,7 @@ frappe.ui.form.on('Quotation', {
 		else{ 
 			frm.set_df_property("final_approved_price", "read_only", 1)
 		}
-		if(frm.doc.quotation_type != "Internal Quotation" && frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
+		if(frm.doc.quotation_type != "Internal Quotation - Repair" && frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
 			
 			var d = new frappe.ui.Dialog({
 				
@@ -268,9 +335,9 @@ frappe.ui.form.on('Quotation', {
 	branch_name:function(frm){
 		if(frm.doc.quotation_type && frm.doc.branch_name){
 			var d = {
-				"Internal Quotation":{"Kuwait - TSL":"QTN-INT-K.YY.-","Dammam - TSL-SA":"QTN-INT-D.YY.-","Riyadh - TSL-SA":"QTN-INT-R.YY.-","Jeddah - TSL-SA":"QTN-INT-J.YY.-"},
-				"Customer Quotation":{"Kuwait - TSL":"QTN-CUS-K.YY.-","Dammam - TSL-SA":"QTN-CUS-D.YY.-","Riyadh - TSL-SA":"QTN-CUS-R.YY.-","Jeddah - TSL-SA":"QTN-CUS-J.YY.-"},
-				"Revised Quotation":{"Kuwait - TSL":"QTN-REV-K.YY.-","Dammam - TSL-SA":"QTN-REV-D.YY.-","Riyadh - TSL-SA":"QTN-REV-R.YY.-","Jeddah - TSL-SA":"QTN-REV-J.YY.-"}
+				"Internal Quotation - Repair":{"Kuwait - TSL":"QTN-INT-K.YY.-","Dammam - TSL-SA":"QTN-INT-D.YY.-","Riyadh - TSL-SA":"QTN-INT-R.YY.-","Jeddah - TSL-SA":"QTN-INT-J.YY.-"},
+				"Customer Quotation - Repair":{"Kuwait - TSL":"QTN-CUS-K.YY.-","Dammam - TSL-SA":"QTN-CUS-D.YY.-","Riyadh - TSL-SA":"QTN-CUS-R.YY.-","Jeddah - TSL-SA":"QTN-CUS-J.YY.-"},
+				"Revised Quotation - Repair":{"Kuwait - TSL":"QTN-REV-K.YY.-","Dammam - TSL-SA":"QTN-REV-D.YY.-","Riyadh - TSL-SA":"QTN-REV-R.YY.-","Jeddah - TSL-SA":"QTN-REV-J.YY.-"}
 					
 				}
 				frm.set_value("naming_series",d[frm.doc.quotation_type][frm.doc.branch_name])
@@ -283,7 +350,7 @@ frappe.ui.form.on('Quotation', {
 	},
 	is_internal_quotation:function(frm){
 		if(frm.doc.is_internal_quotation){
-			frm.doc.quotation_type = "Internal Quotation"
+			frm.doc.quotation_type = "Internal Quotation - Repair"
 			cur_frm.set_df_property("quotation_type","read_only",1)
 
 		}

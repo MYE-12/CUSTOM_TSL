@@ -47,7 +47,7 @@ def create_quotation(wod):
 	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
-	new_doc.quotation_type = "Internal Quotation"
+	new_doc.quotation_type = "Internal Quotation - Repair"
 	new_doc.sales_rep = doc.sales_rep
 	if frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status"):
 		comm = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status") 
@@ -111,7 +111,7 @@ def create_stock_entry(wod):
 				"transfer_qty":j.qty,
 				"stock_uom":"Nos",
 				"conversion_factor":1,
-				"basic_rate":frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate"),
+				"basic_rate":frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea,
 				"basic_amount":float(j.qty) * (float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea))
 			})
 	add = 0
@@ -143,14 +143,14 @@ def create_status_duration(wod):
 class WorkOrderData(Document):
 	def before_save(self):
 		print("\n\n\nbef save......")
-		d = {
-			"Dammam - TSL-SA":"WOD-D.YY.-",
-			"Riyadh - TSL-SA":"WOD-R.YY.-",
-			"Jeddah - TSL-SA":"WOD-J.YY.-",
-			"Kuwait - TSL":"WOD-K.YY.-"
-		}
-		if self.branch:
-			self.naming_series = d[self.branch]
+		# d = {
+		# 	"Dammam - TSL-SA":"WOD-D.YY.-",
+		# 	"Riyadh - TSL-SA":"WOD-R.YY.-",
+		# 	"Jeddah - TSL-SA":"WOD-J.YY.-",
+		# 	"Kuwait - TSL":"WOD-K.YY.-"
+		# }
+		# if self.branch:
+		# 	self.naming_series = d[self.branch]
 			# frappe.db.set_value("Work Order Data",self.name,"naming_series",d[self.branch])
 		now = datetime.now()
 		if not self.status_duration_details or self.status != self.status_duration_details[-1].status:

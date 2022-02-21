@@ -25,14 +25,14 @@ def create_qtn(source):
 	new_doc.branch_name = doc.branch
 	new_doc.append("items",{
 		"item_code":"Service Item",
-		"item_name":"Service Item",
+		"item_name":"Service",
 		"description":"Service Item",
 		"qty":1,
 		"uom":"Nos",
 		"stock_uom":"Nos",
 		"conversion_factor":1,
 		"stock_qty":1,
-		"discount_amount":150
+		"discount_amount":100
 	})
 	return new_doc
 	
