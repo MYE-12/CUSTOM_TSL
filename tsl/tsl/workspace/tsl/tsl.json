@@ -159,6 +159,68 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Supply Flow",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Supply Order Form",
+   "link_to": "Supply Order Form",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Supply Order Data",
+   "link_to": "Supply Order Data",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Request For Quotation",
+   "link_to": "Request for Quotation",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Supplier Quotation",
+   "link_to": "Supplier Quotation",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Master Report",
    "link_type": "Page",
    "onboard": 0,
@@ -260,7 +322,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-02-18 17:02:08.346096",
+ "modified": "2022-02-24 10:19:11.428513",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
