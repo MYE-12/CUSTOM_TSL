@@ -159,8 +159,10 @@ class WorkOrderData(Document):
 				"status":self.status,
 				"date":now,
 			})
+			
 	def on_update_after_submit(self):
 		print("\n\n\n\n\nduring submit")
+		
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()

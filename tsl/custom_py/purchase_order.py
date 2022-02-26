@@ -20,7 +20,6 @@ def on_submit(self,method):
                     for j in l:
                         doc.append("supplier_price_details",j)
             else:
-                print("\n\n\nelse.....")
                 for j in doc.get("supplier_price_details"):
                     l.append({"supplier_name":j.supplier_name,"price":j.price})
                 doc.supplier_price_details = []
@@ -33,5 +32,6 @@ def on_submit(self,method):
                     doc.append("supplier_price_details",j)
             doc.save(ignore_permissions = True)
         wod = frappe.get_doc("Work Order Data",self.work_order_data)
+        wod.purchase_order_no = self.name
         wod.status = "WP-Waiting Parts"
         wod.save(ignore_permissions = True)

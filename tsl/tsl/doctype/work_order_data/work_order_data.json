@@ -15,6 +15,7 @@
   "warranty",
   "delivery",
   "returned_date",
+  "expiry_date",
   "equipment_recieved_form",
   "column_break_7",
   "image",
@@ -61,15 +62,16 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "warranty",
    "fieldtype": "Data",
-   "label": "Warranty"
+   "label": "Warranty Period"
   },
   {
    "allow_on_submit": 1,
    "fieldname": "delivery",
    "fieldtype": "Date",
-   "label": "Delivery"
+   "label": "Delivered Date"
   },
   {
    "fieldname": "payment_terms",
@@ -239,16 +241,22 @@
    "options": "Warehouse"
   },
   {
-   "depends_on": "eval:(doc.status == \"NER-Need Evaluation Return\");",
    "fieldname": "returned_date",
    "fieldtype": "Date",
-   "label": "Returned Date"
+   "label": "Returned Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Warranty Expiry Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-17 21:29:23.371362",
+ "modified": "2022-02-24 19:02:50.155791",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

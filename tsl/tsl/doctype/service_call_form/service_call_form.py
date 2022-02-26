@@ -25,17 +25,25 @@ def create_qtn(source):
 	new_doc.branch_name = doc.branch
 	new_doc.append("items",{
 		"item_code":"Service Item",
-		"item_name":"Service",
 		"description":"Service Item",
 		"qty":1,
 		"uom":"Nos",
 		"stock_uom":"Nos",
 		"conversion_factor":1,
 		"stock_qty":1,
-		"discount_amount":100
 	})
 	return new_doc
-	
+
+@frappe.whitelist()
+def create_sal_inv(source):
+	doc = frappe.get_doc("Service Call Form",source)
+	new_doc = frappe.new_doc("Sales Invoice")
+	new_doc.customer = doc.customer
+	new_doc.customer_name = doc.customer_name
+	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
+	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
+	new_doc.company = doc.company
+	return new_doc
 
 	
 		

@@ -11,6 +11,14 @@ def get_data():
 			{
 				'items': ['Request for Quotation']
 			},
-			
+			{
+				'items': ['Supplier Quotation']
+			},
+			{
+				'items' : ['Quotation']
+			},
+			{
+				'items' : ['Purchase Order']
+			}
 		]
 	}

@@ -70,6 +70,7 @@ def create_quotation(sod):
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation - Supply"
 	new_doc.sales_rep = doc.sales_rep
+	new_doc.ignore_pricing_rule = 1
 	for i in doc.get("in_stock"):
 		new_doc.append("items",{
 			"supply_order_data":sod,
@@ -77,6 +78,7 @@ def create_quotation(sod):
 			"item_name":i.part_name,
 			"description":i.type,
 			"qty":i.qty,
+			"price_list_rate":i.price_ea,
 			"rate":i.price_ea,
 			"amount":i.total,
 			"uom":"Nos",
@@ -91,6 +93,7 @@ def create_quotation(sod):
 			"serial_no":i.serial_no,
 			"description":i.type,
 			"qty":i.quantity,
+			"price_list_rate":i.price,
 			"rate":i.price,
 			"amount":i.amount,
 			"uom":"Nos",
