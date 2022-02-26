@@ -9,6 +9,9 @@
   "part",
   "part_name",
   "type",
+  "manufacturer",
+  "model",
+  "serial_no",
   "qty",
   "price_ea",
   "total",
@@ -75,7 +78,7 @@
    "fieldname": "part",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Part",
+   "label": "Financial Code",
    "options": "Item"
   },
   {
@@ -84,13 +87,31 @@
    "fieldname": "financial_code",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Financial Code"
+   "label": "Part Number"
+  },
+  {
+   "fetch_from": "part.manufacturer",
+   "fieldname": "manufacturer",
+   "fieldtype": "Data",
+   "label": "Manufacturer"
+  },
+  {
+   "fetch_from": "part.model",
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fetch_from": "part.serial_no",
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-02-19 12:50:51.162827",
+ "modified": "2022-02-25 14:19:06.466186",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

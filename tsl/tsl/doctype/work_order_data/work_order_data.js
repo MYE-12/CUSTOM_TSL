@@ -123,17 +123,17 @@ frappe.ui.form.on('Work Order Data', {
 		}
 
 	},
-	branch:function(frm){
-		var d = {
-			"Dammam - TSL-SA":"WOD-D.YY.-",
-			"Riyadh - TSL-SA":"WOD-R.YY.-",
-			"Jeddah - TSL-SA":"WOD-J.YY.-",
-			"Kuwait - TSL":"WOD-K.YY.-"
-		};
-		if(frm.doc.branch){
-			frm.set_value("naming_series",d[frm.doc.branch]);
-		}
-	},
+	// branch:function(frm){
+	// 	var d = {
+	// 		"Dammam - TSL-SA":"WOD-D.YY.-",
+	// 		"Riyadh - TSL-SA":"WOD-R.YY.-",
+	// 		"Jeddah - TSL-SA":"WOD-J.YY.-",
+	// 		"Kuwait - TSL":"WOD-K.YY.-"
+	// 	};
+	// 	if(frm.doc.branch){
+	// 		frm.set_value("naming_series",d[frm.doc.branch]);
+	// 	}
+	// },
 	
 		
 	

@@ -26,6 +26,19 @@ def get_data():
 			{
 				'label': _(''),
 				'items': ['Evaluation Report']
-			}
+			},
+			{
+				'label': _(''),
+				'items': ['Request for Quotation']
+			},
+			{
+				'label': _(''),
+				'items': ['Supplier Quotation']
+			},
+			{
+				'label': _(''),
+				'items': ['Purchase Order']
+			},
+
 		]
 	}

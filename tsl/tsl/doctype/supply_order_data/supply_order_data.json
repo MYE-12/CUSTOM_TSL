@@ -15,6 +15,7 @@
   "warranty",
   "delivery",
   "supply_order_form",
+  "wod_no",
   "column_break_7",
   "image",
   "received_date",
@@ -34,7 +35,8 @@
   "in_stock",
   "material_list",
   "section_break_23",
-  "status_duration_details"
+  "status_duration_details",
+  "amended_from"
  ],
  "fields": [
   {
@@ -208,12 +210,28 @@
    "fieldtype": "Table",
    "label": "In Stock",
    "options": "Part Sheet Item"
+  },
+  {
+   "fieldname": "wod_no",
+   "fieldtype": "Link",
+   "label": "WOD No",
+   "options": "Work Order Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Supply Order Data",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-19 12:26:16.311731",
+ "modified": "2022-02-25 14:08:03.534845",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

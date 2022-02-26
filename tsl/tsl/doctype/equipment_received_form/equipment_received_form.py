@@ -42,13 +42,18 @@ def create_workorder_data(order_no):
 
 		new_doc = frappe.new_doc("Work Order Data")
 		if doc.work_order_data:
+			link0 = []
 			warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"])
-			print(warr)
 			date = frappe.utils.add_to_date(warr[0], days=int(warr[1]))
-			print(date)
 			print(doc.received_date)
+			frappe.db.set_value("Work Order Data",doc.work_order_data,"expiry_date",date)
+			frappe.db.set_value("Work Order Data",doc.work_order_data,"returned_date",doc.received_date)
 			if doc.received_date <= date:
-				new_doc.status = "NER-Need Evaluation Return"
+				frappe.db.set_value("Work Order Data",doc.work_order_data,"status","NER-Need Evaluation Return")
+				frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
+				link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
+				frappe.msgprint("Work Order created: "+', '.join(link0))
+				return True
 			else:
 				frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
 		new_doc.customer = doc.customer
