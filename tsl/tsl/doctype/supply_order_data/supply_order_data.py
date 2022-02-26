@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
-from typing_extensions import Self
+#from typing_extensions import Self
 from frappe.model.document import Document
 from datetime import datetime,date
 from frappe.utils.data import (
