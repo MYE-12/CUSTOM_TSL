@@ -123,6 +123,86 @@ def create_stock_entry(wod):
 
 	return new_doc
 
+@frappe.whitelist()
+def create_sof(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc = frappe.new_doc("Supply Order Form")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
+	new_doc.incharge = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+	new_doc.sales_person = doc.sales_rep
+	new_doc.work_order_data = wod
+	for i in doc.get("material_list"):
+		new_doc.append("received_equipment",{
+			"item_name":i.item_name,
+			"type":i.type,
+			"manufacturer":i.mfg,
+			"model":i.model_no,
+			"serial_no":i.serial_no,
+			"qty":i.quantity
+
+		})
+	return new_doc
+
+@frappe.whitelist()
+def create_sal_inv(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc = frappe.new_doc("Sales Invoice")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
+	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+	new_doc.work_order_data = wod
+	for i in doc.get("material_list"):
+		new_doc.append("items",{
+			"item_name":i.item_name,
+			"item_code":"Service Item",
+			"manufacturer":i.mfg,
+			"model":i.model_no,
+			"serial_number":i.serial_no,
+			"description":i.type,
+			"qty":i.quantity,
+			"wod_no":wod,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"cost_center":doc.department
+
+		})
+	return new_doc
+
+@frappe.whitelist()
+def create_dn(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc = frappe.new_doc("Delivery Note")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
+	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+	new_doc.work_order_data = wod
+	for i in doc.get("material_list"):
+		new_doc.append("items",{
+			"item_name":i.item_name,
+			"item_code":"Service Item",
+			"manufacturer":i.mfg,
+			"model":i.model_no,
+			"serial_number":i.serial_no,
+			"description":i.type,
+			"qty":i.quantity,
+			"wod_no":wod,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"cost_center":doc.department
+
+		})
+	return new_doc
 
 
 @frappe.whitelist()
@@ -162,7 +242,9 @@ class WorkOrderData(Document):
 			
 	def on_update_after_submit(self):
 		print("\n\n\n\n\nduring submit")
-		
+		if self.warranty and self.delivery:
+			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
+			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()

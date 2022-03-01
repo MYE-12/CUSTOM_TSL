@@ -17,7 +17,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "CRM",
+   "label": "Repair Order",
    "link_type": "Page",
    "onboard": 0,
    "type": "Card Break"
@@ -159,7 +159,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Supply Flow",
+   "label": "Supply Order",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -231,6 +231,24 @@
    "is_query_report": 0,
    "label": "Work Order Status",
    "link_to": "Work Order Status",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Supply Order Status",
+   "link_to": "Supply Order Status",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Price Comparison Sheet",
+   "link_to": "Price Comparison Sheet",
    "link_type": "Report",
    "onboard": 1,
    "type": "Link"
@@ -322,7 +340,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-02-24 10:19:11.428513",
+ "modified": "2022-02-28 13:27:54.090577",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",

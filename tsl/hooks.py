@@ -35,7 +35,8 @@ app_license = "MIT"
 doctype_js = {
 	"Quotation" : "custom/custom.js",
 	"Request for Quotation" : "custom/request_for_quotation.js",
-	"Purchase Order":"custom/purchase_order.js"
+	"Purchase Order":"custom/purchase_order.js",
+	"Supplier Quotation":"custom/supplier_quotation.js"
 
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
