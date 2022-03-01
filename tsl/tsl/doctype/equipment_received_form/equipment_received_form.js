@@ -76,7 +76,6 @@ address:function(frm){
 },
 work_order_data:function(frm){
 	if(frm.doc.work_order_data){
-		console.log(frm.doc.work_order_data)
 		frappe.call({
 			method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_wod_details',
 			args: {
@@ -92,9 +91,17 @@ work_order_data:function(frm){
 						childTable.model = r.message[i]["model_no"],
 						childTable.serial_no = r.message[i]["serial_no"],
 						childTable.type = r.message[i]["type"],
-						frm.doc.sales_person = r.message[i]["sales_rep"],
 						childTable.qty = r.message[i]["qty"],
 						cur_frm.refresh_fields("received_equipment");
+						frm.doc.sales_person = r.message[i]["sales_rep"],
+						frm.doc.customer = r.message[i]["customer"],
+						frm.trigger("customer");
+						frm.doc.address = r.message[i]["address"],
+						frm.trigger("address");
+						frm.doc.incharge = r.message[i]["incharge"],
+						frm.trigger("incharge");
+						frm.doc.branch = r.message[i]["branch"]
+						
 					}
 				}
 			}

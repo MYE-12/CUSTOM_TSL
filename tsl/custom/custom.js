@@ -17,10 +17,6 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
-							// doc[0].similar_items_quoted_before = [];
-							// for(var i=0 ; i<doc[0].items.length ; i++){
-							// 	doc[0].items[i].rate += inc_rate
-							// }
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							
 						}
@@ -54,10 +50,7 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
-	// if(frm.doc.docstatus === 0 && frm.doc.party_name){
-	// 	frm.refresh_field("customer_name");
-
-	// }
+	
 	if((frm.doc.quotation_type === "Customer Quotation - Repair" || frm.doc.quotation_type === "Revised Quotation - Repair") && frm.doc.workflow_state==="Rejected by Customer" ){ 
                 frm.add_custom_button(__('Revised Quotation'), function(){
 					frappe.call({
@@ -192,14 +185,11 @@ frappe.ui.form.on('Quotation', {
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
 										}
-										console.log("total qty")
 										frm.doc.total = tot_amt;
-										console.log(frm.doc.total)
 										frm.doc.total_qty = tot_qty;
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 										frm.doc.rounded_total = frm.doc.grand_total;
 										if(frm.doc.technician_hours_spent.length > 0){
-											console.log("technician")
 											frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
 
 										}
@@ -358,6 +348,12 @@ frappe.ui.form.on('Quotation', {
 			cur_frm.set_df_property("quotation_type","read_only",0)
 		}
 		
+	},
+	overall_discount_amount:function(frm){
+		if(frm.doc.overall_discount_amount){
+			frm.doc.discount_amount += frm.doc.overall_discount_amount
+			frm.refresh_fields()
+		}
 	}
 			
 });

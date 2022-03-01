@@ -39,6 +39,15 @@ def get_data():
 				'label': _(''),
 				'items': ['Purchase Order']
 			},
+			{
+				'label': _(''),
+				'items': ['Sales Invoice']
+			},
+			{
+				'label': _(''),
+				'items': ['Delivery Note']
+			},
+
 
 		]
 	}

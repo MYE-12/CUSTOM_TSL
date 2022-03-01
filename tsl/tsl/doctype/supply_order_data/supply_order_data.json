@@ -190,7 +190,7 @@
   {
    "fieldname": "material_list",
    "fieldtype": "Table",
-   "label": "Out Stock",
+   "label": "Stock Not Maintained(Without Financial Code)",
    "options": "Material List",
    "reqd": 1
   },
@@ -208,7 +208,7 @@
   {
    "fieldname": "in_stock",
    "fieldtype": "Table",
-   "label": "In Stock",
+   "label": "Stock Maintained(With Financial Code)",
    "options": "Part Sheet Item"
   },
   {
@@ -231,7 +231,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-25 14:08:03.534845",
+ "modified": "2022-02-28 13:24:25.712922",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

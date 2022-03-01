@@ -72,6 +72,59 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 
 		}
+		if(frm.doc.docstatus === 1) {
+			frm.add_custom_button(__("Sales Invoice"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
+					args: {
+						"wod": frm.doc.name
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
+							
+						}
+					}
+				});
+			},__('Create'));
+		}
+		if(frm.doc.docstatus === 1) {
+			frm.add_custom_button(__("Delivery Note"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_dn",
+					args: {
+						"wod": frm.doc.name
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
+							
+						}
+					}
+				});
+			},__('Create'));
+		}
+		if(frm.doc.docstatus == 1 && (frm.doc.status == "RNR-Return Not Repaired" || frm.doc.status == "RNRC-Return Not Repaired Client")){
+			frm.add_custom_button(__("Supply Order Form"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sof",
+					args: {
+						"wod": frm.doc.name
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							
+						}
+					}
+				});
+			},__('Create'));
+		}
 		if(!frm.doc.image){
 			if(frm.doc.equipment_recieved_form){
 				frappe.call({
@@ -123,17 +176,17 @@ frappe.ui.form.on('Work Order Data', {
 		}
 
 	},
-	// branch:function(frm){
-	// 	var d = {
-	// 		"Dammam - TSL-SA":"WOD-D.YY.-",
-	// 		"Riyadh - TSL-SA":"WOD-R.YY.-",
-	// 		"Jeddah - TSL-SA":"WOD-J.YY.-",
-	// 		"Kuwait - TSL":"WOD-K.YY.-"
-	// 	};
-	// 	if(frm.doc.branch){
-	// 		frm.set_value("naming_series",d[frm.doc.branch]);
-	// 	}
-	// },
+	branch:function(frm){
+		var d = {
+			"Dammam - TSL-SA":"WOD-D.YY.-",
+			"Riyadh - TSL-SA":"WOD-R.YY.-",
+			"Jeddah - TSL-SA":"WOD-J.YY.-",
+			"Kuwait - TSL":"WOD-K.YY.-"
+		};
+		if(frm.doc.branch){
+			frm.set_value("naming_series",d[frm.doc.branch]);
+		}
+	},
 	
 		
 	
