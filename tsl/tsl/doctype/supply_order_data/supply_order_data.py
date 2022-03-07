@@ -100,7 +100,8 @@ def create_quotation(sod):
 			"stock_uom":"Nos"
 		})
 	tot = 0
-	extra_charges = frappe.db.sql('''select freight_charges,custom_clearance,payment_commission,max_freight_duration,max_custom_duration from `tabSupplier Quotation` where supply_order_data = %s and workflow_state = "Approved" and docstatus = 1''',sod,as_dict = 1)
+	extra_charges = frappe.db.sql('''select name,freight_charges,custom_clearance,payment_commission,max_freight_duration,max_custom_duration from `tabSupplier Quotation` where supply_order_data = %s and workflow_state = "Approved" and docstatus = 1''',sod,as_dict = 1)
+	new_doc.supplier_quotation = extra_charges[0]['name']
 	new_doc.freight_charges = extra_charges[0]['freight_charges']
 	tot += float(extra_charges[0]['freight_charges'])
 	new_doc.custom_clearance = extra_charges[0]['custom_clearance']

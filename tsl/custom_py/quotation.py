@@ -100,6 +100,10 @@ def get_quotation_history(source,rate = None,type = None):
 			doclist.items[i].rate += float(rate)
 	return doclist
 
+@frappe.whitelist()
+def create_sal_inv(source):
+	
+
 def on_update(self, method):
 	# if self.quotation_type == "Site Visit Quotation":
 	# 	print("\n\n\n\ntrue")
