@@ -158,11 +158,14 @@ def create_sal_inv(wod):
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
 	for i in doc.get("material_list"):
+		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		new_doc.append("items",{
 			"item_name":i.item_name,
 			"item_code":"Service Item",
 			"manufacturer":i.mfg,
 			"model":i.model_no,
+			"rate":qi_details[0]['rate'],
+			"amount":qi_details[0]['amount'],
 			"serial_number":i.serial_no,
 			"description":i.type,
 			"qty":i.quantity,
@@ -187,6 +190,7 @@ def create_dn(wod):
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
 	for i in doc.get("material_list"):
+		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		new_doc.append("items",{
 			"item_name":i.item_name,
 			"item_code":"Service Item",
@@ -195,6 +199,8 @@ def create_dn(wod):
 			"serial_number":i.serial_no,
 			"description":i.type,
 			"qty":i.quantity,
+			"rate":qi_details[0]['rate'],
+			"amount":qi_details[0]['amount'],
 			"wod_no":wod,
 			"uom":"Nos",
 			"stock_uom":"Nos",

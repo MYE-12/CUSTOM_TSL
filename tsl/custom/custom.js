@@ -27,6 +27,28 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
+	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
+		frm.add_custom_button(__('Sales Invoice'), function(){
+				
+			frappe.call({
+				method: "tsl.custom_py.quotation.create_sal_inv",
+				args: {
+					"source": frm.doc.name,
+				},
+				callback: function(r) {
+					if(r.message) {
+						var doc = frappe.model.sync(r.message);
+						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						
+					}
+				}
+			});
+			
+			
+						   
+					}, ('Create'))
+
+	}
 	if(frm.doc.quotation_type === "Internal Quotation - Supply" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				
@@ -138,7 +160,7 @@ frappe.ui.form.on('Quotation', {
 		//  	frm.refresh_fields();
 
 		// }
-        if (frm.doc.docstatus===0) {
+        if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Repair") {
 			frm.add_custom_button(__('Work Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({
