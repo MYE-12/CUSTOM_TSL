@@ -80,6 +80,8 @@ def create_evaluation_report(doc_no):
 	new_doc.customer = doc.customer
 	new_doc.attn = doc.technician
 	new_doc.work_order_data = doc.name
+	erf = frappe.get_doc("Equipment Received Form",doc.equiom)
+	# new_doc.customer_complaint = 
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_name,
