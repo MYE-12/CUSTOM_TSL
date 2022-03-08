@@ -78,13 +78,7 @@ def get_columns(filters=None):
 		"label": "Serial No",
 		"fieldtype": "Data",
 	},
-	{
-		"fieldname":"technician",
-		"label": "Technician",
-		"fieldtype": "Link",
-		"options" : "User",
-		"width":150
-	},
+	
 	{
 		"fieldname":"quantity",
 		"label": "Qty",
@@ -248,8 +242,8 @@ def get_columns(filters=None):
 
 def get_data(filters):
 	data = []
-	supply_order_entries = frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ps.type as type,ps.manufacturer as mfg,ps.model as model_no,ps.serial_no as serial_no,ps.qty as quantity from `tabSupply Order Data` as so inner join `tabPart Sheet Item` as ps on ps.parent = so.name order by so.creation desc''',as_dict=1)\
-		+ frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ml.type as type,ml.mfg as mfg,ml.model_no as model_no,ml.serial_no as serial_no,ml.quantity as quantity from `tabSupply Order Data` as so inner join `tabMaterial List` as ml on ml.parent = so.name order by so.creation desc''',as_dict=1)
+	supply_order_entries = frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ps.type as type,ps.manufacturer as mfg,ps.model as model_no,ps.serial_no as serial_no,ps.qty as quantity from `tabSupply Order Data` as so inner join `tabPart Sheet Item` as ps on ps.parent = so.name where so.creation >= %s and so.creation <= %s order by so.creation desc ''',(filters.from_date,filters.to_date),as_dict=1)\
+		+ frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ml.type as type,ml.mfg as mfg,ml.model_no as model_no,ml.serial_no as serial_no,ml.quantity as quantity from `tabSupply Order Data` as so inner join `tabMaterial List` as ml on ml.parent = so.name where so.creation >= %s and so.creation <= %s order by so.creation desc''',(filters.from_date,filters.to_date),as_dict=1)
 	for i in supply_order_entries:
 		i["city"] = frappe.db.get_value("Address",frappe.db.get_value("Customer",i.customer,"customer_primary_address"),"city")
 		i["sales_rep"] = frappe.db.get_value("User",i.sales_rep,"full_name")

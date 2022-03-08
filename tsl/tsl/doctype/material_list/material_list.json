@@ -6,12 +6,12 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "model_no",
+  "mfg",
+  "type",
+  "serial_no",
   "item_name",
   "wo",
-  "type",
-  "mfg",
-  "model_no",
-  "serial_no",
   "quantity",
   "price",
   "amount"
@@ -26,16 +26,18 @@
   {
    "columns": 2,
    "fieldname": "mfg",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Mfg"
+   "label": "Mfg",
+   "options": "Item Mfg"
   },
   {
    "columns": 1,
    "fieldname": "model_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Model No"
+   "label": "Model No",
+   "options": "Item Model"
   },
   {
    "columns": 1,
@@ -56,16 +58,17 @@
   {
    "columns": 2,
    "fieldname": "type",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
    "columns": 2,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Item Name"
+   "label": "Description"
   },
   {
    "allow_on_submit": 1,
@@ -85,7 +88,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-02-19 14:50:09.046399",
+ "modified": "2022-03-08 09:14:30.493827",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",

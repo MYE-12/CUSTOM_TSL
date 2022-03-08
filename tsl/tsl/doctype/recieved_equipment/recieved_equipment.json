@@ -6,11 +6,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item_name",
-  "manufacturer",
   "model",
+  "manufacturer",
   "type",
   "serial_no",
+  "item_name",
   "uom",
   "qty",
   "complaint_section",
@@ -30,18 +30,20 @@
  ],
  "fields": [
   {
-   "columns": 1,
+   "columns": 2,
    "fieldname": "manufacturer",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Manufacturer"
+   "label": "Manufacturer",
+   "options": "Item Mfg"
   },
   {
    "columns": 1,
    "fieldname": "model",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Model"
+   "label": "Model",
+   "options": "Item Model"
   },
   {
    "columns": 1,
@@ -140,9 +142,10 @@
   {
    "columns": 2,
    "fieldname": "type",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
    "columns": 1,
@@ -154,10 +157,11 @@
    "options": "UOM"
   },
   {
+   "columns": 2,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Item Name"
+   "label": "Description"
   },
   {
    "fieldname": "column_break_16",
@@ -167,7 +171,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-01-27 13:49:01.748204",
+ "modified": "2022-03-08 09:09:47.944744",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment",

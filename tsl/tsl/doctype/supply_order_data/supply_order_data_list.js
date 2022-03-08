@@ -1,14 +1,20 @@
 frappe.listview_settings['Supply Order Data'] = {
 	add_fields: ["status","name"],
 	get_indicator: function (doc) {
-		if (doc.status === "UE-Under Evaluation") {
-			return [__("UE-Under Evaluation"), "blue", "status,=,UE-Under Evaluation"];
+	if (doc.status === "NE-Need Evaluation") {
+		return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
 
-		} else if (doc.status === "AP-Available Parts") {
-			return [__("AP-Available Parts"), "orange", "status,=,AP-Available Parts"];
-		} else if (doc.status === "SP-Searching Parts") {
-			return [__("SP-Searching Parts"), "yellow", "status,=,SP-Searching Parts"];
+	}
+      else if (doc.status === "UE-Under Evaluation") {
+		return [__("UE-Under Evaluation"), "blue", "status,=,UE-Under Evaluation"];
+
+	} else if (doc.status === "AP-Available Parts") {
+		return [__("AP-Available Parts"), "orange", "status,=,AP-Available Parts"];
+	}
+       else if (doc.status === "SP-Searching Parts") {
+		return [__("SP-Searching Parts"), "yellow", "status,=,SP-Searching Parts"];
         }
+        
         else if (doc.status === "Q-Quoted") {
 			return [__("Q-Quoted"), "green", "status,=,Q-Quoted"];
         }
