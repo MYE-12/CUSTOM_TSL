@@ -102,6 +102,37 @@ def get_quotation_history(source,rate = None,type = None):
 
 @frappe.whitelist()
 def create_sal_inv(source):
+	target_doc = frappe.new_doc("Sales Invoice")
+	doc = frappe.get_doc("Quotation",source)
+
+	# def postprocess(source, target_doc):
+	# 	target_doc.quotation_type = type
+	# 	target_doc.append("quotation_history",{
+	# 		"quotation_type":doc.quotation_type,
+	# 		"status":doc.workflow_state,
+	# 		"quotation_name":doc.name,
+	# 	})
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Sales Invoice",
+			"field_map": {
+				"name": "quotation",
+				"party_name":"customer",
+				"branch_name":"branch",
+				
+			},
+			
+			
+		},
+		"Quotation Item": {
+			"doctype": "Sales Invoice Item",
+			
+		},
+	}, target_doc)
+	for i in doclist.get('items'):
+		doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
+	return doclist
 	
 
 def on_update(self, method):
@@ -161,6 +192,8 @@ def on_update(self, method):
 
 def before_submit(self,method):
 	l = []
+	if self.supplier_quotation:
+		frappe.db.set_value("Suppplier Quotation",self.supplier_quotation,"quotation",self.name)
 	if self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
 			if i.wod_no:

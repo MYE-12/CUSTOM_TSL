@@ -117,6 +117,29 @@ frappe.query_reports["Work Order Status"] = {
 				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#836300'});
 
 			}
+			else if(data[row]['status'] == 'UE-Under Evaluation'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#ffaa00'});
+
+			}
+			else if(data[row]['status'] == 'IQ-Internally Quoted'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#aaff00'});
+
+			}
+			else if(data[row]['status'] == 'UTR-Under Technician Repair'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#ffaa00'});
+
+			}
+			else if(data[row]['status'] == 'RNF-Return No Fault'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#86a6ff'});
+
+			}
+			else if(data[row]['status'] == 'RNFC-Return No Fault Client'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#6176ff'});
+
+			}
+
+
+
 		}
 	    table_instance.style.setStyle(`.dt-scrollable`, {height: '600px;'});
 	 

@@ -80,8 +80,32 @@ def create_evaluation_report(doc_no):
 	new_doc.customer = doc.customer
 	new_doc.attn = doc.technician
 	new_doc.work_order_data = doc.name
-	erf = frappe.get_doc("Equipment Received Form",doc.equiom)
-	# new_doc.customer_complaint = 
+	erf_doc = frappe.get_doc("Equipment Received Form",doc.equipment_recieved_form)
+	cc =""
+	for erf in erf_doc.received_equipment:
+		if erf.no_power:
+			cc+="No Power,"
+		if erf.no_output:
+			cc+="No Output,"
+		if erf.no_display:
+			cc+="No Display,"
+		if erf.no_communication:
+			cc+="No Communication,"
+		if erf.supply_voltage:
+			cc+="Supply Voltage,"
+		if erf.touchkeypad_not_working:
+			cc+="Touch keypad Not Working,"
+		if erf.no_backlight:
+			cc+="No BackLight,"
+		if erf.error_code:
+			cc+="Error Code,"
+		if erf.short_circuit:
+			cc+="Short Circuit,"
+		if erf.overloadovercurrent:
+			cc+="Overload/Over Current,"
+		if erf.other:
+			cc+=erf.specify
+	new_doc.customer_complaint = cc
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_name,
