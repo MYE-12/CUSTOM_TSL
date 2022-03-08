@@ -167,6 +167,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Suppliers",
+   "link_to": "Supplier",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Supply Order Form",
    "link_to": "Supply Order Form",
    "link_type": "DocType",
@@ -340,7 +349,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-03-07 09:17:44.501792",
+ "modified": "2022-03-07 14:19:22.887119",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
