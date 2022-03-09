@@ -58,19 +58,19 @@ def create_quotation(wod):
 		})
 	return new_doc
 
-@frappe.whitelist()
-def create_part_sheet(work_order):
-	doc = frappe.get_doc("Work Order Data",work_order)
-	new_doc= frappe.new_doc("Part Sheet")
-	new_doc.company = doc.company
-	new_doc.work_order_data = doc.name
-	new_doc.customer = doc.customer
-	new_doc.customer_name = doc.customer_name
-	new_doc.technician = doc.technician
-	new_doc.item = doc.material_list[0].item_name
-	new_doc.manufacturer = doc.material_list[0].mfg
-	new_doc.model = doc.material_list[0].model_no
-	return new_doc
+# @frappe.whitelist()
+# def create_part_sheet(work_order):
+# 	doc = frappe.get_doc("Work Order Data",work_order)
+# 	new_doc= frappe.new_doc("Part Sheet")
+# 	new_doc.company = doc.company
+# 	new_doc.work_order_data = doc.name
+# 	new_doc.customer = doc.customer
+# 	new_doc.customer_name = doc.customer_name
+# 	new_doc.technician = doc.technician
+# 	new_doc.item = doc.material_list[0].item_name
+# 	new_doc.manufacturer = doc.material_list[0].mfg
+# 	new_doc.model = doc.material_list[0].model_no
+# 	return new_doc
 
 @frappe.whitelist()
 def create_evaluation_report(doc_no):
@@ -125,9 +125,9 @@ def create_stock_entry(wod):
 	new_doc.work_order_data = doc.name
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
-	ps_list = frappe.db.get_list("Part Sheet",{"work_order_data":wod,"parts_availability":"Yes"})
+	ps_list = frappe.db.get_list("Evaluation Report",{"work_order_data":wod,"parts_availability":"Yes"})
 	for i in ps_list:
-		ps_doc = frappe.get_doc("Part Sheet",i["name"])
+		ps_doc = frappe.get_doc("Evaluation Report",i["name"])
 		for j in ps_doc.get("items"):
 			new_doc.append("items",{
 				"item_code":j.part,

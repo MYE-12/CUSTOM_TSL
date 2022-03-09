@@ -21,10 +21,6 @@ def get_data():
 			},
 			{
 				'label': _(''),
-				'items': ['Part Sheet']
-            },
-			{
-				'label': _(''),
 				'items': ['Evaluation Report']
 			},
 			{

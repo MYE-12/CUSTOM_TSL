@@ -9,18 +9,16 @@ def get_wod_items(wod):
 	wod = json.loads(wod)
 	l=[]
 	for k in list(wod):
-		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabPart Sheet` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
-		# q_sts = frappe.db.get_value("Evaluation Report",{"work_order_data":k},"test_result")
-		if not tot:
-			link = []
-			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
-			frappe.throw("No Part Sheet created for this Work Order"+"-".join(link))
-			continue
+		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=1 ''',k,as_dict=1)[0]["total_amount"]
+		# if not tot:
+		# 	link = []
+		# 	link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
+		# 	frappe.throw("No Part Sheet created for this Work Order"+"-".join(link))
+		# 	continue
 		doc = frappe.get_doc("Work Order Data",k)
 		branch = doc.branch
-		rate = frappe.db.get_value("Part Sheet", {"work_order_data":k, "docstatus":1}, "total_amount")
-		if not rate:
-			rate = 0
+		if not tot:
+			tot = 0
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
 				"item" :"Service Item",
@@ -31,10 +29,8 @@ def get_wod_items(wod):
 				"serial_no": i.serial_no,
 				"qty": i.quantity,
 				"sales_rep":doc.sales_rep,
-				"rate": rate,
 				"total_amt":float(tot)/float(i.quantity),
 				"branch":branch,
-				# "q_unit_status":q_sts
 
 			}))
 			
@@ -45,9 +41,9 @@ def before_save(self,method):
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
 		for i in self.get("items"):
-			part_sheet = frappe.db.sql('''select name from `tabPart Sheet` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
 			for j in part_sheet:
-				doc = frappe.get_doc("Part Sheet",j['name'])
+				doc = frappe.get_doc("Evaluation Report",j['name'])
 				for k in doc.get("items"):
 					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
 						self.append("similar_items_quoted_before",{
@@ -104,15 +100,6 @@ def get_quotation_history(source,rate = None,type = None):
 def create_sal_inv(source):
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
-
-	# def postprocess(source, target_doc):
-	# 	target_doc.quotation_type = type
-	# 	target_doc.append("quotation_history",{
-	# 		"quotation_type":doc.quotation_type,
-	# 		"status":doc.workflow_state,
-	# 		"quotation_name":doc.name,
-	# 	})
-
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Sales Invoice",
@@ -136,11 +123,6 @@ def create_sal_inv(source):
 	
 
 def on_update(self, method):
-	# if self.quotation_type == "Site Visit Quotation":
-	# 	print("\n\n\n\ntrue")
-	# 	self.workflow_state = "Pending Approval"
-	print("\n\n\n\n\n\non update.........")
-
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
 		if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
@@ -191,9 +173,8 @@ def on_update(self, method):
 					doc.save(ignore_permissions=True)
 
 def before_submit(self,method):
-	l = []
 	if self.supplier_quotation:
-		frappe.db.set_value("Suppplier Quotation",self.supplier_quotation,"quotation",self.name)
+		frappe.db.set_value("Supplier Quotation",self.supplier_quotation,"quotation",self.name)
 	if self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
 			if i.wod_no:
@@ -202,11 +183,6 @@ def before_submit(self,method):
 			for i in self.get("item_price_details"):
 				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
 				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
-
-
-
-
-
 def validate(self, method):
 	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
 		self.final_approved_price = self.actual_price*302.8/100+self.actual_price

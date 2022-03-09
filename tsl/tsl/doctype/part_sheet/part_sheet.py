@@ -7,7 +7,7 @@ import frappe
 from frappe.model.document import Document
 
 @frappe.whitelist()
-def check_userrole(user,wod):
+def check_userrole(user):
 	if len(frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role in ("Technician","Purchase User") """.format(user),as_dict=1)) == 2:
 		return 2
 	if frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role = "Technician" """.format(user),as_dict=1):
@@ -38,12 +38,10 @@ def get_availabilty(qty,item):
 
 @frappe.whitelist()
 def create_rfq(ps):
-	doc = frappe.get_doc("Part Sheet",ps)
+	doc = frappe.get_doc("Evaluation Report",ps)
 	new_doc = frappe.new_doc("Request for Quotation")
 	new_doc.company = doc.company
 	new_doc.branch = frappe.db.get_value("Work Order Data",doc.work_order_data,"branch")
-	print("\n\n\n")
-	print(frappe.db.get_value("Work Order Data",doc.work_order_data,"branch"))
 	new_doc.part_sheet = ps
 	new_doc.work_order_data = doc.work_order_data
 	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")

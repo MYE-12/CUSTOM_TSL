@@ -41,7 +41,7 @@
    "name": "Request for Quotation-part_sheet",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "Part Sheet",
+   "options": "Evaluation Report",
    "owner": "Administrator",
    "parent": null,
    "parentfield": null,

@@ -12,4 +12,24 @@ def get_item_image(wod_no):
 	return image
 
 class EvaluationReport(Document):
-	pass
+	def on_submit(self):
+		if self.if_parts_required:
+			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			if self.parts_availability == "Yes":
+				doc.status = "AP-Available Parts"
+			else:
+				doc.status = "SP-Searching Parts"
+			doc.save(ignore_permissions=True)
+
+	def before_save(self):
+		if self.if_parts_required:
+			f=0
+			for i in self.get("items"):
+				if i.parts_availability == "No":
+					f=1
+			if f==1:
+				self.parts_availability = "No"
+			else:
+				self.parts_availability = "Yes"
+
+	

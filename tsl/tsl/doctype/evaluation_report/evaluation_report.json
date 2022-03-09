@@ -27,6 +27,14 @@
   "action_taken",
   "section_break_15",
   "test_result",
+  "if_parts_required",
+  "section_break_22",
+  "parts_availability",
+  "items",
+  "section_break_25",
+  "total_qty",
+  "column_break_27",
+  "total_amount",
   "section_break_17",
   "item_photo"
  ],
@@ -150,12 +158,54 @@
    "fieldname": "specify",
    "fieldtype": "Small Text",
    "label": "Specify"
+  },
+  {
+   "default": "0",
+   "fieldname": "if_parts_required",
+   "fieldtype": "Check",
+   "label": "If Parts Required"
+  },
+  {
+   "depends_on": "eval:(doc.if_parts_required == 1);",
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "parts_availability",
+   "fieldtype": "Select",
+   "label": "Parts Availability",
+   "options": "Yes\nNo"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Part Sheet Item"
+  },
+  {
+   "depends_on": "eval:(doc.if_parts_required == 1);",
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "Total Qty"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-12 14:50:01.392118",
+ "modified": "2022-03-08 21:50:50.722306",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
