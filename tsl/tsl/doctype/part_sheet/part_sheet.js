@@ -2,12 +2,12 @@
 // For license information, please see license.txt
 frappe.ui.form.on('Part Sheet', {
 	refresh: function(frm) {
-		if(frm.doc.docstatus == 0 && frm.doc.work_order_data){
+		if(frm.doc.docstatus == 0 ){
 			frappe.call({
 				method: "tsl.tsl.doctype.part_sheet.part_sheet.check_userrole",
 				args: {
 					"user":frappe.session.user,
-					"wod":frm.doc.work_order_data
+					
 				},
 				callback: function(r) {
 					if(r.message) {

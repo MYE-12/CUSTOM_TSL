@@ -55,7 +55,6 @@ def get_columns(filters):
 	return columns
 
 def get_data(filters):
-	print("\n\n\nget_data\n")
 	data = []
 	data.append({"description":"","qty":"","buy_source":""})
 	suppliers = frappe.db.sql('''select supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_dict=1)

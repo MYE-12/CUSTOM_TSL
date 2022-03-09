@@ -13,7 +13,6 @@ def reject_other_sq(sq,sod):
     
 @frappe.whitelist()
 def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=None):
-    print("\n\n\n\n\nsupplier from rfq..........")
     doc = frappe.get_doc("Request for Quotation",source_name)
     l = []
     for i in doc.get("suppliers"):
@@ -51,11 +50,10 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 
 def on_submit(self,method):
     if self.part_sheet:
-        doc = frappe.get_doc("Part Sheet",self.part_sheet)
+        doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
             for j in doc.get("items"):
                 if j.part == i.item_code:
-                    print("if true.....")
                     j.price_ea = i.rate
                     j.total = i.rate * j.qty
         doc.save(ignore_permissions=True)
