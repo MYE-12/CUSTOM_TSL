@@ -141,7 +141,12 @@ doc_events = {
 		"before_save":[
 			"tsl.custom_py.customer.before_save"
 		]
-	}
+	},
+	"Sales Invoice":{
+		"on_submit":[
+			"tsl.custom_py.sales_invoice.on_submit"
+		]
+	},
 		
 	
 }
