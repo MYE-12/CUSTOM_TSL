@@ -36,7 +36,7 @@ doctype_js = {
 	"Quotation" : "custom/custom.js",
 	"Request for Quotation" : "custom/request_for_quotation.js",
 	"Purchase Order":"custom/purchase_order.js",
-	"Supplier Quotation":"custom/supplier_quotation.js"
+	"Supplier Quotation":"custom/supplier_quotation.js",
 
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -135,6 +135,11 @@ doc_events = {
 	"Delivery Note":{
 		"on_submit":[
 			"tsl.custom_py.delivery_note.on_submit"
+		]
+	},
+	"Customer":{
+		"before_save":[
+			"tsl.custom_py.customer.before_save"
 		]
 	}
 		

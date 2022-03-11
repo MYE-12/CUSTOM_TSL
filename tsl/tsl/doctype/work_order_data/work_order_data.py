@@ -240,7 +240,7 @@ def create_dn(wod):
 @frappe.whitelist()
 def create_extra_ps(doc):
 	l=[]
-	extra_ps = frappe.db.sql('''select name,technician from `tabPart Sheet` where work_order_data = %s order by creation''',doc,as_dict=1)
+	extra_ps = frappe.db.sql('''select name,technician from `tabEvaluation Report` where work_order_data = %s order by creation''',doc,as_dict=1)
 	for i in range(1,len(extra_ps)):
 		l.append(extra_ps[i])
 	return l
@@ -254,26 +254,20 @@ def create_status_duration(wod):
 	
 class WorkOrderData(Document):
 	def before_save(self):
-		print("\n\n\nbef save......")
-		# d = {
-		# 	"Dammam - TSL-SA":"WOD-D.YY.-",
-		# 	"Riyadh - TSL-SA":"WOD-R.YY.-",
-		# 	"Jeddah - TSL-SA":"WOD-J.YY.-",
-		# 	"Kuwait - TSL":"WOD-K.YY.-"
-		# }
-		# if self.branch:
-		# 	self.naming_series = d[self.branch]
-			# frappe.db.set_value("Work Order Data",self.name,"naming_series",d[self.branch])
+		# extra_ps = frappe.db.sql('''select name,attn from `tabEvaluation Report` where work_order_data = %s order by creation''',doc,as_dict=1)
+		# for i in range(1,len(extra_ps)):
+		# 	self.append("extra_part_sheets",{
+		# 		"part_sheet_name":extra_ps[i]['name'],
+		# 		"technician":extra_ps[i]['attn']
+		# 	})
 		now = datetime.now()
 		if not self.status_duration_details or self.status != self.status_duration_details[-1].status:
-			print("\n\n\n\nbef save if.......")
 			self.append("status_duration_details",{
 				"status":self.status,
 				"date":now,
 			})
 			
 	def on_update_after_submit(self):
-		print("\n\n\n\n\nduring submit")
 		if self.warranty and self.delivery:
 			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
@@ -293,8 +287,6 @@ class WorkOrderData(Document):
 				"status":self.status,
 				"date":now,
 			})
-
-			# frappe.db.set_value("Status Duration Details",self.status_duration_details[-2].name,"duration",data)
 			doc.save(ignore_permissions=True)
 		
 	def before_submit(self):

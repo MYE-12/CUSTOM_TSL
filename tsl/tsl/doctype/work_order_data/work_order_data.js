@@ -143,39 +143,39 @@ frappe.ui.form.on('Work Order Data', {
 		}
 		
 	},
-	check_for_extra_partsheets:function(frm){
-		if(frm.doc.docstatus === 1) {
-			frappe.call({
-				method: "tsl.tsl.doctype.work_order_data.work_order_data.create_extra_ps",
-				args: {
-					"doc":frm.doc.name
-				},
-				callback: function(r) {
-					if(r.message) {
-						if(r.message.length >0){
-							console.log(r.message)
-							cur_frm.clear_table("extra_part_sheets");
-							for(var i=0;i<r.message.length;i++){
-								var childTable = cur_frm.add_child("extra_part_sheets");
-								childTable.part_sheet_name = r.message[i]["name"],
-								childTable.technician = r.message[i]["technician"],
-								cur_frm.refresh_fields("extra_part_sheets");
+	// check_for_extra_partsheets:function(frm){
+	// 	if(frm.doc.docstatus === 1) {
+	// 		frappe.call({
+	// 			method: "tsl.tsl.doctype.work_order_data.work_order_data.create_extra_ps",
+	// 			args: {
+	// 				"doc":frm.doc.name
+	// 			},
+	// 			callback: function(r) {
+	// 				if(r.message) {
+	// 					if(r.message.length >0){
+	// 						console.log(r.message)
+	// 						cur_frm.clear_table("extra_part_sheets");
+	// 						for(var i=0;i<r.message.length;i++){
+	// 							var childTable = cur_frm.add_child("extra_part_sheets");
+	// 							childTable.part_sheet_name = r.message[i]["name"],
+	// 							childTable.technician = r.message[i]["technician"],
+	// 							cur_frm.refresh_fields("extra_part_sheets");
 
-						    }
-							cur_frm.doc.docstatus = 1;
-						    cur_frm.refresh_fields();
-						}
-						else{
-							frappe.msgprint("No Extra Part Sheets for this Work Order");
-						}
+	// 					    }
+	// 						cur_frm.doc.docstatus = 1;
+	// 					    cur_frm.refresh_fields();
+	// 					}
+	// 					else{
+	// 						frappe.msgprint("No Extra Part Sheets for this Work Order");
+	// 					}
 						
-					}
+	// 				}
 					
-				}
-			})
-		}
+	// 			}
+	// 		})
+	// 	}
 
-	},
+	// },
 	branch:function(frm){
 		var d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",

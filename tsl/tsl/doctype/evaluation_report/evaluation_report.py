@@ -1,6 +1,7 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
+from pydoc import doc
 import frappe
 from frappe.model.document import Document
 from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
@@ -31,5 +32,17 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
+			
 
-	
+	def before_submit(self):
+		if self.if_parts_required:
+			wod = frappe.get_doc("Work Order Data",self.work_order_data)
+			extra_ps = frappe.db.sql('''select name,attn from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 and creation <= %s''',(self.work_order_data,self.creation),as_dict=1)
+			if extra_ps:
+				wod.append("extra_part_sheets",{
+					"part_sheet_name":self.name,
+					"technician":self.attn,
+				})
+				wod.save(ignore_permissions = True)
+
+		

@@ -118,7 +118,7 @@ frappe.ui.form.on('Part Sheet Item', {
 	},
 	qty:function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
-		if(row.qty){
+		if(row.qty && row.part){
 			frappe.call({
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
 			args :{
@@ -152,4 +152,5 @@ frappe.ui.form.on('Part Sheet Item', {
 		frm.script_manager.trigger("qty",cdt,cdn);
 
 	},
+	
 });
