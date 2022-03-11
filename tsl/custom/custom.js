@@ -27,7 +27,7 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
-	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.items[0].supply_order_data || frm.doc.items[0].wod_no){
+	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply")){
             frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
 				frappe.call({
 					method: "tsl.custom_py.quotation.get_similar_unit_details",
