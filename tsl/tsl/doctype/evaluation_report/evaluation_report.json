@@ -171,6 +171,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "parts_availability",
    "fieldtype": "Select",
    "label": "Parts Availability",
@@ -188,6 +189,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "total_qty",
    "fieldtype": "Float",
    "label": "Total Qty"
@@ -197,6 +199,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "label": "Total Amount"
@@ -205,7 +208,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-09 15:51:25.160822",
+ "modified": "2022-03-11 13:24:51.009988",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
