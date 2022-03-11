@@ -48,6 +48,18 @@ def create_quotation(wod):
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation - Repair"
+	if doc.branch:
+		d = {
+			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-"},
+			"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-"},
+			"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-"},
+			"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-"},
+			"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-"},
+			"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-"},
+			"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL-SA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
+			}
+		new_doc.naming_series = d[new_doc.quotation_type][doc.branch]
+	
 	new_doc.sales_rep = doc.sales_rep
 	if frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status"):
 		comm = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status") 
@@ -58,19 +70,6 @@ def create_quotation(wod):
 		})
 	return new_doc
 
-# @frappe.whitelist()
-# def create_part_sheet(work_order):
-# 	doc = frappe.get_doc("Work Order Data",work_order)
-# 	new_doc= frappe.new_doc("Part Sheet")
-# 	new_doc.company = doc.company
-# 	new_doc.work_order_data = doc.name
-# 	new_doc.customer = doc.customer
-# 	new_doc.customer_name = doc.customer_name
-# 	new_doc.technician = doc.technician
-# 	new_doc.item = doc.material_list[0].item_name
-# 	new_doc.manufacturer = doc.material_list[0].mfg
-# 	new_doc.model = doc.material_list[0].model_no
-# 	return new_doc
 
 @frappe.whitelist()
 def create_evaluation_report(doc_no):
@@ -254,12 +253,6 @@ def create_status_duration(wod):
 	
 class WorkOrderData(Document):
 	def before_save(self):
-		# extra_ps = frappe.db.sql('''select name,attn from `tabEvaluation Report` where work_order_data = %s order by creation''',doc,as_dict=1)
-		# for i in range(1,len(extra_ps)):
-		# 	self.append("extra_part_sheets",{
-		# 		"part_sheet_name":extra_ps[i]['name'],
-		# 		"technician":extra_ps[i]['attn']
-		# 	})
 		now = datetime.now()
 		if not self.status_duration_details or self.status != self.status_duration_details[-1].status:
 			self.append("status_duration_details",{
