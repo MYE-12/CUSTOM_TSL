@@ -27,6 +27,20 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
+	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.items[0].supply_order_data || frm.doc.items[0].wod_no){
+            frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
+				frappe.call({
+					method: "tsl.custom_py.quotation.get_similar_unit_details",
+					args: {
+						"name":frm.doc.name
+					},
+					callback: function(r) {
+						
+					}
+				});
+                
+            }, __("View"));
+    }
 	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
 		frm.add_custom_button(__('Sales Invoice'), function(){
 				

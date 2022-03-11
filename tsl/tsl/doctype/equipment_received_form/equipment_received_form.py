@@ -11,6 +11,20 @@ class EquipmentReceivedForm(Document):
 	def before_submit(self):
 		if not self.branch:
 			frappe.throw("Assign a branch to Submit")
+			
+	def before_save(self):
+		for i in self.get('received_equipment'):
+			if i.model and i.manufacturer and i.type and i.serial_no:
+				for sod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Supply Order Data" ''',(i.model,i.manufacturer,i.type,i.serial_no),as_dict=1):
+					prev_quoted = frappe.db.sql('''select q.party_name as customer,q.name as name,qi.rate as price from `tabQuotation Item` as qi inner join `tabQuotation` as q on qi.parent = q.name where qi.supply_order_data = %s and (q.quotation_type = "Customer Quotation - Supply" or q.quotation_type = "Revised Quotation - Supply") and q.workflow_state = "Approved By Customer" ''',sod['parent'],as_dict = 1)
+					self.append("previously_quoted",{
+						"customer":prev_quoted[0]['customer'],
+						"model":i.model,
+						"mfg":i.manufacturer,
+						"type":i.type,
+						"quoted_price":prev_quoted[0]['price'],
+						"quotation_no":prev_quoted[0]['name']
+					})
 
 	
 

@@ -35,6 +35,50 @@ def get_wod_items(wod):
 			}))
 			
 	return l
+@frappe.whitelist()
+def get_similar_unit_details(name):
+	doc = frappe.get_doc("Quotation",name)
+	l=[]
+	if doc.quotation_type == 'Internal Quotation - Supply':
+		for i in doc.get("items"):
+			l.append(i.supply_order_data)
+		l = list(set(l))
+		for j in l:
+			sod = frappe.get_doc("Supply Order Data",j)
+			for i in sod.get('material_list'):
+				if i.model_no and i.mfg and i.type and i.serial_no:
+					for wod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Work Order Data" ''',(i.model_no,i.mfg,i.type,i.serial_no),as_dict=1):
+						prev_quoted = frappe.db.sql('''select q.party_name as customer,q.name as name,qi.rate as price from `tabQuotation Item` as qi inner join `tabQuotation` as q on qi.parent = q.name where qi.wod_no = %s and (q.quotation_type = "Customer Quotation - Repair" or q.quotation_type = "Revised Quotation - Repair") and q.workflow_state = "Approved By Customer" ''',wod['parent'],as_dict = 1)
+						doc.append("similar_unit_details",{
+							"customer":prev_quoted[0]['customer'],
+							"model":i.model_no,
+							"mfg":i.mfg,
+							"type":i.type,
+							"quoted_price":prev_quoted[0]['price'],
+							"quotation_no":prev_quoted[0]['name']
+						})
+					doc.save(ignore_permissions =True)
+	if doc.quotation_type == 'Internal Quotation - Repair':
+		for i in doc.get("items"):
+			l.append(i.wod_no)
+		for j in l:
+			wod = frappe.get_doc("Work Order Data",j)
+			for i in wod.get('material_list'):
+				if i.model_no and i.mfg and i.type and i.serial_no:
+					for sod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Supply Order Data" ''',(i.model_no,i.mfg,i.type,i.serial_no),as_dict=1):
+						prev_quoted = frappe.db.sql('''select q.party_name as customer,q.name as name,qi.rate as price from `tabQuotation Item` as qi inner join `tabQuotation` as q on qi.parent = q.name where qi.supply_order_data = %s and (q.quotation_type = "Customer Quotation - Supply" or q.quotation_type = "Revised Quotation - Supply") and q.workflow_state = "Approved By Customer" ''',sod['parent'],as_dict = 1)
+						doc.append("similar_unit_details",{
+							"customer":prev_quoted[0]['customer'],
+							"model":i.model_no,
+							"mfg":i.mfg,
+							"type":i.type,
+							"quoted_price":prev_quoted[0]['price'],
+							"quotation_no":prev_quoted[0]['name']
+						})
+					doc.save(ignore_permissions =True)
+	
+		
+
 
 def before_save(self,method):
 	if self.quotation_type == "Internal Quotation - Repair":

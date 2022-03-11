@@ -36,7 +36,6 @@
   "section_break_14",
   "material_list",
   "section_break_23",
-  "check_for_extra_partsheets",
   "extra_part_sheets",
   "section_break_28",
   "status_duration_details",
@@ -198,13 +197,9 @@
    "allow_on_submit": 1,
    "fieldname": "extra_part_sheets",
    "fieldtype": "Table",
-   "label": "Extra Part Sheets",
-   "options": "Extra Part Sheets"
-  },
-  {
-   "fieldname": "check_for_extra_partsheets",
-   "fieldtype": "Button",
-   "label": "Check For Extra PartSheets"
+   "label": "Extra Parts Encountered",
+   "options": "Extra Part Sheets",
+   "read_only": 1
   },
   {
    "fieldname": "remarks",
@@ -256,7 +251,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-24 19:02:50.155791",
+ "modified": "2022-03-09 16:43:05.074438",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
