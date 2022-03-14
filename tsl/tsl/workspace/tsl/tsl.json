@@ -70,15 +70,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Part Sheet",
-   "link_to": "Part Sheet",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Evaluation Report",
    "link_to": "Evaluation Report",
    "link_type": "DocType",
@@ -366,7 +357,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-03-08 15:33:23.844000",
+ "modified": "2022-03-14 10:07:56.995476",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
