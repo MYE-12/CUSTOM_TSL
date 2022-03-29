@@ -12,3 +12,56 @@ def create_after_import():
                 doc.attached_to_name = j['name']
                 doc.attached_to_field = i
                 doc.save(ignore_permissions = True)
+
+@frappe.whitelist()
+def send_mail(branch,name,doctype,msg):
+    receivers = []
+    sender = frappe.db.get_value("Email Account",{"branch":branch},"email_id")
+    doc = frappe.get_doc(doctype,name)
+    for i in doc.get('suppliers'):
+        if i.email_id:
+            receivers.append(i.email_id)
+    if receivers:
+        try:
+            frappe.sendmail(
+                recipients = receivers,
+                sender = sender,
+                subject = str(doctype)+" "+str(name),
+                message = msg,
+                attachments=get_attachments(name,doctype)
+            )
+            frappe.msgprint("Email sent")
+        except frappe.OutgoingEmailError:
+            pass
+
+def get_attachments(name,doctype):
+    attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Standard")
+    return [attachments]
+
+@frappe.whitelist()
+def get_items_from_purchase_receipts(self):
+    print("\n\n\n\n\nget_items_from_purchase_receipts")
+    self.set("items", [])
+    for pr in self.get("purchase_receipts"):
+        if pr.receipt_document_type and pr.receipt_document:
+            pr_items = frappe.db.sql("""select pr_item.item_code, pr_item.description,
+                pr_item.qty, pr_item.base_rate, pr_item.base_amount, pr_item.name,
+                pr_item.cost_center, pr_item.is_fixed_asset
+                from `tab{doctype} Item` pr_item where parent = %s
+                and exists(select name from tabItem
+                    where name = pr_item.item_code and (is_stock_item = 1 or is_fixed_asset=1))
+                """.format(doctype=pr.receipt_document_type), pr.receipt_document, as_dict=True)
+
+            for d in pr_items:
+                item = self.append("items")
+                item.item_code = d.item_code
+                item.description = d.description
+                item.qty = d.qty
+                item.rate = d.base_rate
+                item.cost_center = d.cost_center or \
+                    erpnext.get_default_cost_center(self.company)
+                item.amount = d.base_amount
+                item.receipt_document_type = pr.receipt_document_type
+                item.receipt_document = pr.receipt_document
+                item.purchase_receipt_item = d.name
+                item.is_fixed_asset = d.is_fixed_asset

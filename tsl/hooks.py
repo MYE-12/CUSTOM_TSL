@@ -33,10 +33,11 @@ app_license = "MIT"
 
 # include js in doctype views
 doctype_js = {
-	"Quotation" : "custom/custom.js",
-	"Request for Quotation" : "custom/request_for_quotation.js",
-	"Purchase Order":"custom/purchase_order.js",
-	"Supplier Quotation":"custom/supplier_quotation.js",
+	"Quotation" : ["custom/custom.js"],
+	"Request for Quotation" : ["custom/request_for_quotation.js"],
+	"Purchase Order":["custom/purchase_order.js"],
+	"Supplier Quotation":["custom/supplier_quotation.js"]
+	
 
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -180,9 +181,9 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "tsl.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.stock.doctype.landed_cost_voucher.landed_cost_voucher.get_items_from_purchase_receipts": "tsl.custom_py.after_import.get_items_from_purchase_receipts"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
