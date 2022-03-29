@@ -181,7 +181,7 @@
   {
    "fieldname": "received_equipment",
    "fieldtype": "Table",
-   "label": "Equipments Out Stock",
+   "label": "Stocks Not Maintained(Without Financial Code)",
    "options": "Recieved Equipment",
    "reqd": 1
   },
@@ -199,7 +199,7 @@
   {
    "fieldname": "equipments_in_stock",
    "fieldtype": "Table",
-   "label": "Equipments In Stock",
+   "label": "Stocks Maintained(With Financial Code)",
    "options": "Part Sheet Item"
   },
   {
@@ -227,7 +227,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-08 21:34:13.778384",
+ "modified": "2022-03-24 08:05:47.892311",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Form",
