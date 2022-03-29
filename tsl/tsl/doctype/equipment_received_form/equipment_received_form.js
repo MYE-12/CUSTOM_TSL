@@ -157,3 +157,28 @@ frappe.ui.form.on('Equipment Received Form', {
 		});
 	}
 });
+frappe.ui.form.on("Recieved Equipment",{ 
+	model:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		if(item.model && item.manufacturer && item.docstatus == 0){
+			frappe.call({
+				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_sku',
+				args: {
+						"model":item.model,
+						"mfg":item.manufacturer
+				},
+				callback(r) {
+					if(r.message) {
+						item.sku = r.message;
+						cur_frm.refresh_fields();
+					}
+				}
+				});
+		}
+	},
+	manufacturer:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		cur_frm.script_manager.trigger("model",cdt,cdn)
+	}
+
+});

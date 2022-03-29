@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 from pydoc import doc
+from re import X
 #from typing_extensions import Self
 import frappe
 from frappe.model.document import Document
@@ -36,6 +37,15 @@ def get_contacts(customer):
 		l.append(i.name1)
 	return l
 
+@frappe.whitelist()
+def get_sku(model,mfg):
+	sku = frappe.db.sql('''select sku from `tabRecieved Equipment` where model = %s and manufacturer = %s and docstatus = 1 and parenttype = "Equipment Received Form" ''',(model,mfg),as_dict = 1)
+	if sku:
+		return sku[0]['sku']
+	else:
+		import random
+		x = ''.join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(8))
+		return x
 
 
 @frappe.whitelist()
