@@ -148,6 +148,7 @@ doc_events = {
 			"tsl.custom_py.sales_invoice.on_submit"
 		]
 	},
+	
 		
 	
 }
