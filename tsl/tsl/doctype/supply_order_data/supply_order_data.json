@@ -191,7 +191,7 @@
    "fieldname": "material_list",
    "fieldtype": "Table",
    "label": "Stock Not Maintained(Without Financial Code)",
-   "options": "Material List",
+   "options": "Supply Order Table",
    "reqd": 1
   },
   {
@@ -231,7 +231,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-28 13:24:25.712922",
+ "modified": "2022-04-01 13:20:17.229804",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
