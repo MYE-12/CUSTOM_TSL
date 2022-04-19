@@ -44,7 +44,7 @@ frappe.ui.form.on('Supply Order Form', {
 				args: {
 						"customer": frm.doc.customer,
 				},
-				callback(r) {
+				callback(r) {manufacturer
 						if(r.message) {
 								frm.set_query("incharge", function() {
 										return {
@@ -97,6 +97,18 @@ frappe.ui.form.on('Supply Order Form', {
 			});
 	
 		}
+	},
+	setup:function(frm){
+		frm.fields_dict['equipments_in_stock'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+			var child = locals[cdt][cdn];
+			return{
+				filters: {
+					'financial_code': child.part_number,
+					'category_':child.category,
+					'sub_category':child.sub_category
+				}
+			}
+		}
 	}
 	});
 frappe.ui.form.on("Supply Order Form", {
@@ -147,9 +159,11 @@ frappe.ui.form.on('Supply Order Form', {
 	}
 });
 frappe.ui.form.on('Part Sheet Item', {
+	
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
 		if(row.part){
+			
 			frappe.call({
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
 			args :{
@@ -194,5 +208,6 @@ frappe.ui.form.on('Part Sheet Item', {
 		frm.script_manager.trigger("qty",cdt,cdn);
 
 	},
+	
 });
 

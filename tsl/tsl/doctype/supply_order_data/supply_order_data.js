@@ -65,3 +65,4 @@ frappe.ui.form.on('Supply Order Data', {
 	}
 });
 
+

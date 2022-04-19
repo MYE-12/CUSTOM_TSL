@@ -38,8 +38,8 @@ def get_contacts(customer):
 	return l
 
 @frappe.whitelist()
-def get_sku(model,mfg):
-	sku = frappe.db.sql('''select sku from `tabRecieved Equipment` where model = %s and manufacturer = %s and docstatus = 1 and parenttype = "Equipment Received Form" ''',(model,mfg),as_dict = 1)
+def get_sku(model,mfg,type,serial_no):
+	sku = frappe.db.sql('''select sku from `tabRecieved Equipment` where model = %s and manufacturer = %s and type = %s and serial_no = %s and docstatus = 1 and parenttype = "Equipment Received Form" ''',(model,mfg,type,serial_no),as_dict = 1)
 	if sku:
 		return sku[0]['sku']
 	else:
