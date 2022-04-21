@@ -1,10 +1,7 @@
 import frappe
 
 def before_save(self,method):
-    print("\n\n\n\n\ncontact........")
-    print(self.name)
     contacts = frappe.db.sql('''select c.name as name,c.phone as phone,c.mobile_no as mobile_no,c.email_id as email,c.designation as desig,c.address as location from `tabContact` as c inner join `tabDynamic Link` as dl on dl.parent = c.name where dl.link_doctype = "Customer" and dl.link_name = %s and dl.parenttype = "Contact" ''',self.name,as_dict=1)
-    print(contacts)
     if contacts:
         self.contact_details = []
         for i in contacts:

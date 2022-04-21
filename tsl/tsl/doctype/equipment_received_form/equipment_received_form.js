@@ -160,12 +160,14 @@ frappe.ui.form.on('Equipment Received Form', {
 frappe.ui.form.on("Recieved Equipment",{ 
 	model:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
-		if(item.model && item.manufacturer && item.docstatus == 0){
+		if(item.model && item.manufacturer && item.type && item.serial_no && item.docstatus == 0){
 			frappe.call({
 				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_sku',
 				args: {
 						"model":item.model,
-						"mfg":item.manufacturer
+						"mfg":item.manufacturer,
+						"type":item.type,
+						"serial_no":item.serial_no
 				},
 				callback(r) {
 					if(r.message) {
@@ -177,6 +179,14 @@ frappe.ui.form.on("Recieved Equipment",{
 		}
 	},
 	manufacturer:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		cur_frm.script_manager.trigger("model",cdt,cdn)
+	},
+	type:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		cur_frm.script_manager.trigger("model",cdt,cdn)
+	},
+	serial_no:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
 		cur_frm.script_manager.trigger("model",cdt,cdn)
 	}

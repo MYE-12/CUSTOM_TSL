@@ -10,6 +10,8 @@ import frappe,random
 #         self.item_code = x
 
 
+
+
 def generate_alphanum():
     x = ''.join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(8))
     x = "SP-"+x

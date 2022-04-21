@@ -24,6 +24,8 @@ def create_rfq(sod):
 	new_doc.supply_order_data = sod
 	new_doc.department = doc.department
 	new_doc.items=[]
+	sched_date = add_to_date(nowdate(),3)
+	print(sched_date)
 	for i in doc.get("in_stock"):
 		if i.parts_availability == "No":
 			new_doc.append("items",{
@@ -33,7 +35,9 @@ def create_rfq(sod):
 				"uom":"Nos",
 				"stock_uom":"Nos",
 				"conversion_factor":1,
+				"schedule_date":sched_date,
 				"stock_qty":1,
+				"warehouse":"All Warehouses - TSL",
 				"qty":i.qty
 			})
 	for i in doc.get("material_list"):
@@ -43,7 +47,9 @@ def create_rfq(sod):
 				"description":"Type: "+str(i.type)+", Model: "+str(i.model_no)+" , Serial No: "+str(i.serial_no),
 				"uom":"Nos",
 				"stock_uom":"Nos",
+				"schedule_date":sched_date,
 				"conversion_factor":1,
+				"warehouse":"All Warehouses - TSL",
 				"stock_qty":1,
 				"qty":i.quantity
 			})
@@ -78,6 +84,7 @@ def create_quotation(sod):
 			"item_name":i.part_name,
 			"description":i.type,
 			"qty":i.qty,
+			"schedule_date":add_to_date(nowdate,3),
 			"price_list_rate":i.price_ea,
 			"rate":i.price_ea,
 			"amount":i.total,
@@ -93,6 +100,7 @@ def create_quotation(sod):
 			"serial_no":i.serial_no,
 			"description":i.type,
 			"qty":i.quantity,
+			"schedule_date":add_to_date(nowdate,3),
 			"price_list_rate":i.price,
 			"rate":i.price,
 			"amount":i.amount,
