@@ -82,36 +82,39 @@ def create_evaluation_report(doc_no):
 	erf_doc = frappe.get_doc("Equipment Received Form",doc.equipment_recieved_form)
 	cc =""
 	for erf in erf_doc.received_equipment:
-		if erf.no_power:
-			cc+="No Power,"
-		if erf.no_output:
-			cc+="No Output,"
-		if erf.no_display:
-			cc+="No Display,"
-		if erf.no_communication:
-			cc+="No Communication,"
-		if erf.supply_voltage:
-			cc+="Supply Voltage,"
-		if erf.touchkeypad_not_working:
-			cc+="Touch keypad Not Working,"
-		if erf.no_backlight:
-			cc+="No BackLight,"
-		if erf.error_code:
-			cc+="Error Code,"
-		if erf.short_circuit:
-			cc+="Short Circuit,"
-		if erf.overloadovercurrent:
-			cc+="Overload/Over Current,"
-		if erf.other:
-			cc+=erf.specify
+		if doc.material_list[0].item_code == erf.item_code:
+			if erf.no_power:
+				cc+="No Power,\n"
+			if erf.no_output:
+				cc+="No Output,\n"
+			if erf.no_display:
+				cc+="No Display,\n"
+			if erf.no_communication:
+				cc+="No Communication,\n"
+			if erf.supply_voltage:
+				cc+="Supply Voltage,\n"
+			if erf.touchkeypad_not_working:
+				cc+="Touch keypad Not Working,\n"
+			if erf.no_backlight:
+				cc+="No BackLight,\n"
+			if erf.error_code:
+				cc+="Error Code,\n"
+			if erf.short_circuit:
+				cc+="Short Circuit,\n"
+			if erf.overloadovercurrent:
+				cc+="Overload/Over Current,\n"
+			if erf.other:
+				cc+=erf.specify
 	new_doc.customer_complaint = cc
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
-			"item":i.item_name,
-			"description":i.type,
+			"item":i.item_code,
+			"item_name":i.item_name0,
+			"description":i.item_name,
 			"manufacturer":i.mfg,
 			"model":i.model_no,
-			"serial_no":i.serial_no
+			"serial_no":i.serial_no,
+			"type":i.type
 
 		})
 	new_doc.item_photo = doc.image
@@ -190,20 +193,22 @@ def create_sal_inv(wod):
 			r = qi_details[0]['rate']
 			amt = qi_details[0]['amount']
 		new_doc.append("items",{
-			"item_name":i.item_name,
-			"item_code":"Service Item",
+			"item_name":i.item_name0,
+			"item_code":i.item_code,
 			"manufacturer":i.mfg,
 			"model":i.model_no,
 			"rate":r,
 			"amount":amt, 
+			"type":i.type,
 			"serial_number":i.serial_no,
-			"description":i.type,
+			"description":i.item_name,
 			"qty":i.quantity,
 			"wod_no":wod,
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,
-			"cost_center":doc.department
+			"cost_center":doc.department,
+			"warehouse":"Repair - TSL"
 
 		})
 	return new_doc
@@ -227,12 +232,13 @@ def create_dn(wod):
 			r = qi_details[0]['rate']
 			amt = qi_details[0]['amount']
 		new_doc.append("items",{
-			"item_name":i.item_name,
-			"item_code":"Service Item",
+			"item_name":i.item_name0,
+			"item_code":i.item_code,
 			"manufacturer":i.mfg,
 			"model":i.model_no,
 			"serial_number":i.serial_no,
-			"description":i.type,
+			"description":i.item_name,
+			'type':i.type,
 			"qty":i.quantity,
 			"rate":r,
 			"amount":amt,
@@ -240,7 +246,8 @@ def create_dn(wod):
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,
-			"cost_center":doc.department
+			"cost_center":doc.department,
+			"warehouse":"Repair - TSL"
 
 		})
 	return new_doc

@@ -13,28 +13,28 @@
   "model",
   "manufacturer",
   "type",
-  "part_name",
   "serial_no",
   "qty",
+  "column_break_8",
+  "part_name",
   "price_ea",
   "total",
   "parts_availability"
  ],
  "fields": [
   {
-   "columns": 2,
    "fetch_from": "part.item_name",
    "fieldname": "part_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
+   "fieldtype": "Text Editor",
    "label": "Description"
   },
   {
-   "fetch_from": "part.description",
+   "fetch_from": "part.type",
    "fieldname": "type",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Link",
    "hidden": 1,
-   "label": "Type"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
    "allow_on_submit": 1,
@@ -83,32 +83,36 @@
    "options": "Item"
   },
   {
-   "fetch_from": "part.manufacturer",
+   "columns": 1,
+   "fetch_from": "part.mfg",
    "fieldname": "manufacturer",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Manufacturer"
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Manufacturer",
+   "options": "Item Mfg"
   },
   {
+   "columns": 2,
    "fetch_from": "part.model",
    "fieldname": "model",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Model"
-  },
-  {
-   "fetch_from": "part.serial_no",
-   "fieldname": "serial_no",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Serial No"
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Model/Part Number",
+   "options": "Item Model"
   },
   {
    "columns": 1,
+   "fetch_from": "part.serial_no",
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Serial No"
+  },
+  {
    "fetch_from": "part.financial_code",
    "fieldname": "part_number",
    "fieldtype": "Data",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Part Number"
   },
   {
@@ -117,23 +121,25 @@
    "fieldname": "category",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Category",
+   "label": "Type/Category",
    "options": "Category"
   },
   {
-   "columns": 1,
    "fetch_from": "part.sub_category",
    "fieldname": "sub_category",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Sub Category",
    "options": "Sub Category"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-04-07 09:29:30.759010",
+ "modified": "2022-05-16 08:03:46.148366",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

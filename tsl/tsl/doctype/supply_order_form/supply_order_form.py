@@ -23,38 +23,36 @@ def create_supply_order_data(order_no):
 	}
 
 	new_doc = frappe.new_doc("Supply Order Data")
-	if doc.work_order_data:
-		warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"])
-		date = frappe.utils.add_to_date(warr[0], days=int(warr[1]))
-		if doc.received_date <= date:
-			new_doc.status = "NER-Need Evaluation Return"
-		else:
-			frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+	# if doc.work_order_data:
+	# 	warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"])
+	# 	date = frappe.utils.add_to_date(warr[0], days=int(warr[1]))
+	# 	if doc.received_date <= date:
+	# 		new_doc.status = "NER-Need Evaluation Return"
+	# 	else:
+	# 		frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
 	new_doc.customer = doc.customer
 	new_doc.received_date = doc.received_date
 	new_doc.sales_rep = doc.sales_person
 	new_doc.branch = doc.branch
 	new_doc.naming_series = d[new_doc.branch]
 	new_doc.supply_order_form = doc.name
-	for i in doc.get("received_equipment"):
-		new_doc.append("material_list",{
-			"item_name": i.item_name,
+	for i in doc.get("equipments_in_stock"):
+		new_doc.append("in_stock",{
+			"part":i.part,
+			'item_name':i.item_name,
+			'part_number':i.part_number,
+			'category':i.category,
+			'sub_category':i.sub_category,
+			"part_name":i.part_name,
 			"type":i.type,
 			"model_no":i.model,
 			"mfg":i.manufacturer,
 			"serial_no":i.serial_no,
-			"quantity":i.qty,
-		})
-	for i in doc.get("equipments_in_stock"):
-		new_doc.append("in_stock",{
-			"part":i.part,
-			"part_name":i.part_name,
-			"type":i.type,
 			"qty":i.qty,
 			"price_ea":i.price_ea,
 			"total":i.total,
 			"parts_availability":i.parts_availability,
-			"financial_code":i.financial_code
+			
 		})
 	new_doc.save(ignore_permissions = True)
 	l.append(new_doc.name)
@@ -76,7 +74,7 @@ def get_contacts(customer):
 
 class SupplyOrderForm(Document):
 	def before_save(self):
-		for i in self.get('received_equipment'):
+		for i in self.get('equipments_in_stock'):
 			if i.model and i.manufacturer and i.type and i.serial_no:
 				for wod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s''',(i.model,i.manufacturer,i.type,i.serial_no),as_dict=1):
 					prev_quoted = frappe.db.sql('''select q.party_name as customer,q.name as name,qi.rate as price from `tabQuotation Item` as qi inner join `tabQuotation` as q on qi.parent = q.name where qi.wod_no = %s and (q.quotation_type = "Customer Quotation - Repair" or q.quotation_type = "Revised Quotation - Repair") and q.workflow_state = "Approved By Customer" ''',wod['parent'],as_dict = 1)
@@ -88,6 +86,25 @@ class SupplyOrderForm(Document):
 						"quoted_price":prev_quoted[0]['price'],
 						"quotation_no":prev_quoted[0]['name']
 					})
+
+		for i in self.get('equipments_in_stock'):
+			if not i.part:
+				new_doc = frappe.new_doc('Item')
+				new_doc.naming_series = '.####'
+				new_doc.item_name = i.part_name
+				new_doc.description = i.part_name
+				new_doc.item_group = "All Item Groups"
+				new_doc.category_ = i.category
+				new_doc.sub_category = i.sub_category
+				new_doc.qty = i.qty
+				new_doc.model = i.model
+				new_doc.is_stock_item = 1
+				new_doc.mfg = i.manufacturer
+				new_doc.serial_no = i.serial_no
+				new_doc.save(ignore_permissions = True)
+				if new_doc.name:
+					i.part = new_doc.name
+
 	def before_submit(self):
 		if not self.branch:
 			frappe.throw("Assign a branch to Submit")

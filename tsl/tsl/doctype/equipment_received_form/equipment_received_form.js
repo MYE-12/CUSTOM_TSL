@@ -108,6 +108,19 @@ work_order_data:function(frm){
 		});
 
 	}
+},
+setup:function(frm){
+	frm.fields_dict['received_equipment'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
+		var child = locals[cdt][cdn];
+		return{
+			filters: {
+				'model': child.model,
+				'mfg':child.manufacturer,
+				'category_':child.type,
+				'serial_no':child.serial_no
+			}
+		}
+	}
 }
 });
 frappe.ui.form.on("Equipment Received Form", {
@@ -130,8 +143,8 @@ frappe.ui.form.on('Recieved Equipment Image', {
 		if(frm.doc.received_equipment){
 			let options = []
 			for(let i in frm.doc.received_equipment){
-				if(!options.includes(frm.doc.received_equipment[i].item)){
-					options.push(frm.doc.received_equipment[i].item)
+				if(!options.includes(frm.doc.received_equipment[i].item_code)){
+					options.push(frm.doc.received_equipment[i].item_code)
 				}
 			}
 			frm.fields_dict['images'].grid.get_field('item').get_query = function(doc){
@@ -157,38 +170,38 @@ frappe.ui.form.on('Equipment Received Form', {
 		});
 	}
 });
-frappe.ui.form.on("Recieved Equipment",{ 
-	model:function(frm,cdt,cdn){
-		var item = locals[cdt][cdn];
-		if(item.model && item.manufacturer && item.type && item.serial_no && item.docstatus == 0){
-			frappe.call({
-				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_sku',
-				args: {
-						"model":item.model,
-						"mfg":item.manufacturer,
-						"type":item.type,
-						"serial_no":item.serial_no
-				},
-				callback(r) {
-					if(r.message) {
-						item.sku = r.message;
-						cur_frm.refresh_fields();
-					}
-				}
-				});
-		}
-	},
-	manufacturer:function(frm,cdt,cdn){
-		var item = locals[cdt][cdn];
-		cur_frm.script_manager.trigger("model",cdt,cdn)
-	},
-	type:function(frm,cdt,cdn){
-		var item = locals[cdt][cdn];
-		cur_frm.script_manager.trigger("model",cdt,cdn)
-	},
-	serial_no:function(frm,cdt,cdn){
-		var item = locals[cdt][cdn];
-		cur_frm.script_manager.trigger("model",cdt,cdn)
-	}
+// frappe.ui.form.on("Recieved Equipment",{ 
+// 	model:function(frm,cdt,cdn){
+// 		var item = locals[cdt][cdn];
+// 		if(item.model && item.manufacturer && item.type && item.serial_no && item.docstatus == 0){
+// 			frappe.call({
+// 				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_sku',
+// 				args: {
+// 						"model":item.model,
+// 						"mfg":item.manufacturer,
+// 						"type":item.type,
+// 						"serial_no":item.serial_no
+// 				},
+// 				callback(r) {
+// 					if(r.message) {
+// 						item.sku = r.message;
+// 						cur_frm.refresh_fields();
+// 					}
+// 				}
+// 				});
+// 		}
+// 	},
+// 	manufacturer:function(frm,cdt,cdn){
+// 		var item = locals[cdt][cdn];
+// 		cur_frm.script_manager.trigger("model",cdt,cdn)
+// 	},
+// 	type:function(frm,cdt,cdn){
+// 		var item = locals[cdt][cdn];
+// 		cur_frm.script_manager.trigger("model",cdt,cdn)
+// 	},
+// 	serial_no:function(frm,cdt,cdn){
+// 		var item = locals[cdt][cdn];
+// 		cur_frm.script_manager.trigger("model",cdt,cdn)
+// 	}
 
-});
+// });

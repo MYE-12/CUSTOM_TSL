@@ -103,9 +103,20 @@ frappe.ui.form.on('Supply Order Form', {
 			var child = locals[cdt][cdn];
 			return{
 				filters: {
-					'financial_code': child.part_number,
 					'category_':child.category,
-					'sub_category':child.sub_category
+					'sub_category':child.sub_category,
+					'model':child.model,
+					'manufacturer':child.manufacturer,
+					'serial_no':child.serial_no,
+				}
+			}
+		},
+		frm.fields_dict['equipments_in_stock'].grid.get_field('sub_category').get_query = function(frm, cdt, cdn) {
+			var child = locals[cdt][cdn];
+			return{
+				filters: {
+					
+					'category':child.category
 				}
 			}
 		}
@@ -158,7 +169,7 @@ frappe.ui.form.on('Supply Order Form', {
 		});
 	}
 });
-frappe.ui.form.on('Part Sheet Item', {
+frappe.ui.form.on('Supply Data Item', {
 	
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]

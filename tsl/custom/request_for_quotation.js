@@ -1,13 +1,29 @@
 frappe.ui.form.on('Request for Quotation', {
     
     onload_post_render:function(frm){
-        frm.fields_dict['items'].grid.get_field('warehouse').get_query = function(doc){
-                return{
-                        filters:[
-                                {"company": frm.doc.company}
+        frm.set_query("branch", function() {
+                return {
+                        filters: [
+                                ["Warehouse","company", "=", frm.doc.company],
+                                ["Warehouse","is_branch","=",1]
+                                
                         ]
-                }
-        }
+                };
+        });
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
+		var child = locals[cdt][cdn];
+		return{
+			filters: {
+				'model': child.model,
+				'manufacturer':child.manufacturer,
+				'type':child.type,
+				'serial_no':child.serial_number,
+                                'financial_code':child.part_number,
+                                'category_':child.category,
+                                'sub_category':child.sub_category
+			}
+		};
+	};
     
         },
     refresh:function(frm){

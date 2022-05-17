@@ -134,11 +134,11 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nRNP-Return No Parts\nRNPC-Return No Parts Client\nA-Approved\nEP-Extra Parts\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nTR-Technician Repair\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nW-Working\nP-Paid\nC-Comparison\nCC-Comparison Client\nNER-Need Evaluation Return\nUE-Under Evaluation\nIQ-Internally Quoted\nUTR-Under Technician Repair\nRNF-Return No Fault\nRNFC-Return No Fault Client"
+   "options": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nRNP-Return No Parts\nRNPC-Return No Parts Client\nA-Approved\nEP-Extra Parts\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nTR-Technician Repair\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nW-Working\nP-Paid\nC-Comparison\nCC-Comparison Client\nNER-Need Evaluation Return\nUE-Under Evaluation\nIQ-Internally Quoted\nUTR-Under Technician Repair\nRNF-Return No Fault\nRNFC-Return No Fault ClientA-Approved\nAP-Available Parts\nC-Comparison\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts"
   },
   {
    "fieldname": "remarks",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Remarks"
   },
   {
@@ -190,9 +190,9 @@
   {
    "fieldname": "material_list",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "TSL Non Inventory(Equipments)",
-   "options": "Supply Order Table",
-   "reqd": 1
+   "options": "Supply Order Table"
   },
   {
    "fieldname": "section_break_23",
@@ -231,7 +231,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-06 08:54:19.779154",
+ "modified": "2022-04-28 13:27:31.348964",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
