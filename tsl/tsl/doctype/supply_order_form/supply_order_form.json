@@ -181,9 +181,9 @@
   {
    "fieldname": "received_equipment",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "TSL Non Inventory(Equipments)",
-   "options": "Recieved Equipment",
-   "reqd": 1
+   "options": "Recieved Equipment"
   },
   {
    "fieldname": "attach_image_section",
@@ -201,7 +201,7 @@
    "fieldname": "equipments_in_stock",
    "fieldtype": "Table",
    "label": "TSL Inventory(Spare Parts)",
-   "options": "Part Sheet Item"
+   "options": "Supply Data Item"
   },
   {
    "fieldname": "amended_from",
@@ -228,7 +228,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-07 09:23:03.340065",
+ "modified": "2022-04-30 15:13:06.927728",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Form",

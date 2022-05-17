@@ -5,6 +5,7 @@ from hashlib import new
 from pydoc import doc
 import frappe
 from frappe.model.document import Document
+from frappe.utils import add_to_date
 
 @frappe.whitelist()
 def check_userrole(user):
@@ -51,12 +52,19 @@ def create_rfq(ps):
 			new_doc.append("items",{
 				"item_code":i.part,
 				"item_name":i.part_name,
-				"description":i.type,
+				"description":i.part_name,
+				'model':i.model,
+				"category":i.category,
+				"sub_category":i.sub_category,
+				"manufacturer":i.manufacturer,
+				'serial_no':i.serial_no,
 				"uom":"Nos",
 				"stock_uom":"Nos",
 				"conversion_factor":1,
 				"stock_qty":1,
-				"qty":i.qty
+				"qty":i.qty,
+				"schedule_date":add_to_date(new_doc.transaction_date,days = 2),
+				"warehouse":"All Warehouses - TSL"
 			})
 	return new_doc
 

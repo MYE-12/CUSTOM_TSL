@@ -21,8 +21,9 @@ def get_wod_items(wod):
 			tot = 0
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
-				"item" :"Service Item",
-				"item_name" : i.item_name,
+				"item" :i.item_code,
+				"item_name" : i.item_name0,
+				"description":i.item_name,
 				"wod": k,
 				"type": i.type,
 				"model_no": i.model_no,

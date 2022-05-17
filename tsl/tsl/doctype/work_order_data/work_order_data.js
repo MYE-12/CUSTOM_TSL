@@ -187,7 +187,19 @@ frappe.ui.form.on('Work Order Data', {
 			frm.set_value("naming_series",d[frm.doc.branch]);
 		}
 	},
-	
+	setup:function(frm){
+		frm.fields_dict['material_list'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
+			var child = locals[cdt][cdn];
+			return{
+				filters: {
+					'model': child.model_no,
+					'manufacturer':child.mfg,
+					'type':child.type,
+					'serial_no':child.serial_no
+				}
+			}
+		}
+	}
 		
 	
 });

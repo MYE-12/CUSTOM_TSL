@@ -12,6 +12,40 @@ class EquipmentReceivedForm(Document):
 	def before_submit(self):
 		if not self.branch:
 			frappe.throw("Assign a branch to Submit")
+		for i in self.get('received_equipment'):
+			if not i.item_code:
+				frappe.throw("Item code should be filled in Row-{0}".format(i.idx))
+		for i in self.get('received_equipment'):
+			if i.item_code:
+				new_doc = frappe.new_doc("Stock Entry")
+				new_doc.stock_entry_type = "Material Receipt"
+				new_doc.company = self.company
+				new_doc.branch = self.branch
+				new_doc.equipment_received_form = self.name
+				new_doc.to_warehouse = 'Repair - TSL'
+				new_doc.append("items",{
+					't_warehouse': 'Repair - TSL',
+					'item_code':i.item_code,
+					'item_name':i.item_name,
+					'description':i.item_name,
+					'qty':i.qty,
+					'uom':frappe.db.get_value("Item",i.item_code,'stock_uom'),
+					'conversion_factor':1,
+					'allow_zero_valuation_rate':1
+				})
+				new_doc.save(ignore_permissions = True)
+				if new_doc.name:
+					new_doc.submit()
+
+	def on_cancel(self):
+		if frappe.db.get_list("Stock Entry",{'equipment_received_form':self.name},"name",as_list = 1):
+			for i in frappe.db.get_list("Stock Entry",{'equipment_received_form':self.name},"name",as_list = 1):
+				doc = frappe.get_doc("Stock Entry",i[0])
+				if doc.docstatus == 1:
+					doc.cancel()
+		
+
+
 			
 	def before_save(self):
 		for i in self.get('received_equipment'):
@@ -26,6 +60,25 @@ class EquipmentReceivedForm(Document):
 						"quoted_price":prev_quoted[0]['price'],
 						"quotation_no":prev_quoted[0]['name']
 					})
+				
+		for i in self.get('received_equipment'):
+			if not i.item_code:
+				new_doc = frappe.new_doc('Item')
+				new_doc.naming_series = '.####'
+				new_doc.item_name = i.item_name
+				new_doc.description = i.item_name
+				new_doc.qty = i.qty
+				new_doc.model = i.model
+				new_doc.is_stock_item = 1
+				new_doc.mfg = i.manufacturer
+				new_doc.category_ = i.type
+				new_doc.serial_no = i.serial_no
+				new_doc.save(ignore_permissions = True)
+				if new_doc.name:
+					i.item_code = new_doc.name
+		
+
+
 
 	
 
@@ -37,15 +90,15 @@ def get_contacts(customer):
 		l.append(i.name1)
 	return l
 
-@frappe.whitelist()
-def get_sku(model,mfg,type,serial_no):
-	sku = frappe.db.sql('''select sku from `tabRecieved Equipment` where model = %s and manufacturer = %s and type = %s and serial_no = %s and docstatus = 1 and parenttype = "Equipment Received Form" ''',(model,mfg,type,serial_no),as_dict = 1)
-	if sku:
-		return sku[0]['sku']
-	else:
-		import random
-		x = ''.join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(8))
-		return x
+# @frappe.whitelist()
+# def get_sku(model,mfg,type,serial_no):
+# 	sku = frappe.db.sql('''select sku from `tabRecieved Equipment` where model = %s and manufacturer = %s and type = %s and serial_no = %s and docstatus = 1 and parenttype = "Equipment Received Form" ''',(model,mfg,type,serial_no),as_dict = 1)
+# 	if sku:
+# 		return sku[0]['sku']
+# 	else:
+# 		import random
+# 		x = ''.join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(8))
+# 		return x
 
 
 @frappe.whitelist()
@@ -53,9 +106,9 @@ def create_workorder_data(order_no):
 	l=[]
 	doc = frappe.get_doc("Equipment Received Form",order_no)
 	for i in doc.get("received_equipment"):
-		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item_name=%s and ml.quantity=%s""",(order_no,i.item_name, i.qty))
+		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item_code=%s and ml.quantity=%s""",(order_no,i.item_code, i.qty))
 		if wod:
-			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_name))
+			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_code))
 			continue
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
@@ -87,7 +140,8 @@ def create_workorder_data(order_no):
 		new_doc.naming_series = d[new_doc.branch]
 		new_doc.equipment_recieved_form = doc.name
 		new_doc.append("material_list",{
-			"item_name": i.item_name,
+			"item_code": i.item_code,
+			"item_name":i.item_name,
 			"type":i.type,
 			"model_no":i.model,
 			"mfg":i.manufacturer,

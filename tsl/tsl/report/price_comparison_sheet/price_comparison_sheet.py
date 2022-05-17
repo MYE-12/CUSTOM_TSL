@@ -34,8 +34,6 @@ def get_columns(filters):
 		},
 	]
 	suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_list=1)
-	print("\n\n\n\n")
-	print(suppliers)
 	for i in suppliers:
 		s = i[0].lower().replace(" ","_")
 		columns.append({

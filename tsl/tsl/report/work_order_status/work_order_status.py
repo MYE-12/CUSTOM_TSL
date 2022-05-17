@@ -152,7 +152,8 @@ def get_columns(filters):
 	{
 		"fieldname":"dn_no",
 		"label": "DN No",
-		"fieldtype": "Data",
+		"fieldtype": "Link",
+		"options":"Delivery Note"
 	},
 	{
 		"fieldname":"ner_date",
@@ -172,7 +173,8 @@ def get_columns(filters):
 	{
 		"fieldname":"invoice_no",
 		"label": "Invoice No",
-		"fieldtype": "Data",
+		"fieldtype": "Link",
+		"options":"Sales Invoice"
 	},
 	{
 		"fieldname":"rv_no",
@@ -200,7 +202,8 @@ def get_columns(filters):
 	{
 		"fieldname":"po_no",
 		"label": "PO No",
-		"fieldtype": "Data",
+		"fieldtype": "Link",
+		"options": "Purchase Order"
 	},
 	{
 		"fieldname":"customer_vat_no",
@@ -253,8 +256,11 @@ def get_columns(filters):
 def get_data(filters):
 	# work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks from `tabWork Order Data` where posting_date >= %s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	data = []
-	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name from `tabWork Order Data` where creation >=%s and creation <= %s''',(filters.from_date,filters.to_date),as_dict=1)
+	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name,dn_no,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where creation >=%s and creation <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	for i in work_order_entries:
+		doc = frappe.get_doc("Work Order Data",i["wod_no"])
+		if doc.status == "NER-Need Evaluation Return":
+			i['ner_date'] = doc.returned_date
 		i["sales_rep"] = frappe.db.get_value("User",i.sales_rep,"full_name")
 		i["company"] = frappe.defaults.get_user_default("Company")
 		i["city"] = frappe.db.get_value("Address",frappe.db.get_value("Customer",i.customer,"customer_primary_address"),"city")

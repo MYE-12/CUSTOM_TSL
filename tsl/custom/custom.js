@@ -1,5 +1,28 @@
 frappe.ui.form.on('Quotation', {
-
+	onload_post_render:function(frm){
+        frm.set_query("branch", function() {
+                return {
+                        filters: [
+                                ["Warehouse","company", "=", frm.doc.company],
+                                ["Warehouse","is_branch","=",1]
+                                
+                        ]
+                };
+        });
+        frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
+		var child = locals[cdt][cdn];
+		return{
+			filters: {
+				'model': child.model_no,
+				'mfg':child.manufacturer,
+				'serial_no':child.serial_no,
+				'category_':child.category,
+				'sub_category':child.sub_category
+			}
+		};
+		};
+    
+        },
 	
     refresh:function(frm){
 		
@@ -27,7 +50,8 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
-	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply")){
+	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.name){
+		
             frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
 				frappe.call({
 					method: "tsl.custom_py.quotation.get_similar_unit_details",
@@ -184,7 +208,6 @@ frappe.ui.form.on('Quotation', {
 							customer:frm.doc.party_name,
 						},
 						add_filters_group: 1,
-						// date_field: "transaction_date",
 						get_query() {
 							return {
 								filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name }
@@ -210,7 +233,8 @@ frappe.ui.form.on('Quotation', {
 											childTable.wod_no = r.message[i]["wod"],
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
-											childTable.description = r.message[i]["type"],
+											childTable.description = r.message[i]["description"],
+											childTable.type = r.message[i]['type'],
 											childTable.qty = r.message[i]["qty"],
 											childTable.rate = r.message[i]["total_amt"]
 											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
@@ -464,3 +488,27 @@ frappe.ui.form.on('Quotation', {
 			});
 		}
 	});
+	// frappe.ui.form.on('Sales Invoice', {
+	// 	setup: function(frm) {
+	// 		frm.set_query("branch", function() {
+	// 			return {
+	// 				filters: [
+	// 					["Warehouse","company", "=", frm.doc.company],
+	// 					["Warehouse","is_branch","=",1]
+						
+	// 				]
+	// 			};
+	// 		});
+	// 		frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
+	// 		var child = locals[cdt][cdn];
+	// 		return{
+	// 			filters: {
+	// 				'model': child.model,
+	// 				'manufacturer':child.manufacturer,
+	// 				'type':child.type,
+	// 				'serial_no':child.serial_number
+	// 			}
+	// 		};
+	// 	};
+	// 	}
+	// });

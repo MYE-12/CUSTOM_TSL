@@ -25,7 +25,6 @@ def create_rfq(sod):
 	new_doc.department = doc.department
 	new_doc.items=[]
 	sched_date = add_to_date(nowdate(),3)
-	print(sched_date)
 	for i in doc.get("in_stock"):
 		if i.parts_availability == "No":
 			new_doc.append("items",{
@@ -39,19 +38,6 @@ def create_rfq(sod):
 				"stock_qty":1,
 				"warehouse":"All Warehouses - TSL",
 				"qty":i.qty
-			})
-	for i in doc.get("material_list"):
-		new_doc.append("items",{
-				"item_code":"Service Item",
-				"item_name":i.item_name,
-				"description":"Type: "+str(i.type)+", Model: "+str(i.model_no)+" , Serial No: "+str(i.serial_no),
-				"uom":"Nos",
-				"stock_uom":"Nos",
-				"schedule_date":sched_date,
-				"conversion_factor":1,
-				"warehouse":"All Warehouses - TSL",
-				"stock_qty":1,
-				"qty":i.quantity
 			})
 	return new_doc
 
@@ -84,26 +70,10 @@ def create_quotation(sod):
 			"item_name":i.part_name,
 			"description":i.type,
 			"qty":i.qty,
-			"schedule_date":add_to_date(nowdate,3),
+			"schedule_date":add_to_date(nowdate(),3),
 			"price_list_rate":i.price_ea,
 			"rate":i.price_ea,
 			"amount":i.total,
-			"uom":"Nos",
-			"stock_uom":"Nos"
-		})
-	for i in doc.get("material_list"):
-		new_doc.append("items",{
-			"supply_order_data":sod,
-			"item_code":"Service Item",
-			"item_name":i.item_name,
-			"model_no":i.model_no,
-			"serial_no":i.serial_no,
-			"description":i.type,
-			"qty":i.quantity,
-			"schedule_date":add_to_date(nowdate,3),
-			"price_list_rate":i.price,
-			"rate":i.price,
-			"amount":i.amount,
 			"uom":"Nos",
 			"stock_uom":"Nos"
 		})
@@ -125,7 +95,6 @@ def create_quotation(sod):
 
 class SupplyOrderData(Document):
 	def on_update_after_submit(self):
-		print("\n\n\n\n\nduring submit")
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()
@@ -155,3 +124,12 @@ class SupplyOrderData(Document):
 				"date":now,
 			})
 	
+	def before_save(self):
+		for i in self.get('in_stock'):
+			if i.part:
+				i.parts_availability = 'No'
+				if frappe.db.get_value("Bin",{"item_code":i.part},"name"):
+					if i.qty <= frappe.db.get_value('Bin',{'item_code':i.part},'actual_qty'):
+						i.parts_availability = 'Yes'
+						i.price_ea = frappe.db.get_value('Bin',{'item_code':i.part},'valuation_rate')
+						i.total = i.qty * i.price_ea

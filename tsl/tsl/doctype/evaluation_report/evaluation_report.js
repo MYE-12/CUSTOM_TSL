@@ -65,6 +65,21 @@ frappe.ui.form.on('Evaluation Report', {
 					}
 				}
 			});
+			frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+				var child = locals[cdt][cdn];
+				if(child.model || child.category || child.sub_category || child.serial_no){
+					return{
+						filters: {
+							'model': child.model,
+							'category_':child.category,
+							'sub_category':child.sub_category,
+							'serial_no':child.serial_no,
+						}
+					}
+
+				}
+				
+			}
 		}
 		if(frm.doc.docstatus == 1 && frm.doc.parts_availability == "No"){
 			frm.add_custom_button(__("Request for Quotation"), function(){
@@ -83,6 +98,19 @@ frappe.ui.form.on('Evaluation Report', {
 			},__('Create'));
 		}
 		
+	},
+	setup:function(frm){
+		
+		frm.fields_dict['items'].grid.get_field('sub_category').get_query = function(frm, cdt, cdn) {
+			var child = locals[cdt][cdn];
+			return{
+				filters: {
+					'category':child.category,
+					
+				}
+			}
+		}
+
 	}
 
 });
