@@ -109,7 +109,6 @@ def create_evaluation_report(doc_no):
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_code,
-			"item_name":i.item_name0,
 			"description":i.item_name,
 			"manufacturer":i.mfg,
 			"model":i.model_no,

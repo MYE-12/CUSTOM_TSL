@@ -31,7 +31,8 @@ def send_mail(branch,name,doctype,msg):
                 attachments=get_attachments(name,doctype)
             )
             frappe.msgprint("Email sent")
-        except frappe.OutgoingEmailError:
+        except frappe.OutgoingEmailError as e:
+            frappe.msgprint(str(e))
             pass
 
 def get_attachments(name,doctype):
@@ -40,7 +41,6 @@ def get_attachments(name,doctype):
 
 @frappe.whitelist()
 def get_items_from_purchase_receipts(self):
-    print("\n\n\n\n\nget_items_from_purchase_receipts")
     self.set("items", [])
     for pr in self.get("purchase_receipts"):
         if pr.receipt_document_type and pr.receipt_document:

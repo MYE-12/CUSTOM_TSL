@@ -165,7 +165,16 @@ def create_sal_inv(source):
 	for i in doclist.get('items'):
 		doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
 	return doclist
-	
+
+@frappe.whitelist()
+def final_price_validate(source):
+	doc = frappe.get_doc("Quotation",source)
+	return round(doc.final_approved_price / doc.total_qty,2)
+
+@frappe.whitelist()
+def final_price_validate_si(wod):
+	qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
+	return qi_details
 
 def on_update(self, method):
 	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:

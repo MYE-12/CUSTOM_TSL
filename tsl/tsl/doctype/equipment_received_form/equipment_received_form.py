@@ -28,6 +28,7 @@ class EquipmentReceivedForm(Document):
 					'item_code':i.item_code,
 					'item_name':i.item_name,
 					'description':i.item_name,
+					'serial_no':i.serial_no,
 					'qty':i.qty,
 					'uom':frappe.db.get_value("Item",i.item_code,'stock_uom'),
 					'conversion_factor':1,
@@ -63,19 +64,24 @@ class EquipmentReceivedForm(Document):
 				
 		for i in self.get('received_equipment'):
 			if not i.item_code:
-				new_doc = frappe.new_doc('Item')
-				new_doc.naming_series = '.####'
-				new_doc.item_name = i.item_name
-				new_doc.description = i.item_name
-				new_doc.qty = i.qty
-				new_doc.model = i.model
-				new_doc.is_stock_item = 1
-				new_doc.mfg = i.manufacturer
-				new_doc.category_ = i.type
-				new_doc.serial_no = i.serial_no
-				new_doc.save(ignore_permissions = True)
-				if new_doc.name:
-					i.item_code = new_doc.name
+				item = frappe.db.get_value("Item",{"model":i.model,"mfg":i.manufacturer,"type":i.type,"item_name":i.item_name},"name")
+				if item and i.serial_no in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+					i.item_code = item
+				elif item and i.serial_no not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+					i.item_code = item
+				else:
+					new_doc = frappe.new_doc('Item')
+					new_doc.naming_series = '.####'
+					new_doc.item_name = i.item_name
+					new_doc.description = i.item_name
+					new_doc.model = i.model
+					new_doc.is_stock_item = 1
+					new_doc.mfg = i.manufacturer
+					new_doc.type = i.type
+					new_doc.has_serial_no = 1
+					new_doc.save(ignore_permissions = True)
+					if new_doc.name:
+						i.item_code = new_doc.name
 		
 
 
@@ -106,7 +112,7 @@ def create_workorder_data(order_no):
 	l=[]
 	doc = frappe.get_doc("Equipment Received Form",order_no)
 	for i in doc.get("received_equipment"):
-		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item_code=%s and ml.quantity=%s""",(order_no,i.item_code, i.qty))
+		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item_code=%s and ml.model_no = %s and ml.mfg = %s and ml.type = %s and ml.serial_no = %s and  ml.quantity=%s""",(order_no,i.item_code,i.model ,i.manufacturer , i.type ,i.serial_no ,i.qty))
 		if wod:
 			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_code))
 			continue
@@ -122,7 +128,6 @@ def create_workorder_data(order_no):
 			link0 = []
 			warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"])
 			date = frappe.utils.add_to_date(warr[0], days=int(warr[1]))
-			print(doc.received_date)
 			frappe.db.set_value("Work Order Data",doc.work_order_data,"expiry_date",date)
 			frappe.db.set_value("Work Order Data",doc.work_order_data,"returned_date",doc.received_date)
 			if doc.received_date <= date:

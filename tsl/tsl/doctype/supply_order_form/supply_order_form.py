@@ -97,8 +97,9 @@ class SupplyOrderForm(Document):
 				new_doc.category_ = i.category
 				new_doc.sub_category = i.sub_category
 				new_doc.qty = i.qty
+				new_doc.type = i.type
 				new_doc.model = i.model
-				new_doc.is_stock_item = 1
+				new_doc.is_stock_item = 0
 				new_doc.mfg = i.manufacturer
 				new_doc.serial_no = i.serial_no
 				new_doc.save(ignore_permissions = True)

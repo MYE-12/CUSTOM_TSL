@@ -10,8 +10,9 @@
   "item_name0",
   "model_no",
   "mfg",
-  "type",
+  "category",
   "column_break_6",
+  "type",
   "serial_no",
   "item_name",
   "wo",
@@ -46,29 +47,27 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item_code.serial_no",
    "fieldname": "serial_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Serial No"
+   "label": "Serial No",
+   "options": "Serial No"
   },
   {
-   "columns": 1,
    "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Quantity",
    "reqd": 1
   },
   {
-   "columns": 1,
-   "fetch_from": "item_code.category_",
+   "columns": 2,
+   "fetch_from": "item_code.type",
    "fieldname": "type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type/Category",
-   "options": "Category"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
    "columns": 2,
@@ -76,7 +75,7 @@
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Description"
+   "label": "Description and Specification"
   },
   {
    "allow_on_submit": 1,
@@ -93,11 +92,11 @@
    "read_only": 1
   },
   {
-   "columns": 1,
+   "columns": 2,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Item",
+   "label": "SKU",
    "options": "Item"
   },
   {
@@ -110,12 +109,20 @@
   {
    "fieldname": "column_break_6",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "item_code.category_",
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Type/Category",
+   "options": "Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-11 10:17:13.785458",
+ "modified": "2022-05-21 13:35:21.512295",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",
