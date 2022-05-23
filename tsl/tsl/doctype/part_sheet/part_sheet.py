@@ -36,6 +36,9 @@ def get_availabilty(qty,item):
 		if float(actual) >= float(qty):
 			return "Yes"
 	return "No"
+@frappe.whitelist()
+def get_serial_no(item):
+	return [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]
 
 @frappe.whitelist()
 def create_rfq(ps):

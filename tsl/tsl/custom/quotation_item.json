@@ -617,7 +617,7 @@
    "description": null,
    "docstatus": 0,
    "dt": "Quotation Item",
-   "fetch_from": "item_code.serial_no",
+   "fetch_from": "",
    "fetch_if_empty": 0,
    "fieldname": "serial_no",
    "fieldtype": "Data",

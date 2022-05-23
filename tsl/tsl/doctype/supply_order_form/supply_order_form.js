@@ -101,15 +101,28 @@ frappe.ui.form.on('Supply Order Form', {
 	setup:function(frm){
 		frm.fields_dict['equipments_in_stock'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
 			var child = locals[cdt][cdn];
-			return{
-				filters: {
-					'category_':child.category,
-					'sub_category':child.sub_category,
-					'model':child.model,
-					'manufacturer':child.manufacturer,
-					'serial_no':child.serial_no,
-				}
-			}
+			var d = {};
+					if(child.model){
+						d['model'] = child.model;
+
+					}
+					if(child.category){
+						d['category_'] = child.category;
+					}
+					if(child.sub_category){
+						d['sub_category'] = child.sub_category;
+					}
+					if(child.manufacturer){
+						d['mfg'] = child.manufacturer;
+					}
+					if(child.type){
+						d['type'] = child.type;
+					}
+					
+					return{
+						filters: d
+					}
+			
 		},
 		frm.fields_dict['equipments_in_stock'].grid.get_field('sub_category').get_query = function(frm, cdt, cdn) {
 			var child = locals[cdt][cdn];

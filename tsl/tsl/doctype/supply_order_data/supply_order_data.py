@@ -1,6 +1,7 @@
 # Copyright (c) 2022, Tsl and contributors
 # For license information, please see license.txt
 
+from unicodedata import category
 import frappe
 #from typing_extensions import Self
 from frappe.model.document import Document
@@ -30,7 +31,13 @@ def create_rfq(sod):
 			new_doc.append("items",{
 				"item_code":i.part,
 				"item_name":i.part_name,
-				"description":i.type,
+				"description":i.part_name,
+				"type":i.type,
+				"model":i.model,
+				"manufacturer":i.manufacturer,
+				"serial_no":i.serial_no,
+				"category":i.category,
+				"sub_category":i.sub_category,
 				"uom":"Nos",
 				"stock_uom":"Nos",
 				"conversion_factor":1,
@@ -68,7 +75,11 @@ def create_quotation(sod):
 			"supply_order_data":sod,
 			"item_code":i.part,
 			"item_name":i.part_name,
-			"description":i.type,
+			"description":i.part_name,
+			'model_no':i.model,
+			"type":i.type,
+			"manufacturer":i.manufacturer,
+			"serial_no":i.serial_no,
 			"qty":i.qty,
 			"schedule_date":add_to_date(nowdate(),3),
 			"price_list_rate":i.price_ea,

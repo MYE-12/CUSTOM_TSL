@@ -8,13 +8,14 @@
  "field_order": [
   "tsl_ref_no",
   "item",
-  "item_name",
-  "description",
-  "column_break_4",
-  "manufacturer",
   "model",
+  "item_name",
+  "manufacturer",
+  "column_break_4",
+  "type",
   "serial_no",
-  "type"
+  "description",
+  "category"
  ],
  "fields": [
   {
@@ -30,7 +31,7 @@
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
-   "label": "Description"
+   "label": "Description and Specification"
   },
   {
    "columns": 1,
@@ -52,18 +53,18 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item.serial_no",
    "fieldname": "serial_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Serial No"
+   "label": "Serial No",
+   "options": "Serial No"
   },
   {
    "columns": 1,
    "fieldname": "item",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Item",
+   "label": "SKU",
    "options": "Item"
   },
   {
@@ -72,26 +73,33 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item.category_",
+   "fetch_from": "item.type",
    "fieldname": "type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type/Category",
-   "options": "Category"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
-   "columns": 2,
    "fetch_from": "item.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Item Name"
+  },
+  {
+   "fetch_from": "item.category_",
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Type/Category",
+   "options": "Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-11 10:39:53.482207",
+ "modified": "2022-05-21 13:25:13.863770",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Item",

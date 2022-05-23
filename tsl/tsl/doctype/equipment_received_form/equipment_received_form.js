@@ -112,14 +112,23 @@ work_order_data:function(frm){
 setup:function(frm){
 	frm.fields_dict['received_equipment'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
-		return{
-			filters: {
-				'model': child.model,
-				'mfg':child.manufacturer,
-				'category_':child.type,
-				'serial_no':child.serial_no
-			}
+		var d = {};
+		if(child.model){
+			d['model'] = child.model;
+
 		}
+		if(child.manufacturer){
+			d['mfg'] = child.manufacturer;
+		}
+		if(child.type){
+			d['type'] = child.type;
+		}
+		return{
+			filters: d
+		}
+
+		
+		
 	}
 }
 });

@@ -39,6 +39,33 @@ frappe.ui.form.on('Supply Order Data', {
 		
 
 	},
+	setup:function(frm){
+		frm.fields_dict['in_stock'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+			var child = locals[cdt][cdn];
+					var d = {};
+					if(child.model){
+						d['model'] = child.model;
+
+					}
+					if(child.category){
+						d['category_'] = child.category;
+					}
+					if(child.sub_category){
+						d['sub_category'] = child.sub_category;
+					}
+					if(child.manufacturer){
+						d['mfg'] = child.manufacturer;
+					}
+					if(child.type){
+						d['type'] = child.type;
+					}
+					
+					return{
+						filters: d
+					}
+			
+		}
+	},
 	branch:function(frm){
 		var d = {
 			"Dammam - TSL-SA":"SOD-D.YY.-",

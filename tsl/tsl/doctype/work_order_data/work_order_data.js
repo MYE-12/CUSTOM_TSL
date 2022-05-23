@@ -187,19 +187,62 @@ frappe.ui.form.on('Work Order Data', {
 			frm.set_value("naming_series",d[frm.doc.branch]);
 		}
 	},
+
 	setup:function(frm){
 		frm.fields_dict['material_list'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
 			var child = locals[cdt][cdn];
-			return{
-				filters: {
-					'model': child.model_no,
-					'manufacturer':child.mfg,
-					'type':child.type,
-					'serial_no':child.serial_no
-				}
+			var d = {};
+			if(child.model_no){
+				d['model'] = child.model_no;
+	
 			}
+			if(child.mfg){
+				d['mfg'] = child.mfg;
+			}
+			if(child.type){
+				d['type'] = child.type;
+			}
+			return{
+				filters: d
+			}
+			
 		}
-	}
+		// frm.fields_dict['material_list'].grid.get_field('serial_no').get_query = function(frm, cdt, cdn) {
+		// 	var row = locals[cdt][cdn];
+		// 	var l =[];
+		// 	if(row.item_code){
+		// 		frappe.call({
+		// 		method :"tsl.tsl.doctype.part_sheet.part_sheet.get_serial_no",
+		// 		args :{
+		// 			"item" :row.item_code,
+					
+		// 		},
+		// 		callback :function(r){
+		// 			if(r.message){
+		// 				console.log(r.message)
+						
+		// 				for(var i=0;i<r.message.length;i++){
+		// 					l.push(r.message[i]);
+		// 				}
+						
+		// 			console.log(l)
+	
+		// 			}
+					
+		// 			}
+					
+				
+	
+		// 	})
+		// 	return {
+		// 		filters: [
+		// 			["Serial No","name","in",l]
+		// 		]
+		// 	};
+		// 	}
+			
+		// }
+	 }
 		
 	
 });
@@ -215,4 +258,47 @@ frappe.ui.form.on('Work Order Data', {
 			}
 		});
 	}
+});
+frappe.ui.form.on('Material List', {
+	item_code: function(frm,cdt,cdn){
+		let row = locals[cdt][cdn]
+		var l = [];
+		if(row.item_code){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_serial_no",
+			args :{
+				"item" :row.item_code,
+				
+			},
+			callback :function(r){
+				if(r.message){
+					console.log(r.message)
+					for(var i=0;i<r.message.length;i++){
+						l.push(r.message[i]);
+					}
+					
+					console.log(l)
+					
+				}
+				
+				
+				}
+			
+			
+
+		})
+		
+		}
+		frm.set_query("serial_no","material_list", function(frm, cdt, cdn) {
+			return {
+				filters: {
+					'name': ["in",l]
+					
+				}
+			};
+		});
+		frm.refresh_field("material_list");
+		
+	},
+	
 });

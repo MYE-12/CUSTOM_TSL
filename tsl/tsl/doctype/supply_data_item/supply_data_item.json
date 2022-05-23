@@ -8,11 +8,11 @@
  "field_order": [
   "part",
   "model",
-  "part_number",
-  "category",
-  "sub_category",
   "manufacturer",
   "type",
+  "category",
+  "sub_category",
+  "part_number",
   "column_break_8",
   "serial_no",
   "qty",
@@ -23,7 +23,7 @@
  ],
  "fields": [
   {
-   "columns": 1,
+   "columns": 2,
    "fieldname": "part",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -44,7 +44,7 @@
    "fieldname": "category",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type /Category",
+   "label": "Category",
    "options": "Category"
   },
   {
@@ -57,7 +57,7 @@
    "options": "Sub Category"
   },
   {
-   "columns": 1,
+   "columns": 2,
    "fetch_from": "part.model",
    "fieldname": "model",
    "fieldtype": "Link",
@@ -79,17 +79,17 @@
    "fetch_from": "part.type",
    "fieldname": "type",
    "fieldtype": "Link",
-   "hidden": 1,
+   "in_list_view": 1,
    "label": "Type",
    "options": "Item Type"
   },
   {
    "columns": 1,
-   "fetch_from": "part.serial_no",
    "fieldname": "serial_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Serial No"
+   "label": "Serial No",
+   "options": "Serial No"
   },
   {
    "allow_on_submit": 1,
@@ -138,7 +138,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-16 07:54:32.555769",
+ "modified": "2022-05-21 13:21:55.359571",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Data Item",

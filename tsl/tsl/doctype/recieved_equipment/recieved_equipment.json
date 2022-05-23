@@ -10,6 +10,7 @@
   "model",
   "manufacturer",
   "column_break_5",
+  "category",
   "type",
   "serial_no",
   "item_name",
@@ -32,7 +33,7 @@
  ],
  "fields": [
   {
-   "columns": 1,
+   "columns": 2,
    "fetch_from": "item_code.mfg",
    "fieldname": "manufacturer",
    "fieldtype": "Link",
@@ -51,18 +52,15 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item_code.serial_no",
    "fieldname": "serial_no",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Serial No"
   },
   {
-   "columns": 1,
    "default": "1",
    "fieldname": "qty",
    "fieldtype": "Float",
-   "in_list_view": 1,
    "label": "Qty",
    "reqd": 1
   },
@@ -146,12 +144,12 @@
   },
   {
    "columns": 1,
-   "fetch_from": "item_code.category_",
+   "fetch_from": "item_code.type",
    "fieldname": "type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Type/Category",
-   "options": "Category"
+   "label": "Type",
+   "options": "Item Type"
   },
   {
    "fieldname": "uom",
@@ -166,7 +164,7 @@
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Description"
+   "label": "Description and Specification"
   },
   {
    "fieldname": "column_break_16",
@@ -177,18 +175,26 @@
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Item Code",
+   "label": "SKU",
    "options": "Item"
   },
   {
    "fieldname": "column_break_5",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "item_code.category_",
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Category",
+   "options": "Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-11 10:30:16.349383",
+ "modified": "2022-05-21 11:58:29.983091",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment",

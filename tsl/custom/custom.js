@@ -1,6 +1,7 @@
 frappe.ui.form.on('Quotation', {
 	onload_post_render:function(frm){
-        frm.set_query("branch", function() {
+		if(frm.doc.docstatus == 0){
+			frm.set_query("branch", function() {
                 return {
                         filters: [
                                 ["Warehouse","company", "=", frm.doc.company],
@@ -11,16 +12,59 @@ frappe.ui.form.on('Quotation', {
         });
         frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
-		return{
-			filters: {
-				'model': child.model_no,
-				'mfg':child.manufacturer,
-				'serial_no':child.serial_no,
-				'category_':child.category,
-				'sub_category':child.sub_category
+		var d = {};
+			if(child.model){
+				d['model'] = child.model;
+	
+			}
+			if(child.manufacturer){
+				d['mfg'] = child.manufacturer;
+			}
+			if(child.type){
+				d['type'] = child.type;
+			}
+                        if(child.category){
+				d['category_'] = child.category;
+			}
+                        if(child.sub_category){
+				d['sub_category'] = child.sub_category;
+			}
+			return{
+				filters: d
 			}
 		};
-		};
+
+		}
+		if(frm.doc.quotation_type == "Customer Quotation - Repair" || frm.doc.docstatus == 0){
+			for(var i=0;i<frm.doc.quotation_history.length;i++){
+				if(frm.doc.quotation_history[i].quotation_type == "Internal Quotation - Repair" && frm.doc.quotation_history[i].status == "Approved" ){
+					var doc_name = frm.doc.quotation_history[i].quotation_name
+					break;
+				}
+			}
+			if(doc_name){
+				frappe.call({
+					method: "tsl.custom_py.quotation.final_price_validate",
+					args: {
+						"source": doc_name,
+					},
+					callback: function(r) {
+						if(r.message) {
+							for(var i=0;i<frm.doc.items.length;i++){
+								frm.doc.items[i].rate = r.message
+								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
+							}
+							frm.refresh_field("items");
+							
+						}
+					}
+				});
+
+			}
+			
+
+		}
+        
     
         },
 	
