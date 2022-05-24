@@ -148,6 +148,11 @@ doc_events = {
 			"tsl.custom_py.sales_invoice.on_submit"
 		]
 	},
+	"Stock Entry":{
+		"on_submit":[
+			"tsl.custom_py.stock_entry.on_submit"
+		]
+	},
 	
 		
 	

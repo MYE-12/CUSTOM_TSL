@@ -207,6 +207,7 @@ def create_sal_inv(wod):
 			"stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
+			"income_account":"6001002 - Revenue from Service - TSL"
 			"warehouse":"Repair - TSL"
 
 		})
@@ -310,7 +311,6 @@ class WorkOrderData(Document):
 		# current_time = now.strftime("%H:%M:%S")
 		# self.status_duration_details =[]
 		if self.status != self.status_duration_details[-1].status:
-			print("\n\n\nif passes.")
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()
 			time_date = str(ldate).split(".")[0]
@@ -320,7 +320,6 @@ class WorkOrderData(Document):
 			duration_in_s = duration.total_seconds()
 			minutes = divmod(duration_in_s, 60)[0]/60
 			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
-			print(data)
 			self.status_duration_details[-1].duration = data
 			# doc = frappe.get_doc("Work Order Data",self.name)
 			self.append("status_duration_details",{

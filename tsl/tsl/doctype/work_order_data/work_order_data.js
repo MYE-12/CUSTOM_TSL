@@ -257,6 +257,14 @@ frappe.ui.form.on('Work Order Data', {
 				]
 			}
 		});
+		frm.set_query("department", function() {
+			return {
+				filters: [
+					["Cost Center","company", "=", frm.doc.company],
+					
+				]
+			}
+		});
 	}
 });
 frappe.ui.form.on('Material List', {

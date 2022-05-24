@@ -530,6 +530,14 @@ frappe.ui.form.on('Quotation', {
 					]
 				}
 			});
+			frm.set_query("department", function() {
+				return {
+					filters: [
+						["Cost Center","company", "=", frm.doc.company],
+						
+					]
+				}
+			});
 		}
 	});
 	// frappe.ui.form.on('Sales Invoice', {

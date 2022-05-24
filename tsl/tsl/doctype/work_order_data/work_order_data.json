@@ -64,7 +64,7 @@
    "allow_on_submit": 1,
    "fieldname": "warranty",
    "fieldtype": "Data",
-   "label": "Warranty Period"
+   "label": "Warranty Period(in Days)"
   },
   {
    "allow_on_submit": 1,
@@ -254,7 +254,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-26 07:48:07.866040",
+ "modified": "2022-05-24 09:17:38.518148",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
