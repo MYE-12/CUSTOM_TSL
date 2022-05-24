@@ -117,6 +117,14 @@ frappe.ui.form.on('Evaluation Report', {
 				}
 			}
 		}
+		frm.set_query("department", function() {
+			return {
+				filters: [
+					["Cost Center","company", "=", frm.doc.company],
+					
+				]
+			}
+		});
 
 	}
 

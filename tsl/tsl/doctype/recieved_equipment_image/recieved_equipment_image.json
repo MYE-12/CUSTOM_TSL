@@ -27,6 +27,7 @@
    "label": "Description"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image",
@@ -36,7 +37,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-04-25 10:38:10.568375",
+ "modified": "2022-05-23 10:21:33.494962",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment Image",

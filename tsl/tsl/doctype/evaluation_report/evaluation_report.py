@@ -32,6 +32,17 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
+
+	def on_update_after_submit(self):
+		if self.if_parts_required:
+			f=0
+			for i in self.get("items"):
+				if i.parts_availability == "No":
+					f=1
+			if f==1:
+				self.parts_availability = "No"
+			else:
+				self.parts_availability = "Yes"
 			
 
 	def before_submit(self):
