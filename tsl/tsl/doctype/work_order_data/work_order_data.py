@@ -207,7 +207,7 @@ def create_sal_inv(wod):
 			"stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
-			"income_account":"6001002 - Revenue from Service - TSL"
+			"income_account":"6001002 - Revenue from Service - TSL",
 			"warehouse":"Repair - TSL"
 
 		})
