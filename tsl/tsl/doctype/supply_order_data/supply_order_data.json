@@ -123,6 +123,7 @@
    "label": "Date"
   },
   {
+   "default": "Supply - TSL",
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
@@ -231,7 +232,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-28 13:27:31.348964",
+ "modified": "2022-05-28 17:58:18.293224",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

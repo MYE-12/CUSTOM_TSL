@@ -19,6 +19,7 @@
  ],
  "fields": [
   {
+   "columns": 2,
    "fieldname": "tsl_ref_no",
    "fieldtype": "Data",
    "hidden": 1,
@@ -33,7 +34,7 @@
    "label": "Description and Specification"
   },
   {
-   "columns": 1,
+   "columns": 2,
    "fetch_from": "item.mfg",
    "fieldname": "manufacturer",
    "fieldtype": "Link",
@@ -59,7 +60,7 @@
    "options": "Serial No"
   },
   {
-   "columns": 2,
+   "columns": 1,
    "fieldname": "item",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -98,7 +99,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-25 08:43:35.622576",
+ "modified": "2022-05-30 10:35:00.600257",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Item",
