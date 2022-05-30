@@ -44,7 +44,7 @@ frappe.ui.form.on('Supply Order Form', {
 				args: {
 						"customer": frm.doc.customer,
 				},
-				callback(r) {manufacturer
+				callback(r) {
 						if(r.message) {
 								frm.set_query("incharge", function() {
 										return {

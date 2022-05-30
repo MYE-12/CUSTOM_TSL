@@ -89,7 +89,16 @@ frappe.ui.form.on('Supply Order Data', {
 				]
 			}
 		});
+		frm.set_query("department", function() {
+			return {
+				filters: [
+					["Cost Center","company", "=", frm.doc.company],
+					
+				]
+			}
+		});
 	}
+
 });
 
 
