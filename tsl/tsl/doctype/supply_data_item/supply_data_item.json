@@ -14,6 +14,7 @@
   "sub_category",
   "part_number",
   "column_break_8",
+  "has_serial_no",
   "serial_no",
   "qty",
   "price_ea",
@@ -85,11 +86,11 @@
   },
   {
    "columns": 1,
+   "depends_on": "eval:(doc.has_serial_no == 1);",
    "fieldname": "serial_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Serial No",
-   "options": "Serial No"
+   "label": "Serial No"
   },
   {
    "allow_on_submit": 1,
@@ -107,7 +108,7 @@
   },
   {
    "columns": 2,
-   "fetch_from": "part.description",
+   "fetch_from": "part.item_name",
    "fieldname": "part_name",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
@@ -133,12 +134,18 @@
    "fieldtype": "Currency",
    "hidden": 1,
    "label": "Total"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_serial_no",
+   "fieldtype": "Check",
+   "label": "Has Serial No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-21 13:21:55.359571",
+ "modified": "2022-05-31 08:01:44.263713",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Data Item",

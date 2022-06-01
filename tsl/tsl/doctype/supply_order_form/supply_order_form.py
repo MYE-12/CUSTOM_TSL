@@ -40,6 +40,7 @@ def create_supply_order_data(order_no):
 		new_doc.append("in_stock",{
 			"part":i.part,
 			'item_name':i.item_name,
+			'part_name':i.part_name,
 			'part_number':i.part_number,
 			'category':i.category,
 			'sub_category':i.sub_category,
@@ -96,6 +97,8 @@ class SupplyOrderForm(Document):
 				new_doc.item_group = "All Item Groups"
 				new_doc.category_ = i.category
 				new_doc.sub_category = i.sub_category
+				if i.has_serial_no:
+					new_doc.has_serial_no = 1
 				new_doc.qty = i.qty
 				new_doc.type = i.type
 				new_doc.model = i.model
@@ -109,4 +112,14 @@ class SupplyOrderForm(Document):
 	def before_submit(self):
 		if not self.branch:
 			frappe.throw("Assign a branch to Submit")
+		for i in self.get('equipments_in_stock'):
+			if i.part and i.has_serial_no and i.serial_no:
+				if frappe.db.get_value('Item',i.part,"has_serial_no"):
+					new_doc = frappe.new_doc('Serial No')
+					new_doc.serial_no = i.serial_no
+					new_doc.item_code = i.part
+					new_doc.save(ignore_permissions = True)
+					if new_doc.name:
+						i.serial_no = new_doc.name
+		
 	
