@@ -59,7 +59,7 @@ frappe.ui.form.on('Supply Order Data', {
 					if(child.type){
 						d['type'] = child.type;
 					}
-					
+					d['item_group'] = "Components";
 					return{
 						filters: d
 					}

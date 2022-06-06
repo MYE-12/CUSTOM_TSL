@@ -11,7 +11,6 @@ frappe.ui.form.on('Part Sheet', {
 				},
 				callback: function(r) {
 					if(r.message) {
-						console.log(r.message)
 						if(r.message == "Technician"){
 							var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
 							df.read_only = 1;
@@ -78,7 +77,6 @@ frappe.ui.form.on('Part Sheet Item', {
 				
 			},
 			callback :function(r){
-				console.log(r.message)
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
 				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
 				row.total = row.qty * r.message[0];
@@ -108,7 +106,6 @@ frappe.ui.form.on('Part Sheet Item', {
 			},
 			callback :function(r){
 				if(r.message){
-					console.log(r.message)
 					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
 					frm.refresh_fields();
 					

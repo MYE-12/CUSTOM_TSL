@@ -29,7 +29,6 @@ frappe.ui.form.on('Work Order Data', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r.message)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 						}
@@ -202,6 +201,7 @@ frappe.ui.form.on('Work Order Data', {
 			if(child.type){
 				d['type'] = child.type;
 			}
+			d['item_group'] = "Equipments";
 			return{
 				filters: d
 			}
@@ -280,12 +280,10 @@ frappe.ui.form.on('Material List', {
 			},
 			callback :function(r){
 				if(r.message){
-					console.log(r.message)
 					for(var i=0;i<r.message.length;i++){
 						l.push(r.message[i]);
 					}
 					
-					console.log(l)
 					
 				}
 				

@@ -25,9 +25,9 @@ class EquipmentReceivedForm(Document):
 				new_doc.company = self.company
 				new_doc.branch = self.branch
 				new_doc.equipment_received_form = self.name
-				new_doc.to_warehouse = 'Repair - TSL'
+				new_doc.to_warehouse = i.repair_warehouse
 				new_doc.append("items",{
-					't_warehouse': 'Repair - TSL',
+					't_warehouse': i.repair_warehouse,
 					'item_code':i.item_code,
 					'item_name':i.item_name,
 					'description':i.item_name,
@@ -76,6 +76,7 @@ class EquipmentReceivedForm(Document):
 					new_doc = frappe.new_doc('Item')
 					new_doc.naming_series = '.####'
 					new_doc.item_name = i.item_name
+					new_doc.item_group = "Equipments"
 					new_doc.description = i.item_name
 					new_doc.model = i.model
 					new_doc.is_stock_item = 1

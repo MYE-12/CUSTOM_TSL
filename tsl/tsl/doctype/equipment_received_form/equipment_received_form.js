@@ -123,13 +123,35 @@ setup:function(frm){
 		if(child.type){
 			d['type'] = child.type;
 		}
+		d['item_group'] = "Equipments";
 		return{
 			filters: d
 		}
 
 		
 		
-	}
+	},
+	
+	frm.fields_dict['received_equipment'].grid.get_field('repair_warehouse').get_query = function(frm, cdt, cdn) {
+		var child = locals[cdt][cdn];
+		// var d = {};
+		// d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+		// d['Dammam - TS'] = 'Dammam Repair - TS'
+		// d['Jeddah - TS'] = 'Jeddah Repair - TS'
+		// d['Riyadh - TS'] = 'Riyadh Repair - TS'
+		return {
+			filters: [
+					["Warehouse","company", "=", cur_frm.doc.company],
+					["Warehouse","is_repair","=",1]
+					
+			]
+	};
+			
+		}
+
+		
+		
+	
 }
 });
 frappe.ui.form.on("Equipment Received Form", {
