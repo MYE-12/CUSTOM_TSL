@@ -72,7 +72,6 @@ frappe.ui.form.on('Supply Order Form', {
 		}
 	},work_order_data:function(frm){
 		if(frm.doc.work_order_data){
-			console.log(frm.doc.work_order_data)
 			frappe.call({
 				method:'tsl.tsl.doctype.equipment_received_form.equipment_received_form.get_wod_details',
 				args: {
@@ -118,7 +117,7 @@ frappe.ui.form.on('Supply Order Form', {
 					if(child.type){
 						d['type'] = child.type;
 					}
-					
+					d['item_group'] = "Components";
 					return{
 						filters: d
 					}
@@ -196,7 +195,6 @@ frappe.ui.form.on('Supply Data Item', {
 				
 			},
 			callback :function(r){
-				console.log(r.message)
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
 				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
 				row.total = row.qty * row.price_ea
@@ -217,7 +215,6 @@ frappe.ui.form.on('Supply Data Item', {
 			},
 			callback :function(r){
 				if(r.message){
-					console.log(r.message)
 					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
 					row.total = row.qty * row.price_ea
 					frm.refresh_fields();

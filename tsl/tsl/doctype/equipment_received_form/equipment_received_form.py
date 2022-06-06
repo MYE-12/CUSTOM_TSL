@@ -16,19 +16,22 @@ class EquipmentReceivedForm(Document):
 			if not i.item_code:
 				frappe.throw("Item code should be filled in Row-{0}".format(i.idx))
 		for i in self.get('received_equipment'):
+			sn = ""
 			if i.item_code:
+				if i.has_serial_no:
+					sn = i.serial_no
 				new_doc = frappe.new_doc("Stock Entry")
 				new_doc.stock_entry_type = "Material Receipt"
 				new_doc.company = self.company
 				new_doc.branch = self.branch
 				new_doc.equipment_received_form = self.name
-				new_doc.to_warehouse = 'Repair - TSL'
+				new_doc.to_warehouse = i.repair_warehouse
 				new_doc.append("items",{
-					't_warehouse': 'Repair - TSL',
+					't_warehouse': i.repair_warehouse,
 					'item_code':i.item_code,
 					'item_name':i.item_name,
 					'description':i.item_name,
-					'serial_no':i.serial_no,
+					'serial_no':sn,
 					'qty':i.qty,
 					'uom':frappe.db.get_value("Item",i.item_code,'stock_uom'),
 					'conversion_factor':1,
@@ -73,12 +76,14 @@ class EquipmentReceivedForm(Document):
 					new_doc = frappe.new_doc('Item')
 					new_doc.naming_series = '.####'
 					new_doc.item_name = i.item_name
+					new_doc.item_group = "Equipments"
 					new_doc.description = i.item_name
 					new_doc.model = i.model
 					new_doc.is_stock_item = 1
 					new_doc.mfg = i.manufacturer
 					new_doc.type = i.type
-					new_doc.has_serial_no = 1
+					if i.has_serial_no:
+						new_doc.has_serial_no = 1
 					new_doc.save(ignore_permissions = True)
 					if new_doc.name:
 						i.item_code = new_doc.name

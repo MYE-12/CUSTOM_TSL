@@ -30,7 +30,6 @@ frappe.ui.form.on('Evaluation Report', {
 				},
 				callback: function(r) {
 					if(r.message) {
-						console.log(r.message)
 						if(r.message == "Technician"){
 							var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
 							df.read_only = 1;
@@ -65,28 +64,44 @@ frappe.ui.form.on('Evaluation Report', {
 					}
 				}
 			});
-			frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+			frm.fields_dict['evaluation_details'].grid.get_field('item').get_query = function(frm, cdt, cdn) {
 				var child = locals[cdt][cdn];
-				if(child.model || child.category || child.sub_category || child.serial_no){
-					var d = {};
-					if(child.model){
-						d['model'] = child.model;
-
-					}
-					if(child.category){
-						d['category_'] = child.category;
-					}
-					if(child.sub_category){
-						d['sub_category'] = child.sub_category;
-					}
-					return{
-						filters: d
-					}
-					
-
+				var d = {};
+				if(child.model_no){
+					d['model'] = child.model;
+		
+				}
+				if(child.mfg){
+					d['mfg'] = child.manufacturer;
+				}
+				if(child.type){
+					d['type'] = child.type;
+				}
+				d['item_group'] = "Equipments";
+				return{
+					filters: d
 				}
 				
 			}
+				frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+					var child = locals[cdt][cdn];
+						var d = {};
+						if(child.model){
+							d['model'] = child.model;
+	
+						}
+						if(child.category){
+							d['category_'] = child.category;
+						}
+						if(child.sub_category){
+							d['sub_category'] = child.sub_category;
+						}
+						d['item_group'] = "Components";
+						return{
+							filters: d
+						}
+			}
+			
 		}
 		if(frm.doc.docstatus == 1 && frm.doc.parts_availability == "No"){
 			frm.add_custom_button(__("Request for Quotation"), function(){
@@ -141,7 +156,6 @@ frappe.ui.form.on('Part Sheet Item', {
 				
 			},
 			callback :function(r){
-				console.log(r.message)
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
 				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
 				row.total = row.qty * r.message[0];
@@ -171,7 +185,6 @@ frappe.ui.form.on('Part Sheet Item', {
 			},
 			callback :function(r){
 				if(r.message){
-					console.log(r.message)
 					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
 					frm.refresh_fields();
 					

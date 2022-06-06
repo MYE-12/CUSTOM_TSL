@@ -184,6 +184,12 @@ def create_sal_inv(wod):
 	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
+	d = {}
+	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+	d['Dammam - TS'] = 'Dammam Repair - TS'
+	d['Jeddah - TS'] = 'Jeddah Repair - TS'
+	d['Riyadh - TS'] = 'Riyadh Repair - TS'
+	
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		r = 0
@@ -208,7 +214,7 @@ def create_sal_inv(wod):
 			"conversion_factor":1,
 			"cost_center":doc.department,
 			"income_account":"6001002 - Revenue from Service - TSL",
-			"warehouse":"Repair - TSL"
+			"warehouse":d[doc.branch]
 
 		})
 	return new_doc
@@ -224,6 +230,11 @@ def create_dn(wod):
 	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
+	d = {}
+	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+	d['Dammam - TS'] = 'Dammam Repair - TS'
+	d['Jeddah - TS'] = 'Jeddah Repair - TS'
+	d['Riyadh - TS'] = 'Riyadh Repair - TS'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		r = 0
@@ -247,7 +258,7 @@ def create_dn(wod):
 			"stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
-			"warehouse":"Repair - TSL"
+			"warehouse":d[doc.branch]
 
 		})
 	return new_doc

@@ -94,7 +94,7 @@ frappe.ui.form.on('Quotation', {
                                
                         }, ('Create'))
 	}
-	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.name){
+	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.__unsaved != 1){
 		
             frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
 				frappe.call({
