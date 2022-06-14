@@ -254,7 +254,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Work Order Status",
    "link_to": "Work Order Status",
    "link_type": "Report",
@@ -263,7 +263,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Supply Order Status",
    "link_to": "Supply Order Status",
    "link_type": "Report",
@@ -272,7 +272,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Price Comparison Sheet",
    "link_to": "Price Comparison Sheet",
    "link_type": "Report",
@@ -366,7 +366,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-06-02 13:57:22.167003",
+ "modified": "2022-06-07 10:05:28.251845",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
