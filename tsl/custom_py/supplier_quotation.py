@@ -10,7 +10,23 @@ def reject_other_sq(sq,sod):
     frappe.db.sql('''update `tabSupplier Quotation` set workflow_state = "Rejected" where supply_order_data = %s and docstatus = 0 and workflow_state = "Waiting For Approval" ''',sod)
     frappe.db.commit()
     return True
-    
+
+@frappe.whitelist()
+def item_allocate_to_supplier(sod):
+    order = ""
+    new_doc = frappe.new_doc("Item Allocation")
+    new_doc.order_by = "Supplier"
+    if new_doc.order_by == "Supplier":
+        order += "order by s.creation desc"
+    elif new_doc.order_by == "Item":
+        order += "order by si.item_name"
+    sqtn = frappe.db.sql('''select s.supplier as supplier_name,s.name as supplier_quotation,si.item_code as sku,si.item_name as item_name,si.rate as price,si.qty as qty,si.amount as amount from `tabSupplier Quotation` as s inner join `tabSupplier Quotation Item` as si on si.parent = s.name where s.supply_order_data = %s and s.docstatus = 0 and s.workflow_state = "Waiting For Approval" {0}'''.format(order),sod,as_dict= 1)
+    new_doc.supply_order_data = sod
+    for i in sqtn:
+        new_doc.append("items",i)
+    new_doc.save(ignore_permissions = True)
+    return new_doc
+
 @frappe.whitelist()
 def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=None):
     doc = frappe.get_doc("Request for Quotation",source_name)
@@ -35,7 +51,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
                 "doctype": "Supplier Quotation Item",
                 "field_map": {
                     "name": "request_for_quotation_item",
-                    "parent": "request_for_quotation"
+                    "parent": "request_for_quotation",
                 },
             }
         }, target_doc, postprocess)

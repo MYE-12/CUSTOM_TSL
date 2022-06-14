@@ -59,7 +59,7 @@ def create_rfq(ps):
 				'model':i.model,
 				"category":i.category,
 				"sub_category":i.sub_category,
-				"manufacturer":i.manufacturer,
+				"mfg":i.manufacturer,
 				'serial_no':i.serial_no,
 				"uom":"Nos",
 				"stock_uom":"Nos",
