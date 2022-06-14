@@ -256,7 +256,7 @@ def get_columns(filters):
 def get_data(filters):
 	# work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks from `tabWork Order Data` where posting_date >= %s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	data = []
-	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name,dn_no,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where creation >=%s and creation <= %s''',(filters.from_date,filters.to_date),as_dict=1)
+	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name,dn_no,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>=%s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	for i in work_order_entries:
 		doc = frappe.get_doc("Work Order Data",i["wod_no"])
 		if doc.status == "NER-Need Evaluation Return":

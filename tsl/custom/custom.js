@@ -35,7 +35,7 @@ frappe.ui.form.on('Quotation', {
 		};
 
 		}
-		if(frm.doc.quotation_type == "Customer Quotation - Repair" || frm.doc.docstatus == 0){
+		if(frm.doc.quotation_type == "Customer Quotation - Repair" && frm.doc.docstatus == 0){
 			for(var i=0;i<frm.doc.quotation_history.length;i++){
 				if(frm.doc.quotation_history[i].quotation_type == "Internal Quotation - Repair" && frm.doc.quotation_history[i].status == "Approved" ){
 					var doc_name = frm.doc.quotation_history[i].quotation_name
@@ -63,6 +63,34 @@ frappe.ui.form.on('Quotation', {
 			}
 			
 
+		}
+		if(frm.doc.quotation_type == "Internal Quotation - Supply" && frm.doc.docstatus == 0){
+			var d ={};
+			for(var i=0;i<frm.doc.items.length;i++){
+				if(frm.doc.items[i].supplier_quotation && frm.doc.items[i].item_code){
+				 d[frm.doc.items[i].item_code] = frm.doc.items[i].supplier_quotation
+				}
+			}
+			frappe.call({
+				method: "tsl.custom_py.quotation.get_itemwise_price",
+				args: {
+					"data":frm.doc.items
+				},
+				callback: function(r) {
+					if(r.message) {
+						for(var i=0;i<frm.doc.items.length;i++){
+							frm.doc.items[i].rate = r.message[i][0]
+							frm.doc.items[i].amount = r.message[i][1]
+							// frm.refresh_fields()
+						}
+						frm.refresh_fields();
+					}
+					
+				}
+			});
+			
+			
+			
 		}
         
     
@@ -294,7 +322,7 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.rounded_total = frm.doc.grand_total;
 										frm.doc.actual_price = frm.doc.rounded_total;
 										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
-											frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
+											frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value*frm.doc.technician_hours_spent[0].total_hours_spent);
 										}
 										
 										frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
@@ -503,18 +531,21 @@ frappe.ui.form.on("Quotation Item",{
 frappe.ui.form.on("Technician Hours Spent",{ 
 	value:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
-		if(item.value){
+		if(item.value && item.total_hours_spent){
 			var tot_amt = 0;
 			for(var i=0 ;i< frm.doc.technician_hours_spent.length;i++){
-				tot_amt += frm.doc.technician_hours_spent[i]["value"];
+				tot_amt += (frm.doc.technician_hours_spent[i]["value"] * frm.doc.technician_hours_spent[i]["total_hours_spent"]);
 			}
+			item.total_price = tot_amt;
 			frm.doc.actual_price = tot_amt +frm.doc.rounded_total;
 			frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
 			cur_frm.refresh_fields();
 
 		
 	}
-
+	},
+	total_hours_spent:function(frm,cdt,cdn){
+		frm.script_manager.trigger("value",cdt,cdn);
 	}
 	
 

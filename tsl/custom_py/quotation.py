@@ -1,5 +1,6 @@
 
 from pydoc import doc
+from re import L
 import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
@@ -36,6 +37,8 @@ def get_wod_items(wod):
 			}))
 			
 	return l
+
+
 @frappe.whitelist()
 def get_similar_unit_details(name):
 	doc = frappe.get_doc("Quotation",name)
@@ -78,8 +81,18 @@ def get_similar_unit_details(name):
 						})
 					doc.save(ignore_permissions =True)
 	
-		
+@frappe.whitelist()		
+def get_itemwise_price(data):
+	data = json.loads(data)
+	l =[]
+	for i in data:
+		p = frappe.db.get_value("Supplier Wise Item",{"sku":i['item_code'],"supplier_quotation":i['supplier_quotation']},['price','amount'])
+		l.append(p)
+		i["rate"] = p[0]
+		i["price_list_rate"] = p[0]
+		i["amount"] = p[1]
 
+	return l
 
 def before_save(self,method):
 	if self.quotation_type == "Internal Quotation - Repair":
