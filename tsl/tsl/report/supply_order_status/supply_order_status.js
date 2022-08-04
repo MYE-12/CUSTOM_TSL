@@ -25,8 +25,7 @@ frappe.query_reports["Supply Order Status"] = {
 			"fieldtype": "Link",
 			"options": "Company",
 			"width": "80",
-			"default": frappe.defaults.get_user_default("Company"),
-			"reqd": 1
+			
 		}
 
 	],

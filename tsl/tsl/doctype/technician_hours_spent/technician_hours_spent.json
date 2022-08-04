@@ -25,7 +25,7 @@
    "fieldname": "value",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Value",
+   "label": "Rate/Hour",
    "options": "currency"
   },
   {
@@ -39,13 +39,7 @@
    "columns": 3,
    "fieldname": "total_price",
    "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Total Price"
-  },
-  {
-   "fieldname": "ratehour",
-   "fieldtype": "Currency",
-   "label": "Rate/Hour"
+   "label": "Labor Value"
   }
  ],
  "index_web_pages_for_search": 1,

@@ -36,6 +36,7 @@
   "material_list",
   "section_break_23",
   "status_duration_details",
+  "is_quotation_created",
   "amended_from"
  ],
  "fields": [
@@ -227,12 +228,19 @@
    "options": "Supply Order Data",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_quotation_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Quotation Created"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-05-28 17:58:18.293224",
+ "modified": "2022-07-06 08:45:50.393440",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

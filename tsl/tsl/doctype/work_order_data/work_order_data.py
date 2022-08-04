@@ -21,7 +21,6 @@ from frappe.utils.data import (
 )
 
 
-
 @frappe.whitelist()
 def get_item_image(erf_no):
 	image = frappe.db.sql('''select image from `tabRecieved Equipment Image` where parent = %s order by idx limit 1''',erf_no,as_dict=1)
@@ -126,6 +125,7 @@ def create_stock_entry(wod):
 	new_doc.work_order_data = doc.name
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
+	new_doc.stock_entry_type = "Material Transfer"
 	ps_list = frappe.db.get_list("Evaluation Report",{"work_order_data":wod,"parts_availability":"Yes"})
 	for i in ps_list:
 		ps_doc = frappe.get_doc("Evaluation Report",i["name"])
@@ -133,6 +133,8 @@ def create_stock_entry(wod):
 			new_doc.append("items",{
 				"item_code":j.part,
 				"item_name":j.part_name,
+				"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s order by creation desc limit 1''' ,j.part,as_dict = 1)[0]['warehouse'],
+				"t_warehouse":"Kuwait Repair - TSL",
 				"qty":j.qty,
 				"uom":"Nos",
 				"transfer_qty":j.qty,
