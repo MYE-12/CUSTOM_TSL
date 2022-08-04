@@ -54,7 +54,7 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 		}
 		if(frm.doc.docstatus === 1 && frm.doc.status == "TR-Technician Repair") {
-			frm.add_custom_button(__("Stock Entry"), function(){
+			frm.add_custom_button(__("Stock Transfer"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_stock_entry",
 					args: {

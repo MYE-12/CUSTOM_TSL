@@ -64,34 +64,34 @@ frappe.ui.form.on('Quotation', {
 			
 
 		}
-		if(frm.doc.quotation_type == "Internal Quotation - Supply" && frm.doc.docstatus == 0){
-			var d ={};
-			for(var i=0;i<frm.doc.items.length;i++){
-				if(frm.doc.items[i].supplier_quotation && frm.doc.items[i].item_code){
-				 d[frm.doc.items[i].item_code] = frm.doc.items[i].supplier_quotation
-				}
-			}
-			frappe.call({
-				method: "tsl.custom_py.quotation.get_itemwise_price",
-				args: {
-					"data":frm.doc.items
-				},
-				callback: function(r) {
-					if(r.message) {
-						for(var i=0;i<frm.doc.items.length;i++){
-							frm.doc.items[i].rate = r.message[i][0]
-							frm.doc.items[i].amount = r.message[i][1]
-							// frm.refresh_fields()
-						}
-						frm.refresh_fields();
-					}
+		// if(frm.doc.quotation_type == "Internal Quotation - Supply" && frm.doc.docstatus == 0){
+		// 	var d ={};
+		// 	for(var i=0;i<frm.doc.items.length;i++){
+		// 		if(frm.doc.items[i].supplier_quotation && frm.doc.items[i].item_code){
+		// 		 d[frm.doc.items[i].item_code] = frm.doc.items[i].supplier_quotation
+		// 		}
+		// 	}
+		// 	frappe.call({
+		// 		method: "tsl.custom_py.quotation.get_itemwise_price",
+		// 		args: {
+		// 			"data":frm.doc.items
+		// 		},
+		// 		callback: function(r) {
+		// 			if(r.message) {
+		// 				for(var i=0;i<frm.doc.items.length;i++){
+		// 					frm.doc.items[i].rate = r.message[i][0]
+		// 					frm.doc.items[i].amount = r.message[i][1]
+		// 					// frm.refresh_fields()
+		// 				}
+		// 				frm.refresh_fields();
+		// 			}
 					
-				}
-			});
+		// 		}
+		// 	});
 			
 			
 			
-		}
+		// }
         
     
         },
@@ -337,7 +337,75 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
-		
+		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Supply") {
+			frm.add_custom_button(__('Supply Order Data'),
+				function() {
+					new frappe.ui.form.MultiSelectDialog({
+						doctype: "Supply Order Data",
+						target: frm,
+						setters: {
+							customer:frm.doc.party_name,
+						},
+						add_filters_group: 1,
+						get_query() {
+							return {
+								filters: {is_quotation_created:0 ,docstatus:1 , branch :frm.doc.branch_name }
+							}
+						},
+						action(selections) {
+							frappe.call({
+								method: "tsl.custom_py.quotation.get_sqtn_items",
+								args: {
+									"sod": selections
+								},
+								callback: function(r) {
+									if(r.message) {
+										
+										cur_frm.clear_table("items");
+										var tot_amt = 0;
+										var tot_qty=0;
+										for(var i=0;i<r.message.length;i++){
+											
+											var childTable = cur_frm.add_child("items");
+											childTable.item_code = r.message[i]["item_code"],
+											childTable.item_name = r.message[i]["item_name"],
+											childTable.supply_order_data = r.message[i]["sod"],
+											childTable.supplier_quotation = r.message[i]['sqtn'],
+											childTable.model_no = r.message[i]["model"],
+											childTable.serial_no = r.message[i]["serial_no"],
+											childTable.description = r.message[i]["item_name"],
+											childTable.uom = r.message[i]['uom'],
+											childTable.stock_uom = r.message[i]['stock_uom'],
+											childTable.conversion_factor = r.message[i]['conversion_factor'],
+											childTable.type = r.message[i]['type'],
+											childTable.qty = r.message[i]["qty"],
+											childTable.rate = r.message[i]["rate"]
+											childTable.amount = r.message[i]['amount'],
+											tot_amt += r.message[i]['amount'];
+											tot_qty += r.message[i]["qty"];
+											cur_frm.refresh_fields("items");
+										}
+										frm.doc.total = tot_amt;
+										frm.doc.total_qty = tot_qty;
+										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
+										// frm.doc.rounded_total = frm.doc.grand_total;
+										// frm.doc.actual_price = frm.doc.rounded_total;
+										// if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
+										// 	frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value*frm.doc.technician_hours_spent[0].total_hours_spent);
+										// }
+										
+										// frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
+										cur_frm.refresh_fields();
+
+									}
+								}
+							});
+							cur_dialog.hide();
+						}
+
+					});
+				}, __("Get Items From"), "btn-default");
+		}
 		if(frm.doc.docstatus === 0 && frm.doc.quotation_type){
 			frm.trigger("branch_name")
 			

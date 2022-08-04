@@ -38,6 +38,15 @@ def get_wod_items(wod):
 			
 	return l
 
+@frappe.whitelist()
+def get_sqtn_items(sod):
+	sod = json.loads(sod)
+	l=[]
+	for k in list(sod):
+		l += frappe.db.sql('''select si.item_code,si.mfg,si.model,si.type,si.serial_no,si.item_name,si.uom,si.stock_uom,si.conversion_factor,si.qty,si.rate,si.amount,s.name as sqtn,supply_order_data as sod from `tabSupplier Quotation` as s inner join `tabSupplier Quotation Item` as si on si.parent = s.name where s.docstatus = 0 and s.supply_order_data = %s and s.workflow_state = 'Waiting For Approval' order by s.creation''',k,as_dict =1)
+	print(l)
+	return l
+
 
 @frappe.whitelist()
 def get_similar_unit_details(name):
@@ -81,18 +90,18 @@ def get_similar_unit_details(name):
 						})
 					doc.save(ignore_permissions =True)
 	
-@frappe.whitelist()		
-def get_itemwise_price(data):
-	data = json.loads(data)
-	l =[]
-	for i in data:
-		p = frappe.db.get_value("Supplier Wise Item",{"sku":i['item_code'],"supplier_quotation":i['supplier_quotation']},['price','amount'])
-		l.append(p)
-		i["rate"] = p[0]
-		i["price_list_rate"] = p[0]
-		i["amount"] = p[1]
+# @frappe.whitelist()		
+# def get_itemwise_price(data):
+# 	data = json.loads(data)
+# 	l =[]
+# 	for i in data:
+# 		p = frappe.db.get_value("Supplier Wise Item",{"sku":i['item_code'],"supplier_quotation":i['supplier_quotation']},['price','amount'])
+# 		l.append(p)
+# 		i["rate"] = p[0]
+# 		i["price_list_rate"] = p[0]
+# 		i["amount"] = p[1]
 
-	return l
+# 	return l
 
 def before_save(self,method):
 	if self.quotation_type == "Internal Quotation - Repair":
@@ -118,13 +127,42 @@ def before_save(self,method):
 					else:
 						price = k.price_ea
 						source = "Supplier"
-					
+					sq_no=""
+					if source == "Supplier":
+						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.transaction_date desc limit 1''',(doc.work_order_data,k.part),as_dict=1)[0]["sq"]
 					self.append("item_price_details",{
-						"item":k.part_name,
+						"item":k.part,
 						"item_source":source,
-						"price":price
+						"price":price,
+						"supplier_quotation":sq_no
 
 					})
+					frappe.db.set_value("Supplier Quotation",sq_no[0]["sq"],"quotation",self.name)
+	if self.quotation_type == "Internal Quotation - Supply":
+		l = []
+		fc = cc = pc = 0
+		mfd = "0"
+		mcd = "0"
+		for i in self.get('items'):
+			if i.supplier_quotation:
+				l.append(i.supplier_quotation)
+		l = list(set(l))
+		for i in l:
+			doc = frappe.get_doc("Supplier Quotation",i)
+			fc += doc.freight_charges
+			cc += doc.custom_clearance
+			pc += doc.payment_commission
+			mfd = doc.max_freight_duration if doc.max_freight_duration and int(doc.max_freight_duration) > int(mfd) else mfd
+			mcd = doc.max_custom_duration if doc.max_custom_duration and int(doc.max_custom_duration) > int(mcd) else mcd
+			doc.save(ignore_permissions = True)
+		self.freight_charges = fc
+		self.custom_clearance = cc
+		self.payment_commission = pc
+		self.max_freight_duration = mfd
+		self.max_custom_duration = mcd
+
+
+
 	
 @frappe.whitelist()
 def get_quotation_history(source,rate = None,type = None):
@@ -250,6 +288,34 @@ def before_submit(self,method):
 			for i in self.get("item_price_details"):
 				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
 				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
+	if self.quotation_type == "Internal Quotation - Supply":
+		d = {}
+		for i in self.get('items'):
+			if i.supplier_quotation:
+				d[i.supplier_quotation] = []
+		for i in self.get('items'):
+			if i.supplier_quotation and i.item_code:
+				if i.item_code not in d[i.supplier_quotation]:
+					d[i.supplier_quotation].append(i.item_code)
+		print(d)
+		
+		for k,v in d.items():
+			to_add = []
+			doc = frappe.get_doc("Supplier Quotation",k)
+			for i in doc.get("items"):
+				if i.item_code in v:
+					to_add.append(i)
+			doc.items = []
+			for i in to_add:
+				doc.append("items",i)
+			doc.save(ignore_permissions= True)
+			doc.submit()
+
+		
+
+
+	
+				
 def validate(self, method):
 	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
 		self.final_approved_price = self.actual_price*302.8/100+self.actual_price

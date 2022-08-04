@@ -43,7 +43,7 @@ def create_rfq(sod):
 				"conversion_factor":1,
 				"schedule_date":sched_date,
 				"stock_qty":1,
-				"warehouse":"All Warehouses - TSL",
+				"warehouse":"Kuwait - TSL",
 				"qty":i.qty
 			})
 	return new_doc
@@ -70,24 +70,24 @@ def create_quotation(sod):
 	new_doc.quotation_type = "Internal Quotation - Supply"
 	new_doc.sales_rep = doc.sales_rep
 	new_doc.ignore_pricing_rule = 1
-	for i in doc.get("in_stock"):
-		new_doc.append("items",{
-			"supply_order_data":sod,
-			"item_code":i.part,
-			"item_name":i.part_name,
-			"description":i.part_name,
-			'model_no':i.model,
-			"type":i.type,
-			"manufacturer":i.manufacturer,
-			"serial_no":i.serial_no,
-			"qty":i.qty,
-			"schedule_date":add_to_date(nowdate(),3),
-			"price_list_rate":i.price_ea,
-			"rate":i.price_ea,
-			"amount":i.total,
-			"uom":"Nos",
-			"stock_uom":"Nos"
-		})
+	# for i in doc.get("in_stock"):
+	# 	new_doc.append("items",{
+	# 		"supply_order_data":sod,
+	# 		"item_code":i.part,
+	# 		"item_name":i.part_name,
+	# 		"description":i.part_name,
+	# 		'model_no':i.model,
+	# 		"type":i.type,
+	# 		"manufacturer":i.manufacturer,
+	# 		"serial_no":i.serial_no,
+	# 		"qty":i.qty,
+	# 		"schedule_date":add_to_date(nowdate(),3),
+	# 		"price_list_rate":i.price_ea,
+	# 		"rate":i.price_ea,
+	# 		"amount":i.total,
+	# 		"uom":"Nos",
+	# 		"stock_uom":"Nos"
+	# 	})
 	# tot = 0
 	# extra_charges = frappe.db.sql('''select name,freight_charges,custom_clearance,payment_commission,max_freight_duration,max_custom_duration from `tabSupplier Quotation` where supply_order_data = %s and workflow_state = "Approved" and docstatus = 1''',sod,as_dict = 1)
 	# if extra_charges:

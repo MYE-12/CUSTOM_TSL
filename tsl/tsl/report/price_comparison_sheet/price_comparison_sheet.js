@@ -10,7 +10,6 @@ frappe.query_reports["Price Comparison Sheet"] = {
 			"fieldtype": "Link",
 			"options":"Supply Order Data",
 			"width": "80",
-			"reqd": 1,
 			on_change: () => {
 				var sod = frappe.query_report.get_filter_value('sod_no');
 				if (sod) {

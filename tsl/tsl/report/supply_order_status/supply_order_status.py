@@ -4,7 +4,7 @@
 import frappe
 def execute(filters=None):
 	data = []
-	if filters.from_date and filters.to_date and filters.company:
+	if filters.from_date and filters.to_date :
 		data = get_data(filters)
 	columns = get_columns(filters)
 	return columns, data
@@ -242,7 +242,10 @@ def get_columns(filters=None):
 
 def get_data(filters):
 	data = []
-	supply_order_entries = frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ps.type as type,ps.manufacturer as mfg,ps.model as model_no,ps.serial_no as serial_no,ps.qty as quantity from `tabSupply Order Data` as so inner join `tabPart Sheet Item` as ps on ps.parent = so.name where so.posting_date >= %s and so.posting_date <= %s order by so.creation desc ''',(filters.from_date,filters.to_date),as_dict=1)\
+	f = ""
+	if filters.get('company'):
+		f += "and company = '{0}' ".format(filters.get('company'))
+	supply_order_entries = frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ps.type as type,ps.manufacturer as mfg,ps.model as model_no,ps.serial_no as serial_no,ps.qty as quantity from `tabSupply Order Data` as so inner join `tabPart Sheet Item` as ps on ps.parent = so.name where so.posting_date >= %s and so.posting_date <= %s {0}order by so.creation desc '''.format(f),(filters.from_date,filters.to_date),as_dict=1)\
 		+ frappe.db.sql('''select so.name,so.customer,so.wod_no,so.sales_rep,so.received_date,so.remarks,so.customer_name,so.status,so.department,so.company,so.branch as branch_name,ml.type as type,ml.mfg as mfg,ml.model_no as model_no,ml.serial_no as serial_no,ml.quantity as quantity from `tabSupply Order Data` as so inner join `tabMaterial List` as ml on ml.parent = so.name where so.creation >= %s and so.posting_date <= %s order by so.posting_date desc''',(filters.from_date,filters.to_date),as_dict=1)
 	for i in supply_order_entries:
 		i["city"] = frappe.db.get_value("Address",frappe.db.get_value("Customer",i.customer,"customer_primary_address"),"city")

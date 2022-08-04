@@ -37,24 +37,27 @@ def create_supply_order_data(order_no):
 	new_doc.naming_series = d[new_doc.branch]
 	new_doc.supply_order_form = doc.name
 	for i in doc.get("equipments_in_stock"):
-		new_doc.append("in_stock",{
-			"part":i.part,
-			'item_name':i.item_name,
-			'part_name':i.part_name,
-			'part_number':i.part_number,
-			'category':i.category,
-			'sub_category':i.sub_category,
-			"part_name":i.part_name,
-			"type":i.type,
-			"model_no":i.model,
-			"mfg":i.manufacturer,
-			"serial_no":i.serial_no,
-			"qty":i.qty,
-			"price_ea":i.price_ea,
-			"total":i.total,
-			"parts_availability":i.parts_availability,
-			
-		})
+		d = {}
+		d['part']= i.part
+		if i.part_name:
+			d['part_name'] = i.part_name
+		if i.part_number:
+			d['part_number'] = i.part_number
+		if i.category:
+			d['category'] = i.category
+		if i.sub_category:
+			d['sub_category'] = i.sub_category
+		if i.model:
+			d["model_no"] = i.model
+		if i.manufacturer:
+			d['mfg'] = i.manufacturer
+		if i.serial_no:
+			d['serial_no'] = i.serial_no
+		d['qty'] = i.qty
+		d['price_ea'] =  i.price_ea
+		d['total'] = i.total
+		d["parts_availability"] = i.parts_availability
+		new_doc.append("in_stock",d)
 	new_doc.save(ignore_permissions = True)
 	l.append(new_doc.name)
 	if l:

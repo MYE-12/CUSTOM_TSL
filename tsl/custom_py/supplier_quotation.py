@@ -6,10 +6,15 @@ from frappe.model.mapper import get_mapped_doc
 import json
 
 @frappe.whitelist()
-def reject_other_sq(sq,sod):
-    frappe.db.sql('''update `tabSupplier Quotation` set workflow_state = "Rejected" where supply_order_data = %s and docstatus = 0 and workflow_state = "Waiting For Approval" ''',sod)
-    frappe.db.commit()
-    return True
+def reject_other_sq(sq,sod = None,wod = None):
+    if sod:
+        frappe.db.sql('''update `tabSupplier Quotation` set workflow_state = "Rejected" where supply_order_data = %s and docstatus = 0 and workflow_state = "Waiting For Approval" ''',sod)
+        frappe.db.commit()
+        return True
+    if wod:
+        frappe.db.sql('''update `tabSupplier Quotation` set workflow_state = "Rejected" where work_order_data = %s and docstatus = 0 and workflow_state = "Waiting For Approval" ''',wod)
+        frappe.db.commit()
+        return True
 
 @frappe.whitelist()
 def item_allocate_to_supplier(sod):
@@ -76,17 +81,3 @@ def on_submit(self,method):
                     add += float(j.total)
         doc.total_amount += add
         doc.save(ignore_permissions=True)
-
-    if self.supply_order_data:
-        doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
-        for i in self.get("items"):
-            for j in doc.get("in_stock"):
-                if j.part == i.item_code:
-                    j.price_ea = i.rate
-                    j.total = i.rate * j.qty
-            for j in doc.get("material_list"):
-                if j.item_name == i.item_name:
-                    j.price = i.rate
-                    j.amount = float(i.rate) * float(j.quantity)
-        doc.save(ignore_permissions=True)
-

@@ -73,6 +73,10 @@ def get_data(filters):
 				if i["description"] == k.item_name:
 					i[j['supplier'].lower().replace(" ","_")] = fmt_money(k.rate,currency = j["currency"])
 					i[j['supplier'].lower().replace(" ","_")+"1"] = fmt_money(k.amount,currency = j["currency"])
+				else:
+					i[j['supplier'].lower().replace(" ","_")] = fmt_money(0,currency = j["currency"])
+					i[j['supplier'].lower().replace(" ","_")+"1"] = fmt_money(0,currency = j["currency"])
+
 		data.append(i)
 	d = {}
 	for i in suppliers:

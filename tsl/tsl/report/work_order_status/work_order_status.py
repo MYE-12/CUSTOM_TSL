@@ -7,7 +7,7 @@ from datetime import datetime,date
 
 def execute(filters=None):
 	data = []
-	if filters.from_date and filters.to_date and filters.company:
+	if filters.from_date and filters.to_date:
 		data = get_data(filters)
 	columns = get_columns(filters)
 	return columns, data
@@ -256,7 +256,10 @@ def get_columns(filters):
 def get_data(filters):
 	# work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks from `tabWork Order Data` where posting_date >= %s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
 	data = []
-	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name,dn_no,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>=%s and posting_date <= %s''',(filters.from_date,filters.to_date),as_dict=1)
+	f = ""
+	if filters.get('company'):
+		f += "and company = '{0}' ".format(filters.get('company'))
+	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,customer,technician,status,department,branch as branch_name,dn_no,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>=%s and posting_date <= %s {0}'''.format(f),(filters.from_date,filters.to_date),as_dict=1)
 	for i in work_order_entries:
 		doc = frappe.get_doc("Work Order Data",i["wod_no"])
 		if doc.status == "NER-Need Evaluation Return":
