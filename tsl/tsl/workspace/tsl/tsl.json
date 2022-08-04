@@ -238,6 +238,51 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Category",
+   "link_to": "Category",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sub Category",
+   "link_to": "Sub Category",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Model/Part Number",
+   "link_to": "Item Model",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Manufacturers",
+   "link_to": "Item Mfg",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Type",
+   "link_to": "Item Type",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Item Price List",
    "link_to": "Price List",
    "link_type": "DocType",
@@ -366,7 +411,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-06-08 13:21:13.823608",
+ "modified": "2022-07-05 10:48:18.314130",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
