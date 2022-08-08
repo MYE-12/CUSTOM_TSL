@@ -10,12 +10,13 @@ import frappe
 from frappe.utils import fmt_money
 
 def execute(filters=None):
+	columns,data = [],[]
 	if filters.get("sod_no"):
 		columns = get_columns(filters)
 		data = get_data(filters)
-		return columns, data
+	return columns, data
 
-def get_columns(filters):
+def get_columns(filters=None):
 	columns = [
 		{
 			"fieldname":"description",
@@ -52,7 +53,7 @@ def get_columns(filters):
 		})
 	return columns
 
-def get_data(filters):
+def get_data(filters=None):
 	data = []
 	data.append({"description":"","qty":"","buy_source":""})
 	suppliers = frappe.db.sql('''select supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_dict=1)
