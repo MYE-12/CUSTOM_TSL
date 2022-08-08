@@ -60,12 +60,15 @@ def create_quotation(wod):
 		new_doc.naming_series = d[new_doc.quotation_type][doc.branch]
 	
 	new_doc.sales_rep = doc.sales_rep
-	if frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status"):
-		comm = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"status") 
-		if comm == "Others":
-			comm = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"specify")
+	
+	ths = frappe.db.sql('''select status,hours_spent,ratehour from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
+	if ths:
+		if ths[0]["status"] == "Others":
+			ths[0]["status"] = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"specify")
 		new_doc.append("technician_hours_spent",{
-			"comments": comm
+			"comments": ths[0]["status"],
+			"total_hours_spent":ths[0]["hours_spent"],
+			"value":ths[0]["ratehour"]
 		})
 	return new_doc
 
