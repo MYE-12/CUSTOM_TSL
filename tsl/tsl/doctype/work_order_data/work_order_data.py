@@ -134,7 +134,7 @@ def create_stock_entry(wod):
 				"item_code":j.part,
 				"item_name":j.part_name,
 				"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s order by creation desc limit 1''' ,j.part,as_dict = 1)[0]['warehouse'],
-				"t_warehouse":"Kuwait Repair - TSL",
+				"t_warehouse":"Repair - Kuwait - TSL",
 				"qty":j.qty,
 				"uom":"Nos",
 				"transfer_qty":j.qty,
@@ -187,10 +187,10 @@ def create_sal_inv(wod):
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
 	d = {}
-	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
-	d['Dammam - TS'] = 'Dammam Repair - TS'
-	d['Jeddah - TS'] = 'Jeddah Repair - TS'
-	d['Riyadh - TS'] = 'Riyadh Repair - TS'
+	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
+	d['Dammam - TS'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TS'] = 'Repair - Riyadh - TSL-SA'
 	
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
@@ -233,10 +233,10 @@ def create_dn(wod):
 	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
 	new_doc.work_order_data = wod
 	d = {}
-	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
-	d['Dammam - TS'] = 'Dammam Repair - TS'
-	d['Jeddah - TS'] = 'Jeddah Repair - TS'
-	d['Riyadh - TS'] = 'Riyadh Repair - TS'
+	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
+	d['Dammam - TS'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TS'] = 'Repair - Riyadh - TSL-SA'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		r = 0
