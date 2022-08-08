@@ -49,6 +49,9 @@ class EquipmentReceivedForm(Document):
 
 			
 	def before_save(self):
+		if self.repair_warehouse:
+			for i in self.get("received_equipment"):
+				i.repair_warehouse = self.repair_warehouse
 		for i in self.get('received_equipment'):
 			if i.model and i.manufacturer and i.type and i.serial_no:
 				for sod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Supply Order Data" ''',(i.model,i.manufacturer,i.type,i.serial_no),as_dict=1):

@@ -20,6 +20,22 @@ frappe.ui.form.on('Equipment Received Form', {
 
 			})
 		}
+		// if(frm.doc.branch){
+		// 	frm.fields_dict['received_equipment'].grid.get_field('repair_warehouse').get_query = function(frm, cdt, cdn) {
+		// 		var child = locals[cdt][cdn];
+		// 		var d = {
+		// 			"Kuwait - TSL":"Repair - Kuwait - TSL",
+		// 			"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
+		// 			"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
+		// 			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
+		// 		}
+		// 		return{
+		// 			filters: {
+		// 				"name":d[frm.doc.branch]
+		// 			}
+		// 		}
+		// 	}
+		// }
 		if(frm.doc.received_equipment){
 			let options = []
 			for(let i in frm.doc.received_equipment){
@@ -130,24 +146,28 @@ setup:function(frm){
 
 		
 		
-	},
+	}
 	
 	frm.fields_dict['received_equipment'].grid.get_field('repair_warehouse').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
-		// var d = {};
-		// d['Kuwait - TSL'] = "Kuwait Repair - TSL"
-		// d['Dammam - TS'] = 'Dammam Repair - TS'
-		// d['Jeddah - TS'] = 'Jeddah Repair - TS'
-		// d['Riyadh - TS'] = 'Riyadh Repair - TS'
+		var d = {
+			"Kuwait - TSL":"Repair - Kuwait - TSL",
+			"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
+			"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
+			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
+		}
 		return {
 			filters: [
 					["Warehouse","company", "=", cur_frm.doc.company],
-					["Warehouse","is_repair","=",1]
+					["Warehouse","is_repair","=",1],
 					
 			]
-	};
-			
+		};
+		
 		}
+
+	
+	
 
 		
 		
@@ -198,6 +218,17 @@ frappe.ui.form.on('Equipment Received Form', {
 					
 				]
 			}
+		
+		});
+		frm.set_query("repair_warehouse", function() {
+			return {
+				filters: [
+					["Warehouse","company", "=", frm.doc.company],
+					["Warehouse","is_repair","=",1]
+					
+				]
+			}
+		
 		});
 	}
 });

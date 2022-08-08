@@ -23,6 +23,7 @@
   "column_break_3",
   "company",
   "branch",
+  "repair_warehouse",
   "received_date",
   "sales_person",
   "sales_person_name",
@@ -222,12 +223,18 @@
    "label": "Previously Quoted",
    "options": "Similar Item Repair",
    "read_only": 1
+  },
+  {
+   "fieldname": "repair_warehouse",
+   "fieldtype": "Link",
+   "label": "Repair Warehouse",
+   "options": "Warehouse"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-10 17:11:29.283132",
+ "modified": "2022-08-08 07:36:22.997989",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",
