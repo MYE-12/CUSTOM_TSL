@@ -137,7 +137,7 @@ def before_save(self,method):
 						"supplier_quotation":sq_no
 
 					})
-					frappe.db.set_value("Supplier Quotation",sq_no[0]["sq"],"quotation",self.name)
+					frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
 		fc = cc = pc = 0
