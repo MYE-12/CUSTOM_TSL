@@ -97,9 +97,15 @@ class EquipmentReceivedForm(Document):
 def get_contacts(customer):
 	doc = frappe.get_doc("Customer",customer)
 	l=[]
+	sp = []
+	default_sp = ""
 	for i in doc.get("contact_details"):
 		l.append(i.name1)
-	return l
+	for i in doc.get("sales_person_details"):
+		sp.append(i.sales_person)
+		if i.is_default:
+			default_sp = i.sales_person
+	return [l,sp,default_sp]
 
 # @frappe.whitelist()
 # def get_sku(model,mfg,type,serial_no):
@@ -159,6 +165,7 @@ def create_workorder_data(order_no):
 			"quantity":i.qty,
 		})
 		new_doc.save(ignore_permissions = True)
+		new_doc.submit()
 		l.append(new_doc.name)
 	if l:
 		link = []

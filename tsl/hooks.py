@@ -133,9 +133,9 @@ doc_events = {
 			"tsl.custom_py.delivery_note.on_submit"
 		]
 	},
-	"Customer":{
+	"Contact":{
 		"before_save":[
-			"tsl.custom_py.customer.before_save"
+			"tsl.custom_py.contact.on_save"
 		]
 	},
 	"Sales Invoice":{

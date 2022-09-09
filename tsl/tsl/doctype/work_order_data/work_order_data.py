@@ -22,10 +22,11 @@ from frappe.utils.data import (
 
 
 @frappe.whitelist()
-def get_item_image(erf_no):
-	image = frappe.db.sql('''select image from `tabRecieved Equipment Image` where parent = %s order by idx limit 1''',erf_no,as_dict=1)
-	if image:
-		return image[0]['image']
+def get_item_image(erf_no,item):
+	image = frappe.db.sql('''select attach_image as image from `tabRecieved Equipment` where parent = %s and item_code = %s and docstatus = 1 ''',(erf_no,item),as_dict=1)
+	if image[0]['image']:
+		img = image[0]['image'].replace(" ","%20")
+		return img
 
 @frappe.whitelist()
 def create_quotation(wod):
@@ -130,28 +131,48 @@ def create_stock_entry(wod):
 	new_doc.department = doc.department
 	new_doc.stock_entry_type = "Material Transfer"
 	ps_list = frappe.db.get_list("Evaluation Report",{"work_order_data":wod,"parts_availability":"Yes"})
-	for i in ps_list:
-		ps_doc = frappe.get_doc("Evaluation Report",i["name"])
-		for j in ps_doc.get("items"):
+	if ps_list:
+		for i in ps_list:
+			ps_doc = frappe.get_doc("Evaluation Report",i["name"])
+			for j in ps_doc.get("items"):
+				new_doc.append("items",{
+					"item_code":j.part,
+					"item_name":j.part_name,
+					"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.part,as_dict = 1)[0]['warehouse'] or "",
+					"t_warehouse":"Repair - Kuwait - TSL",
+					"qty":j.qty,
+					"uom":"Nos",
+				"allow_zero_valuation_rate":1,
+					"transfer_qty":j.qty,
+					"stock_uom":"Nos",
+					"conversion_factor":1,
+					"basic_rate":frappe.db.get_value("Bin",{"item_code":j.part,"actual_qty":[">","0"]},"valuation_rate") or j.price_ea,
+					"basic_amount":float(j.qty) * (float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea))
+				}
+				)
+	else:
+		
+		for j in doc.get("material_list"):
 			new_doc.append("items",{
-				"item_code":j.part,
-				"item_name":j.part_name,
-				"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s order by creation desc limit 1''' ,j.part,as_dict = 1)[0]['warehouse'],
-				"t_warehouse":"Repair - Kuwait - TSL",
-				"qty":j.qty,
-				"uom":"Nos",
-				"transfer_qty":j.qty,
-				"stock_uom":"Nos",
-				"conversion_factor":1,
-				"basic_rate":frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea,
-				"basic_amount":float(j.qty) * (float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea))
-			})
-	add = 0
-	for i in new_doc.get("items"):
-		i.basic_amount = i.qty * i.basic_rate
-		add += float(i.basic_amount)
-	new_doc.total_outgoing_value = add
-	new_doc.value_difference = (float(new_doc.total_incoming_value) if new_doc.total_incoming_value  else  0) - new_doc.total_outgoing_value
+					"item_code":j.item_code,
+					"item_name":j.item_name0 or j.item_name,
+					"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.item_code,as_dict = 1)[0]['warehouse'] or "",
+					"qty":j.quantity,
+					"uom":"Nos",
+					"transfer_qty":j.quantity,
+					"allow_zero_valuation_rate":1,
+					"stock_uom":"Nos",
+					"conversion_factor":1,
+					"basic_rate":frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price,
+					"basic_amount":float(j.quantity) * (float(frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price))
+				}
+				)
+	# add = 0
+	# for i in new_doc.get("items"):
+	# 	i.basic_amount = i.qty * i.basic_rate
+	# 	add += float(i.basic_amount)
+	# new_doc.total_outgoing_value = add
+	# new_doc.value_difference = (float(new_doc.total_incoming_value) if new_doc.total_incoming_value  else  0) - new_doc.total_outgoing_value
 
 	return new_doc
 
@@ -316,12 +337,12 @@ class WorkOrderData(Document):
 			doc.save(ignore_permissions=True)
 		
 	def before_submit(self):
-		if not self.branch:
-			frappe.throw("Assign a Branch to Submit")
-		if not self.technician:
-			frappe.throw("Assign a Technician to Submit")
-		if not self.department:
-			frappe.throw("Set Department to Submit")
+		# if not self.branch:
+		# 	frappe.throw("Assign a Branch to Submit")
+		# if not self.technician:
+		# 	frappe.throw("Assign a Technician to Submit")
+		# if not self.department:
+		# 	frappe.throw("Set Department to Submit")
 		self.status = "UE-Under Evaluation"
 		
 		# current_time = now.strftime("%H:%M:%S")
