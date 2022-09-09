@@ -30,6 +30,7 @@
   "suggested_price",
   "customer_reference_number",
   "work_order_data",
+  "is_returned_unit",
   "section_break_9",
   "received_equipment",
   "previously_quoted_item_in_repair_section",
@@ -104,7 +105,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "ERF-.YYYY.-"
+   "options": "ERF-D.YY.-\nERF-R.YY.-\nERF-J.YY.-\nERF-K.YY.-"
   },
   {
    "default": "0",
@@ -129,6 +130,7 @@
   {
    "fieldname": "attach_image_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Attach Image"
   },
   {
@@ -200,9 +202,10 @@
    "options": "Warehouse"
   },
   {
+   "depends_on": "eval:(doc.is_returned_unit == 1);",
    "fieldname": "work_order_data",
    "fieldtype": "Link",
-   "label": "Work Order Data",
+   "label": "Returned WOD ",
    "options": "Work Order Data"
   },
   {
@@ -227,14 +230,21 @@
   {
    "fieldname": "repair_warehouse",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Repair Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_returned_unit",
+   "fieldtype": "Check",
+   "label": "Is Returned Unit"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-08-08 07:36:22.997989",
+ "modified": "2022-08-30 12:23:52.141149",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

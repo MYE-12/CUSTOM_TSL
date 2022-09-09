@@ -32,7 +32,9 @@
   "other",
   "specify",
   "warehouse_section",
-  "repair_warehouse"
+  "repair_warehouse",
+  "column_break_28",
+  "attach_image"
  ],
  "fields": [
   {
@@ -207,14 +209,24 @@
   {
    "fieldname": "repair_warehouse",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Repair Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_28",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attach_image",
+   "fieldtype": "Attach Image",
+   "label": "Attach Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-06-02 12:50:28.183529",
+ "modified": "2022-09-08 11:29:58.316321",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment",

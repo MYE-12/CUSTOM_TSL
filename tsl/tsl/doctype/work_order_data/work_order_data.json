@@ -149,6 +149,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-"
   },
@@ -159,6 +160,7 @@
    "options": "Equipment Received Form"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "technician",
    "fieldtype": "Link",
    "label": "Technician",
@@ -175,6 +177,7 @@
   {
    "fieldname": "department",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Department",
    "options": "Cost Center"
   },
@@ -252,7 +255,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-05-24 09:17:38.518148",
+ "modified": "2022-09-08 11:39:23.403149",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

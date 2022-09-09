@@ -73,6 +73,15 @@ frappe.ui.form.on('Equipment Received Form', {
 				"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
 			}
 			frm.set_value("repair_warehouse",d[frm.doc.branch]);
+			var d = {
+				"Dammam - TSL-SA":"ERF-D.YY.-",
+				"Riyadh - TSL-SA":"ERF-R.YY.-",
+				"Jeddah - TSL-SA":"ERF-J.YY.-",
+				"Kuwait - TSL":"ERF-K.YY.-"
+			};
+			if(frm.doc.branch){
+				frm.set_value("naming_series",d[frm.doc.branch]);
+			}
 			
 		}
 		
@@ -95,10 +104,19 @@ frappe.ui.form.on('Equipment Received Form', {
 								frm.set_query("incharge", function() {
 										return {
 												"filters": {
-														"name":["in", r.message]
+														"name":["in", r.message[0]]
 												}
 										};
 								});
+								frm.set_query("sales_person", function() {
+									return {
+											"filters": {
+													"name":["in", r.message[1]]
+											}
+									};
+							    });
+								frm.set_value("sales_person",r.message[2]);
+								
 						}
 				}
 		});
@@ -209,6 +227,16 @@ frappe.ui.form.on("Equipment Received Form", {
 				]
 			}
 		});
+		// frm.set_query("incharge", function() {
+		// 	return {
+		// 		filters: [
+		// 			["Dynamic Link","parenttype", "=", "Contact"],
+		// 			["Dynamic Link","link_name","=",frm.doc.customer],
+		// 			["Dynamic Link","link_doctype","=","Customer"]
+					
+		// 		]
+		// 	}
+		// });
 		
 	}
 });
