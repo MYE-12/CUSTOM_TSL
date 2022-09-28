@@ -11,6 +11,8 @@
   "sales_rep",
   "customer",
   "customer_name",
+  "address",
+  "incharge",
   "quoted_date",
   "warranty",
   "delivery",
@@ -19,6 +21,7 @@
   "equipment_recieved_form",
   "column_break_7",
   "image",
+  "attach_image",
   "received_date",
   "company",
   "branch",
@@ -253,12 +256,32 @@
    "fieldtype": "Date",
    "label": "Warranty Expiry Date",
    "read_only": 1
+  },
+  {
+   "fieldname": "attach_image",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Attach Image"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "incharge",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Incharge",
+   "options": "Contact"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-09-08 11:39:23.403149",
+ "modified": "2022-09-28 07:54:29.592182",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

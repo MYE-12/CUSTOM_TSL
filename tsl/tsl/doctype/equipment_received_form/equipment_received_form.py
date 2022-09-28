@@ -1,11 +1,13 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
+import json
 from pydoc import doc
 from re import X
 #from typing_extensions import Self
 import frappe
 from frappe.model.document import Document
+from datetime import datetime
 # from tsl.tsl.custom_py.quotation import before_submit
 
 class EquipmentReceivedForm(Document):
@@ -44,10 +46,7 @@ class EquipmentReceivedForm(Document):
 				doc = frappe.get_doc("Stock Entry",i[0])
 				if doc.docstatus == 1:
 					doc.cancel()
-		
 
-
-			
 	def before_save(self):
 		if self.repair_warehouse:
 			for i in self.get("received_equipment"):
@@ -64,7 +63,6 @@ class EquipmentReceivedForm(Document):
 						"quoted_price":prev_quoted[0]['price'],
 						"quotation_no":prev_quoted[0]['name']
 					})
-				
 		for i in self.get('received_equipment'):
 			if not i.item_code:
 				item = frappe.db.get_value("Item",{"model":i.model,"mfg":i.manufacturer,"type":i.type,"item_name":i.item_name},"name")
@@ -87,11 +85,6 @@ class EquipmentReceivedForm(Document):
 					new_doc.save(ignore_permissions = True)
 					if new_doc.name:
 						i.item_code = new_doc.name
-		
-
-
-
-	
 
 @frappe.whitelist()
 def get_contacts(customer):
@@ -121,53 +114,137 @@ def get_contacts(customer):
 @frappe.whitelist()
 def create_workorder_data(order_no):
 	l=[]
-	doc = frappe.get_doc("Equipment Received Form",order_no)
+	sn_no = ""
+	doc = frappe._dict(json.loads(order_no))
+	if not doc.branch:
+		frappe.throw("Please Specify Branch Name")
+	if not doc.customer:
+		frappe.throw("Please Mention the Customer Name")
+	if not doc.incharge:
+		frappe.throw("Please Mention the Customer Representative")
+
 	for i in doc.get("received_equipment"):
-		wod = frappe.db.sql("""select wo.name as name from `tabWork Order Data` as wo join `tabMaterial List` as ml on wo.name=ml.parent where wo.equipment_recieved_form=%s and wo.docstatus!=2 and ml.item_code=%s and ml.model_no = %s and ml.mfg = %s and ml.type = %s and ml.serial_no = %s and  ml.quantity=%s""",(order_no,i.item_code,i.model ,i.manufacturer , i.type ,i.serial_no ,i.qty))
-		if wod:
-			frappe.msgprint("""Work Order Data already exists for this Equipment: {0}""".format(i.item_code))
-			continue
+		if not 'item_code' in i:
+			item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type'],"item_name":i['item_name']},"name")
+			if item and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+				i['item_code'] = item
+			elif item and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+				i['item_code'] = item
+			else:
+				new_doc = frappe.new_doc('Item')
+				new_doc.naming_series = '.####'
+				new_doc.item_name = i['item_name']
+				new_doc.item_group = "Equipments"
+				new_doc.description = i['item_name']
+				new_doc.model = i['model']
+				new_doc.is_stock_item = 1
+				new_doc.mfg = i['manufacturer']
+				new_doc.type = i['type']
+				if 'has_serial_no' in i and i['has_serial_no']:
+					new_doc.has_serial_no = 1
+				new_doc.save(ignore_permissions = True)
+				if new_doc.name:
+					i['item_code'] = new_doc.name
+					if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
+						print("\n\n\n\n\n")
+						def_warehouse = frappe.defaults.get_user_default("Warehouse")
+						print(def_warehouse)
+						frappe.defaults.set_user_default("Warehouse",None)
+						sn_doc = frappe.new_doc("Serial No")
+						sn_doc.serial_no = i['serial_no']
+						sn_doc.item_code = i['item_code']
+						sn_doc.save(ignore_permissions = True)
+						if sn_doc.name:
+							sn_no = sn_doc.name
+							print("\n\n\n\n\nserial_no created")
+							print(sn_doc.name)
+						frappe.defaults.set_user_default("Warehouse",def_warehouse)
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
 			"Riyadh - TSL-SA":"WOD-R.YY.-",
 			"Jeddah - TSL-SA":"WOD-J.YY.-",
 			"Kuwait - TSL":"WOD-K.YY.-"
 		}
-
+		if frappe.db.get_value("Item",i['item_code'],"has_serial_no") and not i['has_serial_no']:
+			frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))
+		
 		new_doc = frappe.new_doc("Work Order Data")
 		if doc.work_order_data:
 			link0 = []
-			warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"])
-			date = frappe.utils.add_to_date(warr[0], days=int(warr[1]))
-			frappe.db.set_value("Work Order Data",doc.work_order_data,"expiry_date",date)
-			frappe.db.set_value("Work Order Data",doc.work_order_data,"returned_date",doc.received_date)
-			if doc.received_date <= date:
-				frappe.db.set_value("Work Order Data",doc.work_order_data,"status","NER-Need Evaluation Return")
-				frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
-				link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
-				frappe.msgprint("Work Order Updated: "+', '.join(link0))
-				return True
+			warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"],as_dict = 1)
+			print("\n\n\n\n\nwarranty")
+			print(warr)
+			if warr['delivery'] and warr['warranty']:
+				date = frappe.utils.add_to_date(warr['delivery'], days=int(warr['warranty']))
+				print(date,type(date))
+				frappe.db.set_value("Work Order Data",doc.work_order_data,"expiry_date",date)
+				frappe.db.set_value("Work Order Data",doc.work_order_data,"returned_date",doc.received_date)
+				if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
+					frappe.db.set_value("Work Order Data",doc.work_order_data,"status","NER-Need Evaluation Return")
+					if not doc.name == "Create Work Order":
+						frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
+					link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
+					frappe.msgprint("Work Order Updated: "+', '.join(link0))
+					return True
+				else:
+					frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
 			else:
-				frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+				frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
 		new_doc.branch = doc.branch
+		new_doc.address = doc.address
+		new_doc.incharge = doc.incharge
 		new_doc.naming_series = d[new_doc.branch]
-		new_doc.equipment_recieved_form = doc.name
+		new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image'in i and i['attach_image'] else ""
+		# serial_no=""
+		# if i['has_serial_no'] and i['serial_no']:
+		# 	serial_no = i['serial_no']
+		# 	sn_doc = frappe.new_doc("Serial No")
+		# 	sn_doc.serial_no = i['serial_no']
+		# 	sn_doc.item_code = i['item_code']
+		# 	sn_doc.warehouse = ""
+		# 	sn_doc.status = "Inactive"
+		# 	sn_doc.save(ignore_permissions = True)
+
 		new_doc.append("material_list",{
-			"item_code": i.item_code,
-			"item_name":i.item_name,
-			"type":i.type,
-			"model_no":i.model,
-			"mfg":i.manufacturer,
-			"serial_no":i.serial_no,
-			"quantity":i.qty,
+			"item_code": i['item_code'],
+			"item_name":i['item_name'],
+			"type":i['type'],
+			"model_no":i['model'],
+			"mfg":i['manufacturer'],
+			"serial_no":sn_no,
+			"quantity":i['qty'],
 		})
+
 		new_doc.save(ignore_permissions = True)
 		new_doc.submit()
 		l.append(new_doc.name)
 	if l:
+		
+		frappe.delete_doc("Create Work Order","Create Work Order")
+		for j in doc.get('received_equipment'):
+			if j['item_code']:
+				se_doc = frappe.new_doc("Stock Entry")
+				se_doc.stock_entry_type = "Material Receipt"
+				se_doc.company = doc.company
+				se_doc.branch = doc.branch
+				se_doc.to_warehouse = doc.repair_warehouse
+				se_doc.append("items",{
+					't_warehouse': doc.repair_warehouse,
+					'item_code':j['item_code'],
+					'item_name':j['item_name'],
+					'description':j['item_name'],
+					'serial_no':sn_no,
+					'qty':j['qty'],
+					'uom':frappe.db.get_value("Item",j['item_code'],'stock_uom') or "Nos",
+					'conversion_factor':1,
+					'allow_zero_valuation_rate':1
+				})
+				se_doc.save(ignore_permissions = True)
+				if se_doc.name:
+					se_doc.submit()
 		link = []
 		for i in l:
 			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
@@ -179,10 +256,10 @@ def create_workorder_data(order_no):
 def get_wod_details(wod):
 	l = []
 	doc = frappe.get_doc("Work Order Data",wod)
-	od = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,["incharge","address"])
 	for i in doc.get("material_list"):
 		l.append(frappe._dict({
 			"item_name" : i.item_name,
+			"item_code": i.item_code,
 			"type": i.type,
 			"mfg":i.mfg,
 			"model_no": i.model_no,
@@ -190,9 +267,9 @@ def get_wod_details(wod):
 			"qty": i.quantity,
 			"sales_rep":doc.sales_rep,
 			"customer":doc.customer,
-			"incharge":od[0] or None,
-			"address" : od[1] or None,
+			"incharge":doc.incharge,
+			"address" : doc.address,
 			"branch":doc.branch
-			
+
 		}))
 	return l
