@@ -2,8 +2,24 @@ from gettext import find
 import frappe
 from frappe.utils import datetime,now,today
 
-def on_save(self,method):
+def before_save(self,method):
     customer = []
+    print("\n\n\n..........")
+    print(self.email_id,self.mobile_no)
+    if self.email_id_or_address:
+        self.append("email_ids",{
+            "email_id":self.email_id_or_address,
+            "is_primary":1
+        })
+    if self.mobile_or_phone_number:
+        self.append("phone_nos",{
+            "phone":self.mobile_or_phone_number,
+            "is_primary_phone":1,
+            "is_primary_mobile_no":1
+        }
+        )
+    self.email_id = self.email_id_or_address
+    self.mobile_no = self.mobile_or_phone_number
     for i in self.links:
         if i.link_doctype == "Customer":
             customer.append(i.link_name)
@@ -19,6 +35,7 @@ def on_save(self,method):
         doc.email_id = self.email_id
         doc.location  = self.location
         doc.save()
+    
     
 def find_idx(customer):
     doc = frappe.get_doc("Customer",customer)

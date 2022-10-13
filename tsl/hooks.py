@@ -135,7 +135,7 @@ doc_events = {
 	},
 	"Contact":{
 		"before_save":[
-			"tsl.custom_py.contact.on_save"
+			"tsl.custom_py.contact.before_save"
 		]
 	},
 	"Sales Invoice":{
