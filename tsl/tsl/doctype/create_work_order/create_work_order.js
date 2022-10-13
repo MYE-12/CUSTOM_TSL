@@ -72,6 +72,10 @@ frappe.ui.form.on('Create Work Order', {
 												}
 										};
 								});
+								if(r.message[0]){
+									frm.set_value("incharge",r.message[0][0])
+								}
+								
 
 
 						}

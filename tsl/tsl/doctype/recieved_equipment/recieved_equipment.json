@@ -226,13 +226,13 @@
   {
    "fieldname": "suggested_price",
    "fieldtype": "Currency",
-   "label": "Suggested Price"
+   "label": "Sales Suggested Price"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-09-28 09:31:13.564614",
+ "modified": "2022-10-10 15:40:59.342235",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Recieved Equipment",

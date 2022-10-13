@@ -52,8 +52,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "New Work Order Form",
-   "link_to": "Equipment Received Form",
+   "label": "Create Work Order",
+   "link_to": "Create Work Order",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -411,7 +411,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-08-27 11:19:00.853672",
+ "modified": "2022-09-28 11:00:08.054020",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",

@@ -14,17 +14,22 @@
  ],
  "fields": [
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "mfg",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Manufacturer Name",
+   "reqd": 1,
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "contact_number",
    "fieldtype": "Data",
    "label": "Contact Number"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "email_id",
    "fieldtype": "Data",
    "label": "Email ID"
@@ -38,7 +43,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-03-08 09:04:18.473700",
+ "modified": "2022-10-10 08:02:45.501066",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Mfg",
