@@ -4,10 +4,6 @@
 frappe.ui.form.on('Create Work Order', {
 	refresh:function(frm){
 		frm.disable_save()
-		frappe.db.get_value("User", {"full_name": frappe.session.user}, "name", (r) => {
-			frm.set_value("sales_person",r.name)
-		});
-		console.log(frappe.user_defaults.warehouse)
 		frm.set_value("branch",frappe.user_defaults.warehouse)
 		frm.add_custom_button(__("Create Work Order"), function(){
 			frappe.call({
@@ -75,7 +71,26 @@ frappe.ui.form.on('Create Work Order', {
 								if(r.message[0]){
 									frm.set_value("incharge",r.message[0][0])
 								}
+								console.log("sale")
+								console.log(r.message[1])
+								console.log(r.message[2])
+								if(r.message[1]){
+									frm.set_query("sales_person", function() {
+										return {
+												"filters": {
+														"name":["in", r.message[1]]
+												}
+										};
+									});
+								}
 								
+								if(r.message[2]){
+									frm.set_value("sales_person",r.message[2])
+								}
+								else{
+									frm.set_value("sales_person","");
+									frm.set_value("sales_person_name","");
+								}
 
 
 						}

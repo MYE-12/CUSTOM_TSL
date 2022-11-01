@@ -161,6 +161,7 @@
    "label": "Received Date"
   },
   {
+   "depends_on": "eval:(!doc.sales_person);",
    "fieldname": "sales_person",
    "fieldtype": "Link",
    "label": "Sales Person",
@@ -247,7 +248,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-10-10 07:56:49.625742",
+ "modified": "2022-10-21 16:01:24.449129",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",
