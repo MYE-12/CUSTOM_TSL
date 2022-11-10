@@ -129,12 +129,14 @@ def before_save(self,method):
 						source = "Supplier"
 					sq_no=""
 					if source == "Supplier":
-						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.transaction_date desc limit 1''',(doc.work_order_data,k.part),as_dict=1)[0]["sq"]
-					self.append("item_price_details",{
-						"item":k.part,
-						"item_source":source,
-						"price":price,
-						"supplier_quotation":sq_no
+						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.transaction_date desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
+						if sq_no:
+							sq_no = sq_no[0]["sq"]
+							self.append("item_price_details",{
+								"item":k.part,
+								"item_source":source,
+								"price":price,
+								"supplier_quotation":sq_no
 
 					})
 					frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)

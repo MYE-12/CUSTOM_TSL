@@ -6,11 +6,11 @@ import frappe
 from frappe.model.document import Document
 from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
 
-@frappe.whitelist()
-def get_item_image(wod_no):
-	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
-	image = img(erf_no)
-	return image
+# @frappe.whitelist()
+# def get_item_image(wod_no):
+# 	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
+# 	image = img(erf_no)
+# 	return image
 
 class EvaluationReport(Document):
 	def on_submit(self):
@@ -28,7 +28,7 @@ class EvaluationReport(Document):
 			for i in self.get("items"):
 				if i.parts_availability == "No":
 					f=1
-			if f==1:
+			if f:
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
@@ -39,7 +39,7 @@ class EvaluationReport(Document):
 			for i in self.get("items"):
 				if i.parts_availability == "No":
 					f=1
-			if f==1:
+			if f:
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
