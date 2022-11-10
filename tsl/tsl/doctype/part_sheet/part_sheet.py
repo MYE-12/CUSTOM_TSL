@@ -67,7 +67,7 @@ def create_rfq(ps):
 				"stock_qty":1,
 				"qty":i.qty,
 				"schedule_date":add_to_date(new_doc.transaction_date,days = 2),
-				"warehouse":"Kuwait - TSL"
+				"warehouse":new_doc.branch
 			})
 	return new_doc
 

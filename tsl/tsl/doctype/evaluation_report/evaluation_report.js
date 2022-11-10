@@ -6,20 +6,24 @@ frappe.ui.form.on('Evaluation Report', {
 
 	// }
 	refresh:function(frm){
-		if(frm.doc.work_order_data){
-			frappe.call({
-				method: "tsl.tsl.doctype.evaluation_report.evaluation_report.get_item_image",
-				args: {
-					"wod_no":frm.doc.work_order_data,
-				},
-				callback: function(r) {
-					if(r.message) {
-						cur_frm.set_df_property("item_photo", "options","<img src="+r.message+"></img>");
-						cur_frm.refresh_fields();
-					}
-				}
-			});
+		// if(frm.doc.work_order_data){
+		// 	frappe.call({
+		// 		method: "tsl.tsl.doctype.evaluation_report.evaluation_report.get_item_image",
+		// 		args: {
+		// 			"wod_no":frm.doc.work_order_data,
+		// 		},
+		// 		callback: function(r) {
+		// 			if(r.message) {
+		// 				cur_frm.set_df_property("item_photo", "options","<img src="+r.message+"></img>");
+		// 				cur_frm.refresh_fields();
+		// 			}
+		// 		}
+		// 	});
 
+		// }
+		if(frm.doc.attach_image){
+			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
+			cur_frm.refresh_fields();
 		}
 		if(frm.doc.docstatus == 0 ){
 			frappe.call({
@@ -189,20 +193,21 @@ frappe.ui.form.on('Part Sheet Item', {
 					frm.refresh_fields();
 					
 				}
+				row.total = row.qty * row.price_ea
+				let tot_qty = 0
+				let tot_amount = 0
+				for(let i in frm.doc.items){
+					tot_qty += frm.doc.items[i].qty
+					tot_amount += frm.doc.items[i].total
+				}
+				frm.set_value("total_qty", tot_qty)
+				frm.set_value("total_amount", tot_amount)
+				frm.refresh();
 			}
 	
 		})
 	   }
-		row.total = row.qty * row.price_ea
-		let tot_qty = 0
-		let tot_amount = 0
-		for(let i in frm.doc.items){
-			tot_qty += frm.doc.items[i].qty
-			tot_amount += frm.doc.items[i].total
-		}
-		frm.set_value("total_qty", tot_qty)
-		frm.set_value("total_amount", tot_amount)
-		frm.refresh();
+		
 	},
 	price_ea:function(frm,cdt,cdn){
 		frm.script_manager.trigger("qty",cdt,cdn);

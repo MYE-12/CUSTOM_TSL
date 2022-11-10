@@ -82,33 +82,34 @@ def create_evaluation_report(doc_no):
 	new_doc.customer = doc.customer
 	new_doc.attn = doc.technician
 	new_doc.work_order_data = doc.name
-	erf_doc = frappe.get_doc("Equipment Received Form",doc.equipment_recieved_form)
-	cc =""
-	for erf in erf_doc.received_equipment:
-		if doc.material_list[0].item_code == erf.item_code:
-			if erf.no_power:
-				cc+="No Power,\n"
-			if erf.no_output:
-				cc+="No Output,\n"
-			if erf.no_display:
-				cc+="No Display,\n"
-			if erf.no_communication:
-				cc+="No Communication,\n"
-			if erf.supply_voltage:
-				cc+="Supply Voltage,\n"
-			if erf.touchkeypad_not_working:
-				cc+="Touch keypad Not Working,\n"
-			if erf.no_backlight:
-				cc+="No BackLight,\n"
-			if erf.error_code:
-				cc+="Error Code,\n"
-			if erf.short_circuit:
-				cc+="Short Circuit,\n"
-			if erf.overloadovercurrent:
-				cc+="Overload/Over Current,\n"
-			if erf.other:
-				cc+=erf.specify
-	new_doc.customer_complaint = cc
+	new_doc.attach_image = doc.attach_image
+	# erf_doc = frappe.get_doc("Equipment Received Form",doc.equipment_recieved_form)
+	# cc =""
+	# for erf in erf_doc.received_equipment:
+	# 	if doc.material_list[0].item_code == erf.item_code:
+	# 		if erf.no_power:
+	# 			cc+="No Power,\n"
+	# 		if erf.no_output:
+	# 			cc+="No Output,\n"
+	# 		if erf.no_display:
+	# 			cc+="No Display,\n"
+	# 		if erf.no_communication:
+	# 			cc+="No Communication,\n"
+	# 		if erf.supply_voltage:
+	# 			cc+="Supply Voltage,\n"
+	# 		if erf.touchkeypad_not_working:
+	# 			cc+="Touch keypad Not Working,\n"
+	# 		if erf.no_backlight:
+	# 			cc+="No BackLight,\n"
+	# 		if erf.error_code:
+	# 			cc+="Error Code,\n"
+	# 		if erf.short_circuit:
+	# 			cc+="Short Circuit,\n"
+	# 		if erf.overloadovercurrent:
+	# 			cc+="Overload/Over Current,\n"
+	# 		if erf.other:
+	# 			cc+=erf.specify
+	new_doc.customer_complaint = doc.complaints
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_code,

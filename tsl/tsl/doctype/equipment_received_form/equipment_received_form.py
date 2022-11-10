@@ -146,7 +146,6 @@ def create_workorder_data(order_no):
 				if new_doc.name:
 					i['item_code'] = new_doc.name
 					if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
-						print("\n\n\n\n\n")
 						def_warehouse = frappe.defaults.get_user_default("Warehouse")
 						print(def_warehouse)
 						frappe.defaults.set_user_default("Warehouse",None)
@@ -156,8 +155,6 @@ def create_workorder_data(order_no):
 						sn_doc.save(ignore_permissions = True)
 						if sn_doc.name:
 							sn_no = sn_doc.name
-							print("\n\n\n\n\nserial_no created")
-							print(sn_doc.name)
 						frappe.defaults.set_user_default("Warehouse",def_warehouse)
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
@@ -172,7 +169,6 @@ def create_workorder_data(order_no):
 		if doc.work_order_data:
 			link0 = []
 			warr = frappe.db.get_value("Work Order Data",doc.work_order_data,["delivery","warranty"],as_dict = 1)
-			print("\n\n\n\n\nwarranty")
 			print(warr)
 			if warr['delivery'] and warr['warranty']:
 				date = frappe.utils.add_to_date(warr['delivery'], days=int(warr['warranty']))
@@ -190,6 +186,30 @@ def create_workorder_data(order_no):
 					frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
 			else:
 				frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
+		cc = ""
+		if i["no_power"]:
+				cc+="No Power,\n"
+		if i["no_output"]:
+			cc+="No Output,\n"
+		if i["no_display"]:
+			cc+="No Display,\n"
+		if i["no_communication"]:
+			cc+="No Communication,\n"
+		if i["supply_voltage"]:
+			cc+="Supply Voltage,\n"
+		if i["touchkeypad_not_working"]:
+			cc+="Touch keypad Not Working,\n"
+		if i["no_backlight"]:
+			cc+="No BackLight,\n"
+		if i["error_code"]:
+			cc+="Error Code,\n"
+		if i["short_circuit"]:
+			cc+="Short Circuit,\n"
+		if i["overloadovercurrent"]:
+			cc+="Overload/Over Current,\n"
+		if i["other"]:
+			cc+=i["specify"]
+		new_doc.complaints = cc
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
@@ -197,7 +217,8 @@ def create_workorder_data(order_no):
 		new_doc.address = doc.address
 		new_doc.incharge = doc.incharge
 		new_doc.naming_series = d[new_doc.branch]
-		new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image'in i and i['attach_image'] else ""
+		new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
+
 		# serial_no=""
 		# if i['has_serial_no'] and i['serial_no']:
 		# 	serial_no = i['serial_no']
@@ -219,6 +240,8 @@ def create_workorder_data(order_no):
 		})
 
 		new_doc.save(ignore_permissions = True)
+		if new_doc.name:
+			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
 		new_doc.submit()
 		l.append(new_doc.name)
 	if l:
@@ -244,7 +267,8 @@ def create_workorder_data(order_no):
 				})
 				se_doc.save(ignore_permissions = True)
 				if se_doc.name:
-					se_doc.submit()
+					# se_doc.submit()
+					pass
 		link = []
 		for i in l:
 			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
