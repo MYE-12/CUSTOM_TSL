@@ -162,6 +162,9 @@ def before_save(self,method):
 		self.payment_commission = pc
 		self.max_freight_duration = mfd
 		self.max_custom_duration = mcd
+		additional = (self.freight_charges + self.custom_clearance + self.payment_commission )
+		self.discount_amount = (additional + self.margin_rate)*-1
+
 
 
 

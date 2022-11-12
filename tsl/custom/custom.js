@@ -497,7 +497,7 @@ frappe.ui.form.on('Quotation', {
 					}
 					
 					// cur_frm.refresh_fields();
-					frm.set_value("approval_date",data.approval_date)
+					frm.set_value("approval_date",data.approval_date);
 					d.hide();
 					
 				},

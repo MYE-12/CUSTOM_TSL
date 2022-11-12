@@ -43,7 +43,7 @@ def create_rfq(sod):
 				"conversion_factor":1,
 				"schedule_date":sched_date,
 				"stock_qty":1,
-				"warehouse":"Kuwait - TSL",
+				"warehouse":doc.branch,
 				"qty":i.qty
 			})
 	return new_doc
@@ -67,6 +67,7 @@ def create_quotation(sod):
 	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
+	new_doc.department = doc.department
 	new_doc.quotation_type = "Internal Quotation - Supply"
 	new_doc.sales_rep = doc.sales_rep
 	new_doc.ignore_pricing_rule = 1
