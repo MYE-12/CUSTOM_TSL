@@ -64,12 +64,15 @@ def create_quotation(wod):
 	
 	ths = frappe.db.sql('''select status,hours_spent,ratehour from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
 	if ths:
+		total = 0
 		if ths[0]["status"] == "Others":
 			ths[0]["status"] = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"specify")
+		total = float(ths[0]["hours_spent"]) * float(ths[0]["ratehour"])
 		new_doc.append("technician_hours_spent",{
 			"comments": ths[0]["status"],
 			"total_hours_spent":ths[0]["hours_spent"],
-			"value":ths[0]["ratehour"]
+			"value":ths[0]["ratehour"],
+			"total_price":total
 		})
 	return new_doc
 
@@ -133,14 +136,20 @@ def create_stock_entry(wod):
 	new_doc.stock_entry_type = "Material Transfer"
 	ps_list = frappe.db.get_list("Evaluation Report",{"work_order_data":wod,"parts_availability":"Yes"})
 	if ps_list:
+
 		for i in ps_list:
 			ps_doc = frappe.get_doc("Evaluation Report",i["name"])
 			for j in ps_doc.get("items"):
+				source_bin = frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.part,as_dict = 1)
+				if source_bin:
+					source_bin = source_bin[0]['warehouse']
+				else:
+					source_bin =  ""
 				new_doc.append("items",{
 					"item_code":j.part,
 					"item_name":j.part_name,
-					"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.part,as_dict = 1)[0]['warehouse'] or "",
-					"t_warehouse":"Repair - Kuwait - TSL",
+					"s_warehouse": source_bin,
+					"t_warehouse":doc.repair_warehouse,
 					"qty":j.qty,
 					"uom":"Nos",
 				"allow_zero_valuation_rate":1,
@@ -214,9 +223,9 @@ def create_sal_inv(wod):
 	new_doc.work_order_data = wod
 	d = {}
 	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
-	d['Dammam - TS'] = 'Dammam Repair - TS'
-	d['Jeddah - TS'] = 'Jeddah Repair - TS'
-	d['Riyadh - TS'] = 'Riyadh Repair - TS'
+	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
 	
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
@@ -309,14 +318,17 @@ def create_status_duration(wod):
 	
 class WorkOrderData(Document):
 	def before_save(self):
-		now = datetime.now()
-		if not self.status_duration_details or self.status != self.status_duration_details[-1].status:
-			self.append("status_duration_details",{
-				"status":self.status,
-				"date":now,
-			})
+		pass
+		# now = datetime.now()
+		# if not self.status_duration_details or self.status != self.status_duration_details[-1].status:
+		# 	self.append("status_duration_details",{
+		# 		"status":self.status,
+		# 		"date":now,
+		# 	})
 			
 	def on_update_after_submit(self):
+		# if self.technician:
+		# 	self.status = "UE-Under Evaluation"
 		if self.warranty and self.delivery:
 			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
@@ -339,16 +351,24 @@ class WorkOrderData(Document):
 			doc.save(ignore_permissions=True)
 		
 	def before_submit(self):
+
+		self.status = "NE-Need Evaluation"
+		now = datetime.now()
+		self.append("status_duration_details",{
+				"status":self.status,
+				"date":now,
+			})
 		# if not self.branch:
 		# 	frappe.throw("Assign a Branch to Submit")
 		# if not self.technician:
 		# 	frappe.throw("Assign a Technician to Submit")
 		# if not self.department:
 		# 	frappe.throw("Set Department to Submit")
-		self.status = "UE-Under Evaluation"
+		# self.status = "UE-Under Evaluation"
 		
 		# current_time = now.strftime("%H:%M:%S")
 		# self.status_duration_details =[]
+		
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()

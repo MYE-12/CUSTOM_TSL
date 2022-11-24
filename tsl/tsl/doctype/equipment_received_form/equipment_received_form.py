@@ -210,10 +210,12 @@ def create_workorder_data(order_no):
 		if i["other"]:
 			cc+=i["specify"]
 		new_doc.complaints = cc
+		new_doc.wod_component = i["item_code"] if "item_code" in i else ""
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
 		new_doc.branch = doc.branch
+		new_doc.repair_warehouse = doc.repair_warehouse
 		new_doc.address = doc.address
 		new_doc.incharge = doc.incharge
 		new_doc.naming_series = d[new_doc.branch]
@@ -240,7 +242,7 @@ def create_workorder_data(order_no):
 		})
 
 		new_doc.save(ignore_permissions = True)
-		if new_doc.name:
+		if new_doc.name and "attach_image" in i:
 			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
 		new_doc.submit()
 		l.append(new_doc.name)

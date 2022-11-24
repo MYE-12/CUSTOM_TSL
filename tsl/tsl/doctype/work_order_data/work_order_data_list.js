@@ -75,7 +75,7 @@ frappe.listview_settings['Work Order Data'] = {
         else if (doc.status === "RNFC-Return No Fault Client") {
               return [__("RNFC-Return No Fault Client"), "green", "status,=,RNFC-Return No Fault Client"];
         }
-       else if(doc.docstatus==0){
+       else if(doc.status === "NE-Need Evaluation"){
             return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
         }
  },

@@ -34,6 +34,7 @@ class EvaluationReport(Document):
 				self.parts_availability = "Yes"
 
 	def on_update_after_submit(self):
+		print("OUAS")
 		if self.if_parts_required:
 			f=0
 			for i in self.get("items"):
@@ -43,6 +44,9 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
+		if self.parts_availability == "Yes" and self.work_order_data:
+
+			frappe.db.sql("""update `tabWork Order Data` set status = "AP-Available Parts" where name = %s""",self.work_order_data)
 			
 
 	def before_submit(self):
