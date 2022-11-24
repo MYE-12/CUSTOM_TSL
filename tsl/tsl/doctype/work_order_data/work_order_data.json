@@ -25,6 +25,7 @@
   "received_date",
   "company",
   "branch",
+  "repair_warehouse",
   "posting_date",
   "technician",
   "department",
@@ -38,6 +39,7 @@
   "invoice_date",
   "section_break_14",
   "material_list",
+  "wod_component",
   "complaints",
   "section_break_23",
   "extra_part_sheets",
@@ -283,12 +285,25 @@
    "fieldtype": "Small Text",
    "hidden": 1,
    "label": "Complaints"
+  },
+  {
+   "fieldname": "repair_warehouse",
+   "fieldtype": "Link",
+   "label": "Repair Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "wod_component",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "WOD Component",
+   "options": "Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-09 18:12:54.438045",
+ "modified": "2022-11-22 15:25:44.426310",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

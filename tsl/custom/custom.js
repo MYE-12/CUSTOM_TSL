@@ -278,7 +278,9 @@ frappe.ui.form.on('Quotation', {
 						target: frm,
 						setters: {
 							customer:frm.doc.party_name,
+							wod_component:null
 						},
+						
 						add_filters_group: 1,
 						get_query() {
 							return {
@@ -323,6 +325,7 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.actual_price = frm.doc.rounded_total;
 										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
 											frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value*frm.doc.technician_hours_spent[0].total_hours_spent);
+											console.log(frm.doc.actual_price);
 										}
 										
 										frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
@@ -580,7 +583,7 @@ frappe.ui.form.on("Quotation Item",{
 				frm.doc.rounded_total = frm.doc.grand_total;
 				frm.doc.actual_price = frm.doc.rounded_total;
 				if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
-					frm.doc.actual_price = frm.doc.rounded_total +frm.doc.technician_hours_spent[0].value;
+					frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value *frm.doc.technician_hours_spent[0].total_hours_spent);
 
 				}
 				var act = (frm.doc.actual_price*(302.8/100))+ frm.doc.actual_price
@@ -600,11 +603,12 @@ frappe.ui.form.on("Technician Hours Spent",{
 	value:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
 		if(item.value && item.total_hours_spent){
-			var tot_amt = 0;
-			for(var i=0 ;i< frm.doc.technician_hours_spent.length;i++){
-				tot_amt += (frm.doc.technician_hours_spent[i]["value"] * frm.doc.technician_hours_spent[i]["total_hours_spent"]);
-			}
-			item.total_price = tot_amt;
+			item.total_price = item.value * item.total_hours_spent;
+			var tot_amt =  item.value * item.total_hours_spent;
+			// for(var i=0 ;i< frm.doc.technician_hours_spent.length;i++){
+			// 	tot_amt += (frm.doc.technician_hours_spent[i]["value"] * frm.doc.technician_hours_spent[i]["total_hours_spent"]);
+			// }
+			
 			frm.doc.actual_price = tot_amt +frm.doc.rounded_total;
 			frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
 			cur_frm.refresh_fields();

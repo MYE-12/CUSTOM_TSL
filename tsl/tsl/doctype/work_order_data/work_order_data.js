@@ -2,6 +2,10 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Work Order Data', {
+	technician:function(frm){
+		frm.set_value("status","UE-Under Evaluation");
+		frm.refresh();
+	},
 	refresh: function(frm) {
 		
 		// if(frm.doc.docstatus === 1) {
