@@ -56,8 +56,9 @@ def get_columns(filters=None):
 def get_data(filters=None):
 	data = []
 	data.append({"description":"","qty":"","buy_source":""})
-	suppliers = frappe.db.sql('''select supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_dict=1)
+	suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s ''',filters.get('sod_no'),as_dict=1)
 	for i in suppliers:
+		
 		s = i['supplier'].lower().replace(" ","_")
 		data[0][s] = "Unit Price"
 		data[0][s+"1"] = "Total Price"

@@ -126,6 +126,9 @@ doc_events = {
 	"Purchase Receipt":{
 		"on_submit":[
 			"tsl.custom_py.purchase_receipt.on_submit"
+		],
+		"before_save":[
+			"tsl.custom_py.purchase_receipt.before_save"
 		]
 	},
 	"Delivery Note":{

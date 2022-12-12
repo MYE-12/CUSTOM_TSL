@@ -139,7 +139,7 @@
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
-   "options": "Warehouse"
+   "options": "Branch"
   },
   {
    "fieldname": "department",
@@ -151,7 +151,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-08 08:57:22.263310",
+ "modified": "2022-12-02 17:31:25.324685",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

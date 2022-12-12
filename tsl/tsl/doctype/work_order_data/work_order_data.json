@@ -243,7 +243,7 @@
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
-   "options": "Warehouse"
+   "options": "Branch"
   },
   {
    "fieldname": "returned_date",
@@ -300,7 +300,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-22 15:25:44.426310",
+ "modified": "2022-12-08 08:26:23.991697",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

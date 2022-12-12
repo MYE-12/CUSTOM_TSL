@@ -19,6 +19,14 @@ def get_data():
 			},
 			{
 				'items' : ['Purchase Order']
-			}
+			},
+			{
+				
+				'items': ['Sales Invoice']
+			},
+			{
+				
+				'items': ['Delivery Note']
+			},
 		]
 	}

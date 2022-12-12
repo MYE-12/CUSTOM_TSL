@@ -25,49 +25,37 @@ frappe.ui.form.on('Evaluation Report', {
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
 			cur_frm.refresh_fields();
 		}
-		if(frm.doc.docstatus == 0 ){
-			frappe.call({
-				method: "tsl.tsl.doctype.part_sheet.part_sheet.check_userrole",
-				args: {
-					"user":frappe.session.user,
-					
-				},
-				callback: function(r) {
-					if(r.message) {
-						if(r.message == "Technician"){
-							var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
-							df.read_only = 1;
-							cur_frm.refresh_fields();
-						}
-						else if(r.message == "Purchase User"){
-							var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
-							df.read_only = 1;
-							cur_frm.refresh_fields();
+		if(frm.doc.docstatus == 0){
+			if(in_list(frappe.user_roles,"Technician")){
+				var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
+				df.read_only = 1;
+				cur_frm.refresh_fields();
+			}
+			else if(in_list(frappe.user_roles,"Purchase User")){
+				var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
+				df.read_only = 1;
+				cur_frm.refresh_fields();
+			}
+			else {
+				var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
+				df.read_only = 1;
+				var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
+				df.read_only = 1;
+				cur_frm.refresh_fields();
 
-						}
-						else if(r.message=="No Role"){
-							var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);
-							df.read_only = 1;
-							var df = frappe.meta.get_docfield("Part Sheet Item","qty", cur_frm.doc.name);
-							df.read_only = 1;
-							cur_frm.refresh_fields();
-
-						}
-					}
-				}
-			});
+			}
 			frm.fields_dict['evaluation_details'].grid.get_field('item').get_query = function(frm, cdt, cdn) {
 				var child = locals[cdt][cdn];
 				var d = {};

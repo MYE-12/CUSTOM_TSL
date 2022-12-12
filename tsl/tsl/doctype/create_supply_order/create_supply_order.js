@@ -1,12 +1,20 @@
 // Copyright (c) 2022, Tsl and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Create Work Order', {
+frappe.ui.form.on('Create Supply Order', {
+	// refresh: function(frm) {
+
+	// }
+});
+// Copyright (c) 2022, Tsl and contributors
+// For license information, please see license.txt
+
+frappe.ui.form.on('Create Supply Order', {
 	refresh:function(frm){
 		frm.disable_save()
-		frm.add_custom_button(__("Create Work Order"), function(){
+		frm.add_custom_button(__("Create Supply Order"), function(){
 			frappe.call({
-				'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
+				'method': 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_supply_order_data',
 				'freeze':true,
 				'args':{
 				'order_no':cur_frm.doc
@@ -32,7 +40,15 @@ frappe.ui.form.on('Create Work Order', {
 				"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
 			}
 			frm.set_value("repair_warehouse",d[frm.doc.branch]);
-			
+			// var d = {
+			// 	"Dammam - TSL-SA":"ERF-D.YY.-",
+			// 	"Riyadh - TSL-SA":"ERF-R.YY.-",
+			// 	"Jeddah - TSL-SA":"ERF-J.YY.-",
+			// 	"Kuwait - TSL":"ERF-K.YY.-"
+			// };
+			// if(frm.doc.branch){
+			// 	frm.set_value("naming_series",d[frm.doc.branch]);
+			// }
 
 		}
 
@@ -164,6 +180,24 @@ setup:function(frm){
 
 	}
 
+	frm.fields_dict['equipments_in_stock'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+		var child = locals[cdt][cdn];
+			var d = {};
+			if(child.model){
+				d['model'] = child.model;
+
+			}
+			if(child.category){
+				d['category_'] = child.category;
+			}
+			if(child.sub_category){
+				d['sub_category'] = child.sub_category;
+			}
+			d['item_group'] = "Components";
+			return{
+				filters: d
+			}
+	}
 	frm.fields_dict['received_equipment'].grid.get_field('repair_warehouse').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 
@@ -185,7 +219,7 @@ setup:function(frm){
 
 }
 });
-frappe.ui.form.on("Create Work Order", {
+frappe.ui.form.on("Create Supply Order", {
 	setup: function(frm) {
 		frm.set_query("address", function() {
 			return {
@@ -202,12 +236,13 @@ frappe.ui.form.on("Create Work Order", {
 	}
 });
 
-frappe.ui.form.on('Create Work Order', {
+frappe.ui.form.on('Create Supply Order', {
 	setup: function(frm) {
 		frm.set_query("branch", function() {
 			return {
 				filters: [
-					["Branch","company", "=", frm.doc.company]
+					["Warehouse","company", "=", frm.doc.company],
+					["Warehouse","is_branch","=",1]
 
 				]
 			}
@@ -223,12 +258,5 @@ frappe.ui.form.on('Create Work Order', {
 			}
 
 		});
-		var d = {
-			"Kuwait - TSL":"Repair - Kuwait - TSL",
-			"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
-			"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
-			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
-		}
-		frm.set_value("repair_warehouse",d[frm.doc.branch]);
 	}
 });

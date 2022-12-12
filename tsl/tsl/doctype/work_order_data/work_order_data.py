@@ -33,8 +33,10 @@ def create_quotation(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
-	new_doc.party_name = doc.customer,
-	new_doc.party_name = new_doc.party_name[0]
+	new_doc.party_name = doc.customer
+	# new_doc.party_name = new_doc.party_name[0]
+	new_doc.department = doc.department
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
 	pay_term = ""
 	if frappe.db.get_value("Customer",doc.customer,"advance"):
@@ -136,23 +138,24 @@ def create_stock_entry(wod):
 	new_doc.stock_entry_type = "Material Transfer"
 	ps_list = frappe.db.get_list("Evaluation Report",{"work_order_data":wod,"parts_availability":"Yes"})
 	if ps_list:
-
 		for i in ps_list:
 			ps_doc = frappe.get_doc("Evaluation Report",i["name"])
 			for j in ps_doc.get("items"):
+				s_warehouse = ""
 				source_bin = frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.part,as_dict = 1)
 				if source_bin:
-					source_bin = source_bin[0]['warehouse']
-				else:
-					source_bin =  ""
+					for war in source_bin:
+						if frappe.db.get_value("Warehouse",{"name":war['warehouse'],"company":doc.company}):
+							s_warehouse = war['warehouse']
+							break
 				new_doc.append("items",{
 					"item_code":j.part,
 					"item_name":j.part_name,
-					"s_warehouse": source_bin,
+					"s_warehouse": s_warehouse,
 					"t_warehouse":doc.repair_warehouse,
 					"qty":j.qty,
 					"uom":"Nos",
-				"allow_zero_valuation_rate":1,
+					"allow_zero_valuation_rate":1,
 					"transfer_qty":j.qty,
 					"stock_uom":"Nos",
 					"conversion_factor":1,
@@ -245,7 +248,7 @@ def create_sal_inv(wod):
 			"serial_number":i.serial_no,
 			"description":i.item_name,
 			"qty":i.quantity,
-			"wod_no":wod,
+			"work_order_data":wod, 
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,
@@ -290,7 +293,7 @@ def create_dn(wod):
 			"qty":i.quantity,
 			"rate":r,
 			"amount":amt,
-			"wod_no":wod,
+			"work_order_data":wod,
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,

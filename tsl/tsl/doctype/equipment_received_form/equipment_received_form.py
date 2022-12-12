@@ -122,6 +122,14 @@ def create_workorder_data(order_no):
 		frappe.throw("Please Mention the Customer Name")
 	if not doc.incharge:
 		frappe.throw("Please Mention the Customer Representative")
+	if not doc.repair_warehouse:
+		d = {
+			"Kuwait - TSL":"Repair - Kuwait - TSL",
+			"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
+			"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
+			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
+		}
+		doc.repair_warehouse = d[doc.branch]
 
 	for i in doc.get("received_equipment"):
 		if not 'item_code' in i:
@@ -146,16 +154,13 @@ def create_workorder_data(order_no):
 				if new_doc.name:
 					i['item_code'] = new_doc.name
 					if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
-						def_warehouse = frappe.defaults.get_user_default("Warehouse")
-						print(def_warehouse)
-						frappe.defaults.set_user_default("Warehouse",None)
+						frappe.defaults.set_user_default("warehouse", None)
 						sn_doc = frappe.new_doc("Serial No")
 						sn_doc.serial_no = i['serial_no']
 						sn_doc.item_code = i['item_code']
 						sn_doc.save(ignore_permissions = True)
 						if sn_doc.name:
 							sn_no = sn_doc.name
-						frappe.defaults.set_user_default("Warehouse",def_warehouse)
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
 			"Riyadh - TSL-SA":"WOD-R.YY.-",
@@ -215,6 +220,7 @@ def create_workorder_data(order_no):
 		new_doc.received_date = doc.received_date
 		new_doc.sales_rep = doc.sales_person
 		new_doc.branch = doc.branch
+		new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
 		new_doc.repair_warehouse = doc.repair_warehouse
 		new_doc.address = doc.address
 		new_doc.incharge = doc.incharge

@@ -43,8 +43,7 @@ def get_sqtn_items(sod):
 	sod = json.loads(sod)
 	l=[]
 	for k in list(sod):
-		l += frappe.db.sql('''select si.item_code,si.mfg,si.model,si.type,si.serial_no,si.item_name,si.uom,si.stock_uom,si.conversion_factor,si.qty,si.rate,si.amount,s.name as sqtn,supply_order_data as sod from `tabSupplier Quotation` as s inner join `tabSupplier Quotation Item` as si on si.parent = s.name where s.docstatus = 0 and s.supply_order_data = %s and s.workflow_state = 'Waiting For Approval' order by s.creation''',k,as_dict =1)
-	print(l)
+		l += frappe.db.sql('''select si.item_code,si.mfg,si.model,si.type,si.serial_no,si.item_name,si.uom,si.stock_uom,si.conversion_factor,si.qty,si.rate,si.amount,s.name as sqtn,s.supply_order_data as sod from `tabSupplier Quotation` as s inner join `tabSupplier Quotation Item` as si on si.parent = s.name where s.docstatus = 0 and s.supply_order_data = %s and s.workflow_state = 'Waiting For Approval' order by s.creation''',k,as_dict =1)
 	return l
 
 
@@ -127,22 +126,21 @@ def before_save(self,method):
 					else:
 						price = k.price_ea
 						source = "Supplier"
-					sq_no=""
-					if source == "Supplier":
-						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.transaction_date desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
-						if sq_no:
-							sq_no = sq_no[0]["sq"]
-							self.append("item_price_details",{
-								"item":k.part,
-								"item_source":source,
-								"price":price,
-								"supplier_quotation":sq_no
+					sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi 
+					where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.transaction_date desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
+					if sq_no:
+						sq_no = sq_no[0]["sq"]
+						self.append("item_price_details",{
+							"item":k.part,
+							"item_source":source,
+							"price":price,
+							"supplier_quotation":sq_no
 
-							})
-							frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+						})
+						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
-		fc = cc = pc = 0
+		fc = cc = pc = additional =0
 		mfd = "0"
 		mcd = "0"
 		for i in self.get('items'):
@@ -163,7 +161,12 @@ def before_save(self,method):
 		self.max_freight_duration = mfd
 		self.max_custom_duration = mcd
 		additional = (self.freight_charges + self.custom_clearance + self.payment_commission )
-		self.discount_amount = (additional + self.margin_rate)*-1
+		if not self.margin_rate:
+			self.margin_rate = 0
+		discount_amount = (additional + self.margin_rate)*-1
+		self.discount_amount = discount_amount or 0
+		self.grand_total -= self.discount_amount
+		self.rounded_total = self.grand_total
 
 
 
@@ -313,6 +316,7 @@ def before_submit(self,method):
 			doc.items = []
 			for i in to_add:
 				doc.append("items",i)
+			doc.quotation = self.name
 			doc.save(ignore_permissions= True)
 			doc.submit()
 
