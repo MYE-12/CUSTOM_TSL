@@ -395,7 +395,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Cost Centers",
+   "label": "Departments",
    "link_to": "Cost Center",
    "link_type": "DocType",
    "onboard": 1,
@@ -411,7 +411,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-09-28 11:00:08.054020",
+ "modified": "2022-12-02 16:42:17.038401",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",

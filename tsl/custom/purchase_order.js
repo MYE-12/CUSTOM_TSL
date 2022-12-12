@@ -3,8 +3,8 @@ frappe.ui.form.on('Purchase Order', {
         frm.set_query("branch", function() {
                 return {
                         filters: [
-                                ["Branch","company", "=", frm.doc.company],
-                                ["Branch","is_branch","=",1]
+                                ["Warehouse","company", "=", frm.doc.company],
+                                ["Warehouse","is_branch","=",1]
                                 
                         ]
                 };
