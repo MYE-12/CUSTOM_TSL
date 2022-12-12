@@ -17,6 +17,91 @@ from frappe.utils.data import (
 )
 
 @frappe.whitelist()
+def create_sal_inv(sod):
+	doc = frappe.get_doc("Supply Order Data",sod)
+	new_doc = frappe.new_doc("Sales Invoice")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.supply_order_data = sod
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	new_doc.cost_center = doc.department
+	d = {}
+	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
+	
+	# for i in doc.get("material_list"):
+	# 	qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.supply_order_data = %s order by q.modified desc''',sod,as_dict=1)
+	# 	r = 0
+	# 	amt = 0
+	# 	if qi_details:
+	# 		r = qi_details[0]['rate']
+	# 		amt = qi_details[0]['amount']
+	# 	new_doc.append("items",{
+	# 		"item_name":i.item_name,
+	# 		"item_code":i.item_code,
+	# 		"manufacturer":i.mfg,
+	# 		"model":i.model_no,
+	# 		"rate":r,
+	# 		"amount":amt, 
+	# 		"type":i.type,
+	# 		"serial_number":i.serial_no,
+	# 		"description":i.item_name,
+	# 		"qty":i.quantity,
+	# 		"supply_order_data":sod,
+	# 		"uom":"Nos",
+	# 		"stock_uom":"Nos",
+	# 		"conversion_factor":1,
+	# 		"cost_center":doc.department,
+	# 		"income_account":"",
+	# 		"warehouse":d[doc.branch]
+
+	# 	})
+	return new_doc
+
+@frappe.whitelist()
+def create_dn(sod):
+	doc = frappe.get_doc("Supply Order Data",sod)
+	new_doc = frappe.new_doc("Delivery Note")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.cost_center = doc.department
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	
+	# for i in doc.get("material_list"):
+	# 	qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.sod_no = %s order by q.creation desc''',sod,as_dict=1)
+	# 	r = 0
+	# 	amt = 0
+	# 	if qi_details:
+	# 		r = qi_details[0]['rate']
+	# 		amt = qi_details[0]['amount']
+	# 	new_doc.append("items",{
+	# 		"item_name":i.item_name0,
+	# 		"item_code":i.item_code,
+	# 		"manufacturer":i.mfg,
+	# 		"model":i.model_no,
+	# 		"serial_number":i.serial_no,
+	# 		"description":i.item_name,
+	# 		'type':i.type,
+	# 		"qty":i.quantity,
+	# 		"rate":r,
+	# 		"amount":amt,
+	# 		"supply_order_data":sod,
+	# 		"uom":"Nos",
+	# 		"stock_uom":"Nos",
+	# 		"conversion_factor":1,
+	# 		"cost_center":doc.department,
+	# 		"warehouse":doc.branch
+
+	# 	})
+	return new_doc
+
+@frappe.whitelist()
 def create_rfq(sod):
 	doc = frappe.get_doc("Supply Order Data",sod)
 	new_doc = frappe.new_doc("Request for Quotation")
@@ -44,8 +129,33 @@ def create_rfq(sod):
 				"schedule_date":sched_date,
 				"stock_qty":1,
 				"warehouse":doc.branch,
-				"qty":i.qty
+				"qty":i.qty,
+				"item_group":"Components",
+				"supply_order_data":doc.name,
+				"branch":doc.branch,
+				"department":doc.department
 			})
+	for i in doc.get("material_list"):
+		new_doc.append("items",{
+			"item_code":i.item_code,
+			"item_name":i.item_name,
+			"description":i.item_name,
+			"type":i.type,
+			"model":i.model_no,
+			"mfg":i.mfg,
+			"serial_no":i.serial_no,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"schedule_date":sched_date,
+			"stock_qty":1,
+			"warehouse":doc.branch,
+			"qty":i.quantity,
+			"supply_order_data":doc.name,
+			"branch":doc.branch,
+			"department":doc.department,
+			"item_group":"Equipments"
+		})
 	return new_doc
 
 @frappe.whitelist()
@@ -68,6 +178,7 @@ def create_quotation(sod):
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
 	new_doc.department = doc.department
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
 	new_doc.quotation_type = "Internal Quotation - Supply"
 	new_doc.sales_rep = doc.sales_rep
 	new_doc.ignore_pricing_rule = 1

@@ -67,7 +67,10 @@ def create_rfq(ps):
 				"stock_qty":1,
 				"qty":i.qty,
 				"schedule_date":add_to_date(new_doc.transaction_date,days = 2),
-				"warehouse":new_doc.branch
+				"warehouse":new_doc.branch,
+				"branch":new_doc.branch,
+				"work_order_data":doc.work_order_data,
+				"department":frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
 			})
 	return new_doc
 

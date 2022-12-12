@@ -1,5 +1,43 @@
-import frappe
+import frappe,json
 
+@frappe.whitelist()
+def get_items_from_ps(wod):
+    wod = json.loads(wod)
+    l = []
+    for i in list(wod):
+        er =  frappe.db.sql('''select name from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s and parts_availability = "No" ''',i,as_dict=1)
+        if not er:
+            frappe.msgprint("No parts available for this Work Order")
+            return
+        for j in er:
+            doc = frappe.get_doc("Evaluation Report",j['name'])
+            for k in doc.items:
+                if k.parts_availability == "No":
+                    d = frappe._dict((k.as_dict()))
+                    d["wod"] = i
+                    d["part_sheet"] = j["name"]
+                    l.append(d)
+    return l
+
+@frappe.whitelist()
+def get_items_from_sod(sod):
+    sod = json.loads(sod)
+    l=[]
+    for i in list(sod):
+        doc = frappe.get_doc("Supply Order Data",i)
+        for j in doc.in_stock:
+            if j.parts_availability == "No":
+                d = frappe._dict(j.as_dict())
+                d['sod'] = i
+                d['dept'] = doc.department
+                l.append(d)
+        for j in doc.material_list:
+            d = frappe._dict(j.as_dict())
+            d['sod'] = i
+            d['dept'] = doc.department
+            l.append(d)
+    return l
+        
 def create_after_import():
     for i in ['cr_copy','vat_certificate','bank_details','address']:
         l = frappe.db.sql('''select name,{0} from `tabCustomer` where {0} is not null '''.format(i),as_dict = 1)

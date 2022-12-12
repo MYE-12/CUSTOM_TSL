@@ -1121,7 +1121,7 @@
    "name": "Quotation-branch_name",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "Warehouse",
+   "options": "Branch",
    "owner": "Administrator",
    "parent": null,
    "parentfield": null,

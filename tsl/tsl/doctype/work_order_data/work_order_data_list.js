@@ -2,7 +2,7 @@ frappe.listview_settings['Work Order Data'] = {
 	add_fields: ["status","name"],
 	get_indicator: function (doc) {
 		if (doc.status === "UE-Under Evaluation") {
-			return [__("UE-Under Evaluation"), "blue", "status,=,UE-Under Evaluation"];
+			return [__("UE-Under Evaluation"), "yellow", "status,=,UE-Under Evaluation"];
 
 		} else if (doc.status === "AP-Available Parts") {
 			return [__("AP-Available Parts"), "orange", "status,=,AP-Available Parts"];

@@ -25,14 +25,22 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 60,
+=======
+   "idx": 55,
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
    "in_list_view": 0,
    "in_preview": 0,
    "in_standard_filter": 0,
+<<<<<<< HEAD
    "insert_after": "dimension_col_break",
+=======
+   "insert_after": "accounting_dimensions_section",
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "label": "Work Order Data",
    "length": 0,
    "mandatory_depends_on": null,
@@ -85,15 +93,24 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 58,
+=======
+   "idx": 59,
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
    "in_list_view": 0,
    "in_preview": 0,
    "in_standard_filter": 0,
+<<<<<<< HEAD
    "insert_after": "project",
    "label": "Department",
+=======
+   "insert_after": "dimension_col_break",
+   "label": "Branch",
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "length": 0,
    "mandatory_depends_on": null,
    "modified": "2022-02-16 17:45:46.786680",
@@ -101,7 +118,11 @@
    "name": "Stock Entry-department",
    "no_copy": 0,
    "non_negative": 0,
+<<<<<<< HEAD
    "options": "Cost Center",
+=======
+   "options": "Branch",
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "owner": "Administrator",
    "parent": null,
    "parentfield": null,
@@ -145,7 +166,11 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 61,
+=======
+   "idx": 60,
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
@@ -205,7 +230,11 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 9,
+=======
+   "idx": 56,
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
@@ -265,15 +294,24 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 17,
+=======
+   "idx": 9,
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
    "in_list_view": 0,
    "in_preview": 0,
    "in_standard_filter": 0,
+<<<<<<< HEAD
    "insert_after": "company",
    "label": "Warehouse",
+=======
+   "insert_after": "work_order",
+   "label": "Equipment Received Form",
+>>>>>>> 06e8c1cd7c76f2c2cd3676f49d7c48b7c10aa1bf
    "length": 0,
    "mandatory_depends_on": null,
    "modified": "2022-11-30 12:48:50.346931",
