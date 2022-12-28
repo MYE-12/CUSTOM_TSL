@@ -71,13 +71,15 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 
 def on_submit(self,method):
     if self.part_sheet:
-        add = 0
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
             for j in doc.get("items"):
                 if j.part == i.item_code:
                     j.price_ea = i.rate
                     j.total = i.rate * j.qty
-                    add += float(j.total)
-        doc.total_amount += add
+        add = 0
+        for i in doc.items:
+            add += j.total
+        doc.total_amount = add
+
         doc.save(ignore_permissions=True)

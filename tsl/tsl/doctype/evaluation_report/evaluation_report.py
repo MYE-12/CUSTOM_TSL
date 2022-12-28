@@ -23,6 +23,22 @@ class EvaluationReport(Document):
 			doc.save(ignore_permissions=True)
 
 	def before_save(self):
+		if not frappe.db.get_value("Work Order Data",self.work_order_data,"technician"):
+			frappe.db.set_value("Work Order Data",self.work_order_data,"technician",frappe.session.user)
+		add = 0
+		self.total_amount = 0
+		for i in self.items:
+			total = 0
+			if i.total:
+				total = i.total
+			print(total)
+			add += total
+		print(add)
+		self.total_amount = add
+		doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		if not doc.technician:
+			doc.status = "UE-Under Evaluation"
+		doc.save(ignore_permissions = True)
 		if self.if_parts_required:
 			f=0
 			for i in self.get("items"):
@@ -34,7 +50,32 @@ class EvaluationReport(Document):
 				self.parts_availability = "Yes"
 
 	def on_update_after_submit(self):
-		print("OUAS")
+		add = total = 0
+		self.total_amount = 0
+		for i in self.items:
+			total = 0
+			if i.total:
+				total = i.total
+			add += total
+		self.total_amount = add
+
+		doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		if self.status:
+			if self.status == "Working":
+				doc.status = "W-Working"
+			elif self.status == "Spare Parts":
+				doc.status = "SP-Searching Parts"
+			elif self.status == "Extra Parts":
+				doc.status = "EP-Extra Parts"
+			elif self.status == "Comparison":
+				doc.status = "C-Comparison"
+			elif self.status == "Return Not Repaired":
+				doc.status = "RNR-Return Not Repaired"
+			elif self.status == "Return No Fault":
+				doc.status = "RNF-Return No Fault"
+		doc.save(ignore_permissions = True)
+				
+				
 		if self.if_parts_required:
 			f=0
 			for i in self.get("items"):

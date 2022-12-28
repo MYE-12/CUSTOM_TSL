@@ -1,0 +1,35 @@
+frappe.listview_settings['Evaluation Report'] = {
+	add_fields: ["status","name"],
+	get_indicator: function (doc) {
+            if (doc.status === "Installed and Completed") {
+                  return [__("Installed and Completed"), "yellow", "status,=,Installed and Completed"];
+
+            } 
+            else if (doc.status === "Customer Testing") {
+                  return [__("Customer Testing"), "orange", "status,=,Customer Testing"];
+            } 
+            else if (doc.status === "Working") {
+                  return [__("Working"), "green", "status,=,Working"];
+            }
+            else if (doc.status === "Spare Parts") {
+                  return [__("Spare Parts"), "blue", "status,=,Spare Parts"];
+            }
+            else if (doc.status === "Extra Parts") {
+                   return [__("Extra Parts"), "cyan", "status,=,Extra Parts"];
+            }
+            else if (doc.status === "Comparison") {
+                   return [__("Comparison"), "yellow", "status,=,Comparison"];
+            }
+            
+            else if (doc.status === "Return Not Repaired") {
+                   return [__("Return Not Repaired"), "grey", "status,=,Return Not Repaired"];
+            }
+            else if (doc.status === "Return No Fault") {
+                  return [__("Return No Fault"), "green", "status,=,Return No Fault"];
+            }
+            else if(doc.docstatus === 0){
+                  return [__("ghgffh"), "green", "docstatus,=,0"];
+            }
+ },
+	
+};

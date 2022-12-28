@@ -191,30 +191,29 @@ def create_workorder_data(order_no):
 					frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
 			else:
 				frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
-		cc = ""
 		if i["no_power"]:
-				cc+="No Power,\n"
+			new_doc.no_power = 1
 		if i["no_output"]:
-			cc+="No Output,\n"
+			new_doc.no_output = 1
 		if i["no_display"]:
-			cc+="No Display,\n"
+			new_doc.no_display=1
 		if i["no_communication"]:
-			cc+="No Communication,\n"
+			new_doc.no_communication=1
 		if i["supply_voltage"]:
-			cc+="Supply Voltage,\n"
+			new_doc.supply_voltage=1
 		if i["touchkeypad_not_working"]:
-			cc+="Touch keypad Not Working,\n"
+			new_doc.touch_keypad_not_working = 1
 		if i["no_backlight"]:
-			cc+="No BackLight,\n"
+			new_doc.no_backlight=1
 		if i["error_code"]:
-			cc+="Error Code,\n"
+			new_doc.error_code=1
 		if i["short_circuit"]:
-			cc+="Short Circuit,\n"
+			new_doc.short_circuit = 1
 		if i["overloadovercurrent"]:
-			cc+="Overload/Over Current,\n"
+			new_doc.overload_overcurrent = 1
 		if i["other"]:
-			cc+=i["specify"]
-		new_doc.complaints = cc
+			new_doc.others = 1
+			new_doc.specify = i["specify"]
 		new_doc.wod_component = i["item_code"] if "item_code" in i else ""
 		new_doc.customer = doc.customer
 		new_doc.received_date = doc.received_date
@@ -261,13 +260,15 @@ def create_workorder_data(order_no):
 				se_doc.stock_entry_type = "Material Receipt"
 				se_doc.company = doc.company
 				se_doc.branch = doc.branch
+				frappe.errprint("target")
+				frappe.errprint(doc.repair_warehouse)
 				se_doc.to_warehouse = doc.repair_warehouse
 				se_doc.append("items",{
 					't_warehouse': doc.repair_warehouse,
 					'item_code':j['item_code'],
 					'item_name':j['item_name'],
 					'description':j['item_name'],
-					'serial_no':sn_no,
+					'serial_no':sn_no or "",
 					'qty':j['qty'],
 					'uom':frappe.db.get_value("Item",j['item_code'],'stock_uom') or "Nos",
 					'conversion_factor':1,

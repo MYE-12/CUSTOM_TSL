@@ -46,7 +46,6 @@ class CreateWorkOrder(Document):
 			
 	def after_save(self):
 		return
-		print("\n\n\n\non save..........")
 		if self.repair_warehouse:
 			for i in self.get("received_equipment"):
 				i.repair_warehouse = self.repair_warehouse
