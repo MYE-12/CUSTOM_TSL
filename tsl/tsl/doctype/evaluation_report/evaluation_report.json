@@ -10,33 +10,49 @@
   "naming_series",
   "customer",
   "attn",
-  "status",
-  "specify",
+  "specify_1",
   "hours_spent",
   "ratehour",
   "column_break_3",
   "company",
   "date",
+  "priority_status",
   "work_order_data",
   "amended_from",
   "section_break_7",
   "evaluation_details",
   "section_break_9",
-  "customer_complaint",
-  "section_break_11",
-  "evaluation_result",
+  "no_power",
+  "no_output",
+  "no_display",
+  "no_communication",
+  "no_backlight",
+  "supply_voltage",
+  "column_break_23",
+  "error_code",
+  "touch_keypad_not_working",
+  "short_circuit",
+  "overload_overcurrent",
+  "others",
+  "specify",
   "column_break_13",
-  "action_taken",
-  "section_break_15",
-  "test_result",
   "if_parts_required",
-  "section_break_22",
   "items",
   "parts_availability",
-  "section_break_25",
+  "section_break_34",
   "total_qty",
   "column_break_27",
   "total_amount",
+  "section_break_25",
+  "evaluation_time",
+  "estimated_repair_time",
+  "actual_repair_time",
+  "actions_section",
+  "status",
+  "technician_comment_section",
+  "comment",
+  "column_break_45",
+  "test_result",
   "section_break_17",
   "item_photo",
   "attach_image"
@@ -51,7 +67,7 @@
   {
    "fieldname": "attn",
    "fieldtype": "Link",
-   "label": "Attn",
+   "label": "Sales Person",
    "options": "User"
   },
   {
@@ -84,40 +100,16 @@
    "options": "Evaluation Item"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "customer_complaint",
-   "fieldtype": "Text",
+   "fieldtype": "Section Break",
    "label": "Customer Complaint"
   },
   {
-   "fieldname": "section_break_11",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "evaluation_result",
-   "fieldtype": "Text",
-   "label": "Evaluation Result"
-  },
-  {
+   "allow_on_submit": 1,
    "fieldname": "column_break_13",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "action_taken",
-   "fieldtype": "Text",
-   "label": "Action Taken"
-  },
-  {
-   "fieldname": "section_break_15",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "test_result",
-   "fieldtype": "Text",
-   "label": "Test Result"
+   "fieldtype": "Section Break",
+   "label": "Technician Feedback"
   },
   {
    "fieldname": "section_break_17",
@@ -141,8 +133,10 @@
   {
    "fieldname": "work_order_data",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Work Order Data",
-   "options": "Work Order Data"
+   "options": "Work Order Data",
+   "reqd": 1
   },
   {
    "fieldname": "company",
@@ -151,16 +145,19 @@
    "options": "Company"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Comment",
-   "options": "\nReady\nNeed Parts\nReplacement\nDelivery for Testing\nSP Not Available\nOthers"
+   "label": "Status",
+   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nReturn Not Repaired\nReturn No Fault"
   },
   {
-   "depends_on": "eval:(doc.status == \"Others\");",
+   "allow_on_submit": 1,
+   "depends_on": "eval:(doc.others==1);",
    "fieldname": "specify",
    "fieldtype": "Small Text",
-   "label": "Specify"
+   "label": "Specify",
+   "mandatory_depends_on": "eval:(doc.others==1);"
   },
   {
    "default": "0",
@@ -169,28 +166,25 @@
    "label": "If Parts Required"
   },
   {
-   "depends_on": "eval:(doc.if_parts_required == 1);",
-   "fieldname": "section_break_22",
-   "fieldtype": "Section Break",
-   "label": "Part Sheet"
-  },
-  {
    "allow_on_submit": 1,
+   "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "parts_availability",
    "fieldtype": "Select",
    "label": "All Parts Availability Status",
    "options": "Yes\nNo"
   },
   {
+   "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "items",
    "fieldtype": "Table",
-   "label": "Items",
+   "label": "Part Sheet",
    "options": "Part Sheet Item"
   },
   {
    "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "section_break_25",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Time Taken"
   },
   {
    "allow_on_submit": 1,
@@ -211,11 +205,13 @@
   {
    "fieldname": "hours_spent",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Hours Spent"
   },
   {
    "fieldname": "ratehour",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Rate/Hour"
   },
   {
@@ -223,12 +219,152 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Attach Image"
+  },
+  {
+   "fieldname": "priority_status",
+   "fieldtype": "Select",
+   "label": "Priority Status",
+   "options": "Not Urgent\nUrgent"
+  },
+  {
+   "depends_on": "eval:(doc.status == \"Others\");",
+   "fieldname": "specify_1",
+   "fieldtype": "Small Text",
+   "label": "Specify"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "no_output",
+   "fieldtype": "Check",
+   "label": "No Output"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "no_display",
+   "fieldtype": "Check",
+   "label": "No Display"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "no_communication",
+   "fieldtype": "Check",
+   "label": "No Communication"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "no_backlight",
+   "fieldtype": "Check",
+   "label": "No Backlight"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "supply_voltage",
+   "fieldtype": "Check",
+   "label": "Supply Voltage"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "error_code",
+   "fieldtype": "Check",
+   "label": "Error Code"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "touch_keypad_not_working",
+   "fieldtype": "Check",
+   "label": "Touch/Keypad Not Working"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "short_circuit",
+   "fieldtype": "Check",
+   "label": "Short Circuit"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "overload_overcurrent",
+   "fieldtype": "Check",
+   "label": "Overload/ Overcurrent"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "fieldname": "evaluation_time",
+   "fieldtype": "Data",
+   "label": "Evaluation Time"
+  },
+  {
+   "fieldname": "estimated_repair_time",
+   "fieldtype": "Data",
+   "label": "Estimated Repair Time"
+  },
+  {
+   "fieldname": "actual_repair_time",
+   "fieldtype": "Data",
+   "label": "Actual Repair Time"
+  },
+  {
+   "depends_on": "eval:(doc.if_parts_required == 1);",
+   "fieldname": "section_break_34",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "actions_section",
+   "fieldtype": "Section Break",
+   "label": "Actions"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_comment_section",
+   "fieldtype": "Section Break",
+   "label": "Technician Comment"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "comment",
+   "fieldtype": "Small Text",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "column_break_45",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "test_result",
+   "fieldtype": "Small Text",
+   "label": "Test Result"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "no_power",
+   "fieldtype": "Check",
+   "label": "No Power"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-09 18:11:22.050869",
+ "modified": "2022-12-24 16:16:15.207753",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

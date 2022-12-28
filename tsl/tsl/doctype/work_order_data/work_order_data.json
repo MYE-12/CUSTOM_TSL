@@ -41,6 +41,20 @@
   "material_list",
   "wod_component",
   "complaints",
+  "section_break_36",
+  "no_power",
+  "no_output",
+  "no_display",
+  "no_communication",
+  "no_backlight",
+  "supply_voltage",
+  "column_break_43",
+  "error_code",
+  "touch_keypad_not_working",
+  "short_circuit",
+  "overload_overcurrent",
+  "others",
+  "specify",
   "section_break_23",
   "extra_part_sheets",
   "section_break_28",
@@ -298,12 +312,94 @@
    "hidden": 1,
    "label": "WOD Component",
    "options": "Item"
+  },
+  {
+   "fieldname": "section_break_36",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "no_power",
+   "fieldtype": "Check",
+   "label": "No Power"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_output",
+   "fieldtype": "Check",
+   "label": "No Output"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_display",
+   "fieldtype": "Check",
+   "label": "No Display"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_communication",
+   "fieldtype": "Check",
+   "label": "No Communication"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_backlight",
+   "fieldtype": "Check",
+   "label": "No Backlight"
+  },
+  {
+   "default": "0",
+   "fieldname": "supply_voltage",
+   "fieldtype": "Check",
+   "label": "Supply Voltage"
+  },
+  {
+   "fieldname": "column_break_43",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "error_code",
+   "fieldtype": "Check",
+   "label": "Error Code"
+  },
+  {
+   "default": "0",
+   "fieldname": "touch_keypad_not_working",
+   "fieldtype": "Check",
+   "label": "Touch Keypad Not Working"
+  },
+  {
+   "default": "0",
+   "fieldname": "short_circuit",
+   "fieldtype": "Check",
+   "label": "Short Circuit"
+  },
+  {
+   "default": "0",
+   "fieldname": "overload_overcurrent",
+   "fieldtype": "Check",
+   "label": "Overload Overcurrent"
+  },
+  {
+   "default": "0",
+   "fieldname": "others",
+   "fieldtype": "Check",
+   "label": "Others"
+  },
+  {
+   "depends_on": "eval:(doc.others==1);",
+   "fieldname": "specify",
+   "fieldtype": "Small Text",
+   "label": "Specify",
+   "mandatory_depends_on": "eval:(doc.others==1);"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-08 08:26:23.991697",
+ "modified": "2022-12-24 17:24:55.201172",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

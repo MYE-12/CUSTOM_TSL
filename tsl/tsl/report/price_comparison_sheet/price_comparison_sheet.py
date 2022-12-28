@@ -11,7 +11,7 @@ from frappe.utils import fmt_money
 
 def execute(filters=None):
 	columns,data = [],[]
-	if filters.get("sod_no"):
+	if filters.get("sod_no") or filters.get("wod_no"):
 		columns = get_columns(filters)
 		data = get_data(filters)
 	return columns, data
@@ -20,33 +20,36 @@ def get_columns(filters=None):
 	columns = [
 		{
 			"fieldname":"description",
-			"label": "Material Description",
+			"label": frappe.bold("Material Description"),
 			"fieldtype": "Data",
 		},
 		{
 			"fieldname":"qty",
-			"label": "Qty",
+			"label": frappe.bold("Qty"),
 			"fieldtype": "Float",
 		},
 		{
 			"fieldname":"buy_source",
-			"label": "Planned Actual Buying Source",
+			"label": frappe.bold("Planned Actual Buying Source"),
 			"fieldtype": "Data",
 		},
 	]
-	suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_list=1)
+	if filters.get("sod_no"):
+		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_list=1)
+	elif filters.get("wod_no"):
+		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where work_order_data = %s''',filters.get('wod_no'),as_list=1)
 	for i in suppliers:
 		s = i[0].lower().replace(" ","_")
 		columns.append({
 			"fieldname":s,
-			"label": i[0],
+			"label":frappe.bold(i[0]),
 			"fieldtype": "Data",
 			
 			"width":170
 		})
 		columns.append({
 			"fieldname":s+"1",
-			"label": i[0],
+			"label": frappe.bold(i[0]),
 			"fieldtype": "Data",
 			
 			"width":170
@@ -56,51 +59,61 @@ def get_columns(filters=None):
 def get_data(filters=None):
 	data = []
 	data.append({"description":"","qty":"","buy_source":""})
-	suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s ''',filters.get('sod_no'),as_dict=1)
+	if filters.get("sod_no"):
+		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s ''',filters.get('sod_no'),as_dict=1)
+	elif filters.get("wod_no"):
+		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where work_order_data = %s ''',filters.get('wod_no'),as_dict=1)
 	for i in suppliers:
 		
 		s = i['supplier'].lower().replace(" ","_")
-		data[0][s] = "Unit Price"
-		data[0][s+"1"] = "Total Price"
+		data[0][s] = frappe.bold("Unit Price")
+		data[0][s+"1"] = frappe.bold("Total Price")
 	item = []
 	for i in suppliers:
 		doc = frappe.get_doc("Supplier Quotation",i['name'])
 		for j in doc.get("items"):
-			if {"description":j.item_name,"qty":j.qty} not in item:
-				item.append({"description":j.item_name,"qty":j.qty})
+			if {"item_code":j.item_code,"description":j.item_name,"qty":j.qty} not in item:
+				item.append({"item_code":j.item_code,"description":j.item_name,"qty":j.qty})
+	print("\n\n\n\n\n")
+	print(data)
+	print(item)
 	for i in item:
+		print(i)
 		for j in suppliers:
+			print(j)
 			doc = frappe.get_doc("Supplier Quotation",j['name'])
 			for k in doc.get("items"):
-				if i["description"] == k.item_name:
+				if i["item_code"] == k.item_code:
+					print(k.item_code)
+					print(k.rate,k.amount)
+
 					i[j['supplier'].lower().replace(" ","_")] = fmt_money(k.rate,currency = j["currency"])
 					i[j['supplier'].lower().replace(" ","_")+"1"] = fmt_money(k.amount,currency = j["currency"])
-				else:
-					i[j['supplier'].lower().replace(" ","_")] = fmt_money(0,currency = j["currency"])
-					i[j['supplier'].lower().replace(" ","_")+"1"] = fmt_money(0,currency = j["currency"])
-
+				# else:
+				# 	i[j['supplier'].lower().replace(" ","_")] = fmt_money(0,currency = j["currency"])
+				# 	i[j['supplier'].lower().replace(" ","_")+"1"] = fmt_money(0,currency = j["currency"])
 		data.append(i)
 	d = {}
 	for i in suppliers:
 		doc = frappe.get_doc("Supplier Quotation",i['name'])
-		d['description'] = "Supplier Total"
+		d['description'] = frappe.bold("Supplier Total")
 		d[i['supplier'].lower().replace(" ","_")] = fmt_money(doc.total,currency = i["currency"])
 	data.append(d)
-	ec = [{"description":"Supplier Quotation No"},{"description":"Freight Charges"},{"description":"Custom Clearance"},{"description":"Payment Commission"},{"description":"Max Freight Duration"},{"description":"Max Custom Duration"}]
+	ec = [{"description":frappe.bold("Supplier Quotation No")},{"description":frappe.bold("Freight Charges")},{"description":frappe.bold("Custom Clearance")},{"description":frappe.bold("Payment Commission")},{"description":frappe.bold("Max Freight Duration")},{"description":frappe.bold("Max Custom Duration")}]
 	for i in ec:
 		for j in suppliers:
 			doc = frappe.get_doc("Supplier Quotation",j['name'])
-			if i["description"] == "Supplier Quotation No":
-				i[j['supplier'].lower().replace(" ","_")] = frappe.utils.get_link_to_form("Supplier Quotation",doc.name)
-			if i["description"] == "Freight Charges":
+			if i["description"] == frappe.bold("Supplier Quotation No"):
+				i[j['supplier'].lower().replace(" ","_")] = frappe.bold(frappe.utils.get_link_to_form("Supplier Quotation",doc.name))
+			if i["description"] == frappe.bold("Freight Charges"):
 				i[j['supplier'].lower().replace(" ","_")] =fmt_money(doc.freight_charges,currency = j["currency"])
-			elif i["description"] == "Custom Clearance":
+			elif i["description"] == frappe.bold("Custom Clearance"):
 				i[j['supplier'].lower().replace(" ","_")] =fmt_money(doc.custom_clearance,currency = j["currency"])
-			elif i["description"] == "Payment Commission":
+			elif i["description"] == frappe.bold("Payment Commission"):
 				i[j['supplier'].lower().replace(" ","_")] =fmt_money(doc.payment_commission,currency = j["currency"])
-			elif i["description"] == "Max Freight Duration":
+			elif i["description"] == frappe.bold("Max Freight Duration"):
 				i[j['supplier'].lower().replace(" ","_")] = doc.max_freight_duration
-			elif i["description"] == "Max Custom Duration":
+			elif i["description"] == frappe.bold("Max Custom Duration"):
 				i[j['supplier'].lower().replace(" ","_")] = doc.max_custom_duration
 				
 		data.append(i)
@@ -108,12 +121,12 @@ def get_data(filters=None):
 	gt = {}
 	for i in suppliers:
 		doc = frappe.get_doc("Supplier Quotation",i['name'])
-		gt['description'] = "Grand Total"
+		gt['description'] = frappe.bold("Grand Total")
 		sum = 0
 		sum += doc.total
 		sum += float(doc.freight_charges)+float(doc.custom_clearance)+float(doc.payment_commission)
-		gt[i['supplier'].lower().replace(" ","_")] = fmt_money(sum,currency = i["currency"])
+		gt[i['supplier'].lower().replace(" ","_")] = frappe.bold(fmt_money(sum,currency = i["currency"]))
 	data.append(gt)
-
+	print(data)
 	return data
 
