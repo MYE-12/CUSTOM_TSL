@@ -261,13 +261,15 @@ def create_workorder_data(order_no):
 				se_doc.stock_entry_type = "Material Receipt"
 				se_doc.company = doc.company
 				se_doc.branch = doc.branch
+				frappe.errprint("target")
+				frappe.errprint(doc.repair_warehouse)
 				se_doc.to_warehouse = doc.repair_warehouse
 				se_doc.append("items",{
 					't_warehouse': doc.repair_warehouse,
 					'item_code':j['item_code'],
 					'item_name':j['item_name'],
 					'description':j['item_name'],
-					'serial_no':sn_no,
+					'serial_no':sn_no or "",
 					'qty':j['qty'],
 					'uom':frappe.db.get_value("Item",j['item_code'],'stock_uom') or "Nos",
 					'conversion_factor':1,
@@ -275,7 +277,7 @@ def create_workorder_data(order_no):
 				})
 				se_doc.save(ignore_permissions = True)
 				if se_doc.name:
-					# se_doc.submit()
+					se_doc.submit()
 					pass
 		link = []
 		for i in l:
