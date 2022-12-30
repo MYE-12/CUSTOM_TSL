@@ -45,6 +45,8 @@ frappe.ui.form.on('Request for Quotation', {
                                         "source_name": cur_frm.doc.name
                                         
                                 },
+                                freeze :true,
+                                freeze_message :"Processing...",
                                
                                 callback: function(r) {
                                         if(r.message) {

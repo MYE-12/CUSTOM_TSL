@@ -252,34 +252,38 @@ def create_workorder_data(order_no):
 		if new_doc.name and "attach_image" in i:
 			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
 		new_doc.submit()
-		l.append(new_doc.name)
-	if l:
-		
-		frappe.delete_doc("Create Work Order","Create Work Order")
-		for j in doc.get('received_equipment'):
-			if j['item_code']:
+		if i['item_code']:
 				se_doc = frappe.new_doc("Stock Entry")
 				se_doc.stock_entry_type = "Material Receipt"
 				se_doc.company = doc.company
 				se_doc.branch = doc.branch
-				frappe.errprint("target")
-				frappe.errprint(doc.repair_warehouse)
 				se_doc.to_warehouse = doc.repair_warehouse
+				se_doc.work_order_data = new_doc.name
 				se_doc.append("items",{
 					't_warehouse': doc.repair_warehouse,
-					'item_code':j['item_code'],
-					'item_name':j['item_name'],
-					'description':j['item_name'],
+					'item_code':i['item_code'],
+					'item_name':i['item_name'],
+					'description':i['item_name'],
 					'serial_no':sn_no or "",
-					'qty':j['qty'],
-					'uom':frappe.db.get_value("Item",j['item_code'],'stock_uom') or "Nos",
+					'qty':i['qty'],
+					'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+					'branch':doc.branch,
+					'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+					'work_order_data':new_doc.name,
 					'conversion_factor':1,
 					'allow_zero_valuation_rate':1
 				})
 				se_doc.save(ignore_permissions = True)
 				if se_doc.name:
 					se_doc.submit()
+					try:
+						se_doc.submit()
+					except Exception as e:
+						frappe.log_error(frappe.get_traceback())
 					pass
+		l.append(new_doc.name)
+	if l:
+		frappe.delete_doc("Create Work Order","Create Work Order")
 		link = []
 		for i in l:
 			link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
