@@ -193,6 +193,7 @@ def create_workorder_data(order_no):
 				frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
 		if i["no_power"]:
 			new_doc.no_power = 1
+			print("\n\n\n\nno power")
 		if i["no_output"]:
 			new_doc.no_output = 1
 		if i["no_display"]:
@@ -235,11 +236,12 @@ def create_workorder_data(order_no):
 		# 	sn_doc.warehouse = ""
 		# 	sn_doc.status = "Inactive"
 		# 	sn_doc.save(ignore_permissions = True)
-
+		if "type" in i:
+			item_type = i['type']
 		new_doc.append("material_list",{
 			"item_code": i['item_code'],
 			"item_name":i['item_name'],
-			"type":i['type'],
+			"type":item_type,
 			"model_no":i['model'],
 			"mfg":i['manufacturer'],
 			"serial_no":sn_no,
