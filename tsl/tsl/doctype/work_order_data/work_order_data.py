@@ -90,6 +90,7 @@ def create_evaluation_report(doc_no):
 	new_doc.attach_image = doc.attach_image
 	
 	if doc.no_power:
+		frappe.errprint("no power")
 		new_doc.no_power = 1
 	if doc.no_output:
 		new_doc.no_output = 1
