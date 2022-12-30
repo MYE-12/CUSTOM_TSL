@@ -3,8 +3,11 @@
 
 frappe.ui.form.on('Work Order Data', {
 	technician:function(frm){
-		frm.set_value("status","UE-Under Evaluation");
-		frm.refresh();
+		if(frm.doc.technician){
+			frm.set_value("status","UE-Under Evaluation");
+			frm.refresh();
+		}
+		
 	},
 	refresh: function(frm) {
 		

@@ -25,6 +25,7 @@ class EvaluationReport(Document):
 	def before_save(self):
 		if not frappe.db.get_value("Work Order Data",self.work_order_data,"technician"):
 			frappe.db.set_value("Work Order Data",self.work_order_data,"technician",frappe.session.user)
+			frappe.db.set_value("Work Order Data",self.work_order_data,"status","UE-Under Evaluation")
 		add = 0
 		self.total_amount = 0
 		for i in self.items:
@@ -85,10 +86,8 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
-		if self.parts_availability == "Yes" and self.work_order_data:
-
-			frappe.db.sql("""update `tabWork Order Data` set status = "AP-Available Parts" where name = %s""",self.work_order_data)
-			
+			if self.parts_availability == "Yes" and self.work_order_data:
+				frappe.db.sql("""update `tabWork Order Data` set status = "AP-Available Parts" where name = %s""",self.work_order_data)
 
 	def before_submit(self):
 		if self.if_parts_required:

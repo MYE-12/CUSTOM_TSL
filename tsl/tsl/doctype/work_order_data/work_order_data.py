@@ -327,8 +327,8 @@ class WorkOrderData(Document):
 		# 	})
 			
 	def on_update_after_submit(self):
-		# if self.technician:
-		# 	self.status = "UE-Under Evaluation"
+		if self.technician and self.status == "NE-Need Evaluation":
+			self.status = "UE-Under Evaluation"
 		if self.warranty and self.delivery:
 			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
