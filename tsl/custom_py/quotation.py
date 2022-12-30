@@ -127,7 +127,7 @@ def before_save(self,method):
 						price = k.price_ea
 						source = "Supplier"
 					sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi 
-					where sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
+					where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
 					if sq_no:
 						sq_no = sq_no[0]["sq"]
 						self.append("item_price_details",{

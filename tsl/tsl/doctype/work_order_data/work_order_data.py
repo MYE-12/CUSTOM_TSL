@@ -161,32 +161,33 @@ def create_stock_entry(wod):
 					"basic_amount":float(j.qty) * (float(frappe.db.get_value("Bin",{"item_code":j.part},"valuation_rate") or j.price_ea))
 				}
 				)
+		return new_doc
 	else:
 		
 		for j in doc.get("material_list"):
-			new_doc.append("items",{
-					"item_code":j.item_code,
-					"item_name":j.item_name0 or j.item_name,
-					"s_warehouse":frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.item_code,as_dict = 1)[0]['warehouse'] or "",
-					"qty":j.quantity,
-					"uom":"Nos",
-					"transfer_qty":j.quantity,
-					"allow_zero_valuation_rate":1,
-					"stock_uom":"Nos",
-					"conversion_factor":1,
-					"basic_rate":frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price,
-					"basic_amount":float(j.quantity) * (float(frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price))
-				}
-				)
-	
-	# add = 0
-	# for i in new_doc.get("items"):
-	# 	i.basic_amount = i.qty * i.basic_rate
-	# 	add += float(i.basic_amount)
-	# new_doc.total_outgoing_value = add
-	# new_doc.value_difference = (float(new_doc.total_incoming_value) if new_doc.total_incoming_value  else  0) - new_doc.total_outgoing_value
+			source_warehouse = frappe.db.sql('''select warehouse from `tabBin` where item_code = %s and actual_qty > 0 order by creation desc limit 1''' ,j.item_code,as_dict = 1)
+			if len(source_warehouse) and 'warehouse' in source_warehouse[0] :
+				if not doc.repair_warehouse == source_warehouse[0]['warehouse']:
+					source_warehouse = source_warehouse[0]['warehouse']
+					new_doc.append("items",{
+							"item_code":j.item_code,
+							"item_name":j.item_name0 or j.item_name,
+							"s_warehouse":source_warehouse ,
+							"qty":j.quantity,
+							"uom":"Nos",
+							"transfer_qty":j.quantity,
+							"allow_zero_valuation_rate":1,
+							"stock_uom":"Nos",
+							"conversion_factor":1,
+							"basic_rate":frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price,
+							"basic_amount":float(j.quantity) * (float(frappe.db.get_value("Bin",{"item_code":j.item_code,"actual_qty":[">","0"]},"valuation_rate") or j.price))
+						}
+						)
+		if len(new_doc.items) > 1:
+			return new_doc
+		frappe.throw("No Spare parts available for this Work Order")
+				
 
-	return new_doc
 
 @frappe.whitelist()
 def create_sof(wod):
@@ -349,7 +350,7 @@ class WorkOrderData(Document):
 				"status":self.status,
 				"date":now,
 			})
-			doc.save(ignore_permissions=True)
+			# doc.save(ignore_permissions=True)
 		
 	def before_submit(self):
 

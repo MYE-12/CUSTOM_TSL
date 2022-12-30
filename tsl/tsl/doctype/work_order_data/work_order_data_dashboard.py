@@ -43,6 +43,10 @@ def get_data():
 				'label': _(''),
 				'items': ['Delivery Note']
 			},
+			{
+				'label': _(''),
+				'items': ['Stock Entry']
+			},
 
 
 		]
