@@ -43,6 +43,7 @@ class EvaluationReport(Document):
 			doc.save(ignore_permissions=True)
 
 	def before_save(self):
+		print("hi")
 		if not frappe.db.get_value("Work Order Data",self.work_order_data,"technician"):
 			frappe.db.set_value("Work Order Data",self.work_order_data,"technician",frappe.session.user)
 			frappe.db.set_value("Work Order Data",self.work_order_data,"status","UE-Under Evaluation")
@@ -52,9 +53,7 @@ class EvaluationReport(Document):
 			total = 0
 			if i.total:
 				total = i.total
-			print(total)
 			add += total
-		print(add)
 		self.total_amount = add
 		doc = frappe.get_doc("Work Order Data",self.work_order_data)
 		if not doc.technician:
@@ -63,7 +62,12 @@ class EvaluationReport(Document):
 		if self.if_parts_required:
 			f=0
 			for i in self.get("items"):
+				print("1n")
+				if not i.part_sheet_no:
+					print("2")
+					i.part_sheet_no = 1
 				if i.parts_availability == "No":
+					print("3")
 					f=1
 			if f:
 				self.parts_availability = "No"
@@ -101,10 +105,21 @@ class EvaluationReport(Document):
 				doc.status = "RNF-Return No Fault"
 			doc.save(ignore_permissions = True)
 		if self.if_parts_required:
+			part_no = 0
 			f=0
 			for i in self.get("items"):
+				print("part no "+str(part_no))
+				print("4n")
+				if not i.part_sheet_no:
+					print("5n")
+					i.part_sheet_no = part_no+1
+					frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"part_sheet_no",part_no+1)
+					print(part_no+1)
+				else:
+					part_no = i.part_sheet_no
 				if i.parts_availability == "No":
 					f=1
+				
 			if f:
 				self.parts_availability = "No"
 			else:

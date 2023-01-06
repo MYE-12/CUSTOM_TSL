@@ -222,14 +222,13 @@
    "fieldname": "previously_quoted",
    "fieldtype": "Table",
    "label": "Previously Quoted",
-   "options": "Similar Item Repair",
-   "read_only": 1
+   "options": "Similar Item Repair"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-28 08:39:15.633095",
+ "modified": "2023-01-05 07:53:47.008421",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Form",

@@ -186,13 +186,13 @@ frappe.ui.form.on('Supply Data Item', {
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
 		if(row.part){
-			
+			console.log("Now.......")
 			frappe.call({
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
 			args :{
 				"item" :row.part,
-				"qty":row.qty
-				
+				"qty":row.qty,
+				"warehouse":frappe.user_defaults.company
 			},
 			callback :function(r){
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
@@ -211,6 +211,7 @@ frappe.ui.form.on('Supply Data Item', {
 			args :{
 				"qty" : row.qty,
 				"item" :row.part,
+				"warehouse":frappe.user_defaults.company
 				
 			},
 			callback :function(r){

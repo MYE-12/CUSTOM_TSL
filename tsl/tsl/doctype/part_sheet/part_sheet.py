@@ -19,19 +19,21 @@ def check_userrole(user):
 	return "No Role"
 
 @frappe.whitelist()
-def get_valuation_rate(item,qty):
+def get_valuation_rate(item,qty,warehouse):
+	price = 0
 	sts = "No"
-	if frappe.db.get_value("Bin",{"item_code":item},"actual_qty"):
+	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]
+	if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent]},"actual_qty"):
 		price = frappe.db.get_value("Item",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")
-		if float(frappe.db.get_value("Bin",{"item_code":item},"actual_qty")) >= float(qty):		
+		if float(frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent]},"actual_qty")) >= float(qty):		
 			sts = "Yes"
-		return [price,sts]
-	return[0,sts]
+	return[price,sts]
 
 	
 @frappe.whitelist()
-def get_availabilty(qty,item):
-	actual = frappe.db.get_value("Bin",{"item_code":item},"actual_qty")
+def get_availabilty(item,qty,warehouse):
+	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]
+	actual = frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent]},"actual_qty")
 	if actual:
 		if float(actual) >= float(qty):
 			return "Yes"

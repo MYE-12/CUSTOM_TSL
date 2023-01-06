@@ -35,3 +35,7 @@ def on_submit(self,method):
         wod.purchase_order_no = self.name
         wod.status = "WP-Waiting Parts"
         wod.save(ignore_permissions = True)
+    if self.supply_order_data:
+        sod = frappe.get_doc("Supply Order Data",self.supply_order_data)
+        sod.status = "Ordered"
+        sod.save(ignore_permissions = True)

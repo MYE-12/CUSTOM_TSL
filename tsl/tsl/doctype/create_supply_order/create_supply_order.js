@@ -31,32 +31,32 @@ frappe.ui.form.on('Create Supply Order', {
 		});
 	},
 
-	branch:function(frm){
-		if(frm.doc.company && frm.doc.branch){
-			var d = {
-				"Kuwait - TSL":"Repair - Kuwait - TSL",
-				"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
-				"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
-				"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
-			}
-			frm.set_value("repair_warehouse",d[frm.doc.branch]);
-			// var d = {
-			// 	"Dammam - TSL-SA":"ERF-D.YY.-",
-			// 	"Riyadh - TSL-SA":"ERF-R.YY.-",
-			// 	"Jeddah - TSL-SA":"ERF-J.YY.-",
-			// 	"Kuwait - TSL":"ERF-K.YY.-"
-			// };
-			// if(frm.doc.branch){
-			// 	frm.set_value("naming_series",d[frm.doc.branch]);
-			// }
+	// branch:function(frm){
+	// 	if(frm.doc.company && frm.doc.branch){
+	// 		var d = {
+	// 			"Kuwait - TSL":"Supply - Kuwait - TSL",
+	// 			"Dammam - TSL-SA":"Supply - Dammam - TSL-SA",
+	// 			"Jeddah - TSL-SA":"Supply - Jeddah - TSL-SA",
+	// 			"Riyadh - TSL-SA":"Supply - Riyadh - TSL-SA"
+	// 		}
+	// 		frm.set_value("repair_warehouse",d[frm.doc.branch]);
+	// 		// var d = {
+	// 		// 	"Dammam - TSL-SA":"ERF-D.YY.-",
+	// 		// 	"Riyadh - TSL-SA":"ERF-R.YY.-",
+	// 		// 	"Jeddah - TSL-SA":"ERF-J.YY.-",
+	// 		// 	"Kuwait - TSL":"ERF-K.YY.-"
+	// 		// };
+	// 		// if(frm.doc.branch){
+	// 		// 	frm.set_value("naming_series",d[frm.doc.branch]);
+	// 		// }
 
-		}
+	// 	}
 
 
-	},
-	company:function(frm){
-		frm.trigger("branch")
-	},
+	// },
+	// company:function(frm){
+	// 	frm.trigger("branch")
+	// },
 	customer:function(frm){
 		if(!frm.doc.customer){
 				return
@@ -78,9 +78,7 @@ frappe.ui.form.on('Create Supply Order', {
 								if(r.message[0]){
 									frm.set_value("incharge",r.message[0][0])
 								}
-								console.log("sale")
-								console.log(r.message[1])
-								console.log(r.message[2])
+								
 								if(r.message[1]){
 									frm.set_query("sales_person", function() {
 										return {
@@ -259,4 +257,55 @@ frappe.ui.form.on('Create Supply Order', {
 
 		});
 	}
+});
+frappe.ui.form.on('Supply Data Item', {
+	
+	part: function(frm, cdt, cdn){
+		let row = locals[cdt][cdn]
+		if(row.part){
+			console.log("Now.......")
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
+			args :{
+				"item" :row.part,
+				"qty":row.qty,
+				"warehouse":frappe.user_defaults.company
+			},
+			callback :function(r){
+				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
+				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
+				row.total = row.qty * row.price_ea
+				}
+		})
+		}
+		frm.refresh();
+	},
+	qty:function(frm, cdt, cdn){
+		let row = locals[cdt][cdn]
+		if(row.qty){
+			frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
+			args :{
+				"qty" : row.qty,
+				"item" :row.part,
+				"warehouse":frappe.user_defaults.company
+				
+			},
+			callback :function(r){
+				if(r.message){
+					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
+					row.total = row.qty * row.price_ea
+					frm.refresh_fields();
+					
+				}
+			}
+	
+		})
+	   }
+	},
+	price_ea:function(frm,cdt,cdn){
+		frm.script_manager.trigger("qty",cdt,cdn);
+
+	},
+	
 });

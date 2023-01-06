@@ -144,7 +144,8 @@ frappe.ui.form.on('Part Sheet Item', {
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
 			args :{
 				"item" :row.part,
-				"qty":row.qty
+				"qty":row.qty,
+				"warehouse":frappe.user_defaults.company
 				
 			},
 			callback :function(r){
@@ -173,7 +174,7 @@ frappe.ui.form.on('Part Sheet Item', {
 			args :{
 				"qty" : row.qty,
 				"item" :row.part,
-				
+				"warehouse":frappe.user_defaults.company
 			},
 			callback :function(r){
 				if(r.message){

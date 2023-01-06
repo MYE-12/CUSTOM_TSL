@@ -193,7 +193,6 @@ def create_workorder_data(order_no):
 				frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
 		if i["no_power"]:
 			new_doc.no_power = 1
-			print("\n\n\n\nno power")
 		if i["no_output"]:
 			new_doc.no_output = 1
 		if i["no_display"]:

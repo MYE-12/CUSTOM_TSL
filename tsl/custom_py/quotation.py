@@ -43,7 +43,8 @@ def get_sqtn_items(sod):
 	sod = json.loads(sod)
 	l=[]
 	for k in list(sod):
-		l += frappe.db.sql('''select si.item_code,si.mfg,si.model,si.type,si.serial_no,si.item_name,si.uom,si.stock_uom,si.conversion_factor,si.qty,si.rate,si.amount,s.name as sqtn,s.supply_order_data as sod from `tabSupplier Quotation` as s inner join `tabSupplier Quotation Item` as si on si.parent = s.name where s.docstatus = 0 and s.supply_order_data = %s and s.workflow_state = 'Waiting For Approval' order by s.creation''',k,as_dict =1)
+		l += frappe.db.sql('''select si.item_code as item_code,si.mfg as manufacturer,si.supplier_quotation as sqtn,si.model_no as model_no,si.type as type,si.serial_no as serial_no,si.item_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.quantity as qty,si.price as rate,si.amount as amount,s.name as sod from `tabSupply Order Table` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
+		l += frappe.db.sql('''select si.part as item_code,si.manufacturer as manufacturer,si.supplier_quotation as sqtn,si.model as model_no,si.type as type,si.serial_no as serial_no,si.part_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.qty as qty,si.price_ea as rate,si.total as amount,s.name as sod from `tabPart Sheet Item Supply` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
 	return l
 
 
@@ -255,7 +256,7 @@ def on_update(self, method):
 			if i.supply_order_data:
 				doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved":
-					doc.status = "IQ-Internally Quoted"	
+					doc.status = "Internal Quotation"	
 				doc.save(ignore_permissions=True)
 	if not self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
@@ -276,14 +277,14 @@ def on_update(self, method):
 			if i.supply_order_data:
 				doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
-					doc.status = "Q-Quoted"
+					doc.status = "Quoted"
 					doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
-					doc.status = "A-Approved"
+					doc.status = "Approved"
 					doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
 					# frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",0)
-					doc.status =  "RNA-Return Not Approved"
+					doc.status =  "Not Approved"
 					doc.save(ignore_permissions=True)
 
 def before_submit(self,method):

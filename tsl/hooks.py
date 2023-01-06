@@ -144,6 +144,9 @@ doc_events = {
 	"Sales Invoice":{
 		"on_submit":[
 			"tsl.custom_py.sales_invoice.on_submit"
+		],
+		"on_update_after_submit":[
+			"tsl.custom_py.sales_invoice.on_update_after_submit"
 		]
 	},
 	"Stock Entry":{
@@ -151,6 +154,12 @@ doc_events = {
 			"tsl.custom_py.stock_entry.on_submit"
 		]
 	},
+	"Request for Quotation":{
+		"on_submit":[
+			"tsl.custom_py.request_for_quotation.on_submit"
+		]
+	},
+
 	
 		
 	
