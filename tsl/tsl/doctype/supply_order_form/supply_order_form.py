@@ -22,14 +22,14 @@ def create_supply_order_data(order_no):
 		frappe.throw("Please Mention the Customer Name")
 	if not doc.incharge:
 		frappe.throw("Please Mention the Customer Representative")
-	if not doc.repair_warehouse:
-		rw = {
-			"Kuwait - TSL":"Repair - Kuwait - TSL",
-			"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
-			"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
-			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
-		}
-		doc.repair_warehouse = rw[doc.branch]
+	# if not doc.repair_warehouse:
+	# 	rw = {
+	# 		"Kuwait - TSL":"Repair - Kuwait - TSL",
+	# 		"Dammam - TSL-SA":"Repair - Dammam - TSL-SA",
+	# 		"Jeddah - TSL-SA":"Repair - Jeddah - TSL-SA",
+	# 		"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
+	# 	}
+	# 	doc.repair_warehouse = rw[doc.branch]
 	new_doc = frappe.new_doc("Supply Order Data")
 	new_doc.customer = doc.customer
 	new_doc.customer_name = doc.customer_name

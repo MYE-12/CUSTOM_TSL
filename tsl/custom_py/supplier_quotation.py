@@ -86,3 +86,18 @@ def on_submit(self,method):
         doc.total_amount = add
 
         doc.save(ignore_permissions=True)
+    if self.supply_order_data:
+        doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
+        for i in self.get('items'):
+            for j in doc.get("in_stock"):
+                if i.item_code == j.part:
+                    j.price_ea = i.rate
+                    j.total = i.rate * j.qty
+                    j.supplier_quotation = self.name
+            for j in doc.get('material_list'):
+                if j.item_code == i.item_code:
+                    j.price = i.rate
+                    j.amount = float(i.rate) * float(j.quantity or 1)
+                    j.supplier_quotation = self.name
+        doc.save(ignore_permissions=True)
+
