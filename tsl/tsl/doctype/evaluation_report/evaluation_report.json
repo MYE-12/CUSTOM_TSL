@@ -221,6 +221,7 @@
    "label": "Attach Image"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "priority_status",
    "fieldtype": "Select",
    "label": "Priority Status",
@@ -307,16 +308,19 @@
    "label": "Others"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "evaluation_time",
    "fieldtype": "Data",
    "label": "Evaluation Time"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "estimated_repair_time",
    "fieldtype": "Data",
    "label": "Estimated Repair Time"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "actual_repair_time",
    "fieldtype": "Data",
    "label": "Actual Repair Time"
@@ -364,7 +368,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-24 16:16:15.207753",
+ "modified": "2023-01-02 12:13:22.253267",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

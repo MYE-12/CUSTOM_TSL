@@ -14,6 +14,26 @@ from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as im
 
 class EvaluationReport(Document):
 	def on_submit(self):
+		if self.status:
+			if self.status == "Working":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "W-Working"
+			elif self.status == "Spare Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "SP-Searching Parts"
+			elif self.status == "Extra Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "EP-Extra Parts"
+			elif self.status == "Comparison":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "C-Comparison"
+			elif self.status == "Return Not Repaired":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RNR-Return Not Repaired"
+			elif self.status == "Return No Fault":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RNF-Return No Fault"
+			doc.save(ignore_permissions = True)
 		if self.if_parts_required:
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			if self.parts_availability == "Yes":
@@ -60,23 +80,26 @@ class EvaluationReport(Document):
 			add += total
 		self.total_amount = add
 
-		doc = frappe.get_doc("Work Order Data",self.work_order_data)
 		if self.status:
 			if self.status == "Working":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
 			elif self.status == "Spare Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "SP-Searching Parts"
 			elif self.status == "Extra Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "EP-Extra Parts"
 			elif self.status == "Comparison":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
 			elif self.status == "Return Not Repaired":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNR-Return Not Repaired"
 			elif self.status == "Return No Fault":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNF-Return No Fault"
-		doc.save(ignore_permissions = True)
-				
-				
+			doc.save(ignore_permissions = True)
 		if self.if_parts_required:
 			f=0
 			for i in self.get("items"):
