@@ -226,6 +226,25 @@ def create_sal_inv(source):
 	for i in doclist.get('items'):
 		doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
 	return doclist
+@frappe.whitelist()
+def advance_pay(source):
+	new_doc = frappe.new_doc("Payment Entry")
+	doc = frappe.get_doc("Quotation",source)
+	new_doc.payment_type = "Receive"
+	new_doc.company = doc.company
+	new_doc.branch = doc.branch_name
+	new_doc.cost_center = doc.department
+	for i in doc.items:
+		new_doc.work_order_data = i.wod_no
+		new_doc.supply_order_data = i.supply_order_data
+	new_doc.paid_from = frappe.db.get_value("Account",{"account_type":["in",["Receivable"]],"is_group":0,"company":doc.company})
+	new_doc.paid_from_account_currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	new_doc.party_type = "Customer"
+	new_doc.party = doc.party_name
+	new_doc.party_name = doc.customer_name
+	new_doc.cost_center = doc.department
+	return new_doc
+
 
 @frappe.whitelist()
 def final_price_validate(source):

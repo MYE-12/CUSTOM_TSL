@@ -28,5 +28,9 @@ def get_data():
 				
 				'items': ['Delivery Note']
 			},
+			{
+				
+				'items': ['Payment Entry']
+			}
 		]
 	}

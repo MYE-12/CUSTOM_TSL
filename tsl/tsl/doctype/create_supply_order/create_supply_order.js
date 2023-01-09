@@ -263,7 +263,6 @@ frappe.ui.form.on('Supply Data Item', {
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
 		if(row.part){
-			console.log("Now.......")
 			frappe.call({
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
 			args :{
