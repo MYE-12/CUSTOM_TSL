@@ -26,5 +26,4 @@ def before_save(self,method):
 				self.igst = round((i.net_amount * float(igst))/100)
 				self.cgst = round((i.net_amount * float(cgst))/100)
 				self.sgst = round((i.net_amount * float(sgst))/100)
-			
 
