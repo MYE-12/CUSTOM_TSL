@@ -159,6 +159,11 @@ doc_events = {
 			"tsl.custom_py.request_for_quotation.on_submit"
 		]
 	},
+	"Payment Entry":{
+		"on_submit":[
+			"tsl.custom_py.payment_entry.on_submit"
+		]
+	},
 
 	
 		

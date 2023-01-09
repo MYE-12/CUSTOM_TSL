@@ -294,7 +294,30 @@ def create_quotation(sod):
 	# 	new_doc.max_custom_duration = extra_charges[0]['max_custom_duration']
 	# 	new_doc.discount_amount = tot * -1
 	return new_doc
-
+@frappe.whitelist()
+def make_payment(sod,invoice):
+	new_doc = frappe.new_doc("Payment Entry")
+	doc = frappe.get_doc("Supply Order Data",sod)
+	new_doc.payment_type = "Receive"
+	new_doc.company = doc.company
+	new_doc.branch = doc.branch
+	new_doc.cost_center = doc.department
+	new_doc.supply_order_data = sod
+	new_doc.paid_from = frappe.db.get_value("Account",{"account_type":["in",["Receivable"]],"is_group":0,"company":doc.company})
+	new_doc.paid_from_account_currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	new_doc.party_type = "Customer"
+	new_doc.party = doc.customer
+	new_doc.party_name = doc.customer_name
+	new_doc.cost_center = doc.department
+	new_doc.append("references",
+	{
+		"reference_doctype":"Sales Invoice",
+		"reference_name":invoice,
+		"total_amount":frappe.db.get_value("Sales Invoice",invoice,"grand_total"),
+		"outstanding_amount":frappe.db.get_value("Sales Invoice",invoice,"outstanding_amount"),
+		"allocated_amount":frappe.db.get_value("Sales Invoice",invoice,"grand_total")
+	})
+	return new_doc
 
 class SupplyOrderData(Document):
 	def on_update_after_submit(self):
@@ -334,7 +357,7 @@ class SupplyOrderData(Document):
 				i.parts_availability = 'No'
 				invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 				if frappe.db.get_value("Bin",{"item_code":i.part,"warehouse":["in",invent]},"name"):
-					if i.qty <= frappe.db.get_value('Bin',{'item_code':i.part},'actual_qty'):
+					if frappe.db.get_value('Bin',{'item_code':i.part,'actual_qty':['>=',i.qty]}):
 						i.parts_availability = 'Yes'
 						i.price_ea = frappe.db.get_value('Bin',{'item_code':i.part},'valuation_rate')
 						i.total = i.qty * i.price_ea

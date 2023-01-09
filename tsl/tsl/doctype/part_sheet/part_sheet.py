@@ -23,10 +23,9 @@ def get_valuation_rate(item,qty,warehouse):
 	price = 0
 	sts = "No"
 	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]
-	if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent]},"actual_qty"):
-		price = frappe.db.get_value("Item",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")
-		if float(frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent]},"actual_qty")) >= float(qty):		
-			sts = "Yes"
+	if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent],"actual_qty":[">=",qty]}):
+		price = frappe.db.get_value("Item",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")	
+		sts = "Yes"
 	return[price,sts]
 
 	
