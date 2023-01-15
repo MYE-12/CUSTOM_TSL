@@ -23,7 +23,7 @@ class EvaluationReport(Document):
 			doc.save(ignore_permissions=True)
 
 	def before_save(self):
-		print("hi")
+		print("save")
 		if not frappe.db.get_value("Work Order Data",self.work_order_data,"technician"):
 			frappe.db.set_value("Work Order Data",self.work_order_data,"technician",frappe.session.user)
 			frappe.db.set_value("Work Order Data",self.work_order_data,"status","UE-Under Evaluation")
@@ -82,18 +82,15 @@ class EvaluationReport(Document):
 				
 				
 		if self.if_parts_required:
-			part_no = 0
+			self.part_no = 0
 			f=0
 			for i in self.get("items"):
-				print("part no "+str(part_no))
-				print("4n")
 				if not i.part_sheet_no:
-					print("5n")
-					i.part_sheet_no = part_no+1
-					frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"part_sheet_no",part_no+1)
-					print(part_no+1)
+					i.part_sheet_no = int(self.part_no)+1
+					frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"part_sheet_no",int(self.part_no)+1)
 				else:
-					part_no = i.part_sheet_no
+					self.part_no = i.part_sheet_no
+					
 				if i.parts_availability == "No":
 					f=1
 				
@@ -103,8 +100,12 @@ class EvaluationReport(Document):
 				self.parts_availability = "Yes"
 			if self.parts_availability == "Yes" and self.work_order_data:
 				frappe.db.sql("""update `tabWork Order Data` set status = "AP-Available Parts" where name = %s""",self.work_order_data)
-
+			for i in self.items:
+				i.is_not_edit = 1
+				frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"is_not_edit",1)
 	def before_submit(self):
+		for i in self.items:
+			i.is_not_edit = 1
 		if self.if_parts_required:
 			wod = frappe.get_doc("Work Order Data",self.work_order_data)
 			extra_ps = frappe.db.sql('''select name,attn from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 and creation <= %s''',(self.work_order_data,self.creation),as_dict=1)
