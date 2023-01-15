@@ -51,8 +51,9 @@ def create_rfq(ps):
 	new_doc.work_order_data = doc.work_order_data
 	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
 	new_doc.items=[]
+	psn = doc.items[-1].part_sheet_no
 	for i in doc.get("items"):
-		if i.parts_availability == "No":
+		if i.parts_availability == "No" and psn == i.part_sheet_no:
 			new_doc.append("items",{
 				"item_code":i.part,
 				"item_name":i.part_name,

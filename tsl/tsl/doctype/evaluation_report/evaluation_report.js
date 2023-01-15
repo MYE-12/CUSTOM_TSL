@@ -5,6 +5,64 @@ frappe.ui.form.on('Evaluation Report', {
 	// refresh: function(frm) {
 
 	// }
+	items_on_form_rendered:function(frm,cdt,cdn){
+		let grid_row = cur_frm.open_grid_row();
+		if(grid_row.grid_form.fields_dict.is_not_edit.doc.is_not_edit){
+			$(".btn.btn-danger.btn-sm.pull-right.grid-delete-row").hide()
+			cur_frm.refresh_fields()
+		}
+		else{
+			$(".btn.btn-danger.btn-sm.pull-right.grid-delete-row").show()
+			cur_frm.refresh_fields()
+		}
+		
+	},
+	work_order_data:function(frm){
+		if(frm.doc.work_order_data){
+			frappe.call({
+				"method": "frappe.client.get",
+				args: {
+					doctype: "Work Order Data",
+					name: frm.doc.work_order_data
+				},
+				callback: function (data) {
+					if(data.message) {
+						console.log(data.message)
+						var doc = data.message
+						frm.doc.customer = doc.customer
+						frm.doc.attn = doc.sales_rep
+						frm.no_output = doc.no_output
+						frm.doc.no_power = doc.no_power
+						frm.doc.no_display = doc.no_display
+						frm.doc.no_communication = doc.no_communication
+						frm.doc.no_backlight = doc.no_backlight
+						frm.doc.supply_voltage = doc.supply_voltage
+						frm.doc.error_code = doc.error_code
+						frm.doc.touch_keypad_not_working = doc.touch_keypad_not_working
+						frm.doc.short_circuit = doc.short_circuit
+						frm.doc.overload_overcurrent = doc.overload_overcurrent
+						frm.doc.others = doc.others
+						frm.doc.specify = doc.specify
+						frm.refresh_fields();
+						for(var i=0;i<doc.material_list.length;i++){
+							frm.clear_table("evaluation_details")
+							var childTable = cur_frm.add_child("evaluation_details");
+							childTable.item = doc.material_list[i].item_code
+							childTable.model = doc.material_list[i].model_no
+							childTable.manufacturer = doc.material_list[i].mfg
+							childTable.type = doc.material_list[i].type
+							childTable.serial_no = doc.material_list[i].serial_no
+							childTable.description = doc.material_list[i].item_name
+							cur_frm.refresh_field("evaluation_details")
+						}
+						
+					}
+					
+				}
+			});
+		}
+		
+	},
 	refresh:function(frm){
 		// if(frm.doc.work_order_data){
 		// 	frappe.call({
@@ -21,6 +79,17 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	});
 
 		// }
+		// if(frm.doc.docstatus == 1){
+		// 	$(".btn.btn-xs.btn-danger.grid-remove-rows").hide()
+		// 	cur_frm.refresh_fields()
+		// }
+		if(frm.doc.docstatus == 1){
+			console.log("status1")
+			cur_frm.set_df_property("status","options",["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
+		}
+		else{
+			cur_frm.set_df_property("status","options",["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])		
+		}
 		if(frm.doc.attach_image){
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
 			cur_frm.refresh_fields();
@@ -132,11 +201,30 @@ frappe.ui.form.on('Evaluation Report', {
 				]
 			}
 		});
+		
 
-	}
-
+	},
+	
 });
 frappe.ui.form.on('Part Sheet Item', {
+	
+	before_items_remove:function(frm,cdt,cdn){
+		var item = locals[cdt][cdn];
+		if(item.is_not_edit && item.__checked){
+			item.__checked = 0
+			cur_frm.refresh_fields()
+			frappe.throw("Cannot Delete old Part Sheets")
+		}
+		// for(var i=0;i<frm.doc.items.length;i++){
+			
+		// 	if(frm.doc.items[i].is_not_edit && cur_frm.doc.items[1].__checked){
+				
+		// 		frappe.throw("Cannot Delete old Part Sheets")
+		// 	}
+
+		// }
+	},
+	
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
 		if(row.part){

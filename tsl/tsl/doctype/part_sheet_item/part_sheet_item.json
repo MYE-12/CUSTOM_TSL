@@ -24,7 +24,8 @@
   "part_sheet_no",
   "spare_part_image_section",
   "add_image",
-  "image_18"
+  "image_18",
+  "is_not_edit"
  ],
  "fields": [
   {
@@ -162,12 +163,20 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Part Sheet No"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "is_not_edit",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Not Edit"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-03 14:18:38.080711",
+ "modified": "2023-01-14 18:23:19.460697",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",
