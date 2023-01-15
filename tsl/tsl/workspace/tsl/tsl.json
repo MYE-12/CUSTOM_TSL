@@ -167,8 +167,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Supply Order Form",
-   "link_to": "Supply Order Form",
+   "label": "Create Supply Order",
+   "link_to": "Create Supply Order",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -411,7 +411,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-12-02 16:42:17.038401",
+ "modified": "2023-01-09 11:15:34.920590",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",

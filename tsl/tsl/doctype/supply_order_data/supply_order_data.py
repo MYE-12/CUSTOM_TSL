@@ -356,7 +356,7 @@ class SupplyOrderData(Document):
 			if i.part:
 				i.parts_availability = 'No'
 				invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
-				if frappe.db.get_value("Bin",{"item_code":i.part,"warehouse":["in",invent]},"name"):
+				if frappe.db.get_value("Bin",{"item_code":i.part,"warehouse":["in",invent],'actual_qty':['>=',i.qty]},"name"):
 					if frappe.db.get_value('Bin',{'item_code':i.part,'actual_qty':['>=',i.qty]}):
 						i.parts_availability = 'Yes'
 						i.price_ea = frappe.db.get_value('Bin',{'item_code':i.part},'valuation_rate')
