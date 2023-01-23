@@ -1,5 +1,7 @@
 frappe.ui.form.on('Purchase Order', {
 	onload_post_render:function(frm){
+		var end_date = frappe.datetime.add_days(frm.doc.transaction_date, 15);
+		cur_frm.set_value("schedule_date", end_date);
         frm.set_query("branch", function() {
                 return {
                         filters: [
