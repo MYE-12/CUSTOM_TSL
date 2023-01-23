@@ -129,6 +129,7 @@ class EvaluationReport(Document):
 	def before_submit(self):
 		for i in self.items:
 			i.is_not_edit = 1
+			frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"is_not_edit",1)
 		if self.if_parts_required:
 			wod = frappe.get_doc("Work Order Data",self.work_order_data)
 			extra_ps = frappe.db.sql('''select name,attn from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 and creation <= %s''',(self.work_order_data,self.creation),as_dict=1)

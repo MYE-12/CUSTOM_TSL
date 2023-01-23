@@ -235,7 +235,7 @@
  "modified": "2022-10-10 15:40:59.342235",
  "modified_by": "Administrator",
  "module": "Tsl",
- "name": "Recieved Equipment",
+ "name": "Received Equipment",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",

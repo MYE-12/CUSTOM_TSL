@@ -200,7 +200,7 @@
    "fieldname": "received_equipment",
    "fieldtype": "Table",
    "label": "Received Equipment",
-   "options": "Recieved Equipment",
+   "options": "Received Equipment",
    "reqd": 1
   },
   {
@@ -248,7 +248,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-12-09 13:11:34.161555",
+ "modified": "2023-01-17 09:52:31.052724",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

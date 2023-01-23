@@ -44,9 +44,6 @@
   "column_break_27",
   "total_amount",
   "section_break_25",
-  "evaluation_time",
-  "estimated_repair_time",
-  "actual_repair_time",
   "extra_repair_time",
   "actions_section",
   "status",
@@ -313,24 +310,6 @@
    "label": "Others"
   },
   {
-   "allow_on_submit": 1,
-   "fieldname": "evaluation_time",
-   "fieldtype": "Data",
-   "label": "Evaluation Time"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "estimated_repair_time",
-   "fieldtype": "Data",
-   "label": "Estimated Repair Time"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "actual_repair_time",
-   "fieldtype": "Data",
-   "label": "Actual Repair Time"
-  },
-  {
    "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "section_break_34",
    "fieldtype": "Section Break"
@@ -370,6 +349,7 @@
    "label": "No Power"
   },
   {
+   "allow_on_submit": 1,
    "depends_on": "eval:(doc.status == \"Extra Parts\");",
    "fieldname": "extra_repair_time",
    "fieldtype": "Duration",
@@ -379,7 +359,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-15 23:31:09.118708",
+ "modified": "2023-01-17 10:52:25.664310",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

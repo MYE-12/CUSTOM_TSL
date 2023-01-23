@@ -89,7 +89,7 @@
    "fieldname": "received_equipment",
    "fieldtype": "Table",
    "label": "Received Equipment",
-   "options": "Recieved Equipment",
+   "options": "Received Equipment",
    "reqd": 1
   },
   {
@@ -244,7 +244,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-08-30 12:23:52.141149",
+ "modified": "2023-01-17 09:52:30.380109",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",

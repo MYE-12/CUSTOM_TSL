@@ -209,7 +209,7 @@
    "fieldname": "received_equipment",
    "fieldtype": "Table",
    "label": "TSL Non Inventory(Equipments)",
-   "options": "Recieved Equipment"
+   "options": "Received Equipment"
   },
   {
    "fieldname": "previously_quoted_item_in_repair_section",
@@ -255,7 +255,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-12-09 12:19:51.115254",
+ "modified": "2023-01-17 09:52:30.756572",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",
