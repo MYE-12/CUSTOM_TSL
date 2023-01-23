@@ -5,6 +5,7 @@ frappe.ui.form.on('Evaluation Report', {
 	// refresh: function(frm) {
 
 	// }
+	
 	items_on_form_rendered:function(frm,cdt,cdn){
 		let grid_row = cur_frm.open_grid_row();
 		if(grid_row.grid_form.fields_dict.is_not_edit.doc.is_not_edit){

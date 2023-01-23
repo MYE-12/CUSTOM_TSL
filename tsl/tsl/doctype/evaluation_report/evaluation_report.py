@@ -82,6 +82,8 @@ class EvaluationReport(Document):
 				
 				
 		if self.if_parts_required:
+			if self.items[-1].part_sheet_no > 1 and self.status in ["Spare Parts","Extra Parts"]:
+				self.status = "Extra Parts"
 			self.part_no = 0
 			f=0
 			for i in self.get("items"):
