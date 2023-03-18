@@ -1,4 +1,11 @@
 frappe.ui.form.on('Quotation', {
+//	margin_rate:function(frm){
+//		if(frm.doc.margin_rate){
+//			var additional = frm.doc.margin_rate - frm.doc.overall_discount_amount
+//			frm.doc.discount_amount = additional*-1
+//			frm.doc.grand_total = frm.doc.grand_total + (frm.doc.discount_amount)
+//		}
+//	},
 	onload_post_render:function(frm){
 		if(frm.doc.docstatus == 0){
 			frm.set_query("branch", function() {
@@ -6,7 +13,6 @@ frappe.ui.form.on('Quotation', {
                         filters: [
                                 ["Warehouse","company", "=", frm.doc.company],
                                 ["Warehouse","is_branch","=",1]
-                                
                         ]
                 };
         });
@@ -15,7 +21,6 @@ frappe.ui.form.on('Quotation', {
 		var d = {};
 			if(child.model){
 				d['model'] = child.model;
-	
 			}
 			if(child.manufacturer){
 				d['mfg'] = child.manufacturer;
@@ -37,7 +42,7 @@ frappe.ui.form.on('Quotation', {
 		}
 		if(frm.doc.quotation_type == "Customer Quotation - Repair" && frm.doc.docstatus == 0){
 			for(var i=0;i<frm.doc.quotation_history.length;i++){
-				if(frm.doc.quotation_history[i].quotation_type == "Internal Quotation - Repair" && frm.doc.quotation_history[i].status == "Approved" ){
+				if(frm.doc.quotation_history[i].quotation_type == "Internal Quotation - Repair" && frm.doc.quotation_history[i].status == "Approved By Management" ){
 					var doc_name = frm.doc.quotation_history[i].quotation_name
 					break;
 				}
@@ -55,13 +60,13 @@ frappe.ui.form.on('Quotation', {
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
 							}
 							frm.refresh_field("items");
-							
+
 						}
 					}
 				});
 
 			}
-			
+
 
 		}
 		// if(frm.doc.quotation_type == "Internal Quotation - Supply" && frm.doc.docstatus == 0){
@@ -95,9 +100,9 @@ frappe.ui.form.on('Quotation', {
         
     
         },
-	
+
     refresh:function(frm){
-		
+
 		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
@@ -113,17 +118,16 @@ frappe.ui.form.on('Quotation', {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
-							
+
 						}
 					}
 				});
-				
-				
-                               
+
+
                         }, ('Create'))
 	}
-	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && frm.doc.__unsaved != 1){
-		
+	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && !frm.doc.__islocal){
+
             frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
 				frappe.call({
 					method: "tsl.custom_py.quotation.get_similar_unit_details",
@@ -131,15 +135,15 @@ frappe.ui.form.on('Quotation', {
 						"name":frm.doc.name
 					},
 					callback: function(r) {
-						
+
 					}
 				});
-                
+
             }, __("View"));
     }
 	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
 		frm.add_custom_button(__('Sales Invoice'), function(){
-				
+
 			frappe.call({
 				method: "tsl.custom_py.quotation.create_sal_inv",
 				args: {
@@ -149,18 +153,18 @@ frappe.ui.form.on('Quotation', {
 					if(r.message) {
 						var doc = frappe.model.sync(r.message);
 						frappe.set_route("Form", doc[0].doctype, doc[0].name);
-						
+
 					}
 				}
 			});
-			
-			
-						   
+
+
+
 					}, ('Create'))
 		}
 	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer" && frm.doc.is_advance_pay == 1){
 			frm.add_custom_button(__('Advance Payment'), function(){
-	
+
 				frappe.call({
 					method: "tsl.custom_py.quotation.advance_pay",
 					args: {
@@ -169,19 +173,19 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
-							
+
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
-							
+
 						}
 					}
 				});
-				
-				
-								
+
+
+
 						}, ('Create'))
-	
+
 	}
-	
+
 		
 	if(frm.doc.quotation_type === "Internal Quotation - Supply" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
@@ -295,8 +299,10 @@ frappe.ui.form.on('Quotation', {
 
 		// }
         if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Repair") {
-			frm.add_custom_button(__('Work Order Data'),
+				frm.add_custom_button(__('Work Order Data'),
 				function() {
+					var from_date = frappe.datetime.add_months(frappe.datetime.get_today(), -1)
+                			var to_date = frappe.datetime.get_today()
 					new frappe.ui.form.MultiSelectDialog({
 						doctype: "Work Order Data",
 						target: frm,
@@ -308,7 +314,7 @@ frappe.ui.form.on('Quotation', {
 						add_filters_group: 1,
 						get_query() {
 							return {
-								filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name }
+								filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name, posting_date:["between",[from_date,to_date]]}
 							}
 						},
 						action(selections) {
@@ -324,7 +330,6 @@ frappe.ui.form.on('Quotation', {
 										var tot_amt = 0;
 										var tot_qty=0;
 										for(var i=0;i<r.message.length;i++){
-											
 											var childTable = cur_frm.add_child("items");
 											childTable.item_code = r.message[i]["item"],
 											childTable.item_name = r.message[i]["item_name"],
@@ -337,7 +342,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.rate = r.message[i]["total_amt"]
 											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
 											childTable.amount = amt,
-											childTable.final_approved_price = (amt*(302.8/100))+amt,
+											childTable.final_approved_price = amt,
 											tot_amt += amt;
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
@@ -347,12 +352,11 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 										frm.doc.rounded_total = frm.doc.grand_total;
 										frm.doc.actual_price = frm.doc.rounded_total;
-										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
-											frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value*frm.doc.technician_hours_spent[0].total_hours_spent);
+										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
+											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_hours_spent;
 											console.log(frm.doc.actual_price);
 										}
-										
-										frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
+										frm.doc.final_approved_price = frm.doc.actual_price;
 										cur_frm.refresh_fields();
 
 									}
@@ -545,7 +549,7 @@ frappe.ui.form.on('Quotation', {
         else{
             frm.set_df_property("final_approved_price", "read_only", 1)
         }
-    },
+        },
 	approval_date:function(frm){
 		frm.save_or_update();
 	},
@@ -580,12 +584,33 @@ frappe.ui.form.on('Quotation', {
 		
 	},
 	overall_discount_amount:function(frm){
-		if(frm.doc.overall_discount_amount){
-			frm.doc.discount_amount += frm.doc.overall_discount_amount
+//		if(frm.doc.overall_discount_amount){
+//			frm.doc.discount_amount = frm.doc.overall_discount_amount
+//			if(frm.doc.margin_rate){
+//				frm.doc.discount_amount = frm.doc.discount_amount - frm.doc.margin_rate
+//				console.log(frm.doc.discount_amount)
+//			}
+//			var total = frm.doc.total-(frm.doc.discount_amount)
+//			frm.doc.grand_total = total
+//			if(frm.doc.technician_hours_spent.length > 0 ){
+//				total += frm.doc.technician_hours_spent[0].total_price
+//			} 
+//			frm.doc.actual_price = total
+			frm.doc.final_approved_price = frm.doc.actual_price;
+			frm.doc.final_approved_price = frm.doc.final_approved_price - frm.doc.overall_discount_amount
+			frm.doc.final_approved_price = frm.doc.final_approved_price + frm.doc.margin_rate
 			frm.refresh_fields()
-		}
+//		}
+	},
+	margin_rate:function(frm){
+		frm.trigger("overall_discount_amount")
+	},
+	discount_percent:function(frm){
+		frm.doc.overall_discount_amount = (frm.doc.final_approved_price * frm.doc.discount_percent)/100
+		console.log("Hiu")
+		frm.trigger("overall_discount_amount")
 	}
-			
+
 });
 
 
@@ -596,7 +621,7 @@ frappe.ui.form.on("Quotation Item",{
 			var item = locals[cdt][cdn];
 			if(item.qty){
 				item.amount = item.qty * item.rate;
-				item.final_approved_price = (item.amount *(302.8/100))+item.amount;
+				item.final_approved_price = item.amount;
 				var tot_amt = 0;
 				var tot_qty=0;
 				for(var i=0 ;i< frm.doc.items.length;i++){
@@ -613,7 +638,7 @@ frappe.ui.form.on("Quotation Item",{
 					frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value *frm.doc.technician_hours_spent[0].total_hours_spent);
 
 				}
-				var act = (frm.doc.actual_price*(302.8/100))+ frm.doc.actual_price
+				var act = frm.doc.actual_price
 				frm.set_value("final_approved_price",act);
 				cur_frm.refresh_fields();
 
@@ -637,7 +662,7 @@ frappe.ui.form.on("Technician Hours Spent",{
 			// }
 			
 			frm.doc.actual_price = tot_amt +frm.doc.rounded_total;
-			frm.doc.final_approved_price = (frm.doc.actual_price*(302.8/100))+frm.doc.actual_price;
+			frm.doc.final_approved_price = frm.doc.actual_price;
 			cur_frm.refresh_fields();
 
 		

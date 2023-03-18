@@ -12,7 +12,6 @@ def check_userrole(user):
 	if len(frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role in ("Technician","Purchase User") """.format(user),as_dict=1)) == 2:
 		return 2
 	if frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role = "Technician" """.format(user),as_dict=1):
-		
 		return "Technician"
 	if frappe.db.sql(""" select role from `tabHas Role` where parent = \'{0}\' and role = "Purchase User" """.format(user),as_dict=1):
 		return "Purchase User"
@@ -23,12 +22,13 @@ def get_valuation_rate(item,qty,warehouse):
 	price = 0
 	sts = "No"
 	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]
-	if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent],"actual_qty":[">=",qty]}):
-		price = frappe.db.get_value("Item",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")	
+	#if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent],"actual_qty":[">=",qty]}):
+	bin = frappe.db.sql('''select name from `tabBin` where item_code = {0} and warehouse in ('{1}') and (actual_qty-evaluation_qty) >={2} '''.format(item,"','".join(invent),qty),as_dict =1)
+	if len(bin) and 'name' in bin[0]:
+		price = frappe.db.get_value("Bin",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")
 		sts = "Yes"
 	return[price,sts]
 
-	
 @frappe.whitelist()
 def get_availabilty(item,qty,warehouse):
 	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]

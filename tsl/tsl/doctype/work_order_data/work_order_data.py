@@ -46,8 +46,9 @@ def create_quotation(wod):
 	elif frappe.db.get_value("Customer",doc.customer,"credit"):
 		pay_term = "Credit"
 	new_doc.payment_term = pay_term	
-	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
+	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address") or doc.address
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
+	new_doc.contact_person = doc.incharge
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation - Repair"
 	if doc.branch:
@@ -64,17 +65,21 @@ def create_quotation(wod):
 	
 	new_doc.sales_rep = doc.sales_rep
 	
-	ths = frappe.db.sql('''select status,hours_spent,ratehour from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
-	if ths:
+	ths = frappe.db.sql('''select status,hours_spent,ratehour,extra_repair_time as ext,evaluation_time as et,estimated_repair_time as ert from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
+	if len(ths):
 		total = 0
 		if ths[0]["status"] == "Others":
 			ths[0]["status"] = frappe.db.get_value("Evaluation Report",{"work_order_data":wod},"specify")
-		total = float(ths[0]["hours_spent"]) * float(ths[0]["ratehour"])
+		if 'et' in ths[0] and 'ert' in ths[0] and ths[0]['ert'] and ths[0]['et']:
+			total = round(((ths[0]['et']/3600) + (ths[0]['ert']/3600)),2)
+#		if 'ext' in ths[0]:
+#			total += round(ths[0]['ext']/3600)
+#		total = float(ths[0]['et'].split()[0][:-1]+"."+ths[0]['et'].split()[1][:-1])
 		new_doc.append("technician_hours_spent",{
 			"comments": ths[0]["status"],
-			"total_hours_spent":ths[0]["hours_spent"],
-			"value":ths[0]["ratehour"],
-			"total_price":total
+			"total_hours_spent":total,
+			"value":20,
+			"total_price":total*20
 		})
 	return new_doc
 
@@ -90,7 +95,6 @@ def create_evaluation_report(doc_no):
 	new_doc.attach_image = doc.attach_image
 	
 	if doc.no_power:
-		frappe.errprint("no power")
 		new_doc.no_power = 1
 	if doc.no_output:
 		new_doc.no_output = 1
@@ -114,6 +118,7 @@ def create_evaluation_report(doc_no):
 		new_doc.others = 1
 		new_doc.specify = doc.specify
 	new_doc.customer_complaint = doc.complaints
+	new_doc.priority_status = doc.priority_status
 	for i in doc.get("material_list"):
 		new_doc.append("evaluation_details",{
 			"item":i.item_code,
@@ -127,6 +132,17 @@ def create_evaluation_report(doc_no):
 	new_doc.item_photo = doc.image
 	return new_doc
 
+@frappe.whitelist()
+def create_paymet_entry(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc = frappe.new_doc("Payment Entry")
+	new_doc.payment_type = "Receive"
+	new_doc.work_order_data = wod
+	new_doc.party_type = "Customer"
+	new_doc.party = doc.customer
+	new_doc.party_name = doc.customer_name
+	new_doc.mode_of_payment = "Cash" 
+	return new_doc
 @frappe.whitelist()
 def create_stock_entry(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
@@ -212,6 +228,48 @@ def create_sof(wod):
 	return new_doc
 
 @frappe.whitelist()
+def create_rn(wod):
+	doc = frappe.get_doc("Work Order Data",wod)
+	new_doc = frappe.new_doc("Return Note")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.cost_center = doc.department
+	new_doc.customer_address = doc.address
+	new_doc.contact_person = doc.incharge
+	new_doc.work_order_data = wod
+	new_doc.status = "Return"
+	new_doc.is_return = 1
+	d = {}
+	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
+	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
+	for i in doc.material_list:
+		new_doc.append("items",{
+			"item_name":i.item_name,
+			"item_code":i.item_code,
+			"manufacturer":i.mfg,
+			"model":i.model_no,
+			"rate":0,
+			"amount":0, 
+			"type":i.type,
+			"serial_number":i.serial_no,
+			"description":i.item_name,
+			"qty":i.quantity,
+			"work_order_data":wod, 
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"cost_center":doc.department,
+			"income_account":"6001002 - Revenue from Service - TSL",
+			"warehouse":d[doc.branch]
+
+			})
+	return new_doc
+
+@frappe.whitelist()
 def create_sal_inv(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
 	new_doc = frappe.new_doc("Sales Invoice")
@@ -219,11 +277,11 @@ def create_sal_inv(wod):
 	new_doc.customer = doc.customer
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
-	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
-	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+	new_doc.customer_address = doc.address
+	new_doc.contact_person = doc.incharge
 	new_doc.work_order_data = wod
 	d = {}
-	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
 	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
@@ -235,7 +293,7 @@ def create_sal_inv(wod):
 			r = qi_details[0]['rate']
 			amt = qi_details[0]['amount']
 		new_doc.append("items",{
-			"item_name":i.item_name0,
+			"item_name":i.item_name,
 			"item_code":i.item_code,
 			"manufacturer":i.mfg,
 			"model":i.model_no,
@@ -256,6 +314,7 @@ def create_sal_inv(wod):
 		})
 	return new_doc
 
+
 @frappe.whitelist()
 def create_dn(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
@@ -264,8 +323,8 @@ def create_dn(wod):
 	new_doc.customer = doc.customer
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
-	new_doc.customer_address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
-	new_doc.contact_person = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+	new_doc.customer_address = doc.address
+	new_doc.contact_person = doc.incharge
 	new_doc.work_order_data = wod
 	d = {}
 	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
@@ -285,6 +344,7 @@ def create_dn(wod):
 			"manufacturer":i.mfg,
 			"model":i.model_no,
 			"serial_number":i.serial_no,
+			"serial_no":i.serial_no,
 			"description":i.item_name,
 			'type':i.type,
 			"qty":i.quantity,
@@ -298,6 +358,31 @@ def create_dn(wod):
 			"warehouse":d[doc.branch]
 
 		})
+		c = 2
+		psi = frappe.db.sql('''select ei.serial_no,ei.manufacturer,ei.type,ei.part,ei.part_name,ei.category,ei.sub_category,ei.model,ei.qty,ei.price_ea,ei.total from `tabPart Sheet Item` as ei join `tabEvaluation Report` as e on ei.parent=e.name where e.work_order_data = %s and e.docstatus = 1''',wod,as_dict=1)
+		for j in psi:
+			new_doc.append("items",{
+			"sr_no":c,
+                        "item_name":j['part_name'],
+                        "item_code":j['part'],
+                        "manufacturer":j['manufacturer'],
+                        "model":j['model'],
+                        "serial_number":j['serial_no'],
+			"serial_no":j['serial_no'],
+                        "description":j['part_name'],
+                        'type':j['type'],
+                        "qty":j['qty'],
+                        "rate":j['price_ea'],
+                        "amount":j['total'],
+                        "work_order_data":wod,
+                        "uom":"Nos",
+                        "stock_uom":"Nos",
+                        "conversion_factor":1,
+                        "cost_center":doc.department,
+                        "warehouse":d[doc.branch]
+
+                	})
+			c += 1
 	return new_doc
 
 
@@ -313,23 +398,29 @@ def create_extra_ps(doc):
 def create_status_duration(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
 	return(doc.status_duration_details[len(doc.status_duration_details-1)])
-	
 
-	
 class WorkOrderData(Document):
 	def before_save(self):
-		pass
+		for i in self.get("material_list"):
+			if i.item_code:
+				suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price
+						,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi
+						 on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 ''',i.item_code,as_dict =1 )
+				if suqb:
+					self.previously_quoted_unit = []
+					for j in suqb:
+						self.append("previously_quoted_unit",j)
 		# now = datetime.now()
 		# if not self.status_duration_details or self.status != self.status_duration_details[-1].status:
 		# 	self.append("status_duration_details",{
 		# 		"status":self.status,
 		# 		"date":now,
 		# 	})
-			
 	def on_update_after_submit(self):
-		if self.technician and self.status == "NE-Need Evaluation":
-			self.status = "UE-Under Evaluation"
+#		if self.technician and self.status == "NE-Need Evaluation":
+#			self.status = "UE-Under Evaluation"
 		if self.warranty and self.delivery:
+#			self.status = 'RSC-Repaired and Shipped Client'
 			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
 		if self.status != self.status_duration_details[-1].status:
@@ -343,13 +434,20 @@ class WorkOrderData(Document):
 			minutes = divmod(duration_in_s, 60)[0]/60
 			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
 			frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
+			self.append("status_duration_details",{
+				"status":self.status,
+				"date":now,
+			})
 			doc = frappe.get_doc("Work Order Data",self.name)
 			doc.append("status_duration_details",{
 				"status":self.status,
 				"date":now,
 			})
-			# doc.save(ignore_permissions=True)
-		
+			doc.save(ignore_permissions=True)
+#		if self.delivery:
+#			wod = frappe.get_doc("Work Order Data",self.name)
+#			wod.status = 'RSC-Repaired and Shipped Client'
+#			wod.save(ignore_permissions = True)
 	def before_submit(self):
 
 		self.status = "NE-Need Evaluation"

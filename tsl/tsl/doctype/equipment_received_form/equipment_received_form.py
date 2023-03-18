@@ -1,7 +1,7 @@
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
-import json
+import json,time
 from pydoc import doc
 from re import X
 #from typing_extensions import Self
@@ -65,14 +65,16 @@ class EquipmentReceivedForm(Document):
 					})
 		for i in self.get('received_equipment'):
 			if not i.item_code:
-				item = frappe.db.get_value("Item",{"model":i.model,"mfg":i.manufacturer,"type":i.type,"item_name":i.item_name},"name")
+				item = frappe.db.get_value("Item",{"model":i.model,"mfg":i.manufacturer,"type":i.type},"name")
 				if item and i.serial_no in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
 					i.item_code = item
 				elif item and i.serial_no not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
 					i.item_code = item
 				else:
+					if 'item_name' not in i:
+						i['item_name'] = i['item_code']
 					new_doc = frappe.new_doc('Item')
-					new_doc.naming_series = '.####'
+					new_doc.naming_series = '.######'
 					new_doc.item_name = i.item_name
 					new_doc.item_group = "Equipments"
 					new_doc.description = i.item_name
@@ -112,7 +114,7 @@ def get_contacts(customer):
 
 
 @frappe.whitelist()
-def create_workorder_data(order_no):
+def create_workorder_data(order_no,f):
 	l=[]
 	sn_no = ""
 	doc = frappe._dict(json.loads(order_no))
@@ -130,17 +132,71 @@ def create_workorder_data(order_no):
 			"Riyadh - TSL-SA":"Repair - Riyadh - TSL-SA"
 		}
 		doc.repair_warehouse = d[doc.branch]
-
+	if doc.address:
+		if not frappe.db.get_value("Dynamic Link",{"parent":doc.address,"link_doctype":"Customer"},"link_name"):
+			addr = frappe.get_doc("Address",doc.address)
+			addr.append("links",{
+				"link_doctype" :"Customer",
+				"link_name":doc.customer
+			})
+			addr.save(ignore_permissions = True)
+	if doc.incharge:
+		if not frappe.db.get_value("Dynamic Link",{"parent":doc.incharge,"link_doctype":"Customer","parenttype":"Contact"},"link_name"):
+			addr = frappe.get_doc("Contact",doc.incharge)
+			addr.append("links",{
+				"link_doctype" :"Customer",
+				"link_name":doc.customer
+			})
+			addr.save(ignore_permissions = True)
+	if int(f) == 0:
+		for i in doc.get("received_equipment"):
+			if i["no_power"]:
+				f = 1
+			if i["no_output"]:
+				f = 1
+			if i["no_display"]:
+				f = 1
+			if i["no_communication"]:
+				f = 1
+			if i["supply_voltage"]:
+				f = 1
+			if i["touchkeypad_not_working"]:
+				f = 1
+			if i["no_backlight"]:
+				f = 1
+			if i["error_code"]:
+				f = 1
+			if i["short_circuit"]:
+				f = 1
+			if i["overloadovercurrent"]:
+				f = 1
+			if i["other"]:
+				f = 1
+			if int(f)==0:
+				return "Confirm" 
 	for i in doc.get("received_equipment"):
 		if not 'item_code' in i:
-			item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type'],"item_name":i['item_name']},"name")
-			if item and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+			item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type']},"name")
+			if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
 				i['item_code'] = item
-			elif item and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+			elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+				frappe.errprint("ssn1")
 				i['item_code'] = item
+				frappe.defaults.set_user_default("warehouse", None)
+				sn_doc = frappe.new_doc("Serial No")
+				sn_doc.serial_no = i['serial_no']
+				sn_doc.item_code = i['item_code']
+				sn_doc.save(ignore_permissions = True)
+				if sn_doc.name:
+					sn_no = sn_doc.name
+			elif item:
+				i['item_code'] = item
+				i['item_name'] = frappe.db.get_value("Item",item,"item_name")
 			else:
+				if not 'item_name' in i:
+					i['item_name'] = ""
 				new_doc = frappe.new_doc('Item')
-				new_doc.naming_series = '.####'
+				new_doc.naming_series = '.######'
 				new_doc.item_name = i['item_name']
 				new_doc.item_group = "Equipments"
 				new_doc.description = i['item_name']
@@ -161,6 +217,17 @@ def create_workorder_data(order_no):
 						sn_doc.save(ignore_permissions = True)
 						if sn_doc.name:
 							sn_no = sn_doc.name
+		else:
+			if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":i['item_code']},as_list=1)]:
+                                frappe.errprint("ssn1")
+                                frappe.defaults.set_user_default("warehouse", None)
+                                sn_doc = frappe.new_doc("Serial No")
+                                sn_doc.serial_no = i['serial_no']
+                                sn_doc.item_code = i['item_code']
+                                sn_doc.save(ignore_permissions = True)
+                                if sn_doc.name:
+                                        sn_no = sn_doc.name
+
 		d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",
 			"Riyadh - TSL-SA":"WOD-R.YY.-",
@@ -196,21 +263,21 @@ def create_workorder_data(order_no):
 		if i["no_output"]:
 			new_doc.no_output = 1
 		if i["no_display"]:
-			new_doc.no_display=1
+			new_doc.no_display = 1
 		if i["no_communication"]:
-			new_doc.no_communication=1
+			new_doc.no_communication = 1
 		if i["supply_voltage"]:
-			new_doc.supply_voltage=1
+			new_doc.supply_voltage = 1
 		if i["touchkeypad_not_working"]:
 			new_doc.touch_keypad_not_working = 1
 		if i["no_backlight"]:
-			new_doc.no_backlight=1
+			new_doc.no_backlight = 1
 		if i["error_code"]:
-			new_doc.error_code=1
+			new_doc.error_code =1
 		if i["short_circuit"]:
-			new_doc.short_circuit = 1
+			new_doc.short_circuit=1
 		if i["overloadovercurrent"]:
-			new_doc.overload_overcurrent = 1
+			new_doc.overload_overcurrent =1
 		if i["other"]:
 			new_doc.others = 1
 			new_doc.specify = i["specify"]
@@ -223,9 +290,9 @@ def create_workorder_data(order_no):
 		new_doc.repair_warehouse = doc.repair_warehouse
 		new_doc.address = doc.address
 		new_doc.incharge = doc.incharge
+		new_doc.priority_status = doc.sts
 		new_doc.naming_series = d[new_doc.branch]
 		new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
-
 		# serial_no=""
 		# if i['has_serial_no'] and i['serial_no']:
 		# 	serial_no = i['serial_no']
@@ -251,6 +318,8 @@ def create_workorder_data(order_no):
 		if new_doc.name and "attach_image" in i:
 			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
 		new_doc.submit()
+		frappe.errprint("sn-no")
+		frappe.errprint(sn_no)
 		if i['item_code']:
 				se_doc = frappe.new_doc("Stock Entry")
 				se_doc.stock_entry_type = "Material Receipt"
@@ -289,6 +358,12 @@ def create_workorder_data(order_no):
 		frappe.msgprint("Work Order created: "+', '.join(link))
 		return True
 	return False
+
+@frappe.whitelist()
+def complaint_issue(args):
+	args = json.loads(args)
+	if args['list']:
+		create_workorder_data(args['order_no'],1)
 
 @frappe.whitelist()
 def get_wod_details(wod):

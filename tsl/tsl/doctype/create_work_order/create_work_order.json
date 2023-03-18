@@ -126,7 +126,7 @@
   {
    "fieldname": "sts",
    "fieldtype": "Select",
-   "label": "Status",
+   "label": "Priority Status",
    "options": "Normal\nUrgent"
   },
   {
@@ -154,7 +154,6 @@
    "label": "Received Date"
   },
   {
-   "depends_on": "eval:(!doc.sales_person);",
    "fieldname": "sales_person",
    "fieldtype": "Link",
    "label": "Sales Person",
@@ -164,8 +163,7 @@
    "fetch_from": "sales_person.full_name",
    "fieldname": "sales_person_name",
    "fieldtype": "Data",
-   "label": "Sales Person Name",
-   "read_only": 1
+   "label": "Sales Person Name"
   },
   {
    "fieldname": "suggested_price",
@@ -248,7 +246,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-01-17 09:52:31.052724",
+ "modified": "2023-02-14 17:52:56.882204",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

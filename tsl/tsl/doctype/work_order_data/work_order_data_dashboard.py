@@ -47,7 +47,14 @@ def get_data():
 				'label': _(''),
 				'items': ['Stock Entry']
 			},
-
+			{
+                                'label': _(''),
+                                'items': ['Payment Entry']
+                        },
+			{
+				'label': _(''),
+                                'items': ['Return Note']
+			}
 
 		]
 	}

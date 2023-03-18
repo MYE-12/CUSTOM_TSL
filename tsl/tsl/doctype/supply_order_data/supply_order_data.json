@@ -11,6 +11,7 @@
   "sales_rep",
   "customer",
   "customer_name",
+  "address",
   "quoted_date",
   "received_date",
   "warranty",
@@ -33,6 +34,9 @@
   "dn_date",
   "invoice_no",
   "invoice_date",
+  "payment_entry_reference",
+  "advance_payment_amount",
+  "advance_paid_date",
   "section_break_14",
   "in_stock",
   "material_list",
@@ -269,12 +273,38 @@
    "fieldtype": "Small Text",
    "label": "Reason",
    "mandatory_depends_on": "eval:(doc.status == \"Not Found\" );"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "payment_entry_reference",
+   "fieldtype": "Link",
+   "label": "Payment Entry Reference",
+   "options": "Payment Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "advance_payment_amount",
+   "fieldtype": "Currency",
+   "label": "Advance Payment Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "advance_paid_date",
+   "fieldtype": "Date",
+   "label": "Advance Paid Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-05 09:15:49.999776",
+ "modified": "2023-02-15 10:12:24.979763",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

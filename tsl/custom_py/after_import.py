@@ -1,4 +1,6 @@
 import frappe,json
+from frappe.desk.form.utils import get_pdf_link
+
 
 @frappe.whitelist()
 def get_items_from_ps(wod):
@@ -51,14 +53,19 @@ def create_after_import():
                 doc.attached_to_field = i
                 doc.save(ignore_permissions = True)
 
+from frappe.www.printview import get_rendered_template
+from frappe.utils.pdf import get_pdf
+
 @frappe.whitelist()
 def send_mail(branch,name,doctype,msg):
     receivers = []
     sender = frappe.db.get_value("Email Account",{"branch":branch},"email_id")
     doc = frappe.get_doc(doctype,name)
-    for i in doc.get('suppliers'):
-        if i.email_id:
-            receivers.append(i.email_id)
+    receivers = ["frankel9675@gmail.com"]
+   # for i in doc.get('suppliers'):
+    #    if i.email_id:
+     #       receivers.append(i.email_id)
+    msg = "<br><br><br>To View Quotation<a href='https://tsl.ribox.me{0}'>Click Here</a>".format(get_pdf_link(doctype,name,"Quotation TSL",0))
     if receivers:
         try:
             frappe.sendmail(
@@ -66,15 +73,24 @@ def send_mail(branch,name,doctype,msg):
                 sender = sender,
                 subject = str(doctype)+" "+str(name),
                 message = msg,
-                attachments=get_attachments(name,doctype)
+                attachments= get_attachments(name , doctype),
+                print_letterhead = 1,
+                unsubscribe_params = "https://tsl.ribox.me"+get_pdf_link(doctype,name,"Quotation TSL",0),
+                add_unsubscribe_link = 1
             )
             frappe.msgprint("Email sent")
         except frappe.OutgoingEmailError as e:
             frappe.msgprint(str(e))
-            pass
+
+import os,pdfkit
+def create_pdf(name, str_html):
+        path = os.getcwd()+frappe.utils.get_site_base_path()[1:]+"/public/files/"+name+".pdf"
+        pdfkit.from_string(str_html, path)
+        return path
 
 def get_attachments(name,doctype):
-    attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Standard")
+    attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL",print_letterhead = True)
+#    attachments = get_pdf_link(doctype,name,"Quotation TSL",0)
     return [attachments]
 
 @frappe.whitelist()

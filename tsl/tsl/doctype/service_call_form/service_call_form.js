@@ -47,6 +47,59 @@ frappe.ui.form.on('Service Call Form', {
 			
 		}
 
+	},
+	related_doc:function(frm){
+		if(frm.doc.related_doc){
+			var data= frm.doc.related_doc
+			var doc_type = frm.doc.document_type
+			var customer = frappe.db.get_value(doc_type,{"name":data},"customer",(r) =>{
+				if(r.customer){
+					frm.set_value("customer",r.customer);
+				}
+				else{
+					frm.set_value("customer","");	
+				}
+			})
+			var branch = frappe.db.get_value(doc_type,{"name":data},"branch",(r) =>{
+				if (r.branch){
+					frm.set_value("branch",r.branch);	
+				}
+				else{
+					frm.set_value("branch","");	
+				}
+			})
+			var department = frappe.db.get_value(doc_type,{"name":data},"department",(r) =>{
+				if(r.department){
+					frm.set_value("department",r.department);	
+				}
+				else{
+					frm.set_value("department","");	
+				}
+			})
+			var sales_rep = frappe.db.get_value(doc_type,{"name":data},"sales_rep",(r) =>{
+				if(r.sales_rep){
+					frm.set_value("salesman_name",r.sales_rep);	
+				}
+				else{
+					frm.set_value("salesman_name","");	
+				}
+			})
+			var technician = frappe.db.get_value(doc_type,{"name":data},"technician",(r) =>{
+				if(r.technician){
+					frm.set_value("technician_name",r.technician);	
+				}
+				else{
+					frm.set_value("technician_name","");	
+				}
+			})
+			}
+	},
+	sch_date:function(frm){
+
+		var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+		var now = new Date(frm.doc.sch_date);
+		var day = days[ now.getDay() ];
+		frm.set_value("day",day);
 	}
 });
 frappe.ui.form.on('Service Call Form', {

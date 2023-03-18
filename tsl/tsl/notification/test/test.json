@@ -1,0 +1,30 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "",
+ "creation": "2023-02-17 08:27:51.212043",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Quotation",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "QTN NO : {{doc.name}} is Waiting for Approval.\nPlease Approve the Quotation",
+ "modified": "2023-02-17 09:10:06.190544",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "test",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "",
+   "receiver_by_role": "Administrator"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Test Sub",
+ "value_changed": "shipping_address_name"
+}

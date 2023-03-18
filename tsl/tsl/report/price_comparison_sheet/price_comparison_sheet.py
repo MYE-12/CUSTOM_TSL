@@ -35,23 +35,21 @@ def get_columns(filters=None):
 		},
 	]
 	if filters.get("sod_no"):
-		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s''',filters.get('sod_no'),as_list=1)
+		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s and docstatus != 2''',filters.get('sod_no'),as_list=1)
 	elif filters.get("wod_no"):
-		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where work_order_data = %s''',filters.get('wod_no'),as_list=1)
+		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where work_order_data = %s and docstatus != 2''',filters.get('wod_no'),as_list=1)
 	for i in suppliers:
 		s = i[0].lower().replace(" ","_")
 		columns.append({
 			"fieldname":s,
 			"label":frappe.bold(i[0]),
 			"fieldtype": "Data",
-			
 			"width":170
 		})
 		columns.append({
 			"fieldname":s+"1",
-			"label": frappe.bold(i[0]),
+			"label": "",
 			"fieldtype": "Data",
-			
 			"width":170
 		})
 	return columns
@@ -60,11 +58,10 @@ def get_data(filters=None):
 	data = []
 	data.append({"description":"","qty":"","buy_source":""})
 	if filters.get("sod_no"):
-		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s ''',filters.get('sod_no'),as_dict=1)
+		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s and docstatus != 2''',filters.get('sod_no'),as_dict=1)
 	elif filters.get("wod_no"):
-		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where work_order_data = %s ''',filters.get('wod_no'),as_dict=1)
+		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where work_order_data = %s and docstatus != 2''',filters.get('wod_no'),as_dict=1)
 	for i in suppliers:
-		
 		s = i['supplier'].lower().replace(" ","_")
 		data[0][s] = frappe.bold("Unit Price")
 		data[0][s+"1"] = frappe.bold("Total Price")
@@ -74,9 +71,6 @@ def get_data(filters=None):
 		for j in doc.get("items"):
 			if {"item_code":j.item_code,"description":j.item_name,"qty":j.qty} not in item:
 				item.append({"item_code":j.item_code,"description":j.item_name,"qty":j.qty})
-	print("\n\n\n\n\n")
-	print(data)
-	print(item)
 	for i in item:
 		print(i)
 		for j in suppliers:
@@ -115,7 +109,6 @@ def get_data(filters=None):
 				i[j['supplier'].lower().replace(" ","_")] = doc.max_freight_duration
 			elif i["description"] == frappe.bold("Max Custom Duration"):
 				i[j['supplier'].lower().replace(" ","_")] = doc.max_custom_duration
-				
 		data.append(i)
 	data.append({})
 	gt = {}

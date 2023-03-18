@@ -11,8 +11,8 @@
   "manufacturer",
   "type",
   "part_number",
-  "serial_no",
   "marking_code",
+  "serial_no",
   "column_break_8",
   "category",
   "sub_category",
@@ -25,14 +25,16 @@
   "spare_part_image_section",
   "add_image",
   "image_18",
-  "is_not_edit"
+  "is_not_edit",
+  "is_read_only"
  ],
  "fields": [
   {
    "fetch_from": "part.item_name",
    "fieldname": "part_name",
    "fieldtype": "Text Editor",
-   "label": "Description"
+   "label": "Description",
+   "read_only": 1
   },
   {
    "fetch_from": "part.type",
@@ -42,13 +44,13 @@
    "options": "Item Type"
   },
   {
-   "allow_on_submit": 1,
    "columns": 1,
    "default": "1",
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Qty",
+   "read_only_depends_on": "eval:(doc.is_read_only == 1);",
    "reqd": 1
   },
   {
@@ -67,12 +69,13 @@
   {
    "allow_on_submit": 1,
    "columns": 1,
-   "default": "Yes",
+   "default": "No",
    "fieldname": "parts_availability",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Parts Availability",
    "options": "\nYes\nNo",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -102,6 +105,7 @@
   {
    "fieldname": "serial_no",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Serial No",
    "options": "Serial No"
   },
@@ -158,25 +162,33 @@
    "options": "add_image"
   },
   {
-   "columns": 2,
-   "fieldname": "part_sheet_no",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Part Sheet No"
-  },
-  {
    "allow_on_submit": 1,
    "default": "0",
    "fieldname": "is_not_edit",
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Is Not Edit"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "is_read_only",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Read Only"
+  },
+  {
+   "columns": 1,
+   "fieldname": "part_sheet_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Part Sheet No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-14 18:23:19.460697",
+ "modified": "2023-03-11 12:19:13.619166",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

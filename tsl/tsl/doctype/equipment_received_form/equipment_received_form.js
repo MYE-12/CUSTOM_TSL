@@ -1,6 +1,5 @@
 // Copyright (c) 2021, Tsl and contributors
 // For license information, please see license.txt
-
 frappe.ui.form.on('Equipment Received Form', {
 	refresh: function(frm) {
 		
@@ -12,7 +11,7 @@ frappe.ui.form.on('Equipment Received Form', {
 					'order_no':cur_frm.doc.name
 					},
 					'callback':function(res){
-						if(res.message){
+						if(res.message[0]){
 //							frappe.msgprint("Work order data created")
 						}
 					}

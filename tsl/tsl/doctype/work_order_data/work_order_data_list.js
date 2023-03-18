@@ -1,5 +1,8 @@
 frappe.listview_settings['Work Order Data'] = {
 	add_fields: ["status","name"],
+	refresh:function(){
+		cur_list.page.clear_primary_action()
+     	},
 	get_indicator: function (doc) {
 		if (doc.status === "UE-Under Evaluation") {
 			return [__("UE-Under Evaluation"), "yellow", "status,=,UE-Under Evaluation"];
@@ -78,6 +81,9 @@ frappe.listview_settings['Work Order Data'] = {
        else if(doc.status === "NE-Need Evaluation"){
             return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
         }
+	else if (doc.status === "CT-Customer Testing") {
+	return[__("CT-Customer Testing"),"yellow","status,=,CT-Customer Testing"];
+}
+          
  },
-	
 };

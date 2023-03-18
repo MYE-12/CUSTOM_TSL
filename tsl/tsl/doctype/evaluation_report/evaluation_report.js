@@ -5,7 +5,49 @@ frappe.ui.form.on('Evaluation Report', {
 	// refresh: function(frm) {
 
 	// }
-	
+	/*on_update_before_submit:function(frm){
+		console.log("opn_update")
+	   if(frm.doc.status){
+		var sts = ""
+		if(frm.doc.status == "Spare Parts"){
+			sts = "SP-Searching Parts"
+		}
+		else if(frm.doc.status == "Extra Parts"){
+			sts = "EP-Extra Parts"
+		}
+		else if(frm.doc.status == "Working"){ 
+                	sts = "W-Working" 
+     		}
+		else if(frm.doc.status == "Comparison"){ 
+                	sts = "C-Comparison"
+            	}
+		else if(frm.doc.status == "Return Not Repaired"){ 
+                	sts = "RNR-Return Not Repaired"
+                }
+		else if(frm.doc.status == "Return No Fault"){ 
+                	sts = "RNF-Return No Fault"
+                }
+
+		if(!sts){
+			if(frm.doc.parts_availability == "Yes"){
+				sts = "AP-Available Parts"
+			}
+			else if(frm.doc.parts_availability == "No"){
+				sts = "SP-Searching Parts"
+			}
+		}
+		console.log(sts)
+		frappe.call({
+                        method :"tsl.tsl.doctype.evaluation_report.evaluation_report.set_wod_status",
+                        args :{
+                                "wod":frm.doc.work_order_data,
+                                "sts":sts,
+                        },
+                        async : false
+		})
+
+          }
+	},*/
 	items_on_form_rendered:function(frm,cdt,cdn){
 		let grid_row = cur_frm.open_grid_row();
 		if(grid_row.grid_form.fields_dict.is_not_edit.doc.is_not_edit){
@@ -16,7 +58,6 @@ frappe.ui.form.on('Evaluation Report', {
 			$(".btn.btn-danger.btn-sm.pull-right.grid-delete-row").show()
 			cur_frm.refresh_fields()
 		}
-		
 	},
 	work_order_data:function(frm){
 		if(frm.doc.work_order_data){
@@ -28,7 +69,6 @@ frappe.ui.form.on('Evaluation Report', {
 				},
 				callback: function (data) {
 					if(data.message) {
-						console.log(data.message)
 						var doc = data.message
 						frm.doc.customer = doc.customer
 						frm.doc.attn = doc.sales_rep
@@ -56,17 +96,15 @@ frappe.ui.form.on('Evaluation Report', {
 							childTable.description = doc.material_list[i].item_name
 							cur_frm.refresh_field("evaluation_details")
 						}
-						
 					}
-					
 				}
 			});
 		}
-		
 	},
 	refresh:function(frm){
 		// if(frm.doc.work_order_data){
-		// 	frappe.call({
+		// 	
+		//frappe.call({
 		// 		method: "tsl.tsl.doctype.evaluation_report.evaluation_report.get_item_image",
 		// 		args: {
 		// 			"wod_no":frm.doc.work_order_data,
@@ -84,18 +122,20 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	$(".btn.btn-xs.btn-danger.grid-remove-rows").hide()
 		// 	cur_frm.refresh_fields()
 		// }
-		if(frm.doc.docstatus == 1){
-			console.log("status1")
-			cur_frm.set_df_property("status","options",["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
+		if(!frm.doc.if_parts_required){
+			    set_field_options("status", ["Installed and Completed","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
 		}
-		else{
-			cur_frm.set_df_property("status","options",["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])		
+		if(frm.doc.if_parts_required && frm.doc.items.length>0){
+		if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
+			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
 		}
+		else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1){
+			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+		}}
 		if(frm.doc.attach_image){
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
 			cur_frm.refresh_fields();
 		}
-		if(frm.doc.docstatus == 0){
 			if(in_list(frappe.user_roles,"Technician")){
 				var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
 				df.read_only = 1;
@@ -131,7 +171,6 @@ frappe.ui.form.on('Evaluation Report', {
 				var d = {};
 				if(child.model_no){
 					d['model'] = child.model;
-		
 				}
 				if(child.mfg){
 					d['mfg'] = child.manufacturer;
@@ -143,14 +182,13 @@ frappe.ui.form.on('Evaluation Report', {
 				return{
 					filters: d
 				}
-				
 			}
 				frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
 					var child = locals[cdt][cdn];
 						var d = {};
+						d['item_group'] = "Components";
 						if(child.model){
 							d['model'] = child.model;
-	
 						}
 						if(child.category){
 							d['category_'] = child.category;
@@ -158,13 +196,10 @@ frappe.ui.form.on('Evaluation Report', {
 						if(child.sub_category){
 							d['sub_category'] = child.sub_category;
 						}
-						d['item_group'] = "Components";
 						return{
 							filters: d
 						}
 			}
-			
-		}
 		if(frm.doc.docstatus == 1 && frm.doc.parts_availability == "No"){
 			frm.add_custom_button(__("Request for Quotation"), function(){
 				frappe.call({
@@ -181,19 +216,50 @@ frappe.ui.form.on('Evaluation Report', {
 				});
 			},__('Create'));
 		}
-		
+	},
+	if_parts_required:function(frm){
+		if(frm.doc.if_parts_required){
+			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+                        frm.set_value("status","Spare Parts")
+			frm.refresh_fields()
+                	if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
+                        	set_field_options("status", ["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
+                	}
+                	else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1 ){
+                        	set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+                	}
+		}
+		else{
+			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
+		}
 	},
 	setup:function(frm){
-		
 		frm.fields_dict['items'].grid.get_field('sub_category').get_query = function(frm, cdt, cdn) {
 			var child = locals[cdt][cdn];
 			return{
 				filters: {
 					'category':child.category,
-					
 				}
 			}
 		}
+		frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
+                                        var child = locals[cdt][cdn];
+                                                var d = {};
+                                      		d['item_group'] = "Components";
+					          if(child.model){
+                                                        d['model'] = child.model;
+        
+                                                }
+                                                if(child.category){
+                                                        d['category_'] = child.category;
+                                                }
+                                                if(child.sub_category){
+                                                        d['sub_category'] = child.sub_category;
+                                                }
+                                                return{
+                                                        filters: d
+                                                }
+                        }
 		frm.set_query("department", function() {
 			return {
 				filters: [
@@ -208,7 +274,18 @@ frappe.ui.form.on('Evaluation Report', {
 	
 });
 frappe.ui.form.on('Part Sheet Item', {
-	
+	refresh:function(frm,cdt,cdn){
+		if(frm.doc.parts_availability){
+                        var last_no = frm.doc.items[frm.doc.items.length-1].part_sheet_no
+                        for(var i=0;i<frm.doc.items.length;i++){
+                                if(frm.doc.items[i].part_sheet_no != last_no){
+                                        var df = frappe.meta.get_docfield("Part Sheet Item","qty", cdn);
+                                        df.read_only = 1;
+                                        frm.refresh_fields();
+                                }
+                        }
+                }
+	},
 	before_items_remove:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
 		if(item.is_not_edit && item.__checked){
@@ -228,14 +305,13 @@ frappe.ui.form.on('Part Sheet Item', {
 	
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]
-		if(row.part){
+		if(row.part && row.qty){
 			frappe.call({
 			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
 			args :{
 				"item" :row.part,
 				"qty":row.qty,
-				"warehouse":frappe.user_defaults.company
-				
+				"warehouse":frm.doc.company
 			},
 			callback :function(r){
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
@@ -256,40 +332,37 @@ frappe.ui.form.on('Part Sheet Item', {
 		frm.refresh();
 	},
 	qty:function(frm, cdt, cdn){
-		let row = locals[cdt][cdn]
+		var row = locals[cdt][cdn]
 		if(row.qty && row.part){
-			frappe.call({
-			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
-			args :{
-				"qty" : row.qty,
-				"item" :row.part,
-				"warehouse":frappe.user_defaults.company
-			},
-			callback :function(r){
-				if(r.message){
-					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
-					frm.refresh_fields();
-					
-				}
-				row.total = row.qty * row.price_ea
-				let tot_qty = 0
-				let tot_amount = 0
-				for(let i in frm.doc.items){
-					tot_qty += frm.doc.items[i].qty
-					tot_amount += frm.doc.items[i].total
-				}
-				frm.set_value("total_qty", tot_qty)
-				frm.set_value("total_amount", tot_amount)
-				frm.refresh();
-			}
-	
-		})
+//			frappe.call({
+//			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_availabilty",
+//			args :{
+//				"qty" : row.qty,
+//				"item" :row.part,
+//				"warehouse":frappe.user_defaults.company
+//			},
+//			callback :function(r){
+//				if(r.message){
+//					frappe.model.set_value(cdt, cdn, "parts_availability",r.message);
+//					frm.refresh_fields();
+//				}
+//				row.total = row.qty * row.price_ea
+//				let tot_qty = 0
+//				let tot_amount = 0
+//				for(let i in frm.doc.items){
+//					tot_qty += frm.doc.items[i].qty
+//					tot_amount += frm.doc.items[i].total
+//				}
+//				frm.set_value("total_qty", tot_qty)
+//				frm.set_value("total_amount", tot_amount)
+//				frm.refresh();
+//			}
+//		})
+		frm.script_manager.trigger('part',cdt,cdn)
 	   }
-		
 	},
 	price_ea:function(frm,cdt,cdn){
 		frm.script_manager.trigger("qty",cdt,cdn);
 
 	},
-	
 });

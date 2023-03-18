@@ -2,12 +2,19 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Work Order Data', {
-	technician:function(frm){
-		if(frm.doc.technician){
-			frm.set_value("status","UE-Under Evaluation");
-			frm.refresh();
+	onload_post_render:function(frm){
+		if(frm.doc.material_list[0].item_code){
+                                var item = $(".static-area.ellipsis")[6].outerText
+                                var item = item.split(":")[0]
+                                $(".static-area.ellipsis")[6].outerText = item;
+                                frm.refresh_field("material_list")
+                }
+	},
+	delivery:function(frm){
+		if(frm.doc.delivery){
+		frm.set_value("status",'RSC-Repaired and Shipped Client');
+		frm.refresh_field('status')
 		}
-		
 	},
 	refresh: function(frm) {
 		
@@ -27,6 +34,13 @@ frappe.ui.form.on('Work Order Data', {
 		// 		});
 		// 	},__('Create'));
 		// }
+		if(frm.doc.material_list[0].item_code){
+                		var item = $(".static-area.ellipsis")[6].outerText
+        			var item = item.split(":")[0]
+       		 		$(".static-area.ellipsis")[6].outerText = item;
+        			frm.refresh_field("material_list")
+	        }
+
 		if(frm.doc.docstatus === 1) {
 			frm.add_custom_button(__("Evaluation Report"), function(){
 				frappe.call({
@@ -44,7 +58,7 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 		}
 		if(frm.doc.docstatus === 1) {
-			frm.add_custom_button(__("Quotation"), function(){
+			frm.add_custom_button(__("Internal Quotation"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_quotation",
 					args: {
@@ -125,7 +139,37 @@ frappe.ui.form.on('Work Order Data', {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
-							
+						}
+					}
+				});
+			},__('Create'));
+			frm.add_custom_button(__("Return Note"), function(){
+                                frappe.call({
+                                        method: "tsl.tsl.doctype.work_order_data.work_order_data.create_rn",
+                                        args: {
+                                                "wod": frm.doc.name
+                                        },
+                                        callback: function(r) {
+                                                if(r.message) {
+                                                        var doc = frappe.model.sync(r.message);
+                                                        frappe.set_route("Form", doc[0].doctype, doc[0].name);
+                                                }
+                                        }
+                                });
+                        },__('Create'));
+		}
+		if(frm.doc.docstatus === 1) {
+			frm.add_custom_button(__("Payment Entry"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_paymet_entry",
+					args: {
+						"wod": frm.doc.name
+					},
+					callback: function(r) {
+						if(r.message) {
+							console.log(r.message)
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 						}
 					}
 				});
@@ -186,6 +230,13 @@ frappe.ui.form.on('Work Order Data', {
 	// 	}
 
 	// },
+	material_list_on_form_rendered:function(frm){
+	    console.log("add")
+	     if(frm.doc.material_list[0].item_code){
+		console.log("call")
+		$(`[data-name=${frm.doc.material_list[0].item_code}]`).text(frm.doc.material_list[0].item_code)
+	     }
+	},
 	branch:function(frm){
 		var d = {
 			"Dammam - TSL-SA":"WOD-D.YY.-",

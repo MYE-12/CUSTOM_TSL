@@ -61,7 +61,7 @@ def create_supply_order_data(order_no):
 							sn_no = sn_doc.name
 				else:
 					i_doc = frappe.new_doc('Item')
-					i_doc.naming_series = '.####'
+					i_doc.naming_series = '.######'
 					i_doc.item_name = i['item_name']
 					i_doc.item_group = "Equipments"
 					i_doc.description = i['item_name']

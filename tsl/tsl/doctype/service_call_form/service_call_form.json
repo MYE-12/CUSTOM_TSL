@@ -9,6 +9,7 @@
  "field_order": [
   "naming_series",
   "date",
+  "document_type",
   "related_doc",
   "customer",
   "customer_name",
@@ -17,6 +18,7 @@
   "branch",
   "department",
   "salesman_name",
+  "salesman_name1",
   "reason",
   "suitable_date_and_time_for_customer_section",
   "cus_date",
@@ -37,14 +39,16 @@
    "options": "SCF-.YYYY.-"
   },
   {
+   "default": "Today",
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date"
   },
   {
    "fieldname": "related_doc",
-   "fieldtype": "Data",
-   "label": "Related WO/SO"
+   "fieldtype": "Dynamic Link",
+   "label": "Related WO/SO",
+   "options": "document_type"
   },
   {
    "fieldname": "customer",
@@ -62,7 +66,7 @@
   {
    "fieldname": "salesman_name",
    "fieldtype": "Link",
-   "label": "Salesman Name",
+   "label": "Salesman",
    "options": "User"
   },
   {
@@ -146,12 +150,24 @@
    "fieldtype": "Link",
    "label": "Department",
    "options": "Cost Center"
+  },
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "label": "Document Type",
+   "options": "Work Order Data\nSupply Order Data"
+  },
+  {
+   "fetch_from": "salesman_name.full_name",
+   "fieldname": "salesman_name1",
+   "fieldtype": "Data",
+   "label": "Salesman Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-02 17:31:25.324685",
+ "modified": "2023-03-15 09:39:57.644794",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

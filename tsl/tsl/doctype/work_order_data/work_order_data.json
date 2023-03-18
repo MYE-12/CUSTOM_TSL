@@ -9,6 +9,7 @@
  "field_order": [
   "naming_series",
   "sales_rep",
+  "sales_rep_name",
   "customer",
   "customer_name",
   "address",
@@ -19,6 +20,7 @@
   "returned_date",
   "expiry_date",
   "equipment_recieved_form",
+  "priority_status",
   "column_break_7",
   "image",
   "attach_image",
@@ -39,6 +41,7 @@
   "invoice_date",
   "section_break_14",
   "material_list",
+  "previously_quoted_unit",
   "wod_component",
   "complaints",
   "section_break_36",
@@ -117,7 +120,7 @@
    "fetch_from": "dn_no.posting_date",
    "fieldname": "dn_date",
    "fieldtype": "Date",
-   "label": "Delivery Date",
+   "label": "Delivery Note Date",
    "read_only": 1
   },
   {
@@ -194,7 +197,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts"
+   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts"
   },
   {
    "default": "Repair - TSL",
@@ -316,39 +319,45 @@
   {
    "fieldname": "section_break_36",
    "fieldtype": "Section Break",
-   "hidden": 1
+   "label": "Complaints"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "no_power",
    "fieldtype": "Check",
    "label": "No Power"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "no_output",
    "fieldtype": "Check",
    "label": "No Output"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "no_display",
    "fieldtype": "Check",
    "label": "No Display"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "no_communication",
    "fieldtype": "Check",
    "label": "No Communication"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "no_backlight",
    "fieldtype": "Check",
    "label": "No Backlight"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "supply_voltage",
    "fieldtype": "Check",
@@ -359,47 +368,74 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "error_code",
    "fieldtype": "Check",
    "label": "Error Code"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "touch_keypad_not_working",
    "fieldtype": "Check",
    "label": "Touch Keypad Not Working"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "short_circuit",
    "fieldtype": "Check",
    "label": "Short Circuit"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "overload_overcurrent",
    "fieldtype": "Check",
    "label": "Overload Overcurrent"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "others",
    "fieldtype": "Check",
    "label": "Others"
   },
   {
+   "allow_on_submit": 1,
    "depends_on": "eval:(doc.others==1);",
    "fieldname": "specify",
    "fieldtype": "Small Text",
    "label": "Specify",
    "mandatory_depends_on": "eval:(doc.others==1);"
+  },
+  {
+   "fetch_from": "sales_rep.full_name",
+   "fieldname": "sales_rep_name",
+   "fieldtype": "Data",
+   "label": "Sales Rep Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previously_quoted_unit",
+   "fieldtype": "Table",
+   "label": "Previously Quoted Unit",
+   "options": "Similar Item Repair",
+   "read_only": 1
+  },
+  {
+   "fieldname": "priority_status",
+   "fieldtype": "Select",
+   "label": "Priority Status",
+   "options": "Normal\nUrgent",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-12-30 17:46:28.521882",
+ "modified": "2023-03-18 10:06:42.860757",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

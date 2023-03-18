@@ -74,6 +74,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 
 def on_submit(self,method):
     if self.part_sheet:
+        frappe.errprint("on submit SQ")
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
             for j in doc.get("items"):

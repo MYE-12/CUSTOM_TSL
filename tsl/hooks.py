@@ -170,7 +170,11 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
+	"weekly": [
+		"tsl.custom_py.quotation.send_qtn_reminder_mail"
+	]
+}
 # 	"all": [
 # 		"tsl.tasks.all"
 # 	],

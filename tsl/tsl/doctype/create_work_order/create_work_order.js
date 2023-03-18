@@ -9,11 +9,37 @@ frappe.ui.form.on('Create Work Order', {
 				'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
 				'freeze':true,
 				'args':{
-				'order_no':cur_frm.doc
+				'order_no':cur_frm.doc,
+				'f':0
+
 				},
 				'callback':function(res){
 					if(res.message){
+						if(res.message == "Confirm"){
+							frappe.confirm(
+							    'Complaints not given.Are you sure to Continue?',
+							    function(){
+							       frappe.call({
+					                                'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
+					                                'freeze':true,
+					                                'args':{
+					                                'order_no':cur_frm.doc,
+					                                'f':1
+
+					                                },
+					                                'callback':function(res){
+										if(res.message){
+										 	cur_frm.reload_doc();
+										}
+									}
+								})
+							    },
+							)
+
+						}
+					else{
 						cur_frm.reload_doc();
+					}
 
 					}
 				}

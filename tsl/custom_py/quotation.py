@@ -4,21 +4,20 @@ from re import L
 import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
+from frappe import get_print
 
 @frappe.whitelist()
 def get_wod_items(wod):
 	wod = json.loads(wod)
 	l=[]
 	for k in list(wod):
-		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=1 group by work_order_data''',k,as_dict=1)[0]["total_amount"]
-		# if not tot:
-		# 	link = []
-		# 	link.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(k))
-		# 	frappe.throw("No Part Sheet created for this Work Order"+"-".join(link))
-		# 	continue
+		tot = 0
+		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=1 group by work_order_data''',k,as_dict=1)
 		doc = frappe.get_doc("Work Order Data",k)
 		branch = doc.branch
-		if not tot:
+		if len(tot) and 'total_amount' in tot[0]:
+			tot = tot[0]['total_amount']
+		else:
 			tot = 0
 		for i in doc.get("material_list"):
 			l.append(frappe._dict({
@@ -35,7 +34,6 @@ def get_wod_items(wod):
 				"branch":branch,
 
 			}))
-			
 	return l
 
 @frappe.whitelist()
@@ -108,10 +106,12 @@ def before_save(self,method):
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
 		for i in self.get("items"):
+			total_qtn_rate = 0
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
 			for j in part_sheet:
 				doc = frappe.get_doc("Evaluation Report",j['name'])
 				for k in doc.get("items"):
+					total_qtn_rate += k.total
 					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
 						self.append("similar_items_quoted_before",{
 							"item":k.part_name,
@@ -119,27 +119,32 @@ def before_save(self,method):
 							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
 						})
 
-					if frappe.db.get_value("Bin",{"item_code":k.part},"actual_qty"):
-						price = frappe.db.get_value("Item",{"item_code":k.part},"valuation_rate") or frappe.db.get_value("Bin",{"item_code":k.part},"valuation_rate")
-						source = "TSL Inventory"
-						if k.parts_availability == "No":
-							source = "Supplier"
+					if k.parts_availability == "No":
+						source = "Supplier"
+						price = k.price_ea
+						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+                                        			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
+						if len(sq_no):
+							sq_no = sq_no[0]["sq"]
+						else:
+							sq_no =  ""
 					else:
 						price = k.price_ea
-						source = "Supplier"
-					sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi 
-					where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved" order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
-					if sq_no:
-						sq_no = sq_no[0]["sq"]
-						self.append("item_price_details",{
-							"item":k.part,
-							"item_source":source,
-							"price":price,
-							"supplier_quotation":sq_no
+						source = "TSL Inventory"
+						sq_no = ""
+					self.append("item_price_details",{
+						"item":k.part,
+						"item_source":source,
+						"price":price,
+						"supplier_quotation":sq_no
 
 					})
-					frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
-
+					if sq_no:
+						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+			i.amount = total_qtn_rate
+			i.rate = total_qtn_rate/i.qty
+		self.in_words1 = frappe.utils.money_in_words(self.final_approved_price)
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
 		fc = cc = pc = additional =0
@@ -170,7 +175,15 @@ def before_save(self,method):
 		self.grand_total -= self.discount_amount
 		self.rounded_total = self.grand_total
 
-
+	for i in self.get("items"):
+		if i.item_code:
+			suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price
+				,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi
+				on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 and q.name != %s''',(i.item_code,self.name),as_dict =1 )
+			if suqb:
+				self.previously_quoted_unit = []
+				for j in suqb:
+					self.append("previously_quoted_unit",j)
 
 
 	
@@ -181,6 +194,10 @@ def get_quotation_history(source,rate = None,type = None):
 
 	def postprocess(source, target_doc):
 		target_doc.quotation_type = type
+		if type == "Customer Quotation - Repair":
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
 		target_doc.append("quotation_history",{
 			"quotation_type":doc.quotation_type,
 			"status":doc.workflow_state,
@@ -257,7 +274,7 @@ def final_price_validate_si(wod):
 	return qi_details
 
 def on_update(self, method):
-	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved", "Approved By Customer", "Cancelled"]:
+	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved","Approved By Management", "Approved By Customer", "Cancelled"]:
 		if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
 
@@ -267,14 +284,14 @@ def on_update(self, method):
 		for i in self.get("items"):
 			if i.wod_no:
 				doc = frappe.get_doc("Work Order Data",i.wod_no)
-				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved":
+				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Management":
 					doc.status = "IQ-Internally Quoted"	
 				doc.save(ignore_permissions=True)
 	if self.quotation_type == "Internal Quotation - Supply":
 		for i in self.get("items"):
 			if i.supply_order_data:
 				doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
-				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved":
+				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Management":
 					doc.status = "Internal Quotation"	
 				doc.save(ignore_permissions=True)
 	if not self.quotation_type == "Internal Quotation - Repair":
@@ -347,8 +364,10 @@ def before_submit(self,method):
 	
 				
 def validate(self, method):
-	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
-		self.final_approved_price = self.actual_price*302.8/100+self.actual_price
+#	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
+#		self.overall_discount_amount = (self.final_approved_price * self.discount_percent)/100
+#		self.final_approved_price -= self.overall_discount_amount
+#		self.final_approved_price += self.margin_rate
 	l = []
 	if self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
@@ -367,12 +386,39 @@ def validate(self, method):
 			if i==3:
 				break
 			self.append("similar_items_quoted_before",l[i])
-		
 
+def send_qtn_reminder_mail():
+	for i in frappe.db.sql('''select  q.name as name,c.email_id as email_id,q.branch_name as branch,q.is_email_sent as ecount,q.party_name as customer_name from `tabQuotation` as q join `tabCustomer` as c on c.name = q.party_name where q.docstatus = 0 and 
+				q.workflow_state = 'Quoted to Customer' ''',as_dict=1):
+		receiver = []
+		receiver.append(i['email_id'])
+		sender = frappe.db.get_value("Email Account",{"branch":i['branch']},"email_id")
+		doctype = "Quotation"
+		name = i['name']
+		msg = '''Dear Mr./Ms. %s,{Dear Sir,}<br>We would like to remind you about the Quotation (WO/ Quotation Ref.: %s) sent earlier.<br>Kindly advise in order to proceed with
+			work or we will return the unit in your facility.<br><br>Your quick response will be highly appreciated.'''%(i['customer_name'],i['name'])
+		if not i['ecount']:
+			msg = '''Dear Mr./Ms. %s,{Dear Sir,}<br>We would like to remind you about the Quotation (WO/ Quotation Ref.: %s) sent earlier. We have<br>attached the quotation
+				for your reference.<br><br>We look forward to your approval of the work.'''%(i['customer_name'],i['name'])
 
-import frappe,json
-import requests
-from frappe.utils import today
+		if len(receiver):
+			try:
+				frappe.sendmail(
+					recipients = receiver,
+					sender = sender,
+					subject = str(doctype)+" "+str(name),
+					message = msg,
+					attachments=get_attachments(name,doctype)
+				)
+				print("Email sent")
+				frappe.db.set_value("Quotation",name,"is_email_sent",1)
+			except frappe.OutgoingEmailError as e:
+				print(str(e))
+
+def get_attachments(name,doctype):
+	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL")
+	return [attachments]
+
 
 # @frappe.whitelist()
 # def create_wallet_balance():

@@ -254,7 +254,7 @@ def create_quotation(sod):
 	elif frappe.db.get_value("Customer",doc.customer,"credit"):
 		pay_term = "Credit"
 	new_doc.payment_term = pay_term	
-	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
+	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address") or doc.address
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.branch_name = doc.branch
 	new_doc.department = doc.department
@@ -363,6 +363,7 @@ class SupplyOrderData(Document):
 						i.total = i.qty * i.price_ea
 				suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 ''',i.part,as_dict =1 )
 				if suqb:
+					self.previously_quoted = []
 					for j in suqb:
 						self.append("previously_quoted",j)
 		for i in self.get("material_list"):
