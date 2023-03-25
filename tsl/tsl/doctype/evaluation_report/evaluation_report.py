@@ -26,7 +26,7 @@ class EvaluationReport(Document):
 					frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
 	def on_submit(self):
-		if self.status:
+		if self.status and self.is_parts_available:
 			if self.status == "Working":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
@@ -61,112 +61,136 @@ class EvaluationReport(Document):
 #				if i.part and i.parts_availability == "Yes":
 #					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
-	# def validate(self):
-	# 	add = 0
-	# 	self.total_amount = 0
-	# 	for i in self.items:
-	# 		if i.part:
-	# 			price_sts = get_valuation_rate(i.part,i.qty,frappe.defaults.get_defaults().company)
-	# 			i.price_ea = price_sts[0] if len(price_sts) else 0
-	# 			i.parts_availability = price_sts[1] if len(price_sts) else "No"
-	# 			total = 0
-	# 			if i.total:
-	# 				total = i.total
-	# 			add += total
-	# 	self.total_amount = add
-	# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 	doc.status = "UE-Under Evaluation"
-	# 	doc.save(ignore_permissions = True)
-	# 	if self.if_parts_required:
-	# 		f=0
-	# 		for i in self.get("items"):
-	# 			if not i.part_sheet_no:
-	# 				i.part_sheet_no = 1
-	# 			if i.parts_availability == "No":
-	# 				f=1
-	# 		if f:
-	# 			self.parts_availability = "No"
-	# 		else:
-	# 			self.parts_availability = "Yes"
-	# 	if not self.evaluation_time or not self.estimated_repair_time:
-	# 		frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
-	# def on_update_after_submit(self):
-	# 	add = total = 0
-	# 	self.total_amount = 0
-	# 	for i in self.items:
-	# 		if i.part and get_valuation_rate(i.part,i.qty,self.company)[1] == "Yes":
-	# 			price_sts = get_valuation_rate(i.part,i.qty,self.company)
-	# 			i.price_ea = price_sts[0] if len(price_sts) else 0
-	# 			i.total = i.price_ea*i.qty
-	# 			i.parts_availability = price_sts[1] if len(price_sts) else "No"
-	# 			frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
-	# 		add += (i.price_ea * i.qty)
-	# 	self.total_amount = add
-	# 	frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
-	# 	if self.status:
-	# 		doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 		if self.status == "Working":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "W-Working"
-	# 		elif self.status == "Spare Parts":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "SP-Searching Parts"
-	# 		elif self.status == "Extra Parts":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "EP-Extra Parts"
-	# 		elif self.status == "Comparison":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "C-Comparison"
-	# 		elif self.status == "Return Not Repaired":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "RNR-Return Not Repaired"
-	# 		elif self.status == "Return No Fault":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "RNF-Return No Fault"
-	# 		elif self.status == "Installed and Completed":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "RS-Repaired and Shipped"
-	# 		elif  self.status == "Customer Testing":
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "CT-Customer Testing"
-	# 		doc.save(ignore_permissions = True)
-	# 	if self.if_parts_required:
-	# 		self.part_no = 0
-	# 		f=0
-	# 		for i in self.get("items"):
-	# 			if not i.part_sheet_no:
-	# 				i.part_sheet_no = int(self.part_no)+1
-	# 				frappe.db.sql('''update `tabPart Sheet Item` set part_sheet_no = %s where name = %s''',((int(self.part_no)+1),i.name))
-	# 			else:
-	# 				self.part_no = i.part_sheet_no
-	# 			if i.parts_availability == "No":
-	# 				f=1
-	# 		if len(self.items)>0 and self.items[-1].part_sheet_no:
-	# 			if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
-	# 				frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
-	# 		if f:
-	# 			frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "No" where name = %s ''',(self.name))
-	# 			self.parts_availability = "No"
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "SP-Searching Parts"
-	# 			doc.save(ignore_permissions = True)
-	# 		else:
-	# 			self.parts_availability = "Yes"
-	# 			frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
-	# 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-	# 			doc.status = "AP-Available Parts"
-	# 			doc.save(ignore_permissions=True)	
-	# 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
-	# 		for i in self.items:
-	# 			if i.part and i.parts_availability == "Yes" and not i.is_not_edit:
-	# 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
-	# 		for i in self.items:
-	# 			i.is_not_edit = 1
-	# 			frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
-	# 		lpn = self.items[-1].part_sheet_no
-	# 		for i in self.items:
-	# 			if i.part_sheet_no != lpn:
-	# 				frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))
+	def validate(self):
+		add = 0
+		self.total_amount = 0
+		for i in self.items:
+			if i.part:
+				price_sts = get_valuation_rate(i.part,i.qty,frappe.defaults.get_defaults().company)
+				i.price_ea = price_sts[0] if len(price_sts) else 0
+				i.parts_availability = price_sts[1] if len(price_sts) else "No"
+				total = 0
+				if i.total:
+					total = i.total
+				add += total
+		self.total_amount = add
+		doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		doc.status = "UE-Under Evaluation"
+		doc.save(ignore_permissions = True)
+		if self.if_parts_required:
+			f=0
+			for i in self.get("items"):
+				if not i.part_sheet_no:
+					i.part_sheet_no = 1
+				if i.parts_availability == "No":
+					f=1
+			if f:
+				self.parts_availability = "No"
+			else:
+				self.parts_availability = "Yes"
+		if not self.evaluation_time or not self.estimated_repair_time:
+			frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
+
+	def on_update_after_submit(self):
+		add = total = 0
+		self.total_amount = 0
+		for i in self.items:
+			if i.part and get_valuation_rate(i.part,i.qty,self.company)[1] == "Yes":
+				price_sts = get_valuation_rate(i.part,i.qty,self.company)
+				i.price_ea = price_sts[0] if len(price_sts) else 0
+				i.total = i.price_ea*i.qty
+				i.parts_availability = price_sts[1] if len(price_sts) else "No"
+				frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
+			add += (i.price_ea * i.qty)
+		self.total_amount = add
+		frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
+		if self.status:
+			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			if self.status == "Working":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "W-Working"
+			elif self.status == "Spare Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "SP-Searching Parts"
+			elif self.status == "Extra Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "EP-Extra Parts"
+			elif self.status == "Comparison":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "C-Comparison"
+			elif self.status == "Return Not Repaired":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RNR-Return Not Repaired"
+			elif self.status == "Return No Fault":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RNF-Return No Fault"
+			elif self.status == "Installed and Completed":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RS-Repaired and Shipped"
+			elif  self.status == "Customer Testing":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "CT-Customer Testing"
+			doc.save(ignore_permissions = True)
+		if self.if_parts_required:
+			self.part_no = 0
+			f=0
+			for i in self.get("items"):
+				if not i.part_sheet_no:
+					i.part_sheet_no = int(self.part_no)+1
+					frappe.db.sql('''update `tabPart Sheet Item` set part_sheet_no = %s where name = %s''',((int(self.part_no)+1),i.name))
+				else:
+					self.part_no = i.part_sheet_no
+				if i.parts_availability == "No":
+					f=1
+			if len(self.items)>0 and self.items[-1].part_sheet_no:
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
+					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+			if f:
+				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "No" where name = %s ''',(self.name))
+				self.parts_availability == "No"
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "SP-Searching Parts"
+				doc.save(ignore_permissions=True)
+#				if self.status == "Installed and Completed":
+#					doc.status = "RS-Repaired and Shipped"
+#				elif self.status == "Customer Testing":
+#					doc.status == "CT-Customer Testing"
+#				elif self.status == "Working":
+#					doc.status = "W-Working"
+#				elif self.status == "Comparison":
+#					doc.status = "C-Comparison"
+			else if self.is_parts_available:
+				self.parts_availability = "Yes"
+				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "AP-Available Parts"
+				if self.status == "Installed and Completed":
+					doc.status = "RS-Repaired and Shipped"
+				elif self.status == "Customer Testing":
+					doc.status == "CT-Customer Testing"
+				elif self.status == "Working":
+					doc.status = "W-Working"
+				elif self.status == "Comparison":
+					doc.status = "C-Comparison"
+				doc.save(ignore_permissions=True)
+			else if not self.is_parts_available:
+				self.parts_availability = "Yes"
+				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "AP-Available Parts"
+				doc.save(ignore_permissions=True)
+			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
+			for i in self.items:
+				if i.part and i.parts_availability == "Yes" and not i.is_not_edit:
+					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
+			for i in self.items:
+				i.is_not_edit = 1
+				frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
+			lpn = self.items[-1].part_sheet_no
+			for i in self.items:
+				if i.part_sheet_no != lpn:
+					frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))
+
 
 	def before_submit(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]	

@@ -40,6 +40,7 @@
   "update_availability_status",
   "items",
   "parts_availability",
+  "is_parts_available",
   "section_break_34",
   "total_qty",
   "column_break_27",
@@ -382,12 +383,18 @@
    "fieldtype": "Button",
    "label": "Update Availability Status",
    "options": "update_availability_status"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_parts_available",
+   "fieldtype": "Check",
+   "label": "Is Parts Available"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-13 10:47:35.448378",
+ "modified": "2023-03-25 09:57:33.255142",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
