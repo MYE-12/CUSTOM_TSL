@@ -26,7 +26,7 @@ class EvaluationReport(Document):
 					frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
 	def on_submit(self):
-		if self.status:
+		if self.status and self.is_parts_available:
 			if self.status == "Working":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
@@ -150,6 +150,20 @@ class EvaluationReport(Document):
 				self.parts_availability == "No"
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "SP-Searching Parts"
+				doc.save(ignore_permissions=True)
+#				if self.status == "Installed and Completed":
+#					doc.status = "RS-Repaired and Shipped"
+#				elif self.status == "Customer Testing":
+#					doc.status == "CT-Customer Testing"
+#				elif self.status == "Working":
+#					doc.status = "W-Working"
+#				elif self.status == "Comparison":
+#					doc.status = "C-Comparison"
+			else if self.is_parts_available:
+				self.parts_availability = "Yes"
+				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "AP-Available Parts"
 				if self.status == "Installed and Completed":
 					doc.status = "RS-Repaired and Shipped"
 				elif self.status == "Customer Testing":
@@ -158,21 +172,13 @@ class EvaluationReport(Document):
 					doc.status = "W-Working"
 				elif self.status == "Comparison":
 					doc.status = "C-Comparison"
-				
-			else:
+				doc.save(ignore_permissions=True)
+			else if not self.is_parts_available:
 				self.parts_availability = "Yes"
 				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "AP-Available Parts"
-				if self.status == "Installed and Completed":
-                                        doc.status = "RS-Repaired and Shipped"
-                                #elif self.status == "Customer Testing":
-                               #         doc.status == "CT-Customer Testing"
-                                #elif self.status == "Working":
-                                 #       doc.status = "W-Working"
-                                #elif self.status == "Comparison":
-                                 #       doc.status = "C-Comparison"
-				doc.save(ignore_permissions=True)	
+				doc.save(ignore_permissions=True)
 			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 			for i in self.items:
 				if i.part and i.parts_availability == "Yes" and not i.is_not_edit:
