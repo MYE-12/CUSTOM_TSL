@@ -17,12 +17,13 @@ class EvaluationReport(Document):
 	def update_availability_status(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
-			if i.parts_availability == "No":
+			if i.part and i.parts_availability == "No":
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = {0} and warehouse in ('{1}') and (actual_qty-evaluation_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
 				if len(bin) and 'name' in bin[0]:
 					sts = "Yes"
 					i.parts_availability = sts
 					frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = "Yes" where name = %s''',i.name)
+					frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
 	def on_submit(self):
 		if self.status:
@@ -185,4 +186,10 @@ class EvaluationReport(Document):
 					"technician":self.attn,
 				})
 				wod.save(ignore_permissions = True)
+
+	def on_cancel(self):
+		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
+		for i in self.items:
+			if i.part and i.parts_availability == "Yes":
+				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")-i.qty))
 

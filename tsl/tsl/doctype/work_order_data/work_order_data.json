@@ -227,6 +227,7 @@
    "allow_on_submit": 1,
    "fieldname": "extra_part_sheets",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Extra Parts Encountered",
    "options": "Extra Part Sheets",
    "read_only": 1
@@ -435,7 +436,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-18 10:06:42.860757",
+ "modified": "2023-03-25 09:07:43.709325",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
