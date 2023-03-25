@@ -112,12 +112,12 @@ def before_save(self,method):
 				doc = frappe.get_doc("Evaluation Report",j['name'])
 				for k in doc.get("items"):
 					total_qtn_rate += k.total
-					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
-						self.append("similar_items_quoted_before",{
-							"item":k.part_name,
-							"client":frappe.db.get_value("Item",k.part,"last_quoted_client"),
-							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
-						})
+#					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
+#						self.append("similar_items_quoted_before",{
+#							"item":k.part_name,
+#							"client":frappe.db.get_value("Item",k.part,"last_quoted_client"),
+#							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
+#						})
 
 					if k.parts_availability == "No":
 						source = "Supplier"

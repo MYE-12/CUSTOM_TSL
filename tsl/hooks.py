@@ -147,6 +147,9 @@ doc_events = {
 		],
 		"on_update_after_submit":[
 			"tsl.custom_py.sales_invoice.on_update_after_submit"
+		],
+		"before_save":[
+			"tsl.custom_py.sales_invoice.before_save"
 		]
 	},
 	"Stock Entry":{

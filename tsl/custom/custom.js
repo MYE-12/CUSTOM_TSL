@@ -353,8 +353,7 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.rounded_total = frm.doc.grand_total;
 										frm.doc.actual_price = frm.doc.rounded_total;
 										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
-											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_hours_spent;
-											console.log(frm.doc.actual_price);
+											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
 										}
 										frm.doc.final_approved_price = frm.doc.actual_price;
 										cur_frm.refresh_fields();
@@ -596,19 +595,32 @@ frappe.ui.form.on('Quotation', {
 //				total += frm.doc.technician_hours_spent[0].total_price
 //			} 
 //			frm.doc.actual_price = total
+		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
 			frm.doc.final_approved_price = frm.doc.actual_price;
 			frm.doc.final_approved_price = frm.doc.final_approved_price - frm.doc.overall_discount_amount
 			frm.doc.final_approved_price = frm.doc.final_approved_price + frm.doc.margin_rate
 			frm.refresh_fields()
+		}
+		else if(in_list(["Customer Quotation - Repair"],frm.doc.quotation_type)){ 
+			frm.doc.discount_amount = frm.doc.overall_discount_amount
+			frm.doc.grand_total = frm.doc.total
+			frm.doc.grand_total = frm.doc.grand_total- frm.doc.discount_amount
+			frm.refresh_fields()
+                }
 //		}
 	},
 	margin_rate:function(frm){
 		frm.trigger("overall_discount_amount")
 	},
 	discount_percent:function(frm){
-		frm.doc.overall_discount_amount = (frm.doc.final_approved_price * frm.doc.discount_percent)/100
-		console.log("Hiu")
-		frm.trigger("overall_discount_amount")
+		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
+			frm.doc.overall_discount_amount = (frm.doc.actual_price * frm.doc.discount_percent)/100
+			frm.trigger("overall_discount_amount")
+		}
+		else if(in_list(["Customer Quotation - Repair"],frm.doc.quotation_type)){
+			frm.doc.overall_discount_amount = (frm.doc.total * frm.doc.discount_percent)/100
+			frm.trigger("overall_discount_amount")
+		}
 	}
 
 });
