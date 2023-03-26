@@ -379,13 +379,16 @@
    "label": "Estimated Repair Time"
   },
   {
+   "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "update_availability_status",
    "fieldtype": "Button",
    "label": "Update Availability Status",
    "options": "update_availability_status"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
+   "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "is_parts_available",
    "fieldtype": "Check",
    "label": "Is Parts Available"
@@ -394,7 +397,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-25 09:57:33.255142",
+ "modified": "2023-03-25 11:01:18.384713",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
