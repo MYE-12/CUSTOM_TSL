@@ -5,7 +5,7 @@ from pydoc import doc
 import frappe
 from frappe.model.document import Document
 from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
-from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
+# from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 # @frappe.whitelist()
 # def get_item_image(wod_no):
 # 	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
@@ -219,7 +219,8 @@ class EvaluationReport(Document):
 			lpn = self.items[-1].part_sheet_no
 			for i in self.items:
 				if i.part_sheet_no != lpn:
-					frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))
+					frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))main
+          
 	def before_submit(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]	
 		for i in self.items:
