@@ -306,7 +306,7 @@ def create_workorder_data(order_no,f):
 			item_type = i['type']
 		new_doc.append("material_list",{
 			"item_code": i['item_code'],
-			"item_name":i['item_name'],
+B			"item_name":i['item_name'],
 			"type":item_type,
 			"model_no":i['model'],
 			"mfg":i['manufacturer'],

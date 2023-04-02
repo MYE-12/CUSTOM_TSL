@@ -23,13 +23,11 @@
    "unique": 1
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "contact_number",
    "fieldtype": "Data",
    "label": "Contact Number"
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "email_id",
    "fieldtype": "Data",
    "label": "Email ID"
@@ -43,7 +41,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-10 08:02:45.501066",
+ "modified": "2023-03-28 13:23:19.673584",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Mfg",

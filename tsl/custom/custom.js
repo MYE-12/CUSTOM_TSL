@@ -325,7 +325,7 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										cur_frm.clear_table("items");
+										//cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
 										var tot_qty=0;
@@ -503,6 +503,13 @@ frappe.ui.form.on('Quotation', {
 						fieldname: "po_date",
 						fieldtype: "Date",
 						hidden:1,
+						
+					},
+					{
+						label: "Attach",
+						fieldname: "attach",
+						fieldtype: "Attach",
+						
 						
 					},
 					{

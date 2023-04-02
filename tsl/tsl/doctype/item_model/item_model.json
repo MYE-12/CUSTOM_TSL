@@ -7,7 +7,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "model"
+  "model",
+  "category",
+  "sub_category"
  ],
  "fields": [
   {
@@ -18,11 +20,23 @@
    "label": "Model",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "label": "Category",
+   "options": "Category"
+  },
+  {
+   "fieldname": "sub_category",
+   "fieldtype": "Link",
+   "label": "Sub Category",
+   "options": "Sub Category"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-10-10 08:02:08.651106",
+ "modified": "2023-03-30 09:55:11.188479",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",
@@ -43,5 +57,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }

@@ -158,7 +158,7 @@ frappe.ui.form.on('Work Order Data', {
                                 });
                         },__('Create'));
 		}
-		if(frm.doc.docstatus === 1) {
+		if(frm.doc.docstatus == 1 && (frm.doc.status == "RSC-Repaired and Shipped Client")) {
 			frm.add_custom_button(__("Payment Entry"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_paymet_entry",

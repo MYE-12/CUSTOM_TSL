@@ -59,6 +59,7 @@ frappe.ui.form.on('Evaluation Report', {
 			cur_frm.refresh_fields()
 		}
 	},
+	
 	work_order_data:function(frm){
 		if(frm.doc.work_order_data){
 			frappe.call({
@@ -286,13 +287,13 @@ frappe.ui.form.on('Part Sheet Item', {
                         }
                 }
 	},
-	before_items_remove:function(frm,cdt,cdn){
-		var item = locals[cdt][cdn];
-		if(item.is_not_edit && item.__checked){
-			item.__checked = 0
-			cur_frm.refresh_fields()
-			frappe.throw("Cannot Delete old Part Sheets")
-		}
+//	before_items_remove:function(frm,cdt,cdn){
+//		var item = locals[cdt][cdn];
+//	if(item.is_not_edit && item.__checked){
+//			item.__checked = 1
+//			cur_frm.refresh_fields()
+//			frappe.throw("Cannot Delete old Part Sheets")
+//		}
 		// for(var i=0;i<frm.doc.items.length;i++){
 			
 		// 	if(frm.doc.items[i].is_not_edit && cur_frm.doc.items[1].__checked){
@@ -301,7 +302,7 @@ frappe.ui.form.on('Part Sheet Item', {
 		// 	}
 
 		// }
-	},
+//	},
 	
 	part: function(frm, cdt, cdn){
 		let row = locals[cdt][cdn]

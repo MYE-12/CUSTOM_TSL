@@ -244,7 +244,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-17 09:52:30.380109",
+ "modified": "2023-03-28 09:08:27.334622",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Equipment Received Form",
@@ -264,5 +264,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }

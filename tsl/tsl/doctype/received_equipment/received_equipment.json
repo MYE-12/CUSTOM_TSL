@@ -210,7 +210,6 @@
   {
    "fieldname": "repair_warehouse",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Repair Warehouse",
    "options": "Warehouse"
   },
@@ -232,7 +231,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-10-10 15:40:59.342235",
+ "modified": "2023-03-27 22:46:08.194011",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",

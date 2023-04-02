@@ -364,28 +364,29 @@ def before_submit(self,method):
 	
 				
 def validate(self, method):
+	pass
 #	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
 #		self.overall_discount_amount = (self.final_approved_price * self.discount_percent)/100
 #		self.final_approved_price -= self.overall_discount_amount
 #		self.final_approved_price += self.margin_rate
-	l = []
-	if self.quotation_type == "Internal Quotation - Repair":
-		for i in self.get("items"):
-			if i.item_name:
-				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
-				for j in item:
-					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation - Repair":
-						l.append({
-							"item":j['item_name'],
-							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
-							"price":j['rate'],
-
-						})
-		self.similar_items_quoted_before = []
-		for i in range(len(l)):
-			if i==3:
-				break
-			self.append("similar_items_quoted_before",l[i])
+#	l = []
+#	if self.quotation_type == "Internal Quotation - Repair":
+#		for i in self.get("items"):
+#			if i.item_name:
+#				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
+#				for j in item:
+#					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation - Repair":
+#						l.append({
+#							"item":j['item_name'],
+#							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
+#							"price":j['rate'],
+#
+#						})
+#		self.similar_items_quoted_before = []
+#		for i in range(len(l)):
+#			if i==3:
+#				break
+#			self.append("similar_items_quoted_before",l[i])
 
 def send_qtn_reminder_mail():
 	for i in frappe.db.sql('''select  q.name as name,c.email_id as email_id,q.branch_name as branch,q.is_email_sent as ecount,q.party_name as customer_name from `tabQuotation` as q join `tabCustomer` as c on c.name = q.party_name where q.docstatus = 0 and 

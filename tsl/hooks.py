@@ -250,3 +250,4 @@ user_data_fields = [
 # 	"tsl.auth.validate"
 # ]
 
+fixtures = ["Property Setter"]
