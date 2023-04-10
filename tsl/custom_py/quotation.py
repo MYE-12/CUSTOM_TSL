@@ -5,7 +5,7 @@ import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
 from frappe import get_print
-
+import datetime
 @frappe.whitelist()
 def get_wod_items(wod):
 	wod = json.loads(wod)
@@ -144,7 +144,8 @@ def before_save(self,method):
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 			i.amount = total_qtn_rate
 			i.rate = total_qtn_rate/i.qty
-		self.in_words1 = frappe.utils.money_in_words(self.final_approved_price)
+		if self.final_approved_price:
+			self.in_words1 = frappe.utils.money_in_words(self.final_approved_price) or "Zero"
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
 		fc = cc = pc = additional =0
@@ -183,7 +184,18 @@ def before_save(self,method):
 			if suqb:
 				self.previously_quoted_unit = []
 				for j in suqb:
-					self.append("previously_quoted_unit",j)
+					frappe.errprint(j.work_order_data)
+					w_doc = frappe.get_doc("Work Order Data",j.work_order_data)
+					self.append("previously_quoted_unit",{
+					"customer":j.customer,
+					"sku":j.sku,
+					"model":j.model,
+					"type":j.type,
+					"quoted_price":j.quoted_price,
+					"quotation_no":j.quotation_no,
+					"work_order_data":j.work_order_data,
+					"wo_status":w_doc.status
+})
 
 
 	
@@ -266,7 +278,7 @@ def advance_pay(source):
 @frappe.whitelist()
 def final_price_validate(source):
 	doc = frappe.get_doc("Quotation",source)
-	return round(doc.final_approved_price / doc.total_qty,2)
+	return round(doc.final_approved_price / doc.total_qty,2) or 0
 
 @frappe.whitelist()
 def final_price_validate_si(wod):
@@ -364,7 +376,25 @@ def before_submit(self,method):
 	
 				
 def validate(self, method):
-	pass
+	items = self.get("items")
+	for item in items:
+		if item.wod_no:
+			eval_report = frappe.db.sql("""select * from `tabEvaluation Report` where work_order_data = '%s'"""%(item.wod_no),as_dict =1)
+			for eval in eval_report:
+				eval_time = eval.evaluation_time
+				spent_time = eval.estimated_repair_time
+				total_time = str(datetime.timedelta(seconds = eval_time + spent_time))
+				total_hrs = total_time.split(":")[0]
+				self.append("technician_hours_spent",{
+							"total_hours_spent":total_hrs,
+							"value":20,
+							"total_price":20*int(total_hrs),
+							"comments": eval.status
+						})
+		tech = self.technician_hours_spent
+		for t in tech:
+			self.actual_price += t.total_price
+    			
 #	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
 #		self.overall_discount_amount = (self.final_approved_price * self.discount_percent)/100
 #		self.final_approved_price -= self.overall_discount_amount

@@ -269,7 +269,32 @@ frappe.ui.form.on('Evaluation Report', {
 				]
 			}
 		});
-		
+		//frm.set_query("category","items",function(doc,cdt,cdn){
+		//var d = locals[cdt][cdn];
+		//return{
+		//filters:{
+		//	modelpart:d.model
+//}
+//}
+//});
+		frm.set_query("part_description","items",function(doc,cdt,cdn){ 
+                var d = locals[cdt][cdn];
+                return{ 
+                filters:{ 
+                        model_part:d.model
+}
+}
+});
+  		frm.set_query("model","items",function(doc,cdt,cdn){ 
+                var d = locals[cdt][cdn];
+		if(d.part_description){
+                return{ 
+                filters:{ 
+                       	description:d.part_description
+}
+}
+}
+});
 
 	},
 	

@@ -9,7 +9,8 @@
  "field_order": [
   "model",
   "category",
-  "sub_category"
+  "sub_category",
+  "description"
  ],
  "fields": [
   {
@@ -22,21 +23,31 @@
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "category",
    "fieldtype": "Link",
    "label": "Category",
-   "options": "Category"
+   "options": "Category",
+   "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "sub_category",
    "fieldtype": "Link",
    "label": "Sub Category",
-   "options": "Sub Category"
+   "options": "Sub Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Link",
+   "label": "Description",
+   "options": "Part Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-30 09:55:11.188479",
+ "modified": "2023-04-09 09:18:24.743944",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",

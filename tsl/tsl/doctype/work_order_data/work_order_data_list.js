@@ -1,6 +1,12 @@
 frappe.listview_settings['Work Order Data'] = {
 	add_fields: ["status","name"],
-	refresh:function(){
+	refresh:function(listview){
+		console.log("DSS")
+		if(frappe.user.has_role("Technician") && frappe.session.user !="Administrator" ){
+		console.log("HTD")
+		listview.page.fields_dict.status.value = "NE-Need Evaluation"
+		listview.page.fields_dict.status.refresh()
+		}
 		cur_list.page.clear_primary_action()
      	},
 	get_indicator: function (doc) {
