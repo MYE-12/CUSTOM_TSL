@@ -50,6 +50,8 @@
   "extra_repair_time",
   "actions_section",
   "status",
+  "technician_on_work_section",
+  "technician_details",
   "technician_comment_section",
   "comment",
   "column_break_45",
@@ -384,12 +386,24 @@
    "fieldtype": "Button",
    "label": "Update Availability Status",
    "options": "update_availability_status"
+  },
+  {
+   "fieldname": "technician_on_work_section",
+   "fieldtype": "Section Break",
+   "label": "Technician On Work"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_details",
+   "fieldtype": "Table",
+   "label": "Technician Details",
+   "options": "User Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-28 09:10:12.988521",
+ "modified": "2023-04-19 14:01:18.411518",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

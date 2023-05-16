@@ -105,15 +105,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Supplier Quotation",
-   "link_to": "Supplier Quotation",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Purchase Order",
    "link_to": "Purchase Order",
    "link_type": "DocType",
@@ -143,6 +134,15 @@
    "is_query_report": 0,
    "label": "Stock Entry",
    "link_to": "Stock Entry",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Notification Log",
+   "link_to": "Notification Log",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -196,15 +196,6 @@
    "is_query_report": 0,
    "label": "Supplier Quotation",
    "link_to": "Supplier Quotation",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Quotation",
-   "link_to": "Quotation",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -285,6 +276,15 @@
    "is_query_report": 0,
    "label": "Item Price List",
    "link_to": "Price List",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Part Description",
+   "link_to": "Part Description",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -411,7 +411,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-01-09 11:15:34.920590",
+ "modified": "2023-04-30 09:41:00.301744",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
@@ -419,5 +419,30 @@
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
- "shortcuts": []
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Delivery Note",
+   "link_to": "Delivery Note",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Purchase Receipt",
+   "link_to": "Purchase Receipt",
+   "type": "DocType"
+  }
+ ]
 }

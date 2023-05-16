@@ -1,3 +1,4 @@
+
 # Copyright (c) 2021, Tsl and contributors
 # For license information, please see license.txt
 
@@ -98,6 +99,9 @@ class EvaluationReport(Document):
 #				if i.part and i.parts_availability == "Yes":
 #					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
+
+
+
 	def validate(self):
 		add = 0
 		self.total_amount = 0
@@ -107,8 +111,8 @@ class EvaluationReport(Document):
 				i.price_ea = price_sts[0] if len(price_sts) else 0
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
 				total = 0
-				if i.total:
-					total = i.total
+			if i.total:
+				total = i.total
 				add += total
 		self.total_amount = add
 		doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -127,7 +131,19 @@ class EvaluationReport(Document):
 				self.parts_availability = "Yes"
 		if not self.evaluation_time or not self.estimated_repair_time:
 			frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
-
+		for pm in self.get("items"):
+			model = pm.model
+			part_no = pm.part
+			category = pm.category
+			sub_cat = pm.sub_category
+			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
+			if not part_no:
+				item_doc = frappe.new_doc("Item")
+				item_doc.model = model
+				item_doc.category_ = category
+				item_doc.sub_category = sub_cat
+				item_doc.item_group = "Components"
+				item_doc.save(ignore_permissions = True)
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0
@@ -138,8 +154,8 @@ class EvaluationReport(Document):
 				i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
 				frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
-			add += (i.price_ea * i.qty)
-		self.total_amount = add
+			#add += (i.price_ea * i.qty)
+		#self.total_amount = add
 		frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
 		if self.status:
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -220,6 +236,20 @@ class EvaluationReport(Document):
 			for i in self.items:
 				if i.part_sheet_no != lpn:
 					frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))
+			for pm in self.get("items"):
+				model = pm.model
+				part_no = pm.part
+				category = pm.category
+				sub_cat = pm.sub_category
+				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
+				if  not part_no:
+					item_doc = frappe.new_doc("Item")
+					item_doc.model = model
+					item_doc.category_ = category
+					item_doc.sub_category = sub_cat
+					item_doc.item_group = "Components"
+					item_doc.save(ignore_permissions = True)
+		
 	def before_submit(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]	
 		for i in self.items:
@@ -245,3 +275,9 @@ class EvaluationReport(Document):
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")-i.qty))
 
+
+#	def onload(self):
+#		self.append("technician_details",{
+#			'user':frappe.session.user
+#		})
+#		self.save(ignore_permissions = True)

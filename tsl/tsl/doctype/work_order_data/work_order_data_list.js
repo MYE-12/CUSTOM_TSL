@@ -1,14 +1,24 @@
 frappe.listview_settings['Work Order Data'] = {
 	add_fields: ["status","name"],
-	refresh:function(listview){
-		console.log("DSS")
-		if(frappe.user.has_role("Technician") && frappe.session.user !="Administrator" ){
-		console.log("HTD")
-		listview.page.fields_dict.status.value = "NE-Need Evaluation"
-		listview.page.fields_dict.status.refresh()
-		}
+	refresh:function(){
+		//console.log("DSS")
+		//if(frappe.user.has_role("Technician") && frappe.session.user !="Administrator" ){
+		//console.log("HTD")
+		//listview.page.fields_dict.status.value = "NE-Need Evaluation"
+		//listview.page.fields_dict.status.refresh()
+		//}
 		cur_list.page.clear_primary_action()
      	},
+	
+	 onload: function (listview) {
+	//console.log("hi")
+	if(frappe.user.has_role("Technician") && frappe.session.user !="Administrator" ){
+        //    listview.filter_area.add([[ "Work Order Data", "status" ,"=", "Q-Quoted" ]]);
+          //  listview.filter_area.add([[ "Work Order Data", "status" ,"=", "NE-Need Evaluation" ]]);
+            listview.filter_area.add([[ "Work Order Data", "status" ,"in", ["NE-Need Evaluation","AP-Available Parts","SP-Searching Parts","NER-Need Evaluation Return"] ]]);
+            listview.refresh()
+}
+    },
 	get_indicator: function (doc) {
 		if (doc.status === "UE-Under Evaluation") {
 			return [__("UE-Under Evaluation"), "yellow", "status,=,UE-Under Evaluation"];

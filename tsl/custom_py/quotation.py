@@ -182,19 +182,22 @@ def before_save(self,method):
 				,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi
 				on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 and q.name != %s''',(i.item_code,self.name),as_dict =1 )
 			if suqb:
+				frappe.errprint(suqb)
 				self.previously_quoted_unit = []
 				for j in suqb:
-					frappe.errprint(j.work_order_data)
-					w_doc = frappe.get_doc("Work Order Data",j.work_order_data)
-					self.append("previously_quoted_unit",{
-					"customer":j.customer,
-					"sku":j.sku,
-					"model":j.model,
-					"type":j.type,
-					"quoted_price":j.quoted_price,
-					"quotation_no":j.quotation_no,
-					"work_order_data":j.work_order_data,
-					"wo_status":w_doc.status
+					frappe.errprint(j)
+					if j.work_order_data:
+						w_doc = frappe.get_doc("Work Order Data",j.work_order_data)
+					
+						self.append("previously_quoted_unit",{
+						"customer":j.customer,
+						"sku":j.sku,
+						"model":j.model,
+						"type":j.type,
+						"quoted_price":j.quoted_price,
+						"quotation_no":j.quotation_no,
+						"work_order_data":j.work_order_data or "" ,
+						"wo_status":w_doc.status
 })
 
 
@@ -381,8 +384,8 @@ def validate(self, method):
 		if item.wod_no:
 			eval_report = frappe.db.sql("""select * from `tabEvaluation Report` where work_order_data = '%s'"""%(item.wod_no),as_dict =1)
 			for eval in eval_report:
-				eval_time = eval.evaluation_time
-				spent_time = eval.estimated_repair_time
+				eval_time = eval.evaluation_time or 0
+				spent_time = eval.estimated_repair_time or 0
 				total_time = str(datetime.timedelta(seconds = eval_time + spent_time))
 				total_hrs = total_time.split(":")[0]
 				self.append("technician_hours_spent",{
