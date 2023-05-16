@@ -141,6 +141,11 @@ doc_events = {
 			"tsl.custom_py.contact.before_save"
 		]
 	},
+	 "Contact":{
+                "after_insert":[
+                        "tsl.custom_py.customer.create_customer_details"
+                ]
+        },
 	"Sales Invoice":{
 		"on_submit":[
 			"tsl.custom_py.sales_invoice.on_submit"

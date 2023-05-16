@@ -157,7 +157,7 @@ frappe.ui.form.on('Evaluation Report', {
 				var df = frappe.meta.get_docfield("Part Sheet Item","price_ea", cur_frm.doc.name);
 				df.read_only = 1;
 				var df = frappe.meta.get_docfield("Part Sheet Item","part", cur_frm.doc.name);
-				df.read_only = 1;
+				//df.read_only = 1;
 				var df = frappe.meta.get_docfield("Part Sheet Item","part_name", cur_frm.doc.name);
 				df.read_only = 1;
 				var df = frappe.meta.get_docfield("Part Sheet Item","type", cur_frm.doc.name);

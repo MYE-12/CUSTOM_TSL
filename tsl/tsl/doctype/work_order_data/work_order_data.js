@@ -58,6 +58,7 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 		}
 		if(frm.doc.docstatus === 1) {
+		if(! frappe.user.has_role("Technician")){
 			frm.add_custom_button(__("Internal Quotation"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_quotation",
@@ -71,10 +72,14 @@ frappe.ui.form.on('Work Order Data', {
 							
 						}
 					}
+
 				});
+
 			},__('Create'));
+}
 		}
 		if(frm.doc.docstatus === 1) {
+		if (! frappe.user.has_role ("Technician")){
 			frm.add_custom_button(__("Stock Transfer"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_stock_entry",
@@ -90,9 +95,10 @@ frappe.ui.form.on('Work Order Data', {
 					}
 				});
 			},__('Create'));
-
+}
 		}
 		if(frm.doc.docstatus === 1) {
+		if(! frappe.user.has_role("Technician")){
 			frm.add_custom_button(__("Sales Invoice"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
@@ -110,7 +116,9 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			},__('Create'));
 		}
+}
 		if(frm.doc.docstatus === 1) {
+		if(! frappe.user.has_role("Technician")){
 			frm.add_custom_button(__("Delivery Note"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_dn",
@@ -128,6 +136,7 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			},__('Create'));
 		}
+}
 		if(frm.doc.docstatus == 1 && (frm.doc.status == "RNR-Return Not Repaired" || frm.doc.status == "RNRC-Return Not Repaired Client")){
 			frm.add_custom_button(__("Supply Order Form"), function(){
 				frappe.call({
