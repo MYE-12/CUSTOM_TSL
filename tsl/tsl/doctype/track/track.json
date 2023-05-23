@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-23 10:07:14.670752",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "work_done",
+  "wo",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "work_done",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Work Done",
+   "options": "\nMeeting New Customer\nNew W/O\nSubmit W/O\nSubmit Sales Invoice\nDelivery W/O\nCollect Payment against W/O"
+  },
+  {
+   "fieldname": "wo",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "W/O",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-23 10:18:26.397568",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Track",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
