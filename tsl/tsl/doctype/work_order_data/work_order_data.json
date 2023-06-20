@@ -62,6 +62,8 @@
   "extra_part_sheets",
   "section_break_28",
   "status_duration_details",
+  "online_price_section",
+  "price_table",
   "amended_from"
  ],
  "fields": [
@@ -259,12 +261,14 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Company",
    "options": "Company"
   },
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Branch",
    "options": "Branch"
   },
@@ -309,6 +313,7 @@
   {
    "fieldname": "repair_warehouse",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Repair Warehouse",
    "options": "Warehouse"
   },
@@ -421,6 +426,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:frappe.user.has_role('Administrator')",
    "fieldname": "previously_quoted_unit",
    "fieldtype": "Table",
    "label": "Previously Quoted Unit",
@@ -433,12 +439,26 @@
    "label": "Priority Status",
    "options": "Normal\nUrgent",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "eval:frappe.user.has_role(\"Admin\",\"GCEO\")",
+   "fieldname": "online_price_section",
+   "fieldtype": "Section Break",
+   "label": "Online Price"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "price_table",
+   "fieldtype": "Table",
+   "label": "Price Table",
+   "options": "Online Price List"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-04-13 12:47:38.322569",
+ "modified": "2023-06-19 08:35:02.884776",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

@@ -110,7 +110,7 @@
    "read_only": 1
   },
   {
-   "fetch_from": "incharge.phone",
+   "fetch_from": "incharge.mobile_no",
    "fieldname": "incharge_phone_no",
    "fieldtype": "Data",
    "label": "Customer Representative Phone No",
@@ -246,7 +246,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-03-28 09:08:50.004017",
+ "modified": "2023-06-19 08:15:45.832093",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

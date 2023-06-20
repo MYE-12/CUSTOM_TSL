@@ -43,6 +43,7 @@
    "fetch_from": "part.type",
    "fieldname": "type",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Type",
    "options": "Item Type"
   },
@@ -94,6 +95,7 @@
    "fetch_from": "part.mfg",
    "fieldname": "manufacturer",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Manufacturer",
    "options": "Item Mfg"
   },
@@ -186,7 +188,8 @@
    "fieldname": "part_sheet_no",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Part Sheet No"
+   "label": "Part Sheet No",
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
@@ -213,7 +216,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-04-29 10:01:20.316100",
+ "modified": "2023-06-18 15:29:47.162268",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

@@ -18,6 +18,7 @@
   "date",
   "priority_status",
   "work_order_data",
+  "initial_evaluation",
   "amended_from",
   "section_break_7",
   "evaluation_details",
@@ -48,17 +49,21 @@
   "evaluation_time",
   "estimated_repair_time",
   "extra_repair_time",
+  "return_repair_time",
   "actions_section",
   "status",
-  "technician_on_work_section",
-  "technician_details",
   "technician_comment_section",
   "comment",
   "column_break_45",
   "test_result",
+  "technician_on_work_section",
+  "technician_details",
   "section_break_17",
   "item_photo",
-  "attach_image"
+  "section_break_52",
+  "attach_image",
+  "column_break_55",
+  "technician_image"
  ],
  "fields": [
   {
@@ -115,7 +120,7 @@
    "allow_on_submit": 1,
    "fieldname": "column_break_13",
    "fieldtype": "Section Break",
-   "label": "Technician Feedback"
+   "label": "Parts Used"
   },
   {
    "fieldname": "section_break_17",
@@ -147,6 +152,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -192,7 +198,7 @@
   {
    "fieldname": "section_break_25",
    "fieldtype": "Section Break",
-   "label": "Time Taken"
+   "label": "Time Used"
   },
   {
    "allow_on_submit": 1,
@@ -227,8 +233,7 @@
   },
   {
    "fieldname": "attach_image",
-   "fieldtype": "Data",
-   "hidden": 1,
+   "fieldtype": "Attach",
    "label": "Attach Image"
   },
   {
@@ -398,12 +403,40 @@
    "fieldtype": "Table",
    "label": "Technician Details",
    "options": "User Details"
+  },
+  {
+   "fieldname": "section_break_52",
+   "fieldtype": "Section Break",
+   "label": "Technician Feedback image"
+  },
+  {
+   "depends_on": "eval:doc.status == 'Return Not Repaired'",
+   "fieldname": "return_repair_time",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Return Repair Time"
+  },
+  {
+   "fieldname": "technician_image",
+   "fieldtype": "Attach",
+   "label": "Technician Image"
+  },
+  {
+   "fieldname": "column_break_55",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "initial_evaluation",
+   "fieldtype": "Link",
+   "label": "Initial Evaluation",
+   "options": "Initial Evaluation"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-04-19 14:01:18.411518",
+ "modified": "2023-06-20 11:53:19.187761",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

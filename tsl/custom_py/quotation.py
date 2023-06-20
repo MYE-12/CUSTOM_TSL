@@ -1,4 +1,4 @@
-
+	
 from pydoc import doc
 from re import L
 import frappe
@@ -105,6 +105,9 @@ def before_save(self,method):
 	if self.quotation_type == "Internal Quotation - Repair":
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
+		tc = self.technician_hours_spent
+		for t in tc:
+			labour_value = t.total_price
 		for i in self.get("items"):
 			total_qtn_rate = 0
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
@@ -143,7 +146,7 @@ def before_save(self,method):
 					if sq_no:
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 			i.amount = total_qtn_rate
-			i.rate = total_qtn_rate/i.qty
+			i.rate = total_qtn_rate/i.qty + labour_value
 		if self.final_approved_price:
 			self.in_words1 = frappe.utils.money_in_words(self.final_approved_price) or "Zero"
 	if self.quotation_type == "Internal Quotation - Supply":
@@ -233,6 +236,7 @@ def get_quotation_history(source,rate = None,type = None):
 		for i in range(len(doclist.items)):
 			doclist.items[i].rate += float(rate)
 	return doclist
+
 
 @frappe.whitelist()
 def create_sal_inv(source):
@@ -378,25 +382,25 @@ def before_submit(self,method):
 
 	
 				
-def validate(self, method):
-	items = self.get("items")
-	for item in items:
-		if item.wod_no:
-			eval_report = frappe.db.sql("""select * from `tabEvaluation Report` where work_order_data = '%s'"""%(item.wod_no),as_dict =1)
-			for eval in eval_report:
-				eval_time = eval.evaluation_time or 0
-				spent_time = eval.estimated_repair_time or 0
-				total_time = str(datetime.timedelta(seconds = eval_time + spent_time))
-				total_hrs = total_time.split(":")[0]
-				self.append("technician_hours_spent",{
-							"total_hours_spent":total_hrs,
-							"value":20,
-							"total_price":20*int(total_hrs),
-							"comments": eval.status
-						})
-		tech = self.technician_hours_spent
-		for t in tech:
-			self.actual_price += t.total_price
+#def validate(self, method):
+#	items = self.get("items")
+#	for item in items:
+#		if item.wod_no:
+#			eval_report = frappe.db.sql("""select * from `tabEvaluation Report` where work_order_data = '%s'"""%(item.wod_no),as_dict =1)
+#			for eval in eval_report:
+#				eval_time = eval.evaluation_time or 0
+#				spent_time = eval.estimated_repair_time or 0
+#				total_time = str(datetime.timedelta(seconds = eval_time + spent_time))
+#				total_hrs = total_time.split(":")[0]
+#				self.append("technician_hours_spent",{
+#							"total_hours_spent":total_hrs,
+#							"value":20,
+#							"total_price":20*int(total_hrs),
+#							"comments": eval.status
+#						})
+#		tech = self.technician_hours_spent
+#		for t in tech:
+#			self.actual_price += t.total_price
     			
 #	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
 #		self.overall_discount_amount = (self.final_approved_price * self.discount_percent)/100

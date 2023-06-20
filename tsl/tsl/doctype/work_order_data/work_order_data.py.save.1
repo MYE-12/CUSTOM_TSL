@@ -180,65 +180,29 @@ def create_test_evaluation_report(doc_no):
         new_doc.item_photo = doc.image
         return new_doc
 @frappe.whitelist()
-def create_initial_eval(doc_no):
-	doc = frappe.get_doc("Initial Evaluation",doc_no)
-	new_doc = frappe.new_doc("Evaluation Report")
-	new_doc.company =  doc.company
-	new_doc.customer = doc.customer
-	new_doc.work_order_data = doc.work_order_data
-	new_doc.initial_evaluation = doc.name
-	new_doc.parts_availability = doc.parts_availability
-	new_doc.attach_image = doc.attach_image
-	if doc.no_power:
-		new_doc.no_power = 1
-	if doc.no_output:
-		new_doc.no_output = 1
-	if doc.no_display:
-		new_doc.no_display = 1
-	if doc.no_communication:
-		new_doc.no_communication = 1
-	if doc.supply_voltage:
-		new_doc.supply_voltage =1
-	if doc.touch_keypad_not_working:
-		new_doc.touch_keypad_not_working =1
-	if doc.no_backlight:
-		new_doc.no_backlight = 1
-	if doc.error_code:
-		new_doc.error_code =1 
-	if doc.short_circuit:
-		new_doc.short_circuit = 1
-	if doc.overload_overcurrent:
-		new_doc.overload_overcurrent = 1
-	if doc.others:
-		new_doc.others = 1
-		new_doc.specify = doc.specify
-	#new_doc.customer_complaint = doc.complaints
-	new_doc.priority_status = doc.priority_status
-	if doc.if_parts_required:
-		new_doc.if_parts_required = 1
-	for i in doc.get("evaluation_details"):
-		new_doc.append("evaluation_details",{
-			"item":i.item,
-			"description":i.description,
-			"manufacturer":i.manufacturer,
-			"model":i.model,
-			"serial_no":i.serial_no,
-			"type":i.type
+def create_from_initial_evaluation(doc_no):
+        doc = frappe.get_doc("Initial Evaluation",doc_no)
+        new_doc = frappe.new_doc("Evaluation Report")
+        new_doc.company = doc.company
+        new_doc.customer = doc.customer
+        #new_doc.attn = doc.sales_rep or ''
+        new_doc.work_order_data = doc.name
+        new_doc.attach_image = doc.attach_image
 
-		})
-	for j in doc.get("items"):
-		frappe.errprint(j)
-		new_doc.append("items",{
-			"part":j.part,
-			"model":j.model,
-			"category":j.category,
-			"sub_category":j.sub_category,
-			"qty":j.used_qty,
-			"part_description":j.part_description,
-			"parts_availability":j.parts_availability,
-
-		})
-	return new_doc
+        if doc.no_power:
+                new_doc.no_power = 1
+        if doc.no_output:
+                new_doc.no_output = 1
+        if doc.no_display:
+                new_doc.no_display = 1
+        if doc.no_communication:
+                new_doc.no_communication = 1
+        if doc.supply_voltage:
+                new_doc.supply_voltage =1
+        if doc.touch_keypad_not_working:
+                new_doc.touch_keypad_not_working =1
+        if doc.no_backlight:
+                new_doc.no_backlight = 
 @frappe.whitelist()
 def create_paymet_entry(wod):
 	doc = frappe.get_doc("Work Order Data",wod)

@@ -6,36 +6,109 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "customer",
   "work_done",
+  "visit_purpose",
+  "select_order_type",
   "wo",
+  "column_break_6",
+  "contact_person",
+  "contact_number",
+  "contact_email",
+  "location",
   "description"
  ],
  "fields": [
   {
+   "columns": 1,
    "fieldname": "work_done",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Work Done",
-   "options": "\nMeeting New Customer\nNew W/O\nSubmit W/O\nSubmit Sales Invoice\nDelivery W/O\nCollect Payment against W/O"
+   "label": "Job Type",
+   "options": "\nMeeting New Customer/Existing\nNew WO/SO\nSubmit Sales Invoice\nDelivery WO/SO\nCollect Payment against WO/SO"
   },
   {
+   "columns": 2,
    "fieldname": "wo",
-   "fieldtype": "Link",
+   "fieldtype": "Dynamic Link",
    "in_list_view": 1,
-   "label": "W/O",
-   "options": "Work Order Data"
+   "label": "WO / SO",
+   "options": "select_order_type"
   },
   {
+   "columns": 1,
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Description"
+   "label": "Feedback/Remarks"
+  },
+  {
+   "columns": 1,
+   "fieldname": "visit_purpose",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Visit Purpose",
+   "options": "\nFollow up\nIntroduction\nCollecting WO/SO\nPayment Collection\nInvoice/Delivery\nService Enquiry"
+  },
+  {
+   "columns": 1,
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "customer.customer_primary_contact",
+   "fieldname": "contact_person",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contact Person",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fetch_from": "customer.mobile_no",
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contact Number",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:doc.visit_purpose == 'Collecting WO/SO'",
+   "fieldname": "select_order_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Select Order Type",
+   "options": "\nWork Order Data\nSupply Order Data"
+  },
+  {
+   "fetch_from": "customer.email_id",
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "options": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-05-23 10:18:26.397568",
+ "modified": "2023-06-20 08:08:26.324973",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Track",

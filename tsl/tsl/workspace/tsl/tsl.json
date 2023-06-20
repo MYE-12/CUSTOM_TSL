@@ -43,24 +43,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Service Call Form",
-   "link_to": "Service Call Form",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Create Work Order",
-   "link_to": "Create Work Order",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Work Order Data",
    "link_to": "Work Order Data",
    "link_type": "DocType",
@@ -72,15 +54,6 @@
    "is_query_report": 0,
    "label": "Evaluation Report",
    "link_to": "Evaluation Report",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Quotation",
-   "link_to": "Quotation",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -203,15 +176,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Purchase Order",
-   "link_to": "Purchase Order",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Item Master",
    "link_type": "DocType",
    "onboard": 0,
@@ -276,15 +240,6 @@
    "is_query_report": 0,
    "label": "Item Price List",
    "link_to": "Price List",
-   "link_type": "DocType",
-   "onboard": 1,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Part Description",
-   "link_to": "Part Description",
    "link_type": "DocType",
    "onboard": 1,
    "type": "Link"
@@ -411,7 +366,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-04-30 09:41:00.301744",
+ "modified": "2023-06-19 08:42:38.351129",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL",
@@ -422,14 +377,26 @@
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Sales Invoice",
-   "link_to": "Sales Invoice",
+   "label": "Create Work Order",
+   "link_to": "Create Work Order",
    "type": "DocType"
   },
   {
    "doc_view": "List",
    "label": "Delivery Note",
    "link_to": "Delivery Note",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Quotation",
+   "link_to": "Quotation",
    "type": "DocType"
   },
   {
@@ -442,6 +409,36 @@
    "doc_view": "List",
    "label": "Purchase Receipt",
    "link_to": "Purchase Receipt",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Sales Track",
+   "link_to": "Sales Track",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Assets Management",
+   "link_to": "Assets Management",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Work Order Data",
+   "link_to": "Work Order Data",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Evaluation Report",
+   "link_to": "Evaluation Report",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Initial Evaluation",
+   "link_to": "Initial Evaluation",
    "type": "DocType"
   }
  ]

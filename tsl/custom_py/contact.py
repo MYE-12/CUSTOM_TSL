@@ -19,8 +19,8 @@ def before_save(self,method):
             "is_primary_mobile_no":1
         }
         )
-    self.email_id = self.email_id_or_address
-    self.mobile_no = self.mobile_or_phone_number
+   # self.email_id = self.email_id_or_address
+   # self.mobile_no = self.mobile_or_phone_number
     for i in self.links:
         if i.link_doctype == "Customer":
             customer.append(i.link_name)
@@ -38,7 +38,7 @@ def before_save(self,method):
             doc.name1 = self.name
             doc.designation = self.designation
             doc.phone_number = self.phone
-            doc.email_id = self.email_id
+            doc.email_id = self.email_id_or_address
             doc.location  = self.location
             doc.save()
     if len(supplier):

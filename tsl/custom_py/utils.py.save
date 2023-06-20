@@ -1,0 +1,34 @@
+import frappe
+#from frappe.permissions import has_role
+
+@frappe.whitelist()
+def send_mail():
+	sales_person = ["maaz@tsl-me.com","omar@tsl-me.com","vazeem@tsl-me.com"]	
+	sales_report = frappe.db.sql("""select date,sales_person from `tabSales Track` where date = CURDATE()""",as_dict=1)
+	for sr in sales_report:
+		if sales_person[0] not in sr.sales_person:
+			print(sales_person[0])
+			frappe.sendmail(
+					recipients= [sales_person[0]],
+					#cc = ["alkouh@tsl-me.com","ehab@tsl-me.com","yousuf@tsl-me.com"],
+					subject="Daily Sales Report Reminder",
+					message = "Kindly fill the Daily Report by EOD"
+				)
+		if sales_person[1] not in sr.sales_person:
+			print(sales_person[1])
+			frappe.sendmail(
+				recipients= sales_person[1]
+
+cc = ["yousuf@tsl-me.com"],["ehab@tsl-me.com"],
+	                        subject="Daily Sales Report Reminder",
+	                        message = "Kindly fill the Daily Report by EOD"
+		                )
+
+		if sales_person[2] not in sr.sales_person:
+                        print(sales_person[2])
+                        frappe.sendmail(
+                                        recipients= [sales_person[2]],
+                                        #cc = ["alkouh@tsl-me.com","ehab@tsl-me.com","yousuf@tsl-me.com"],
+                                        subject="Daily Sales Report Reminder",
+                                        message = "Kindly fill the Daily Report by EOD"
+                                )

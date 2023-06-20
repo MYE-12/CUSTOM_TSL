@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-06-13 15:47:03.951460",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "itemdescription",
+  "qty",
+  "model",
+  "serial_noplate_no",
+  "remarks",
+  "others"
+ ],
+ "fields": [
+  {
+   "fieldname": "itemdescription",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Item/Description",
+   "options": "CAR\nLAPTOP/PC\nMOBILE\nSIM CARD\nOthers Specify"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "QTY"
+  },
+  {
+   "fieldname": "serial_noplate_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Serial No/Plate No"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "others",
+   "fieldtype": "Data",
+   "label": "Others"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Model"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-06-13 16:04:51.038843",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Asset Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

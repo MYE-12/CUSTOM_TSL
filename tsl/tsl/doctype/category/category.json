@@ -21,19 +21,21 @@
   {
    "fieldname": "modelpart",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Model/Part",
    "options": "Item Model"
   },
   {
    "fieldname": "part_description",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Part Description",
    "options": "Part Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-08 12:37:37.236557",
+ "modified": "2023-06-01 14:06:44.377845",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Category",

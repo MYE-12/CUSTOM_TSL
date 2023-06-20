@@ -1,18 +1,20 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:sales_person",
+ "autoname": "naming_series:",
  "creation": "2023-05-23 10:01:49.482112",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "sales_user",
   "sales_person",
   "column_break",
   "date",
   "section_break_okdlc",
-  "track"
+  "track",
+  "amended_from"
  ],
  "fields": [
   {
@@ -26,14 +28,12 @@
    "fieldname": "sales_person",
    "fieldtype": "Data",
    "label": "Sales Person",
-   "read_only": 1,
-   "unique": 1
+   "read_only": 1
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date",
-   "read_only": 1
+   "label": "Date"
   },
   {
    "fieldname": "column_break",
@@ -48,14 +48,32 @@
    "fieldtype": "Table",
    "label": "Track",
    "options": "Track"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sales Track",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ST-Y.YY.-.###",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2023-05-23 10:53:10.392332",
+ "modified": "2023-06-08 15:44:19.408314",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Sales Track",
+ "name_case": "Title Case",
  "owner": "Administrator",
  "permissions": [
   {
@@ -72,5 +90,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }

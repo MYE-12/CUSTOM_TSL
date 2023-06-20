@@ -74,7 +74,7 @@ frappe.ui.form.on('Work Order Data', {
                         },__('Create'));
                 }
 		if(frm.doc.docstatus == 1) {
-//		if(! frappe.user.has_role("Technician")){
+		if(! frappe.user.has_role("Technician")){
 			frm.add_custom_button(__("Internal Quotation"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_quotation",
@@ -92,7 +92,7 @@ frappe.ui.form.on('Work Order Data', {
 				});
 
 			},__('Create'));
-//}
+}
 		}
 		if(frm.doc.docstatus === 1) {
 		if (! frappe.user.has_role ("Technician")){
@@ -164,7 +164,7 @@ frappe.ui.form.on('Work Order Data', {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
-						}
+B						}
 					}
 				});
 			},__('Create'));

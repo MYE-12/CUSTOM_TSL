@@ -55,6 +55,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
+							console.log(r.message)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -116,6 +117,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
+						console.log(r.message)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -325,6 +327,7 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
+										console.log(r.message)
 										//cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
@@ -353,7 +356,8 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.rounded_total = frm.doc.grand_total;
 										frm.doc.actual_price = frm.doc.rounded_total;
 										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
-											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
+//											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
+											console.log('Actual price')
 										}
 										frm.doc.final_approved_price = frm.doc.actual_price;
 										cur_frm.refresh_fields();
@@ -605,7 +609,7 @@ frappe.ui.form.on('Quotation', {
 		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
 			frm.doc.final_approved_price = frm.doc.actual_price;
 			frm.doc.final_approved_price = frm.doc.final_approved_price - frm.doc.overall_discount_amount
-			frm.doc.final_approved_price = frm.doc.final_approved_price + frm.doc.margin_rate
+			frm.doc.final_approved_price = frm.doc.margin_rate
 			frm.refresh_fields()
 		}
 		else if(in_list(["Customer Quotation - Repair"],frm.doc.quotation_type)){ 
@@ -654,7 +658,7 @@ frappe.ui.form.on("Quotation Item",{
 				frm.doc.rounded_total = frm.doc.grand_total;
 				frm.doc.actual_price = frm.doc.rounded_total;
 				if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
-					frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value *frm.doc.technician_hours_spent[0].total_hours_spent);
+//					frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value *frm.doc.technician_hours_spent[0].total_hours_spent);
 
 				}
 				var act = frm.doc.actual_price

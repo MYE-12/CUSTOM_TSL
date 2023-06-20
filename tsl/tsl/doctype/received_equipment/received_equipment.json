@@ -35,7 +35,14 @@
   "warehouse_section",
   "attach_image",
   "column_break_28",
-  "repair_warehouse"
+  "repair_warehouse",
+  "online_price_section",
+  "price_type_section",
+  "price",
+  "old_price",
+  "column_break_34",
+  "websitelink",
+  "used_websitelink"
  ],
  "fields": [
   {
@@ -226,12 +233,51 @@
    "fieldname": "suggested_price",
    "fieldtype": "Currency",
    "label": "Sales Suggested Price"
+  },
+  {
+   "fieldname": "online_price_section",
+   "fieldtype": "Section Break",
+   "label": "Online Price"
+  },
+  {
+   "fieldname": "price_type_section",
+   "fieldtype": "Select",
+   "label": "Price Type",
+   "options": "New\nUsed"
+  },
+  {
+   "depends_on": "eval:doc.price_type_section == \"New\"",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "New Price"
+  },
+  {
+   "depends_on": "eval:doc.price_type_section == \"New\"",
+   "fieldname": "websitelink",
+   "fieldtype": "Data",
+   "label": "New Website/Link"
+  },
+  {
+   "fieldname": "column_break_34",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.price_type_section == \"Used\"",
+   "fieldname": "old_price",
+   "fieldtype": "Currency",
+   "label": "Old Price"
+  },
+  {
+   "depends_on": "eval:doc.price_type_section == \"Used\"",
+   "fieldname": "used_websitelink",
+   "fieldtype": "Data",
+   "label": "Used Website/Link"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-03-27 22:46:08.194011",
+ "modified": "2023-06-19 08:28:52.884075",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",

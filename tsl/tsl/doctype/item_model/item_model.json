@@ -27,27 +27,26 @@
    "fieldname": "category",
    "fieldtype": "Link",
    "label": "Category",
-   "options": "Category",
-   "reqd": 1
+   "options": "Category"
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "sub_category",
    "fieldtype": "Link",
    "label": "Sub Category",
-   "options": "Sub Category",
-   "reqd": 1
+   "options": "Sub Category"
   },
   {
    "fieldname": "description",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Description",
    "options": "Part Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-04-09 09:18:24.743944",
+ "modified": "2023-06-06 15:57:44.482564",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",

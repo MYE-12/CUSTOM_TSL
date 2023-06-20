@@ -107,9 +107,9 @@ class EvaluationReport(Document):
 		self.total_amount = 0
 		for i in self.items:
 			if i.part and not i.from_scrap:
-				price_sts = get_valuation_rate(i.part,i.qty,frappe.defaults.get_defaults().company)
-				i.price_ea = price_sts[0] if len(price_sts) else 0
-				i.parts_availability = price_sts[1] if len(price_sts) else "No"
+#				price_sts = get_valuation_rate(i.part,i.qty,frappe.defaults.get_defaults().company)
+#				i.price_ea = price_sts[0] if len(price_sts) else 0
+#				i.parts_availability = price_sts[1] if len(price_sts) else "No"
 				total = 0
 			if i.total:
 				total = i.total
@@ -136,9 +136,13 @@ class EvaluationReport(Document):
 			part_no = pm.part
 			category = pm.category
 			sub_cat = pm.sub_category
+			frappe.errprint("yts")
 			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 			if not part_no:
+				frappe.errprint('ESX')
 				item_doc = frappe.new_doc("Item")
+				frappe.errprint('jOb')
+				#item_doc.naming_series = "CO.#####"
 				item_doc.model = model
 				item_doc.category_ = category
 				item_doc.sub_category = sub_cat
@@ -243,7 +247,9 @@ class EvaluationReport(Document):
 				sub_cat = pm.sub_category
 				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 				if  not part_no:
+					frappe.errprint('ijt')
 					item_doc = frappe.new_doc("Item")
+					item_doc.naming_series = 'P.#####'
 					item_doc.model = model
 					item_doc.category_ = category
 					item_doc.sub_category = sub_cat

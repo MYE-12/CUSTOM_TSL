@@ -88,9 +88,9 @@ frappe.ui.form.on('Create Work Order', {
 								if(r.message[0]){
 									frm.set_value("incharge",r.message[0][0])
 								}
-								console.log("sale")
-								console.log(r.message[1])
-								console.log(r.message[2])
+								//console.log("sale")
+								console.log(r.message)
+								//console.log(r.message[2])
 								if(r.message[1]){
 									frm.set_query("sales_person", function() {
 										return {
@@ -101,8 +101,12 @@ frappe.ui.form.on('Create Work Order', {
 									});
 								}
 								
-								if(r.message[2]){
-									frm.set_value("sales_person",r.message[2])
+								if(r.message[1]){
+									frm.set_value("sales_person",r.message[1])
+									//frappe.db.get_value('User',r.message[1], 'full_name', (values) => {
+									//console.log(values)
+									//frm.set_value("sales_person_name", values.full_name);
+								//});
 								}
 								else{
 									frm.set_value("sales_person","");
