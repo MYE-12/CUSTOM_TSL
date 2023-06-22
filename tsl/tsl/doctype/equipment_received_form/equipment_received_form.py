@@ -315,8 +315,8 @@ def create_workorder_data(order_no,f):
 		})
 #
 		new_doc.save(ignore_permissions = True)
-		if new_doc.name and "attach_image" in i:
-			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
+#		if new_doc.name and "attach_image" in i:
+#			frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
 		new_doc.submit()
 #		frappe.errprint("sn-no")
 #		frappe.errprint(sn_no)
@@ -386,3 +386,4 @@ def get_wod_details(wod):
 
 		}))
 	return l
+
