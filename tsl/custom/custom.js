@@ -327,6 +327,7 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
+										console.log('JI')
 										console.log(r.message)
 										//cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
@@ -341,12 +342,15 @@ frappe.ui.form.on('Quotation', {
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["description"],
 											childTable.type = r.message[i]['type'],
-											childTable.qty = r.message[i]["qty"],
-											childTable.rate = r.message[i]["total_amt"]
-											var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
-											childTable.amount = amt,
-											childTable.final_approved_price = amt,
-											tot_amt += amt;
+											childTable.qty = r.message[i]["qty"]
+											// childTable.rate = r.message[i]["total_amt"]
+											// if(r.message[i]["total_amt"]){
+											// 	var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
+											// 	childTable.amount = amt
+												
+											// }
+											
+											
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
 										}
@@ -354,12 +358,12 @@ frappe.ui.form.on('Quotation', {
 										frm.doc.total_qty = tot_qty;
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 										frm.doc.rounded_total = frm.doc.grand_total;
-										frm.doc.actual_price = frm.doc.rounded_total;
-										if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
-//											frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
-											console.log('Actual price')
-										}
-										frm.doc.final_approved_price = frm.doc.actual_price;
+										// frm.doc.actual_price = frm.doc.rounded_total;
+										// if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
+										// 	frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
+										// 	console.log('Actual price')
+										// }
+										// frm.doc.final_approved_price = frm.doc.actual_price;
 										cur_frm.refresh_fields();
 
 									}
@@ -624,6 +628,7 @@ frappe.ui.form.on('Quotation', {
 		frm.trigger("overall_discount_amount")
 	},
 	discount_percent:function(frm){
+		console.log("ki")
 		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
 			frm.doc.overall_discount_amount = (frm.doc.actual_price * frm.doc.discount_percent)/100
 			frm.trigger("overall_discount_amount")

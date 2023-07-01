@@ -63,6 +63,7 @@
   "section_break_28",
   "status_duration_details",
   "online_price_section",
+  "initial_evaluation",
   "price_table",
   "amended_from"
  ],
@@ -453,12 +454,18 @@
    "fieldtype": "Table",
    "label": "Price Table",
    "options": "Online Price List"
+  },
+  {
+   "fieldname": "initial_evaluation",
+   "fieldtype": "Link",
+   "label": "Initial Evaluation",
+   "options": "Initial Evaluation"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-19 08:35:02.884776",
+ "modified": "2023-06-25 11:49:20.910161",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
