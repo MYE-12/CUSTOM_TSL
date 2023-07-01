@@ -330,36 +330,36 @@ frappe.ui.form.on('Part Sheet Item', {
 		// }
 //	},
 	
-//	part: function(frm, cdt, cdn){
-//		let row = locals[cdt][cdn]
-//		if(row.part && row.qty){
-//		frappe.call({
-//			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
-//			args :{
-//				"item" :row.part,
-//				"qty":row.qty,
-//				"warehouse":frappe.user_defaults.company
-//			},
-//			callback :function(r){
-//				console.log(r)
-//				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
-//				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
-//				row.total = row.qty * r.message[0];
-//				let tot_qty = 0
-//				let tot_amount = 0
-//				for(let i in frm.doc.items){
-//					tot_qty += frm.doc.items[i].qty
-//					tot_amount += frm.doc.items[i].total
-//					status = r.message[1]
-//				}
-//				frm.set_value("total_qty", tot_qty)
-//				frm.set_value("total_amount", tot_amount)
-//						frm.refresh_fields();
-//				}
-//		})
-//		}
-//		frm.refresh();
-///	},
+	part: function(frm, cdt, cdn){
+		let row = locals[cdt][cdn]
+		if(row.part && row.qty){
+		frappe.call({
+			method :"tsl.tsl.doctype.part_sheet.part_sheet.get_valuation_rate",
+			args :{
+				"item" :row.part,
+				"qty":row.qty,
+				"warehouse":frappe.user_defaults.company
+			},
+			callback :function(r){
+				console.log(r)
+				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
+				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
+				row.total = row.qty * r.message[0];
+				let tot_qty = 0
+				let tot_amount = 0
+				for(let i in frm.doc.items){
+					tot_qty += frm.doc.items[i].qty
+					tot_amount += frm.doc.items[i].total
+					status = r.message[1]
+				}
+				frm.set_value("total_qty", tot_qty)
+				frm.set_value("total_amount", tot_amount)
+						frm.refresh_fields();
+				}
+		})
+		}
+		frm.refresh();
+	},
 	qty:function(frm, cdt, cdn){
 		var row = locals[cdt][cdn]
 		if(row.qty && row.part){

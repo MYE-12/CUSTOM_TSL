@@ -265,7 +265,7 @@
    "depends_on": "eval:doc.price_type_section == \"Used\"",
    "fieldname": "old_price",
    "fieldtype": "Currency",
-   "label": "Old Price"
+   "label": "Used Price"
   },
   {
    "depends_on": "eval:doc.price_type_section == \"Used\"",
@@ -277,7 +277,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-19 08:28:52.884075",
+ "modified": "2023-06-24 09:51:38.188186",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",

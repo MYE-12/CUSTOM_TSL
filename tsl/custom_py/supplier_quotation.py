@@ -87,6 +87,20 @@ def on_submit(self,method):
         doc.total_amount = add
 
         doc.save(ignore_permissions=True)
+    elif self.initial_evaluation:
+        frappe.errprint("on submit SQ")
+        doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
+        for i in self.get("items"):
+            for j in doc.get("items"):
+                if j.part == i.item_code:
+                    j.price_ea = i.rate
+                    j.total = i.rate * j.qty
+        add = 0
+        for i in doc.items:
+            add += j.total
+        doc.total_amount = add
+
+        doc.save(ignore_permissions=True)
     if self.supply_order_data:
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         for i in self.get('items'):

@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Create Work Order', {
 	refresh:function(frm){
+		console.log("hi")
 		frm.disable_save()
 		frm.add_custom_button(__("Create Work Order"), function(){
 			frappe.call({
@@ -15,6 +16,7 @@ frappe.ui.form.on('Create Work Order', {
 				},
 				'callback':function(res){
 					if(res.message){
+						console.log(res.message)
 						if(res.message == "Confirm"){
 							frappe.confirm(
 							    'Complaints not given.Are you sure to Continue?',
@@ -29,6 +31,7 @@ frappe.ui.form.on('Create Work Order', {
 					                                },
 					                                'callback':function(res){
 										if(res.message){
+											console.log(res)
 										 	cur_frm.reload_doc();
 										}
 									}

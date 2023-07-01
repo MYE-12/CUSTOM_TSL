@@ -41,7 +41,7 @@ frappe.ui.form.on('Work Order Data', {
         			frm.refresh_field("material_list")
 	        }
 
-		if(frm.doc.docstatus === 1) {
+		if(frm.doc.docstatus == 1) {
 			frm.add_custom_button(__("Evaluation Report"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_evaluation_report",
@@ -57,7 +57,7 @@ frappe.ui.form.on('Work Order Data', {
 				});
 			},__('Create'));
 		}
-		  if(frm.doc.docstatus === 1) {
+		  if(frm.doc.docstatus == 1) {
                         frm.add_custom_button(__("Initial Evaluation"), function(){
                                 frappe.call({
                                         method: "tsl.tsl.doctype.work_order_data.work_order_data.create_test_evaluation_report",
@@ -74,7 +74,7 @@ frappe.ui.form.on('Work Order Data', {
                         },__('Create'));
                 }
 		if(frm.doc.docstatus == 1) {
-//		if(! frappe.user.has_role("Technician")){
+		if(!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){
 			frm.add_custom_button(__("Internal Quotation"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_quotation",
@@ -92,9 +92,9 @@ frappe.ui.form.on('Work Order Data', {
 				});
 
 			},__('Create'));
-//}
+}
 		}
-		if(frm.doc.docstatus === 1) {
+		if(frm.doc.docstatus == 1) {
 		if (! frappe.user.has_role ("Technician")){
 			frm.add_custom_button(__("Stock Transfer"), function(){
 				frappe.call({
@@ -114,7 +114,7 @@ frappe.ui.form.on('Work Order Data', {
 }
 		}
 		if(frm.doc.docstatus === 1) {
-		if(! frappe.user.has_role("Technician")){
+		if(! frappe.user.has_role("Technician")|| frappe.user.has_role("Administrator")){
 			frm.add_custom_button(__("Sales Invoice"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
@@ -134,7 +134,7 @@ frappe.ui.form.on('Work Order Data', {
 		}
 }
 		if(frm.doc.docstatus === 1) {
-		if(! frappe.user.has_role("Technician")){
+		if(! frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){
 			frm.add_custom_button(__("Delivery Note"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_dn",

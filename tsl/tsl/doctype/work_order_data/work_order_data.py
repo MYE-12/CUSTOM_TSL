@@ -67,6 +67,8 @@ def create_quotation(wod):
 	new_doc.sales_rep = doc.sales_rep
 	
 	ths = frappe.db.sql('''select status,hours_spent,ratehour,extra_repair_time as ext,evaluation_time as et,estimated_repair_time as ert from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
+	thst = frappe.db.sql('''select evaluation_time as et,estimated_repair_time as ert from `tabInitial Evaluation` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
+	frappe.errprint(thst)
 	if len(ths):
 		total = 0
 		if ths[0]["status"] == "Others":
@@ -78,6 +80,20 @@ def create_quotation(wod):
 #		total = float(ths[0]['et'].split()[0][:-1]+"."+ths[0]['et'].split()[1][:-1])
 		new_doc.append("technician_hours_spent",{
 			"comments": ths[0]["status"],
+			"total_hours_spent":total,
+			"value":20,
+			"total_price":total*20
+		})
+	elif len(thst):
+		frappe.errprint("EXE")
+		total = 0
+		if 'et' in thst[0] and 'ert' in thst[0] and thst[0]['ert'] and thst[0]['et']:
+			total = round(((thst[0]['et']/3600) + (thst[0]['ert']/3600)),2)
+#		if 'ext' in thst[0]:
+#			total += round(thst[0]['ext']/3600)
+#		total = float(thst[0]['et'].split()[0][:-1]+"."+thst[0]['et'].split()[1][:-1])
+		new_doc.append("technician_hours_spent",{
+			# "comments": thst[0]["status"],
 			"total_hours_spent":total,
 			"value":20,
 			"total_price":total*20
@@ -212,7 +228,7 @@ def create_initial_eval(doc_no):
 	if doc.others:
 		new_doc.others = 1
 		new_doc.specify = doc.specify
-	#new_doc.customer_complaint = doc.complaints
+	new_doc.total_qty = doc.total_qty
 	new_doc.priority_status = doc.priority_status
 	if doc.if_parts_required:
 		new_doc.if_parts_required = 1

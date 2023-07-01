@@ -13,6 +13,7 @@
   "specify_1",
   "hours_spent",
   "ratehour",
+  "parts_returned",
   "column_break_3",
   "company",
   "date",
@@ -341,6 +342,7 @@
   {
    "fieldname": "actions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Actions"
   },
   {
@@ -423,12 +425,18 @@
    "options": "Initial Evaluation",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "parts_returned",
+   "fieldtype": "Check",
+   "label": "Parts Returned"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-18 13:41:20.239733",
+ "modified": "2023-06-24 12:02:47.632325",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",
