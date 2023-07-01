@@ -181,6 +181,7 @@ frappe.ui.form.on('Work Order Data', {
                                                 }
                                         }
                                 });
+								console.log("ji")
                         },__('Create'));
 		}
 		if(frm.doc.docstatus == 1 && (frm.doc.status == "RSC-Repaired and Shipped Client")) {
