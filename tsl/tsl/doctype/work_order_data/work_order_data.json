@@ -12,6 +12,7 @@
   "sales_rep_name",
   "customer",
   "customer_name",
+  "customer_email",
   "address",
   "incharge",
   "quoted_date",
@@ -460,12 +461,19 @@
    "fieldtype": "Link",
    "label": "Initial Evaluation",
    "options": "Initial Evaluation"
+  },
+  {
+   "fetch_from": "customer.email_id",
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Customer Email",
+   "options": "Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-25 11:49:20.910161",
+ "modified": "2023-07-01 15:20:21.095465",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
