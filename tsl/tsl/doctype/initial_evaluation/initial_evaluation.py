@@ -69,7 +69,7 @@ class InitialEvaluation(Document):
 			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 			if not part_no:
 				item_doc = frappe.new_doc("Item")
-				#item_doc.naming_series = "CO.#####"
+				item_doc.naming_series = "P.#####"
 				item_doc.model = model
 				item_doc.category_ = category
 				item_doc.sub_category = sub_cat
@@ -134,7 +134,7 @@ class InitialEvaluation(Document):
 				if  not part_no:
 					frappe.errprint('ijt')
 					item_doc = frappe.new_doc("Item")
-					item_doc.naming_series = 'P.#####'
+					item_doc.naming_series = 'P.######'
 					item_doc.model = model
 					item_doc.category_ = category
 					item_doc.sub_category = sub_cat
@@ -163,7 +163,7 @@ class InitialEvaluation(Document):
 						'allow_zero_valuation_rate':1
 					})
 					if self.parts_returned != 1:
-						frappe.msgprint("Please Return the Unused parts")
+						frappe.throw("<b style=color:red>Please Return the Unused Parts to Submit this Document</b> ")
 					else:
 						new_doc.save(ignore_permissions=True)
 					if new_doc.name:
