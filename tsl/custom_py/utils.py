@@ -55,16 +55,16 @@ def send_sales_reminder():
                                 )
 
 
-def create_hooks():
-    job = frappe.db.exists('Scheduled Job Type', 'send_sales_reminder')
-    if not job:
-        sjt = frappe.new_doc("Scheduled Job Type")  
-        sjt.update({
-            "method" : 'tsl.custom_py.utils.send_sales_reminder',
-            "frequency" : 'Cron',
-            "cron_format" : '30 16 * * *'
-        })
-        sjt.save(ignore_permissions=True)
+# def create_hooks():
+#     job = frappe.db.exists('Scheduled Job Type', 'send_sales_reminder')
+#     if not job:
+#         sjt = frappe.new_doc("Scheduled Job Type")  
+#         sjt.update({
+#             "method" : 'tsl.custom_py.utils.send_sales_reminder',
+#             "frequency" : 'Cron',
+#             "cron_format" : '30 16 * * *'
+#         })
+#         sjt.save(ignore_permissions=True)
 #def previous_day_mail():
 #	yesterday = add_days(today(), -1)
 #	sales_report = frappe.db.sql("""select date,sales_user from `tabSales Track` where date ='%s'"""%(yesterday),as_dict=1)

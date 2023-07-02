@@ -181,7 +181,12 @@ doc_events = {
 scheduler_events = {
 	"weekly": [
 		"tsl.custom_py.quotation.send_qtn_reminder_mail"
-	]
+	],
+    "cron": {
+		"30 19 * * *": [
+			"tsl.custom_py.utils.send_sales_reminder",
+		]
+	},
 }
 # 	"all": [
 # 		"tsl.tasks.all"

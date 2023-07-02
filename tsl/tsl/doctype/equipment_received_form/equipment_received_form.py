@@ -121,6 +121,7 @@ def get_contacts(customer):
 
 @frappe.whitelist()
 def create_workorder_data(order_no, f):
+    frappe.errprint(order_no)
     l = []
     sn_no = ""
     doc = frappe._dict(json.loads(order_no))

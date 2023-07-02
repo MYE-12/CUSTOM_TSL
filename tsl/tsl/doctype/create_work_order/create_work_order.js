@@ -1,4 +1,4 @@
-// Copyright (c) 2022, Tsl and contributors
+//Copyright (c) 2022, Tsl and contributors
 // For license information, please see license.txt
 
 frappe.ui.form.on('Create Work Order', {
@@ -6,6 +6,7 @@ frappe.ui.form.on('Create Work Order', {
 		console.log("hi")
 		frm.disable_save()
 		frm.add_custom_button(__("Create Work Order"), function(){
+			console.log("jiujgh")
 			frappe.call({
 				'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
 				'freeze':true,
@@ -15,6 +16,8 @@ frappe.ui.form.on('Create Work Order', {
 
 				},
 				'callback':function(res){
+					console.log(res.message)
+
 					if(res.message){
 						console.log(res.message)
 						if(res.message == "Confirm"){
@@ -22,14 +25,14 @@ frappe.ui.form.on('Create Work Order', {
 							    'Complaints not given.Are you sure to Continue?',
 							    function(){
 							       frappe.call({
-					                                'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
-					                                'freeze':true,
-					                                'args':{
-					                                'order_no':cur_frm.doc,
-					                                'f':1
+												'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
+												'freeze':true,
+												'args':{
+												'order_no':cur_frm.doc,
+												'f':1
 
-					                                },
-					                                'callback':function(res){
+												},
+												'callback':function(res){
 										if(res.message){
 											console.log(res)
 										 	cur_frm.reload_doc();
