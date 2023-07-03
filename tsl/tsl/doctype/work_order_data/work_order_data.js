@@ -82,7 +82,6 @@ frappe.ui.form.on('Work Order Data', {
 						"wod": frm.doc.name
 					},
 					callback: function(r) {
-						console.log(r.message.customer_email)
 
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
