@@ -82,6 +82,8 @@ frappe.ui.form.on('Work Order Data', {
 						"wod": frm.doc.name
 					},
 					callback: function(r) {
+						console.log(r)
+
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);

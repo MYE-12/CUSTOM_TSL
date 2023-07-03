@@ -32,6 +32,7 @@ def get_item_image(erf_no,item):
 @frappe.whitelist()
 def create_quotation(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
+	frappe.errprint(doc)
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer
