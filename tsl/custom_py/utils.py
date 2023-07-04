@@ -12,6 +12,8 @@ from frappe.utils import (
 	rounded,
 	today,
 )
+from frappe.utils import add_to_date
+
 #from frappe.permissions import has_role
 
 @frappe.whitelist()
@@ -53,6 +55,41 @@ def send_sales_reminder():
                                         subject="Daily Sales Report Reminder",
                                         message = "Kindly fill the Daily Report by EOD"
                                 )
+
+@frappe.whitelist()
+def create_rfq_int(ps):
+	doc = frappe.get_doc("Initial Evaluation",ps)
+	new_doc = frappe.new_doc("Request for Quotation")
+	new_doc.company = doc.company
+	new_doc.branch = frappe.db.get_value("Work Order Data",doc.work_order_data,"branch")
+	new_doc.initial_evaluation = ps
+	new_doc.work_order_data = doc.work_order_data
+	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
+	new_doc.items=[]
+	psn = doc.items[-1].part_sheet_no
+	for i in doc.get("items"):
+		if i.parts_availability == "No" and psn == i.part_sheet_no:
+			new_doc.append("items",{
+				"item_code":i.part,
+				"item_name":i.part_name,
+				"description":i.part_name,
+				'model':i.model,
+				"category":i.category,
+				"sub_category":i.sub_category,
+				"mfg":i.manufacturer,
+				'serial_no':i.serial_no,
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"stock_qty":1,
+				"qty":i.qty,
+				"schedule_date":add_to_date(new_doc.transaction_date,days = 2),
+				"warehouse":new_doc.branch,
+				"branch":new_doc.branch,
+				"work_order_data":doc.work_order_data,
+				"department":frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
+			})
+	return new_doc
 
 
 # def create_hooks():

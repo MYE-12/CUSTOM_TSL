@@ -221,7 +221,7 @@ frappe.ui.form.on('Initial Evaluation', {
                         if(!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){
 			frm.add_custom_button(__("Request for Quotation"), function(){
 				frappe.call({
-					method: "tsl.tsl.doctype.part_sheet.part_sheet.create_rfq_from_int",
+					method: "tsl.custom_py.utils.create_rfq_int",
 					args: {
 						"ps": frm.doc.name
 					},
