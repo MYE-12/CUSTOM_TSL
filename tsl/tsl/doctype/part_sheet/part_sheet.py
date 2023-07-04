@@ -78,7 +78,7 @@ def create_rfq(ps):
 			})
 	return new_doc
 @frappe.whitelist()
-def create_rfq_from_intevl(ps):
+def create_rfq_from_int(ps):
 	doc = frappe.get_doc("Initial Evaluation",ps)
 	new_doc = frappe.new_doc("Request for Quotation")
 	new_doc.company = doc.company
