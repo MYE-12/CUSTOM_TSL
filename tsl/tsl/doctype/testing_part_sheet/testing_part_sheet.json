@@ -25,6 +25,7 @@
   "part_description",
   "parts_availability",
   "bin_no",
+  "parts_website",
   "from_scrap",
   "spare_part_image_section",
   "add_image",
@@ -166,7 +167,6 @@
    "columns": 1,
    "fieldname": "part_sheet_no",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Part Sheet No"
   },
   {
@@ -221,12 +221,17 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Used QTY"
+  },
+  {
+   "fieldname": "parts_website",
+   "fieldtype": "Data",
+   "label": "Parts Website"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-24 15:41:52.436870",
+ "modified": "2023-07-06 08:27:39.105530",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Testing Part Sheet",
