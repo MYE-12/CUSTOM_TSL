@@ -136,7 +136,6 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -238,6 +237,7 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Branch",
    "options": "Branch"
   }
@@ -245,7 +245,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-08 10:51:29.966067",
+ "modified": "2023-06-19 08:15:45.832093",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

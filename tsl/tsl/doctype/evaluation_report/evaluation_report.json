@@ -119,7 +119,7 @@
   {
    "allow_on_submit": 1,
    "fieldname": "column_break_13",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Parts Used"
   },
   {
@@ -436,10 +436,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-06-20 11:53:19.187761",
+ "modified": "2023-07-10 09:52:11.683968",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -457,5 +458,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
