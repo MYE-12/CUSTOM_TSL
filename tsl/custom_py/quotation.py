@@ -112,7 +112,7 @@ def before_save(self,method):
 		for i in self.get("items"):
 			total_qtn_rate = 0
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
-			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
 			# frappe.errprint(part_sheet_ini)
 			for j in  part_sheet_ini:
 				# frappe.errprint(j)
@@ -140,6 +140,7 @@ def before_save(self,method):
 							sq_no =  ""
 					else:
 						price = k.price_ea
+						frappe.errprint(pr)
 						source = "TSL Inventory"
 						sq_no = ""
 					self.append("item_price_details",{
