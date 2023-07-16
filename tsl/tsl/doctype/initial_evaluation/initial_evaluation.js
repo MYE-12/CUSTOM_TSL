@@ -182,7 +182,7 @@ frappe.ui.form.on('Initial Evaluation', {
 				cur_frm.refresh_fields();
 
 			}
-			frm.fields_dict['evaluation_details'].grid.get_field('item').get_query = function(frm, cdt, cdn) {
+			frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
 				var child = locals[cdt][cdn];
 				var d = {};
 				if(child.model_no){
@@ -196,7 +196,9 @@ frappe.ui.form.on('Initial Evaluation', {
 				}
 				d['item_group'] = "Equipments";
 				return{
-					filters: d
+					filters: d,
+					// cur_frm.set_value("part", d)
+
 				}
 			}
 				frm.fields_dict['items'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
@@ -212,7 +214,6 @@ frappe.ui.form.on('Initial Evaluation', {
 						if(child.sub_category){
 							d['sub_category'] = child.sub_category;
 						}
-						console.log(d)
 						return{
 							filters: d
 						}
@@ -329,6 +330,10 @@ frappe.ui.form.on('Testing Part Sheet', {
                         }
                }
 	},
+	// validate:function(frm,cdt,cdn){
+	// 	console.log("OUK")
+	// 	cur_frm.refresh_field("part")
+	// },
 
 //	before_items_remove:function(frm,cdt,cdn){
 //		var item = locals[cdt][cdn];

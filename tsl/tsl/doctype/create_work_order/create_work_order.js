@@ -96,7 +96,7 @@ frappe.ui.form.on('Create Work Order', {
 								}
 								//console.log("sale")
 								console.log(r.message)
-								//console.log(r.message[2])
+								console.log(r.message[2])
 								if(r.message[1]){
 									frm.set_query("sales_person", function() {
 										return {
