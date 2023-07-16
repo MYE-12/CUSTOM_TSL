@@ -70,7 +70,7 @@ def create_quotation(wod):
 	new_doc.sales_rep = doc.sales_rep
 	
 	ths = frappe.db.sql('''select status,hours_spent,ratehour,extra_repair_time as ext,evaluation_time as et,estimated_repair_time as ert from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
-	thst = frappe.db.sql('''select evaluation_time as et,estimated_repair_time as ert from `tabInitial Evaluation` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
+	thst = frappe.db.sql('''select evaluation_time as et,estimated_repair_time as ert from `tabInitial Evaluation` where docstatus = 0 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
 	frappe.errprint(thst)
 	if len(ths):
 		total = 0
