@@ -26,10 +26,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-04-26 12:22:35.093026",
+ "modified": "2023-07-18 09:10:14.025538",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Sub Category",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -47,5 +48,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

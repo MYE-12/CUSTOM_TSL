@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:model",
  "creation": "2022-03-08 09:06:10.644214",
@@ -19,8 +20,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Model",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -46,10 +46,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-06 15:57:44.482564",
+ "modified": "2023-07-18 09:16:59.713787",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -68,5 +69,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
