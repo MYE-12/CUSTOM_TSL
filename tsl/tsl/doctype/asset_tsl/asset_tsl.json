@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-07-24 14:03:46.504304",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "user_name",
+  "department",
+  "branch",
+  "year_of_purchase",
+  "column_break",
+  "model",
+  "serial_no",
+  "brand"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "TSL-KW-PC-.####\nTSL-KW-LAP-.####\nTSL-CYRIX-KW-PC-.####\nTSL-CYRIX-KW-LAP-.####\nTSL-SA-PC-.####\nTSL-SA-LAP-.####\nTSL-CYRIX-SA-PC-.####\nTSL-CYRIX-SA-LAP-.####\nTSL-UAE-PC-.####\nTSL-UAE-LAP-.####\nTSL-CYRIX-UAE-PC-.####\nTSL-CYRIX-UAE-LAP-.####"
+  },
+  {
+   "fieldname": "user_name",
+   "fieldtype": "Data",
+   "label": "User Name"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Data",
+   "label": "Serial No"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "year_of_purchase",
+   "fieldtype": "Data",
+   "label": "Year of Purchase"
+  },
+  {
+   "fieldname": "brand",
+   "fieldtype": "Select",
+   "label": "Brand",
+   "options": "\nDELL\nHP\nLENOVO"
+  },
+  {
+   "fieldname": "column_break",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-07-24 14:25:04.737085",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Asset TSL",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
