@@ -3,7 +3,7 @@
 from pydoc import doc
 import frappe
 from frappe.model.document import Document
-from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
+# from tsl.tsl.doctype.work_order_data.work_order_data import get_item_image as img
 from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 from frappe.model.document import Document
 
