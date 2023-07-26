@@ -147,7 +147,7 @@ work_order_data:function(frm){
 			},
 			callback(r) {
 				if(r.message) {
-					cur_frm.clear_table("received_equipment")
+					// cur_frm.clear_table("received_equipment")
 					for(var i=0;i<r.message.length;i++){
 						var childTable = cur_frm.add_child("received_equipment");
 						childTable.item_code = r.message[i]['item_code'],

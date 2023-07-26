@@ -312,8 +312,9 @@ def create_workorder_data(order_no, f):
         new_doc.incharge = doc.incharge
         new_doc.priority_status = doc.sts
         new_doc.naming_series = d[new_doc.branch]
-        new_doc.attach_image = (i['attach_image']).replace(
-            " ", "%20") if 'attach_image' in i and i['attach_image'] else ""
+        new_doc.attach_image = (i['attach_image'])
+        # new_doc.image = (i['attach_image']).replace(
+            # " ", "%20")
         # serial_no=""
         # if i['has_serial_no'] and i['serial_no']:
         # 	serial_no = i['serial_no']

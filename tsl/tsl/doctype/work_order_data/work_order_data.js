@@ -205,23 +205,23 @@ frappe.ui.form.on('Work Order Data', {
 		if(frm.doc.attach_image && frm.doc.docstatus == 1){
 			cur_frm.set_df_property("image", "options","<img src="+frm.doc.attach_image+">");
 			cur_frm.refresh_fields();
-			// if(frm.doc.material_list.length > 0){
-				frappe.call({
-					method: "tsl.tsl.doctype.work_order_data.work_order_data.get_item_image",
-					args: {
-						"erf_no":frm.doc.equipment_recieved_form,
-						"item":frm.doc.material_list[0].item_code
-					},
-					callback: function(r) {
-						if(r.message) {
-							console.log(r.message)
-							cur_frm.set_df_property("image", "options","<img src="+r.message+">");
-							cur_frm.refresh_fields();
-						}
-					}
-				});
-			}
-		// }
+			// // if(frm.doc.material_list.length > 0){
+			// 	frappe.call({
+			// 		method: "tsl.tsl.doctype.work_order_data.work_order_data.get_item_image",
+			// 		args: {
+			// 			"erf_no":frm.doc.equipment_recieved_form,
+			// 			"item":frm.doc.material_list[0].item_code
+			// 		},
+			// 		callback: function(r) {
+			// 			if(r.message) {
+			// 				console.log(r.message)
+			// 				cur_frm.set_df_property("image", "options","<img src="+r.message+">");
+			// 				cur_frm.refresh_fields();
+			// 			}
+			// 		}
+			// 	});
+			// }
+		}
 		
 	},
 	// check_for_extra_partsheets:function(frm){
