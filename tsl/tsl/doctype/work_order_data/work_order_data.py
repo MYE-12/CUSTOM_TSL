@@ -25,6 +25,7 @@ from frappe.utils.data import (
 @frappe.whitelist()
 def get_item_image(erf_no,item):
 	image = frappe.db.sql('''select attach_image as image from `tabRecieved Equipment` where parent = %s and item_code = %s and docstatus = 1 ''',(erf_no,item),as_dict=1)
+	frappe.errprint(image)
 	if image[0]['image']:
 		img = image[0]['image'].replace(" ","%20")
 		return img

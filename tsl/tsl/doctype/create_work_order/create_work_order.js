@@ -6,7 +6,6 @@ frappe.ui.form.on('Create Work Order', {
 		console.log("hi")
 		frm.disable_save()
 		frm.add_custom_button(__("Create Work Order"), function(){
-			console.log("jiujgh")
 			frappe.call({
 				'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data',
 				'freeze':true,
@@ -94,30 +93,30 @@ frappe.ui.form.on('Create Work Order', {
 								if(r.message[0]){
 									frm.set_value("incharge",r.message[0][0])
 								}
-								//console.log("sale")
+								console.log("sale")
 								console.log(r.message)
 								console.log(r.message[2])
 								if(r.message[1]){
+								console.log("Rsale")
+
 									frm.set_query("sales_person", function() {
 										return {
 												"filters": {
 														"name":["in", r.message[1]]
 												}
 										};
+										
 									});
+									
 								}
 								
-								if(r.message[1]){
-									frm.set_value("sales_person",r.message[1])
-									//frappe.db.get_value('User',r.message[1], 'full_name', (values) => {
-									//console.log(values)
-									//frm.set_value("sales_person_name", values.full_name);
-								//});
-								}
-								else{
-									frm.set_value("sales_person","");
-									frm.set_value("sales_person_name","");
-								}
+								// if(r.message[1]){
+								// 	frm.set_value("sales_person",r.message[1])
+								// }
+								// else{
+								// 	frm.set_value("sales_person","");
+								// 	frm.set_value("sales_person_name","");
+								// }
 
 
 						}

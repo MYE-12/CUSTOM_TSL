@@ -99,6 +99,7 @@ frappe.ui.form.on('Equipment Received Form', {
 						"customer": frm.doc.customer,
 				},
 				callback(r) {
+					console.log(r)
 						if(r.message) {
 								frm.set_query("incharge", function() {
 										return {
@@ -154,7 +155,7 @@ work_order_data:function(frm){
 						childTable.type = r.message[i]["type"],
 						childTable.qty = r.message[i]["qty"],
 						cur_frm.refresh_fields("received_equipment");
-						frm.doc.sales_person = r.message[i]["sales_rep"],
+						// frm.doc.sales_person = r.message[i]["sales_rep"],
 						frm.doc.customer = r.message[i]["customer"],
 						frm.trigger("customer");
 						frm.doc.address = r.message[i]["address"],

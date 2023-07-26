@@ -51,6 +51,7 @@ class InitialEvaluation(Document):
 		doc.status = "UE-Under Evaluation"
 		doc.save(ignore_permissions = True)
 		if self.if_parts_required:
+			
 			f=0
 			for i in self.get("items"):
 				if not i.part_sheet_no:
@@ -61,6 +62,23 @@ class InitialEvaluation(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
+			if i.part and i.parts_availability == "Yes" and i.used_qty < 0:
+
+				new_doc = frappe.new_doc("Stock Entry")
+				new_doc.stock_entry_type = "Material Issue"
+				new_doc.company = self.company
+				# new_doc.to_warehouse = "Kuwait - TSL"
+				new_doc.append("items",{
+					's_warehouse':"Kuwait - TSL",
+					'item_code':i.part,
+					'qty':i.qty,
+					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+					'conversion_factor':1,
+					'allow_zero_valuation_rate':1
+				})
+				new_doc.save(ignore_permissions = True)
+				new_doc.submit()
+
 		for pm in self.get("items"):
 			model = pm.model
 			part_no = pm.part
@@ -75,6 +93,7 @@ class InitialEvaluation(Document):
 				item_doc.sub_category = sub_cat
 				item_doc.item_group = "Components"
 				item_doc.save(ignore_permissions = True)
+			
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0
@@ -145,29 +164,31 @@ class InitialEvaluation(Document):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]	
 		for parts in self.items:
 			update_part = parts.qty - (parts.used_qty or 0)
-			item_name = frappe.get_value("Item",parts.part,"description")
-			for i in self.get('items'):
-				if i.part:
-					new_doc = frappe.new_doc("Stock Entry")
-					new_doc.stock_entry_type = "Material Receipt"
-					new_doc.company = self.company
-					new_doc.to_warehouse = "Repair - Kuwait - TSL"
-					new_doc.append("items",{
-						't_warehouse':"Repair - Kuwait - TSL",
-						'item_code':i.part,
-						'item_name':item_name,
-						'description':item_name,
-						'qty':update_part,
-						'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-						'conversion_factor':1,
-						'allow_zero_valuation_rate':1
-					})
-					if self.parts_returned != 1:
-						frappe.throw("<b style=color:red>Please Return the Unused Parts to Submit this Document</b> ")
-					else:
-						new_doc.save(ignore_permissions=True)
-					if new_doc.name:
-						new_doc.submit()
+			
+			if update_part >0 :
+				item_name = frappe.get_value("Item",parts.part,"description")
+				for i in self.get('items'):
+					if i.part:
+						new_doc = frappe.new_doc("Stock Entry")
+						new_doc.stock_entry_type = "Material Receipt"
+						new_doc.company = self.company
+						new_doc.to_warehouse = "Kuwait - TSL"
+						new_doc.append("items",{
+							't_warehouse':"Kuwait - TSL",
+							'item_code':i.part,
+							'item_name':item_name,
+							'description':item_name,
+							'qty':update_part,
+							'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+							'conversion_factor':1,
+							'allow_zero_valuation_rate':1
+						})
+						if self.parts_returned != 1:
+							frappe.throw("<b style=color:red>Please Return the Unused Parts to Submit this Document</b> ")
+						else:
+							new_doc.save(ignore_permissions=True)
+						if new_doc.name:
+							new_doc.submit()
 		for i in self.items:
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
