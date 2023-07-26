@@ -238,7 +238,6 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Branch",
    "options": "Branch"
   }
@@ -246,7 +245,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-17 15:32:37.391749",
+ "modified": "2023-07-23 16:54:31.384837",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",
