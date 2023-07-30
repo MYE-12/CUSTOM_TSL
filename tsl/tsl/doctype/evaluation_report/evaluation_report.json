@@ -63,7 +63,8 @@
   "section_break_52",
   "attach_image",
   "column_break_55",
-  "technician_image"
+  "technician_image",
+  "lab_coordinator"
  ],
  "fields": [
   {
@@ -431,12 +432,18 @@
    "fieldtype": "Link",
    "label": "Initial Evaluation",
    "options": "Initial Evaluation"
+  },
+  {
+   "fieldname": "lab_coordinator",
+   "fieldtype": "Link",
+   "label": "Lab Coordinator",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-10 09:52:11.683968",
+ "modified": "2023-07-30 08:36:20.026226",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
