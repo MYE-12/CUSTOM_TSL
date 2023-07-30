@@ -249,8 +249,34 @@ def before_save(self,method):
 						"work_order_data":j.work_order_data or "" ,
 						"wo_status":w_doc.status
 })
+@frappe.whitelist()
+def create_cust_qtn(source):
+	doc = frappe.get_doc('Quotation',source)
+	target_doc = frappe.new_doc('Quotation')
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		if type == "Customer Quotation - Repair":
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
+		target_doc.append("quotation_history",{
+			"quotation_type":doc.quotation_type,
+			"status":doc.workflow_state,
+			"quotation_name":doc.name,
+		})
 
-
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+	}, target_doc, postprocess)
+	frappe.errprint(doclist)
+	return doclist
 	
 @frappe.whitelist()
 def get_quotation_history(source,rate = None,type = None):

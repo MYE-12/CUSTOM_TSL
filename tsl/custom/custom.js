@@ -103,9 +103,28 @@ frappe.ui.form.on('Quotation', {
         },
 
     refresh:function(frm){
-
-		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
+			
+			frappe.call({
+				method: "tsl.custom_py.quotation.create_cust_qtn",
+				args: {
+					"source": frm.doc.name,
+					"type":"Customer Quotation - Repair"
+				},
+				callback: function(r) {
+					if(r.message) {
+						var doc = frappe.model.sync(r.message);
+						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+
+
+					}
+				}
+			});
+
+
+					}, ('Create'))
+		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus===1){
+		frm.add_custom_button(__('Customer Quotations'), function(){
 				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				let inc_rate = diff / frm.doc.total_qty
                 frappe.call({
@@ -117,7 +136,8 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-						console.log(r.message)
+						console.log('ku')
+						console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
