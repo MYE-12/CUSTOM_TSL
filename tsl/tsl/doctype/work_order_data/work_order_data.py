@@ -158,7 +158,7 @@ def create_test_evaluation_report(doc_no):
         new_doc = frappe.new_doc("Initial Evaluation")
         new_doc.company = doc.company
         new_doc.customer = doc.customer
-        new_doc.attn = doc.sales_rep
+        new_doc.attn = doc.sales_rep_name
         new_doc.work_order_data = doc.name
         new_doc.attach_image = doc.attach_image
 
@@ -205,6 +205,7 @@ def create_initial_eval(doc_no):
 	new_doc = frappe.new_doc("Evaluation Report")
 	new_doc.company =  doc.company
 	new_doc.customer = doc.customer
+	new_doc.attn = doc.attn
 	new_doc.work_order_data = doc.work_order_data
 	new_doc.initial_evaluation = doc.name
 	new_doc.parts_availability = doc.parts_availability

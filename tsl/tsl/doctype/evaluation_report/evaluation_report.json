@@ -76,9 +76,8 @@
   },
   {
    "fieldname": "attn",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Sales Person",
-   "options": "User",
    "read_only": 1
   },
   {
@@ -125,7 +124,7 @@
   },
   {
    "fieldname": "section_break_17",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Item Photo"
   },
   {
@@ -436,6 +435,7 @@
   {
    "fieldname": "lab_coordinator",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Lab Coordinator",
    "options": "User"
   }
@@ -443,7 +443,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-30 08:36:20.026226",
+ "modified": "2023-07-31 10:09:43.892714",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
