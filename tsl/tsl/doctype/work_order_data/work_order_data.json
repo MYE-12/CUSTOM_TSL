@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "details_tab",
   "naming_series",
   "sales_rep",
   "sales_rep_name",
@@ -23,8 +24,6 @@
   "equipment_recieved_form",
   "priority_status",
   "column_break_7",
-  "image",
-  "attach_image",
   "received_date",
   "company",
   "branch",
@@ -41,11 +40,15 @@
   "invoice_no",
   "invoice_date",
   "section_break_14",
-  "material_list",
+  "image",
+  "attach_image",
+  "section_break_dc2tn",
   "previously_quoted_unit",
   "wod_component",
-  "complaints",
   "section_break_36",
+  "material_list",
+  "section_break_oy5vi",
+  "complaints",
   "no_power",
   "no_output",
   "no_display",
@@ -328,7 +331,7 @@
   },
   {
    "fieldname": "section_break_36",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Complaints"
   },
   {
@@ -446,7 +449,7 @@
    "allow_on_submit": 1,
    "depends_on": "eval:frappe.user.has_role(\"Admin\",\"GCEO\")",
    "fieldname": "online_price_section",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Online Price"
   },
   {
@@ -468,12 +471,25 @@
    "fieldtype": "Data",
    "label": "Customer Email",
    "options": "Email"
+  },
+  {
+   "fieldname": "details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "section_break_dc2tn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_oy5vi",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-26 13:24:12.720954",
+ "modified": "2023-07-31 10:06:28.426311",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

@@ -55,7 +55,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r.message)
+							// console.log(r.message)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -136,8 +136,8 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-						console.log('ku')
-						console.log(r)
+						// console.log('ku')
+						// console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -347,8 +347,8 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										console.log('JI')
-										console.log(r.message)
+										// console.log('JI')
+										// console.log(r.message)
 										//cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
@@ -648,7 +648,7 @@ frappe.ui.form.on('Quotation', {
 		frm.trigger("overall_discount_amount")
 	},
 	discount_percent:function(frm){
-		console.log("ki")
+		// console.log("ki")
 		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
 			frm.doc.overall_discount_amount = (frm.doc.actual_price * frm.doc.discount_percent)/100
 			frm.trigger("overall_discount_amount")
