@@ -4,7 +4,7 @@ from erpnext.accounts.party import get_party_account_currency, get_party_details
 from erpnext.stock.doctype.material_request.material_request import set_missing_values
 from frappe.model.mapper import get_mapped_doc
 import json
-
+import requests
 @frappe.whitelist()
 def reject_other_sq(sq,sod = None,wod = None):
     if sod:
@@ -90,11 +90,19 @@ def on_submit(self,method):
     elif self.initial_evaluation:
         frappe.errprint("on submit SQ")
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
+        
         for i in self.get("items"):
+            url = "https://api.exchangerate.host/%s"%(self.currency)
+            payload = {}
+            headers = {}
+            response = requests.request("GET", url, headers=headers, data=payload)
+            data = response.json()
+            rate_kw = data['rates']['KWD']
+            conv_rate = i.rate * rate_kw
             for j in doc.get("items"):
                 if j.part == i.item_code:
-                    j.price_ea = i.rate
-                    j.total = i.rate * j.qty
+                    j.price_ea = conv_rate
+                    j.total = conv_rate * j.qty
         add = 0
         for i in doc.items:
             add += j.total
