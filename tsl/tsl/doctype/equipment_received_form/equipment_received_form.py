@@ -121,7 +121,6 @@ def get_contacts(customer):
 
 @frappe.whitelist()
 def create_workorder_data(order_no, f):
-    frappe.errprint(order_no)
     l = []
     sn_no = ""
     doc = frappe._dict(json.loads(order_no))
@@ -182,6 +181,8 @@ def create_workorder_data(order_no, f):
                 f = 1
             if int(f) == 0:
                 return "Confirm"
+            frappe.errprint(doc)
+            
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
             item = frappe.db.get_value(
@@ -189,7 +190,6 @@ def create_workorder_data(order_no, f):
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
             elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
-                frappe.errprint("ssn1")
                 i['item_code'] = item
                 frappe.defaults.set_user_default("warehouse", None)
                 sn_doc = frappe.new_doc("Serial No")
@@ -228,7 +228,6 @@ def create_workorder_data(order_no, f):
                             sn_no = sn_doc.name
         else:
             if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
-                frappe.errprint("ssn1")
                 frappe.defaults.set_user_default("warehouse", None)
                 sn_doc = frappe.new_doc("Serial No")
                 sn_doc.serial_no = i['serial_no']
@@ -335,17 +334,15 @@ def create_workorder_data(order_no, f):
             "serial_no": sn_no,
             "quantity": i['qty'],
         })
-        # new_doc.append("price_table",{
-        #     "price_type":i["price_type_section"],
-        #     "new_price":i["price"],
-        #     "used_websitelink":i["website"] or "websitelink":i["website"]
-        # })
+        new_doc.append("price_table",{
+            "price_type":i["price_type_section"],
+            "new_price":i["price"],
+            "websitelink":"Tese",
+        })
         new_doc.save(ignore_permissions=True)
         if new_doc.name and "attach_image" in i:
             frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
         new_doc.submit()
-# frappe.errprint("sn-no")
-# frappe.errprint(sn_no)
         if i['item_code']:
             se_doc = frappe.new_doc("Stock Entry")
             se_doc.stock_entry_type = "Material Receipt"

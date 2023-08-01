@@ -6,6 +6,7 @@ import json
 from frappe.model.mapper import get_mapped_doc
 from frappe import get_print
 import datetime
+import requests
 @frappe.whitelist()
 def get_wod_items(wod):
 	wod = json.loads(wod)
@@ -104,6 +105,7 @@ def get_similar_unit_details(name):
 
 def before_save(self,method):
 	if self.quotation_type == "Internal Quotation - Repair":
+		
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
 		tc = self.technician_hours_spent
@@ -129,12 +131,19 @@ def before_save(self,method):
 #							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
 #						})
 					if k.parts_availability == "No":
+						
 						source = "Supplier"
 						price = k.price_ea
 						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
 						# frappe.errprint(sq_no)
+						url = "https://api.exchangerate.host/USD"
+						payload = {}
+						headers = {}
+						response = requests.request("GET", url, headers=headers, data=payload)
+						data = response.json()
+						print((data['rates']['KWD']))
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:

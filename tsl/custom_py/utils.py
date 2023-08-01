@@ -14,8 +14,17 @@ from frappe.utils import (
 	today,
 )
 from frappe.utils import add_to_date
-
+import requests
 #from frappe.permissions import has_role
+@frappe.whitelist()
+def currency():
+
+	url = "https://api.exchangerate.host/USD"
+	payload = {}
+	headers = {}
+	response = requests.request("GET", url, headers=headers, data=payload)
+	data = response.json()
+	print((data['rates']['KWD']))
 
 @frappe.whitelist()
 def send_sales_reminder():
@@ -27,7 +36,7 @@ def send_sales_reminder():
 	if sales_report == []:
 		frappe.sendmail(
 						recipients= sales_person,
-					   # cc = ["yousuf@tsl-me.com"],
+					   cc = ["yousuf@tsl-me.com"],
 						subject="Daily Sales Report Reminder",
 						message = "Kindly fill the Daily Report by EOD"
 						)
