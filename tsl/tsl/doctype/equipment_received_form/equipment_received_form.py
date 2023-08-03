@@ -124,7 +124,6 @@ def create_workorder_data(order_no, f):
     l = []
     sn_no = ""
     doc = frappe._dict(json.loads(order_no))
-    frappe.errprint(doc)
     if not doc.branch:
         frappe.throw("Please Specify Branch Name")
     if not doc.customer:
@@ -181,7 +180,6 @@ def create_workorder_data(order_no, f):
                 f = 1
             if int(f) == 0:
                 return "Confirm"
-            frappe.errprint(doc)
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:

@@ -74,13 +74,20 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 
 def on_submit(self,method):
     if self.part_sheet:
-        frappe.errprint("on submit SQ")
+        frappe.errprint("on submit SQ1")
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
+            url = "https://api.exchangerate.host/%s"%(self.currency)
+            payload = {}
+            headers = {}
+            response = requests.request("GET", url, headers=headers, data=payload)
+            data = response.json()
+            rate_kw = data['rates']['KWD']
+            conv_rate = i.rate * rate_kw
             for j in doc.get("items"):
                 if j.part == i.item_code:
-                    j.price_ea = i.rate
-                    j.total = i.rate * j.qty
+                    j.price_ea = conv_rate
+                    j.total = conv_rate * j.qty
         add = 0
         for i in doc.items:
             add += j.total

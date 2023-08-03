@@ -40,18 +40,19 @@
   "if_parts_required",
   "update_availability_status",
   "items",
-  "parts_availability",
   "section_break_34",
   "total_qty",
   "column_break_27",
+  "parts_availability",
   "total_amount",
-  "section_break_25",
-  "evaluation_time",
-  "estimated_repair_time",
-  "extra_repair_time",
-  "return_repair_time",
   "actions_section",
   "status",
+  "section_break_25",
+  "evaluation_time",
+  "extra_repair_time",
+  "column_break_cb5ok",
+  "estimated_repair_time",
+  "return_repair_time",
   "technician_comment_section",
   "comment",
   "column_break_45",
@@ -197,7 +198,7 @@
   },
   {
    "fieldname": "section_break_25",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Time Used"
   },
   {
@@ -438,12 +439,16 @@
    "hidden": 1,
    "label": "Lab Coordinator",
    "options": "User"
+  },
+  {
+   "fieldname": "column_break_cb5ok",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-31 10:09:43.892714",
+ "modified": "2023-08-02 13:53:02.049770",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

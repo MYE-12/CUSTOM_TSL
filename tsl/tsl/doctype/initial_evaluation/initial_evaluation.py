@@ -12,14 +12,16 @@ class InitialEvaluation(Document):
 	def update_availability_status(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
-			if i.part and i.parts_availability == "No" and not i.from_scarp:
-				bin = frappe.db.sql('''select name from `tabBin` where item_code = {0} and warehouse in ('{1}') and (actual_qty-evaluation_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
+			if i.part and i.parts_availability == "No" :
+				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
+				frappe.errprint(bin)
 				if len(bin) and 'name' in bin[0]:
 					sts = "Yes"
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
 					i.price_ea = price
 					i.parts_availability = sts
-					frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
+
+					frappe.db.sql('''update `tabTesting Part Sheet` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
 					frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
 		f = 0
@@ -93,7 +95,13 @@ class InitialEvaluation(Document):
 				item_doc.sub_category = sub_cat
 				item_doc.item_group = "Components"
 				item_doc.save(ignore_permissions = True)
-			
+		if self.if_parts_required:
+			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			if self.parts_availability == "Yes":
+				doc.status = "AP-Available Parts"
+			else:
+				doc.status = "SP-Searching Parts"
+			doc.save(ignore_permissions=True)
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0
@@ -103,7 +111,7 @@ class InitialEvaluation(Document):
 				i.price_ea = price_sts[0] if len(price_sts) else 0
 				i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
-				frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
+				frappe.db.sql('''update `tabTesting Part Sheet` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
 			#add += (i.price_ea * i.qty)
 		#self.total_amount = add
 		frappe.db.sql('''update `tabInitial Evaluation` set total_amount = %s where name = %s ''',(add,self.name))
@@ -113,7 +121,7 @@ class InitialEvaluation(Document):
 			for i in self.get("items"):
 				if not i.part_sheet_no:
 					i.part_sheet_no = int(self.part_no)+1
-					frappe.db.sql('''update `tabPart Sheet Item` set part_sheet_no = %s where name = %s''',((int(self.part_no)+1),i.name))
+					frappe.db.sql('''update `tabTesting Part Sheet` set part_sheet_no = %s where name = %s''',((int(self.part_no)+1),i.name))
 				else:
 					self.part_no = i.part_sheet_no
 				if i.parts_availability == "No" and not i.from_scrap:
@@ -127,7 +135,7 @@ class InitialEvaluation(Document):
 				# doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				# doc.status = "SP-Searching Parts"
 				# doc.save(ignore_permissions=True)
-				#	scrap = frappe.db.sql('''select * from `tabPart Sheet Item` where name = %s ''', (self.name),as_dict=1)
+				#	scrap = frappe.db.sql('''select * from `tabTesting Part Sheet` where name = %s ''', (self.name),as_dict=1)
 				#	frappe.errprint(scrap)
 			else:
 				self.parts_availability = "Yes"
@@ -139,11 +147,11 @@ class InitialEvaluation(Document):
 					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 			for i in self.items:
 				i.is_not_edit = 1
-				frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
+				frappe.db.sql('''update `tabTesting Part Sheet` set is_not_edit = 1 where name = %s''',(i.name))
 			lpn = self.items[-1].part_sheet_no
 			for i in self.items:
 				if i.part_sheet_no != lpn:
-					frappe.db.sql('''update `tabPart Sheet Item` set is_read_only = 1 where name = %s''',(i.name))
+					frappe.db.sql('''update `tabTesting Part Sheet` set is_read_only = 1 where name = %s''',(i.name))
 			for pm in self.get("items"):
 				model = pm.model
 				part_no = pm.part
@@ -195,7 +203,7 @@ class InitialEvaluation(Document):
 
 		for i in self.items:
 			i.is_not_edit = 1
-			frappe.db.set_value("Part Sheet Item",{"parent":self.name,"name":i.name},"is_not_edit",1)
+			frappe.db.set_value("Testing Part Sheet",{"parent":self.name,"name":i.name},"is_not_edit",1)
 		if self.if_parts_required:
 			wod = frappe.get_doc("Work Order Data",self.work_order_data)
 			extra_ps = frappe.db.sql('''select name,attn from `tabInitial Evaluation` where work_order_data = %s and docstatus = 1 and creation <= %s''',(self.work_order_data,self.creation),as_dict=1)
