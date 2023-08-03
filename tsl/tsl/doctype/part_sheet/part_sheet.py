@@ -22,9 +22,12 @@ def get_valuation_rate(item,warehouse,qty):
 	price = 0
 	sts = "No"
 	invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":warehouse,"is_branch":1},"name",as_list=1)]
-	#if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent],"actual_qty":[">=",qty]}):
-	bin = frappe.db.sql("""select name from `tabBin` where item_code = '{0}'  and warehouse in ('{1}') and (actual_qty-(evaluation_qty or ini_evaluation_qty)) >= {2}""".format(item,"','".join(invent),qty),as_dict =1)
+	frappe.errprint(invent)
 
+	#if frappe.db.get_value("Bin",{"item_code":item,"warehouse":["in",invent],"actual_qty":[">=",qty]}):
+	bin = frappe.db.sql("""select name from `tabBin` where item_code = '{0}'  and warehouse in ('{1}') and (actual_qty) >= {2}""".format(item,"','".join(invent),qty),as_dict =1)
+
+	frappe.errprint('bin')
 	frappe.errprint(bin)
 	if len(bin) and 'name' in bin[0]:
 		price = frappe.db.get_value("Bin",{"item_code":item},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":item,"buying":1},"price_list_rate")

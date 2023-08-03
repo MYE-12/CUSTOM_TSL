@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:work_order",
+ "creation": "2023-08-03 12:20:19.010067",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "work_order",
+  "section_break_oduay",
+  "received_date",
+  "status",
+  "customer_name",
+  "column_break_jlfwf",
+  "sales_person_name",
+  "technician",
+  "section_break_oco16",
+  "material_list",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "work_order",
+   "fieldtype": "Link",
+   "label": "Work Order",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "section_break_oduay",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "work_order.received_date",
+   "fieldname": "received_date",
+   "fieldtype": "Data",
+   "label": "Received Date",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "work_order.status",
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "work_order.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jlfwf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "work_order.sales_rep_name",
+   "fieldname": "sales_person_name",
+   "fieldtype": "Data",
+   "label": "Sales Person Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "work_order.technician",
+   "fieldname": "technician",
+   "fieldtype": "Data",
+   "label": "Technician",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_oco16",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "material_list",
+   "fieldtype": "Table",
+   "label": "Material List",
+   "options": "Material List",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Work Order Look Up",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-08-03 12:20:19.010067",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Work Order Data Lookup",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

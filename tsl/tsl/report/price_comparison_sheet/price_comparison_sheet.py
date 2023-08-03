@@ -28,11 +28,11 @@ def get_columns(filters=None):
 			"label": frappe.bold("Qty"),
 			"fieldtype": "Float",
 		},
-		{
-			"fieldname":"buy_source",
-			"label": frappe.bold("Planned Actual Buying Source"),
-			"fieldtype": "Data",
-		},
+		# {
+		# 	"fieldname":"buy_source",
+		# 	"label": frappe.bold("Planned Actual Buying Source"),
+		# 	"fieldtype": "Data",
+		# },
 	]
 	if filters.get("sod_no"):
 		suppliers = frappe.db.sql('''select supplier from `tabSupplier Quotation` where supply_order_data = %s and docstatus != 2''',filters.get('sod_no'),as_list=1)
@@ -42,7 +42,7 @@ def get_columns(filters=None):
 		s = i[0].lower().replace(" ","_")
 		columns.append({
 			"fieldname":s,
-			"label":frappe.bold(i[0]),
+			"label":"<b>Supplier</b>"+":"+frappe.bold(i[0]),
 			"fieldtype": "Data",
 			"width":170
 		})
@@ -56,7 +56,8 @@ def get_columns(filters=None):
 
 def get_data(filters=None):
 	data = []
-	data.append({"description":"","qty":"","buy_source":""})
+	# data.append({"description":"","qty":"","buy_source":""})
+	data.append({"description":"","qty":""})
 	if filters.get("sod_no"):
 		suppliers = frappe.db.sql('''select quotation,supplier,name,currency from `tabSupplier Quotation` where supply_order_data = %s and docstatus != 2''',filters.get('sod_no'),as_dict=1)
 	elif filters.get("wod_no"):
@@ -120,6 +121,6 @@ def get_data(filters=None):
 		sum += float(doc.freight_charges)+float(doc.custom_clearance)+float(doc.payment_commission)
 		gt[i['supplier'].lower().replace(" ","_")] = frappe.bold(fmt_money(sum,currency = i["currency"]))
 	data.append(gt)
-	print(data)
+	frappe.errprint(data)
 	return data
 

@@ -14,7 +14,6 @@ def get_wod_items(wod):
 	for k in list(wod):
 		tot = 0
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=1 group by work_order_data''',k,as_dict=1)
-		# frappe.errprint(tot)
 		doc = frappe.get_doc("Work Order Data",k)
 		branch = doc.branch
 		if len(tot) and 'total_amount' in tot[0]:
@@ -116,14 +115,10 @@ def before_save(self,method):
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
 			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
 			# part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
-			# frappe.errprint(part_sheet_ini)
 			for j in  part_sheet_ini:
-				# frappe.errprint(j)
 				doc = frappe.get_doc("Initial Evaluation",j['name']) 
 				for k in doc.get("items"):
-					# frappe.errprint(k.price_ea)
 					total_qtn_rate += k.total
-					# frappe.errprint(total_qtn_rate)
 #					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
 #						self.append("similar_items_quoted_before",{
 #							"item":k.part_name,
@@ -131,19 +126,12 @@ def before_save(self,method):
 #							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
 #						})
 					if k.parts_availability == "No":
-						
 						source = "Supplier"
 						price = k.price_ea
 						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
-						# frappe.errprint(sq_no)
-						url = "https://api.exchangerate.host/USD"
-						payload = {}
-						headers = {}
-						response = requests.request("GET", url, headers=headers, data=payload)
-						data = response.json()
-						print((data['rates']['KWD']))
+					
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:
@@ -165,7 +153,6 @@ def before_save(self,method):
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 
 			for j in  part_sheet:
-				# frappe.errprint(j)
 				doc = frappe.get_doc("Evaluation Report",j['name']) 
 				for k in doc.get("items"):
 					total_qtn_rate += k.total
@@ -194,6 +181,8 @@ def before_save(self,method):
 						"item":k.part,
 						"item_source":source,
 						"model":k.model,
+						"price":price,
+						"amount":k.total,
 						"supplier_quotation":sq_no
 
 					})
@@ -284,7 +273,6 @@ def create_cust_qtn(source):
 			
 		},
 	}, target_doc, postprocess)
-	# frappe.errprint(doclist)
 	return doclist
 	
 @frappe.whitelist()
