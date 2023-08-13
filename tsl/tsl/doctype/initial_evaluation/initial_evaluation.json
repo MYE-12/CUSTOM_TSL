@@ -16,6 +16,7 @@
   "parts_returned",
   "column_break_3",
   "company",
+  "branch",
   "date",
   "priority_status",
   "work_order_data",
@@ -73,7 +74,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Naming Series",
-   "options": "TEVAL-REP-.YYYY.-"
+   "options": "TEVAL-KW-.YYYY.-\nTEVAL-JED-.YYYY.-\nTEVAL-RIYADH-.YYYY.-\nTEVAL-DMM-.YYYY.-"
   },
   {
    "fieldname": "customer",
@@ -113,6 +114,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -356,6 +358,7 @@
   {
    "fieldname": "technician_on_work_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Technician On Work"
   },
   {
@@ -443,12 +446,20 @@
   {
    "fieldname": "column_break_hmowd",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "work_order_data.branch",
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-07-31 10:08:35.831985",
+ "modified": "2023-08-06 09:27:36.214763",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

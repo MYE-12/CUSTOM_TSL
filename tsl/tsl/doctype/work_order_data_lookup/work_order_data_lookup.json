@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "work_order",
+  "branch",
   "section_break_oduay",
   "received_date",
   "status",
@@ -18,7 +19,8 @@
   "technician",
   "section_break_oco16",
   "material_list",
-  "amended_from"
+  "amended_from",
+  "items"
  ],
  "fields": [
   {
@@ -86,15 +88,28 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Work Order Look Up",
+   "options": "Work Order Data Lookup",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Testing Part Sheet"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-08-03 12:20:19.010067",
+ "modified": "2023-08-07 11:56:12.079587",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data Lookup",

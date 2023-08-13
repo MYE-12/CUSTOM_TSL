@@ -9,4 +9,7 @@ class WorkOrderDataLookup(Document):
 @frappe.whitelist()
 def get_wod_for_tool(doc):
 	wod_data = frappe.get_doc("Work Order Data",doc)
-	return wod_data
+	initial_eval = frappe.db.exists("Initial Evaluation",{'work_order_data':doc})
+	if initial_eval:
+		eval = frappe.get_doc('Initial Evaluation',initial_eval)	
+		return wod_data,eval

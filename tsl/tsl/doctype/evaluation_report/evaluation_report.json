@@ -396,6 +396,7 @@
   {
    "fieldname": "technician_on_work_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Technician On Work"
   },
   {
@@ -448,7 +449,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-08-02 13:53:02.049770",
+ "modified": "2023-08-03 12:49:25.548269",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

@@ -133,9 +133,9 @@ def create_workorder_data(order_no, f):
     if not doc.repair_warehouse:
         d = {
             "Kuwait - TSL": "Repair - Kuwait - TSL",
-            "Dammam - TSL-SA": "Repair - Dammam - TSL-SA",
-            "Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
-            "Riyadh - TSL-SA": "Repair - Riyadh - TSL-SA"
+            "Dammam - TSL-SA": "Dammam - TSL-SA",
+            "Jeddah - TSL-SA": "Jeddah - TSL-SA",
+            "Riyadh - TSL-SA": "Riyadh - TSL-SA"
         }
         doc.repair_warehouse = d[doc.branch]
     if doc.address:

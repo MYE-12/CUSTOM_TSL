@@ -63,6 +63,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
                 },
             }
         }, target_doc, postprocess)
+        frappe.errprint(doclist)
         doclist.save()
         l.append(doclist.name)
     if l:
@@ -73,6 +74,31 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
         return True
 
 def on_submit(self,method):
+    if not self.part_sheet:
+        items = self.get("items")
+        for it in items:
+            ie = frappe.get_doc("Initial Evaluation",it.initial_evaluation)
+            for i in self.get('items'):
+                url = "https://api.exchangerate.host/%s"%(self.currency)
+                payload = {}
+                headers = {}
+                response = requests.request("GET", url, headers=headers, data=payload)
+                data = response.json()
+                rate_kw = data['rates']['KWD']
+                conv_rate = i.rate * rate_kw
+                for j in ie.get("items"):
+                    if j.part == i.item_code:
+                        j.price_ea = conv_rate
+                        j.total = conv_rate * j.qty
+            add = 0
+            for i in ie.items:
+                add += j.total
+            ie.total_amount = add
+            frappe.errprint('updated')
+
+            ie.save(ignore_permissions=True)
+
+
     if self.part_sheet:
         frappe.errprint("on submit SQ1")
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
@@ -94,6 +120,7 @@ def on_submit(self,method):
         doc.total_amount = add
 
         doc.save(ignore_permissions=True)
+   
     elif self.initial_evaluation:
         frappe.errprint("on submit SQ")
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
@@ -116,6 +143,7 @@ def on_submit(self,method):
         doc.total_amount = add
 
         doc.save(ignore_permissions=True)
+
     if self.supply_order_data:
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         for i in self.get('items'):

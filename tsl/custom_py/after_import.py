@@ -8,11 +8,18 @@ def get_items_from_ps(wod):
     l = []
     for i in list(wod):
         er =  frappe.db.sql('''select name from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s and parts_availability = "No" ''',i,as_dict=1)
-        if not er:
-            frappe.msgprint("No parts available for this Work Order")
-            return
+        ie =  frappe.db.sql('''select name from `tabInitial Evaluation` where docstatus = 0 and work_order_data = %s and parts_availability = "No" ''',i,as_dict=1)
+      
         for j in er:
             doc = frappe.get_doc("Evaluation Report",j['name'])
+            for k in doc.items:
+                if k.parts_availability == "No":
+                    d = frappe._dict((k.as_dict()))
+                    d["wod"] = i
+                    d["part_sheet"] = j["name"]
+                    l.append(d)
+        for j in ie:
+            doc = frappe.get_doc("Initial Evaluation",j['name'])
             for k in doc.items:
                 if k.parts_availability == "No":
                     d = frappe._dict((k.as_dict()))

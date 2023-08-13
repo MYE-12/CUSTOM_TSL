@@ -101,7 +101,16 @@ frappe.ui.form.on('Quotation', {
         
     
         },
-
+	validate(frm){
+			cur_frm.clear_table('technician_hours_spent')
+			
+		if(!frm.doc.__islocal){
+			var price = frm.doc.item_price_details
+				var wod_t = 0
+					$.each(price,function(i,v){		
+				})			
+		}
+	},
     refresh:function(frm){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 			
@@ -346,10 +355,8 @@ frappe.ui.form.on('Quotation', {
 									"wod": selections
 								},
 								callback: function(r) {
+									console.log(r)
 									if(r.message) {
-										// console.log('JI')
-										// console.log(r.message)
-										//cur_frm.clear_table("items");
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
 										var tot_qty=0;
@@ -366,11 +373,8 @@ frappe.ui.form.on('Quotation', {
 											// childTable.rate = r.message[i]["total_amt"]
 											// if(r.message[i]["total_amt"]){
 											// 	var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
-											// 	childTable.amount = amt
-												
-											// }
-											
-											
+											// 	childTable.amount = amt		
+											// }										
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
 										}

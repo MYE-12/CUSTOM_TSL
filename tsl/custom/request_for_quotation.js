@@ -83,27 +83,32 @@ frappe.ui.form.on('Request for Quotation', {
                         callback: function(r) {
                                 if(r.message) {
                                         cur_frm.clear_table("items");
-                                        for(var i=0;i<r.message.length;i++){
-                                                // if(r.message[i]["parts_availabilty"] == "No"){
-                                                        var childTable = cur_frm.add_child("items");
-                                                        childTable.item_code = r.message[i]["part"],
-                                                        childTable.item_name = r.message[i]["part_name"],
-                                                        childTable.mfg = r.message[i]["manufacturer"],
-                                                        childTable.model = r.message[i]["model"],
-                                                        childTable.category = r.message[i]["category"],
-                                                        childTable.sub_category = r.message[i]["sub_category"],
-                                                        childTable.serial_no = r.message[i]["serial_no"],
-                                                        childTable.description = r.message[i]["part_name"],
-                                                        childTable.qty = r.message[i]["qty"],
-                                                        childTable.uom = "Nos",
-                                                        childTable.warehouse = frm.doc.branch,
-                                                        childTable.branch =  frm.doc.branch,
-                                                        childTable.work_order_data =  r.message[i]['wod'],
-                                                        childTable.conversion_factor =1,
-                                                        childTable.department = frm.doc.department,
-                                                        frm.doc.part_sheet = r.message[i]["part_sheet"]
+                                        // for(var i=0;i<r.message.length;i++){
+                                                console.log(r)
+                                                $.each(r.message, function(i,v){
+                                                        console.log(v)
+                                                        var item_child = cur_frm.add_child("items");
+                                                        item_child.item_code = v.part,
+                                                        item_child.item_name = v.part_name,
+                                                        item_child.mfg = v.manufacturer,
+                                                        item_child.model = v.model,
+                                                        item_child.category = v.category,
+                                                        item_child.sub_category = v.sub_category,
+                                                        item_child.serial_no = v.serial_no,
+                                                        item_child.description = v.part_name,
+                                                        item_child.qty = v.qty,
+                                                        item_child.uom = "Nos",
+                                                        item_child.warehouse = frm.doc.branch,
+                                                        item_child.branch =  frm.doc.branch,
+                                                        item_child.work_order_data =  v.wod,
+                                                        item_child.conversion_factor =1,
+                                                        item_child.department = frm.doc.department,
+                                                        item_child.initial_evaluation = v.parent
                                                         cur_frm.refresh_fields("items");
-                                                }
+                                                })
+                                                // if(r.message[i]["parts_availabilty == "No"){
+                                                       
+                                                // }
                                         // }
                                                 
                                                      
