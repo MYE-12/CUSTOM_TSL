@@ -302,32 +302,36 @@ def before_save(self,method):
 						"wo_status":w_doc.status
 })
 @frappe.whitelist()
-def create_cust_qtn(source):
+def create_cust_qtn(type,source):
 	doc = frappe.get_doc('Quotation',source)
 	target_doc = frappe.new_doc('Quotation')
-	def postprocess(source, target_doc):
-		target_doc.quotation_type = type
-		if type == "Customer Quotation - Repair":
-			target_doc.overall_discount_amount = 0
-			target_doc.margin_rate = 0
-			target_doc.discount_amount = 0
-		target_doc.append("quotation_history",{
-			"quotation_type":doc.quotation_type,
-			"status":doc.workflow_state,
-			"quotation_name":doc.name,
+	target_doc.party_name = doc.party_name
+	target_doc.branch_name = doc.branch_name
+	target_doc.internal_quotation = source
+	target_doc.quotation_type = "Customer Quotation - Repair"
+	
+	target_doc.quotation_type = type
+	if type == "Customer Quotation - Repair":
+		target_doc.overall_discount_amount = 0
+		target_doc.margin_rate = 0
+		target_doc.discount_amount = 0
+	target_doc.append("quotation_history",{
+		"quotation_type":doc.quotation_type,
+		"status":doc.workflow_state,
+		"quotation_name":doc.name,
+	})
+	for i in doc.items:
+		target_doc.append("items",{
+			"item_code":i.item_code,
+			'rate':i.margin_amount,
+			'uom':1,
+			'description':i.description,
+			'item_name':i.item_name,
+			'wod_no':i.wod_no,
+			'qty':i.qty,
 		})
 
-	doclist = get_mapped_doc("Quotation",source , {
-		"Quotation": {
-			"doctype": "Quotation",
-			
-		},
-		"Quotation Item": {
-			"doctype": "Quotation Item",
-			
-		},
-	}, target_doc, postprocess)
-	return doclist
+	return target_doc
 	
 @frappe.whitelist()
 def get_quotation_history(source,rate = None,type = None):
