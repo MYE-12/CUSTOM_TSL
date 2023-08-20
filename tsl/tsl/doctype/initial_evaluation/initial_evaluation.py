@@ -60,8 +60,11 @@ class InitialEvaluation(Document):
 					f=1
 			if f:
 				self.parts_availability = "No"
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "SP-Searching Parts"
 			else:
 				self.parts_availability = "Yes"
+				doc.status = "AP-Available Parts"
 			
 
 		for pm in self.get("items"):

@@ -102,7 +102,7 @@ frappe.ui.form.on('Quotation', {
     
         },
 	validate(frm){
-			cur_frm.clear_table('technician_hours_spent')
+			// cur_frm.clear_table('technician_hours_spent')
 			
 		if(!frm.doc.__islocal){
 			var price = frm.doc.item_price_details

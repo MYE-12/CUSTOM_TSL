@@ -190,7 +190,7 @@ def before_save(self,method):
 						sq_no = ""
 					self.append("item_price_details",{
 						"item":k.part,
-						"item_source":source,
+						# "item_source":source,
 						"model":k.model,
 						"price":price,
 						"amount":k.total,
