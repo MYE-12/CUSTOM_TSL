@@ -234,5 +234,41 @@ def getstock_detail(item_details,company):
 
 
 # @frappe.whitelist()
-# def get_quot_for_tech_hour():
-	
+# def item_qty():
+# 	item = frappe.db.sql("""select name,model,category,sub_category,qty from `tabItem`""",as_dict=1)
+# 	ir = 0
+# 	data= ""
+
+# 	for i in item:
+		
+			
+# 		data += '<table class="table table-bordered">'
+# 		data += '<tr>'
+# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
+# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>CATEGORY</b><center></td>'
+# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SUB - CATEGORY</b><center></td>'
+# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>QTY</b><center></td>'
+		
+# 		data += '</tr>'
+# 		data +='<tr>'
+# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.name)
+# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.model)
+# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.category)
+# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.sub_category)
+# 		if i.qty < 10:
+# 			data += '<td style="text-align:center;" colspan=1>%s</td>'%(i.qty)
+# 			ir += 1
+# 		data += '</tr>'
+		
+# 		data += '</table>'
+# 		# print(message)
+# 		# print(data)
+
+# 		frappe.sendmail(
+# 		recipients='yousuf@tsl-me.com',
+# 		sender="info@tsl-me.com",
+# 		subject="Low Stock",
+# 		message=data
+			
+# 	)

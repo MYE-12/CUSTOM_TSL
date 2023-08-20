@@ -38,7 +38,6 @@ class InitialEvaluation(Document):
 	def validate(self):
 		add = 0
 		self.total_amount = 0
-				
 		for i in self.items:
 			if i.part and not i.from_scrap:
 #				price_sts = get_valuation_rate(i.part,i.qty,frappe.defaults.get_defaults().company)
@@ -53,7 +52,6 @@ class InitialEvaluation(Document):
 		doc.status = "UE-Under Evaluation"
 		doc.save(ignore_permissions = True)
 		if self.if_parts_required:
-			
 			f=0
 			for i in self.get("items"):
 				if not i.part_sheet_no:
@@ -64,22 +62,7 @@ class InitialEvaluation(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
-			if i.part and i.parts_availability == "Yes" and i.used_qty < 0:
-
-				new_doc = frappe.new_doc("Stock Entry")
-				new_doc.stock_entry_type = "Material Issue"
-				new_doc.company = self.company
-				# new_doc.to_warehouse = "Kuwait - TSL"
-				new_doc.append("items",{
-					's_warehouse':"Kuwait - TSL",
-					'item_code':i.part,
-					'qty':i.qty,
-					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-					'conversion_factor':1,
-					'allow_zero_valuation_rate':1
-				})
-				new_doc.save(ignore_permissions = True)
-				new_doc.submit()
+			
 
 		for pm in self.get("items"):
 			model = pm.model
@@ -192,11 +175,29 @@ class InitialEvaluation(Document):
 							'allow_zero_valuation_rate':1
 						})
 						if self.parts_returned != 1:
-							frappe.throw("<b style=color:red>Please Return the Unused Parts to Submit this Document</b> ")
+							frappe.throw("<b style=color:red>Please Mention the Used Parts and Return the Unused Parts to Submit this Document</b> ")
 						else:
 							new_doc.save(ignore_permissions=True)
 						if new_doc.name:
 							new_doc.submit()
+			if i.part and i.parts_availability == "Yes" and i.used_qty > 0:
+				frappe.errprint("Status")
+				new_doc = frappe.new_doc("Stock Entry")
+				new_doc.stock_entry_type = "Material Issue"
+				new_doc.company = self.company
+				new_doc.to_warehouse = "Kuwait - TSL"
+
+				# new_doc.to_warehouse = "Kuwait - TSL"
+				new_doc.append("items",{
+					's_warehouse':"Kuwait - TSL",
+					'item_code':i.part,
+					'qty':i.used_qty,
+					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+					'conversion_factor':1,
+					'allow_zero_valuation_rate':1
+				})
+				new_doc.save(ignore_permissions = True)
+				new_doc.submit()
 		for i in self.items:
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
@@ -210,7 +211,7 @@ class InitialEvaluation(Document):
 			if extra_ps:
 				wod.append("extra_part_sheets",{
 					"part_sheet_name":self.name,
-					"technician":self.attn,
+					"attn":self.attn,
 				})
 				wod.save(ignore_permissions = True)
 

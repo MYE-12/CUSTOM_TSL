@@ -74,7 +74,8 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
         return True
 
 def on_submit(self,method):
-    if not self.part_sheet:
+    if (self.part_sheet and self.initial_evaluation):
+        frappe.errprint("JIX")
         items = self.get("items")
         for it in items:
             ie = frappe.get_doc("Initial Evaluation",it.initial_evaluation)

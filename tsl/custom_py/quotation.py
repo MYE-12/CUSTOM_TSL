@@ -321,9 +321,10 @@ def create_cust_qtn(type,source):
 		"quotation_name":doc.name,
 	})
 	for i in doc.items:
+		frappe.errprint("lko")
 		target_doc.append("items",{
 			"item_code":i.item_code,
-			'rate':i.margin_amount,
+			'rate':i.margin_amount or i.rate, 
 			'uom':1,
 			'description':i.description,
 			'item_name':i.item_name,
