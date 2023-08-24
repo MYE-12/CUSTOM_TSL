@@ -115,8 +115,8 @@ frappe.ui.form.on('Quotation', {
 		})
 		cur_frm.clear_table("parts_price_list_");
 		var child = cur_frm.add_child("parts_price_list_");
-		child.tsl_inventory = amt,
-		child.supplier = sup_amt,
+		child.tsl_inventory = Math.ceil(amt).toFixed(2),
+		child.supplier = Math.ceil(sup_amt).toFixed(2),
 		console.log(amt)
 		cur_frm.refresh_fields("parts_price_list_");
 	
