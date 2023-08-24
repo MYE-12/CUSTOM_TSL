@@ -1,36 +1,43 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:sub_category",
+ "autoname": "SC.######",
  "creation": "2022-03-07 15:30:28.264295",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "sub_category",
-  "category"
+  "category",
+  "model"
  ],
  "fields": [
   {
    "fieldname": "sub_category",
    "fieldtype": "Data",
-   "label": "Sub Category",
-   "unique": 1
+   "in_preview": 1,
+   "label": "Sub Category"
   },
   {
    "fieldname": "category",
    "fieldtype": "Link",
    "label": "Parent Category",
    "options": "Category"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Link",
+   "label": "Model",
+   "options": "Item Model"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-18 09:10:14.025538",
+ "modified": "2023-08-22 12:43:26.145899",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Sub Category",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -47,7 +54,9 @@
   }
  ],
  "quick_entry": 1,
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "sub_category"
 }

@@ -65,7 +65,8 @@ class InitialEvaluation(Document):
 			else:
 				self.parts_availability = "Yes"
 				doc.status = "AP-Available Parts"
-			
+		if not self.evaluation_time or not self.estimated_repair_time:
+			frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
 
 		for pm in self.get("items"):
 			model = pm.model
@@ -183,24 +184,24 @@ class InitialEvaluation(Document):
 							new_doc.save(ignore_permissions=True)
 						if new_doc.name:
 							new_doc.submit()
-			if i.part and i.parts_availability == "Yes" and i.used_qty > 0:
-				frappe.errprint("Status")
-				new_doc = frappe.new_doc("Stock Entry")
-				new_doc.stock_entry_type = "Material Issue"
-				new_doc.company = self.company
-				new_doc.to_warehouse = "Kuwait - TSL"
+				if i.part and i.parts_availability == "Yes" and i.used_qty > 0:
+					frappe.errprint("Status")
+					new_doc = frappe.new_doc("Stock Entry")
+					new_doc.stock_entry_type = "Material Issue"
+					new_doc.company = self.company
+					new_doc.to_warehouse = "Kuwait - TSL"
 
-				# new_doc.to_warehouse = "Kuwait - TSL"
-				new_doc.append("items",{
-					's_warehouse':"Kuwait - TSL",
-					'item_code':i.part,
-					'qty':i.used_qty,
-					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-					'conversion_factor':1,
-					'allow_zero_valuation_rate':1
-				})
-				new_doc.save(ignore_permissions = True)
-				new_doc.submit()
+					# new_doc.to_warehouse = "Kuwait - TSL"
+					new_doc.append("items",{
+						's_warehouse':"Kuwait - TSL",
+						'item_code':i.part,
+						'qty':i.used_qty,
+						'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+						'conversion_factor':1,
+						'allow_zero_valuation_rate':1
+					})
+					new_doc.save(ignore_permissions = True)
+					new_doc.submit()
 		for i in self.items:
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))

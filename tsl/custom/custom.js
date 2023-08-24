@@ -55,7 +55,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							// console.log(r.message)
+							console.log(r.message)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -102,14 +102,24 @@ frappe.ui.form.on('Quotation', {
     
         },
 	validate(frm){
-			// cur_frm.clear_table('technician_hours_spent')
-			
-		if(!frm.doc.__islocal){
-			var price = frm.doc.item_price_details
-				var wod_t = 0
-					$.each(price,function(i,v){		
-				})			
-		}
+		cur_frm.clear_table('technician_hours_spent')
+		var amt = 0
+		var sup_amt = 0
+		$.each(frm.doc.item_price_details,function(i,v){
+			if (v.item_source =="TSL Inventory"){
+				amt += v.amount	
+			} 
+			else{
+				sup_amt += v.amount
+			}
+		})
+		cur_frm.clear_table("parts_price_list_");
+		var child = cur_frm.add_child("parts_price_list_");
+		child.tsl_inventory = amt,
+		child.supplier = sup_amt,
+		console.log(amt)
+		cur_frm.refresh_fields("parts_price_list_");
+	
 	},
     refresh:function(frm){
 		frm.add_custom_button(__('Customer Quotation'), function(){
@@ -133,15 +143,22 @@ frappe.ui.form.on('Quotation', {
 
 
 					}, ('Create'))
-		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus===1){
+		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus==0){
 		frm.add_custom_button(__('Customer Quotations'), function(){
-				let diff = frm.doc.final_approved_price - frm.doc.rounded_total
-				let inc_rate = diff / frm.doc.total_qty
+				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+				// let inc_rate = diff / frm.doc.total_qty
+				// $.each(frm.doc.items,function(i,v){
+				// 	var mar = v.margin_amount
+				// })
+				// frappe.db.get_value('Quotation', frm.doc.items, 'margin_amount', (v) => {
+				// 	var mar = v
+					
+				// });
                 frappe.call({
 					method: "tsl.custom_py.quotation.get_quotation_history",
 					args: {
 						"source": frm.doc.name,
-						"rate":inc_rate,
+						// "rate":inc_rate,
 						"type":"Customer Quotation - Repair"
 					},
 					callback: function(r) {

@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "field:model",
+ "autoname": "M.######",
  "creation": "2022-03-08 09:06:10.644214",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -46,11 +46,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-18 09:16:59.713787",
+ "modified": "2023-08-22 15:15:47.984562",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -67,8 +67,11 @@
   }
  ],
  "quick_entry": 1,
+ "search_fields": "model",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "model",
  "track_changes": 1
 }

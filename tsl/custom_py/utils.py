@@ -179,96 +179,55 @@ def getstock_detail(item_details,company):
 		data += '</table>'
 				
 	return data
-# def create_hooks():
-#     job = frappe.db.exists('Scheduled Job Type', 'send_sales_reminder')
-#     if not job:
-#         sjt = frappe.new_doc("Scheduled Job Type")  
-#         sjt.update({
-#             "method" : 'tsl.custom_py.utils.send_sales_reminder',
-#             "frequency" : 'Cron',
-#             "cron_format" : '30 16 * * *'
-#         })
-#         sjt.save(ignore_permissions=True)
-#def previous_day_mail():
-#	yesterday = add_days(today(), -1)
-#	sales_report = frappe.db.sql("""select date,sales_user from `tabSales Track` where date ='%s'"""%(yesterday),as_dict=1)
-#	#print(sales_report)
-	#print(yesterday)
-#	sales_person = ["maaz@tsl-me.com","omar@tsl-me.com","vazeem@tsl-me.com"]
+def create_hooks():
+    job = frappe.db.exists('Scheduled Job Type', 'stock_reminder')
+    if not job:
+        sjt = frappe.new_doc("Scheduled Job Type")  
+        sjt.update({
+            "method" : 'tsl.custom_py.utils.enque_qty',
+            "frequency" : 'Cron',
+            "cron_format" : '30 16 * * *'
+        })
+        sjt.save(ignore_permissions=True)
+
+def enque_qty():
+	frappe.enqueue(
+					item_qty, queue="long", enqueue_after_commit=True
+				)
+@frappe.whitelist()
+def item_qty():
+	item = frappe.db.sql("""select name,model,category,sub_category,qty from `tabItem` where qty < 5 """,as_dict=1)
+	ir = 0
+	data= ""
+	data += '<table class="table table-bordered">'
+	data += '<tr>'
+	data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+	data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
+	data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>CATEGORY</b><center></td>'
+	data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SUB - CATEGORY</b><center></td>'
+	data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>QTY</b><center></td>'
+	data += '</tr>'
 
 
-#	if sales_report == []:
-		#print("1")
-#		frappe.sendmail(
-#                        recipients= sales_person,
-					   # cc = ["yousuf@tsl-me.com"],
-#                        subject="Previous day  Sales Report Reminder",
-#                        message = "Pending on Pervious day Report.Kindly fill ASAP"
-#                        )
-#	for sr in sales_report:
-#		if  sales_person[0]not in sr.sales_user:
-	#		print(sales_person[0])
-#			print(sr.sales_user)
-#			frappe.sendmail(
-#                                        recipients= [sales_person[0]],
-										#cc = ["yousuf@tsl-me.com"],
-#                                        subject="Previous day  Sales Report Reminder",
-#                                        message ="Pending on Pervious day Report.Kindly fill ASAP"
-#                                )
-#		if sales_person[1] not in sr.sales_user:
-	#		print(sales_person[1])
-#			frappe.sendmail(
-#                                recipients= sales_person[1],
-								#cc = ["yousuf@tsl-me.com"],
-#                                subject="Previous day Sales Report Reminder",
-#                                message = "Pending on Previous day Report.Kindly fill ASAP"
-#                                )
-#		if sales_person[2] not in sr.sales_user:
-	#		print(sales_person[2])
-#			frappe.sendmail(
-#                                        recipients= [sales_person[2]],
- #                                       cc = ["yousuf@tsl-me.com"],
-#                                        subject="Previous day Sales Report Reminder",
-#                                        message = "Pending on Pervious day Report.Kindly fill ASAP"
-#                                )
-
-
-# @frappe.whitelist()
-# def item_qty():
-# 	item = frappe.db.sql("""select name,model,category,sub_category,qty from `tabItem`""",as_dict=1)
-# 	ir = 0
-# 	data= ""
-
-# 	for i in item:
+	for i in item:
 		
+		data +='<tr>'
+		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.name)
+		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.model)
+		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.category)
+		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.sub_category)
+		data += '<td style="text-align:center;" colspan=1>%s</td>'%(i.qty)
+		data += '</tr>'
+		
+	data += '</table>'
+		# print(message)
+	print(data)
+
+	frappe.sendmail(
+	recipients='yousuf@tsl-me.com',
+	sender="info@tsl-me.com",
+	subject="Low Stock",
+	message=data
+	
 			
-# 		data += '<table class="table table-bordered">'
-# 		data += '<tr>'
-# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
-# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
-# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>CATEGORY</b><center></td>'
-# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SUB - CATEGORY</b><center></td>'
-# 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>QTY</b><center></td>'
-		
-# 		data += '</tr>'
-# 		data +='<tr>'
-# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.name)
-# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.model)
-# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.category)
-# 		data += '<td style="text-align:center" colspan=1>%s</td>'%(i.sub_category)
-# 		if i.qty < 10:
-# 			data += '<td style="text-align:center;" colspan=1>%s</td>'%(i.qty)
-# 			ir += 1
-# 		data += '</tr>'
-		
-# 		data += '</table>'
-# 		# print(message)
-# 		# print(data)
-
-# 		frappe.sendmail(
-# 		recipients='yousuf@tsl-me.com',
-# 		sender="info@tsl-me.com",
-# 		subject="Low Stock",
-# 		message=data
-			
-# 	)
+	)
