@@ -15,7 +15,6 @@ def get_wod_items(wod):
 	for k in list(wod):
 		tot = 0
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=0 group by work_order_data''',k,as_dict=1)
-		frappe.errprint(tot)
 		doc = frappe.get_doc("Work Order Data",k)
 		branch = doc.branch
 		if len(tot) and 'total_amount' in tot[0]:
@@ -30,6 +29,7 @@ def get_wod_items(wod):
 				"wod": k,
 				"type": i.type,
 				"model_no": i.model_no,
+				"manufacturer": i.mfg,
 				"serial_no": i.serial_no,
 				"qty": i.quantity,
 				"sales_rep":doc.sales_rep,
@@ -122,9 +122,7 @@ def sum_amount(doc,method):
 
 			
 			# ths = frappe.db.sql("""select wod_no `tabQuotation`.work_order_data as wod sum(amount) where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)
-		
-		# frappe.errprint(pi)
-		# frappe.errprint(ths)
+	
 		# sd = frappe.db.sql(""" SELECT
 		# 	sum(`tabItem Price Details`.amount) as pa,
 		# 	sum(`tabTechnician Hours Spent`.total_price) as ta
@@ -138,11 +136,16 @@ def sum_amount(doc,method):
 		# 	WHERE `tabTechnician Hours Spent`.work_order_data = '%s' and `tabItem Price Details`.work_order_data = '%s'
 		#     and `tabQuotation`.name = '%s'
 		# 	""" %(sm.wod_no,sm.wod_no,doc.name),as_dict=True)
-		# frappe.errprint(sd)					
+						
 				
 					# frappe.db.sql('''update `tabQuotation Item` set rate = '{0}' where parent ='{1}' '''.format(tot_a,doc.name))
-def before_save(self,method):
-	
+def show_details(self,method):
+	if self.is_multiple_quotation == 1:
+		tot = 0
+		for i in self.get("items"):
+			tot += i.margin_amount
+		self.actual_price = tot
+
 	if self.quotation_type == "Internal Quotation - Repair":
 		
 		self.item_price_details=[]
@@ -152,7 +155,7 @@ def before_save(self,method):
 			labour_value = t.total_price
 		for i in self.get("items"):
 			total_qtn_rate = 0
-			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
 			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
 			for j in  part_sheet_ini:
 				doc = frappe.get_doc("Initial Evaluation",j['name']) 
@@ -166,17 +169,8 @@ def before_save(self,method):
 						"work_order_data":doc.work_order_data
 					})
 				for k in doc.get("items"):
-					
-
 					price =0
 					total_qtn_rate += k.total
-				
-#					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
-#						self.append("similar_items_quoted_before",{
-#							"item":k.part_name,
-#							"client":frappe.db.get_value("Item",k.part,"last_quoted_client"),
-#							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
-#						})
 					if k.parts_availability == "No":
 						source = "Supplier"
 						price = k.price_ea
@@ -208,22 +202,23 @@ def before_save(self,method):
 		
 			for j in  part_sheet:
 				doc = frappe.get_doc("Evaluation Report",j['name']) 
+				total = 0
+				if doc.evaluation_time and doc.estimated_repair_time:
+					total = round(((doc.evaluation_time/3600) + (doc.estimated_repair_time/3600)),2)
+					self.append("technician_hours_spent",{
+						"total_hours_spent":total,
+						"value":20,
+						"total_price":total*20,
+						"work_order_data":doc.work_order_data
+					})
 				for k in doc.get("items"):
 					total_qtn_rate += k.total
-					# frappe.errprint(total_qtn_rate)
-#					if frappe.db.get_value("Item",k.part,"last_quoted_price") >= 0 and frappe.db.get_value("Item",k.part,"last_quoted_client"):
-#						self.append("similar_items_quoted_before",{
-#							"item":k.part_name,
-#							"client":frappe.db.get_value("Item",k.part,"last_quoted_client"),
-#							"price":frappe.db.get_value("Item",k.part,"last_quoted_price")
-#						})
 					if k.parts_availability == "No":
 						source = "Supplier"
 						price = k.price_ea
 						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
-						frappe.errprint(sq_no)
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:
@@ -245,19 +240,12 @@ def before_save(self,method):
 					
 					if sq_no:
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
-					i.amount = total_qtn_rate /i.qty + labour_value
-					i.rate = total_qtn_rate/i.qty + labour_value
-		# amt = 0
-		# for it in self.get('item_price_details'):
-		# 	if it.item_source == "TSL Inventory":
-		# 		amt = amt + it.amount
-		# frappe.errprint(amt)
-		# self.append("parts_price_list_",{
-		# 	"tsl_intventory":amt
-		# })
-			self.actual_price = self.grand_total
-		if self.final_approved_price:
-			self.in_words1 = frappe.utils.money_in_words(self.final_approved_price) or "Zero"
+					# i.amount = total_qtn_rate /i.qty + labour_value
+					# i.rate = total_qtn_rate/i.qty + labour_value
+		if not self.is_multiple_quotation:
+			self.actual_price = i.rate
+		if self.after_discount_cost:
+			self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
@@ -294,11 +282,10 @@ def before_save(self,method):
 			suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price
 				,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi
 				on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 and q.name != %s''',(i.item_code,self.name),as_dict =1 )
+			
 			if suqb:
-				# frappe.errprint(suqb)
 				self.previously_quoted_unit = []
 				for j in suqb:
-					# frappe.errprint(j)
 					if j.work_order_data:
 						w_doc = frappe.get_doc("Work Order Data",j.work_order_data)
 					
@@ -307,6 +294,7 @@ def before_save(self,method):
 						"sku":j.sku,
 						"model":j.model,
 						"type":j.type,
+						"mfg":j.mfg,
 						"quoted_price":j.quoted_price,
 						"quotation_no":j.quotation_no,
 						"work_order_data":j.work_order_data or "" ,
@@ -332,7 +320,6 @@ def create_cust_qtn(type,source):
 		"quotation_name":doc.name,
 	})
 	for i in doc.items:
-		frappe.errprint("lko")
 		target_doc.append("items",{
 			"item_code":i.item_code,
 			'rate':i.margin_amount or i.rate, 
@@ -376,8 +363,11 @@ def get_quotation_history(source,type = None):
 	}, target_doc, postprocess)
 	for ic in doclist.get('items'):
 		if ic.item_code:
-			frappe.errprint(ic)
 			ic.rate = float(ic.margin_amount)
+		if not ic.margin_amount:
+			ic.rate = doc.after_discount_cost
+
+		
 	# for i in doc.items:
 	# 	rate = i.margin_amount
 	# 	if rate:
@@ -511,7 +501,6 @@ def before_submit(self,method):
 			if i.supplier_quotation and i.item_code:
 				if i.item_code not in d[i.supplier_quotation]:
 					d[i.supplier_quotation].append(i.item_code)
-		print(d)
 		
 		for k,v in d.items():
 			to_add = []

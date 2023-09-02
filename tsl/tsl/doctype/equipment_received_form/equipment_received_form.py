@@ -332,11 +332,11 @@ def create_workorder_data(order_no, f):
             "serial_no": sn_no,
             "quantity": i['qty'],
         })
-        new_doc.append("price_table",{
-            "price_type":i["price_type_section"],
-            "new_price":i["price"],
-            "websitelink":"Tese",
-        })
+        # new_doc.append("price_table",{
+        #     "price_type":i["price_type_section"],
+        #     "new_price":i["price"],
+        #     "websitelink":"Tese",
+        # })
         new_doc.save(ignore_permissions=True)
         if new_doc.name and "attach_image" in i:
             frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))

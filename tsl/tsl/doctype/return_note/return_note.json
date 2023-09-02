@@ -1848,12 +1848,11 @@
   },
   {
    "fieldname": "c_form_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "C-Form No",
    "no_copy": 1,
-   "options": "C-Form",
    "print_hide": 1,
    "read_only": 1
   },
@@ -2068,11 +2067,12 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-03-15 17:47:01.922835",
+ "modified": "2023-08-30 16:12:31.039415",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Return Note",
  "name_case": "Title Case",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -2118,6 +2118,7 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "timeline_field": "customer",
  "title_field": "title",
  "track_changes": 1,

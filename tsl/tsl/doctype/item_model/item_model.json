@@ -27,14 +27,16 @@
    "fieldname": "category",
    "fieldtype": "Link",
    "label": "Category",
-   "options": "Category"
+   "options": "Category",
+   "read_only_depends_on": "eval:!(frappe.user.has_role('Lab Coordinator'))"
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "sub_category",
    "fieldtype": "Link",
    "label": "Sub Category",
-   "options": "Sub Category"
+   "options": "Sub Category",
+   "read_only_depends_on": "eval:!frappe.user.has_role('Lab Coordinator')"
   },
   {
    "fieldname": "description",
@@ -46,7 +48,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-22 15:15:47.984562",
+ "modified": "2023-09-02 09:35:33.683405",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",

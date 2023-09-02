@@ -106,11 +106,12 @@ doc_events = {
 			"tsl.custom_py.quotation.before_submit"
 		],
 		"validate":[
-			"tsl.custom_py.quotation.sum_amount"
+			"tsl.custom_py.quotation.sum_amount",
+            "tsl.custom_py.quotation.show_details"
 		],
-		"before_save":[
-			"tsl.custom_py.quotation.before_save"
-		]
+		# "before_save":[
+			
+		# ]
 	},
 	"Supplier Quotation":{
 		"on_submit":[

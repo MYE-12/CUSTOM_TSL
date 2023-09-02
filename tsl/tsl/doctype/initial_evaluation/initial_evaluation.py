@@ -75,6 +75,7 @@ class InitialEvaluation(Document):
 			sub_cat = pm.sub_category
 			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 			if not part_no:
+				
 				item_doc = frappe.new_doc("Item")
 				item_doc.naming_series = "P.######"
 				item_doc.model = model

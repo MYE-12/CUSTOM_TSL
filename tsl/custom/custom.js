@@ -55,7 +55,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r.message)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -101,7 +100,28 @@ frappe.ui.form.on('Quotation', {
         
     
         },
+	default_discount_percentage(frm){
+		if(frm.doc.default_discount_percentage){
+		var disc_val = (frm.doc.final_approved_price/100)*frm.doc.default_discount_percentage
+		var disc = Math.ceil(frm.doc.final_approved_price - disc_val).toFixed(2)
+		frm.set_value("after_discount_cost",disc)
+		}
+
+	},
 	validate(frm){
+		if(frm.doc.is_multiple_quotation){
+			$.each(frm.doc.items, function(i,v){
+				if(v.margin_amount <= 0){
+					frappe.msgprint({
+						title: __('<b style = color:green>Alert</b>'),
+						indicator: 'green',
+						message: __('<center><b style=color:red>Note : Please Give the Suggested Price for each Work Order Line Item !!</b></center>')
+					});
+
+					// frappe.msgprint("Please Give the Suggested Price for each Work Order Line Item")
+				}
+			})
+		}
 		cur_frm.clear_table('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
@@ -117,34 +137,33 @@ frappe.ui.form.on('Quotation', {
 		var child = cur_frm.add_child("parts_price_list_");
 		child.tsl_inventory = Math.ceil(amt).toFixed(2),
 		child.supplier = Math.ceil(sup_amt).toFixed(2),
-		console.log(amt)
+		child.total_material_cost = Math.ceil(sup_amt + amt).toFixed(2),
 		cur_frm.refresh_fields("parts_price_list_");
 	
 	},
     refresh:function(frm){
-		frm.add_custom_button(__('Customer Quotation'), function(){
+		// frm.add_custom_button(__('Customer Quotation'), function(){
 			
-			frappe.call({
-				method: "tsl.custom_py.quotation.create_cust_qtn",
-				args: {
-					"source": frm.doc.name,
-					"type":"Customer Quotation - Repair"
-				},
-				callback: function(r) {
-					if(r.message) {
-						console.log(r.message)
-						var doc = frappe.model.sync(r.message);
-						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+		// 	frappe.call({
+		// 		method: "tsl.custom_py.quotation.create_cust_qtn",
+		// 		args: {
+		// 			"source": frm.doc.name,
+		// 			"type":"Customer Quotation - Repair"
+		// 		},
+		// 		callback: function(r) {
+		// 			if(r.message) {
+		// 				var doc = frappe.model.sync(r.message);
+		// 				frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
 
-					}
-				}
-			});
+		// 			}
+		// 		}
+		// 	});
 
 
-					}, ('Create'))
-		if(frm.doc.quotation_type === "Internal Quotation - Repair" && frm.doc.docstatus==0){
-		frm.add_custom_button(__('Customer Quotations'), function(){
+		// 			}, ('Create'))
+		if(frm.doc.quotation_type == "Internal Quotation - Repair"){
+		frm.add_custom_button(__('Customer Quotation'), function(){
 				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
 				// let inc_rate = diff / frm.doc.total_qty
 				// $.each(frm.doc.items,function(i,v){
@@ -163,8 +182,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-						// console.log('ku')
-						// console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -373,7 +390,6 @@ frappe.ui.form.on('Quotation', {
 									"wod": selections
 								},
 								callback: function(r) {
-									console.log(r)
 									if(r.message) {
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
@@ -384,6 +400,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.item_name = r.message[i]["item_name"],
 											childTable.wod_no = r.message[i]["wod"],
 											childTable.model_no = r.message[i]["model_no"],
+											childTable.manufacturer = r.message[i]["manufacturer"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["description"],
 											childTable.type = r.message[i]['type'],
@@ -403,7 +420,6 @@ frappe.ui.form.on('Quotation', {
 										// frm.doc.actual_price = frm.doc.rounded_total;
 										// if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
 										// 	frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
-										// 	console.log('Actual price')
 										// }
 										// frm.doc.final_approved_price = frm.doc.actual_price;
 										cur_frm.refresh_fields();
@@ -492,12 +508,12 @@ frappe.ui.form.on('Quotation', {
 
 		}
 
-		if(frm.doc.edit_final_approved_price){ 
-			frm.set_df_property("final_approved_price", "read_only", 0)
-		}
-		else{ 
-			frm.set_df_property("final_approved_price", "read_only", 1)
-		}
+		// if(frm.doc.edit_final_approved_price){ 
+		// 	frm.set_df_property("final_approved_price", "read_only", 0)
+		// }
+		// else{ 
+		// 	frm.set_df_property("final_approved_price", "read_only", 1)
+		// }
 		if(frm.doc.quotation_type != "Internal Quotation - Repair" && frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
 			
 			var d = new frappe.ui.Dialog({
@@ -644,7 +660,6 @@ frappe.ui.form.on('Quotation', {
 //			frm.doc.discount_amount = frm.doc.overall_discount_amount
 //			if(frm.doc.margin_rate){
 //				frm.doc.discount_amount = frm.doc.discount_amount - frm.doc.margin_rate
-//				console.log(frm.doc.discount_amount)
 //			}
 //			var total = frm.doc.total-(frm.doc.discount_amount)
 //			frm.doc.grand_total = total
@@ -653,15 +668,16 @@ frappe.ui.form.on('Quotation', {
 //			} 
 //			frm.doc.actual_price = total
 		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
-			frm.doc.final_approved_price = frm.doc.actual_price;
-			frm.doc.final_approved_price = frm.doc.final_approved_price - frm.doc.overall_discount_amount
-			frm.doc.final_approved_price = frm.doc.margin_rate
+			// frm.doc.final_approved_price = frm.doc.actual_price;
+			// frm.doc.final_approved_price = frm.doc.final_approved_price - frm.doc.overall_discount_amount
+			// frm.doc.final_approved_price = frm.doc.margin_rate
 			frm.refresh_fields()
 		}
 		else if(in_list(["Customer Quotation - Repair"],frm.doc.quotation_type)){ 
-			frm.doc.discount_amount = frm.doc.overall_discount_amount
-			frm.doc.grand_total = frm.doc.total
-			frm.doc.grand_total = frm.doc.grand_total- frm.doc.discount_amount
+			// frm.doc.discount_amount = frm.doc.overall_discount_amount
+			// frm.doc.grand_total = frm.doc.total
+
+			frm.doc.after_discount_cost = frm.doc.after_discount_cost - frm.doc.overall_discount_amount
 			frm.refresh_fields()
                 }
 //		}
@@ -670,13 +686,12 @@ frappe.ui.form.on('Quotation', {
 		frm.trigger("overall_discount_amount")
 	},
 	discount_percent:function(frm){
-		// console.log("ki")
 		if(in_list(["Internal Quotation - Repair","Revised Quotation - Repair"],frm.doc.quotation_type)){
 			frm.doc.overall_discount_amount = (frm.doc.actual_price * frm.doc.discount_percent)/100
 			frm.trigger("overall_discount_amount")
 		}
 		else if(in_list(["Customer Quotation - Repair"],frm.doc.quotation_type)){
-			frm.doc.overall_discount_amount = (frm.doc.total * frm.doc.discount_percent)/100
+			frm.doc.overall_discount_amount = (frm.doc.after_discount_cost * frm.doc.discount_percent)/100
 			frm.trigger("overall_discount_amount")
 		}
 	}

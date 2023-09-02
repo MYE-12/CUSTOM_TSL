@@ -118,7 +118,6 @@ def getstock_detail(item_details,company):
 	data += '<h4><center><b>STOCK DETAILS</b></center></h4>'
 	data += '<h6><B>Note:</h6>'
 	data += '<table style = font-size:12px width=100% ><tr><td>REPAIR KUWAIT - <b>TSL</b></td><td>RIYADH MAIN -<b>TSL SA</b></td><td>JEDDAH -<b>TSL SA</b></td><td>DAMMAM- <b>TSL SA</b></tr>'
-	# data += '<tr><td>Electra Najma Showroom Warehouse - <b> ENS</b></td><td>Marazeem Warehouse - <b>MSS</b></td><td>Barwa Showroom  - <b>EBS</b></td><td>Electra Electrical Warehouse - <b>EDE</b></td><td>Electra Engineering Warehouse - <b>EED</b></td></tr>'
 	data += '</table>'
 	for j in item_details:
 		country = frappe.get_value("Company",{"name":company},["country"])
@@ -156,6 +155,7 @@ def getstock_detail(item_details,company):
 		del_total = new_so['qty'] - new_so['d_qty']
 			
 		i = 0
+		
 		for po in pos:
 			if pos:
 				data += '<table class="table table-bordered">'
@@ -169,7 +169,8 @@ def getstock_detail(item_details,company):
 				data += '</tr>'
 				data +='<tr>'
 				data += '<td style="text-align:center" colspan=1>%s</td>'%(j["sku"])
-				data += '<td style="text-align:center" colspan=1>%s</td>'%(j["model"])
+				
+				data += '<td style="text-align:center" colspan=1>%s</td>'%(frappe.db.get_value("Item Model",j["model"],['model']))
 				for stock in stocks:
 					if stock.actual_qty > 0:
 						data += '<td style="text-align:center;" colspan=1>%s</td>'%(stock.actual_qty)
@@ -179,16 +180,16 @@ def getstock_detail(item_details,company):
 		data += '</table>'
 				
 	return data
-def create_hooks():
-    job = frappe.db.exists('Scheduled Job Type', 'stock_reminder')
-    if not job:
-        sjt = frappe.new_doc("Scheduled Job Type")  
-        sjt.update({
-            "method" : 'tsl.custom_py.utils.enque_qty',
-            "frequency" : 'Cron',
-            "cron_format" : '30 16 * * *'
-        })
-        sjt.save(ignore_permissions=True)
+# def create_hooks():
+#     job = frappe.db.exists('Scheduled Job Type', 'stock_reminder')
+#     if not job:
+#         sjt = frappe.new_doc("Scheduled Job Type")  
+#         sjt.update({
+#             "method" : 'tsl.custom_py.utils.enque_qty',
+#             "frequency" : 'Cron',
+#             "cron_format" : '30 16 * * *'
+#         })
+#         sjt.save(ignore_permissions=True)
 
 def enque_qty():
 	frappe.enqueue(
