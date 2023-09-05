@@ -55,6 +55,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
+							console.log(r)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -182,6 +183,7 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
+							console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -378,11 +380,11 @@ frappe.ui.form.on('Quotation', {
 						},
 						
 						add_filters_group: 1,
-						get_query() {
-							return {
-								filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name, posting_date:["between",[from_date,to_date]]}
-							}
-						},
+						// get_query() {
+						// 	return {
+						// 		filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name, posting_date:["between",[from_date,to_date]]}
+						// 	}
+						// },
 						action(selections) {
 							frappe.call({
 								method: "tsl.custom_py.quotation.get_wod_items",
@@ -724,6 +726,7 @@ frappe.ui.form.on("Quotation Item",{
 
 				}
 				var act = frm.doc.actual_price
+				console.log(act)
 				frm.set_value("final_approved_price",act);
 				cur_frm.refresh_fields();
 

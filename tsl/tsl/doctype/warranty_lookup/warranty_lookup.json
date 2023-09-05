@@ -1,13 +1,14 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "field:work_order_data",
  "creation": "2023-08-31 10:35:08.586936",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "work_order_data",
   "customer",
   "customer_name",
@@ -15,8 +16,7 @@
   "column_break_nvehj",
   "date",
   "email",
-  "warranty_status",
-  "naming_series"
+  "warranty_status"
  ],
  "fields": [
   {
@@ -24,7 +24,8 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Work Order Data",
-   "options": "Work Order Data"
+   "options": "Work Order Data",
+   "unique": 1
   },
   {
    "fetch_from": "work_order_data.customer",
@@ -75,17 +76,18 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "options": "WAR-R.YY.-"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-02 15:29:32.707228",
+ "modified": "2023-09-03 11:27:18.100199",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Warranty Lookup",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

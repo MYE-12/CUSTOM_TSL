@@ -11,12 +11,13 @@ frappe.ui.form.on('Warranty Lookup', {
 	work_order_data(frm){
 		if(frm.doc.work_order_data){
 			frappe.call({
-				method: "tsl.tsl.doctype.warranty_form.warranty_form.get_dn",
+				method: "tsl.tsl.doctype.warranty_lookup.warranty_lookup.get_dn",
 				args: {
 					'wod': frm.doc.work_order_data,
 					
 				},
 				callback:function(r){
+					console.log(r)
 					
 					$.each(r.message,function(i,v){
 						console.log(v)

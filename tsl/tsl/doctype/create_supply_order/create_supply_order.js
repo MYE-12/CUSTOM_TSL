@@ -236,16 +236,16 @@ frappe.ui.form.on("Create Supply Order", {
 
 frappe.ui.form.on('Create Supply Order', {
 	setup: function(frm) {
-		frm.set_query("branch", function() {
-			return {
-				filters: [
-					["Warehouse","company", "=", frm.doc.company],
-					["Warehouse","is_branch","=",1]
+		// frm.set_query("branch", function() {
+		// 	return {
+		// 		filters: [
+		// 			// ["Warehouse","company", "=", frm.doc.company],
+		// 			// ["Warehouse","is_branch","=",1]
 
-				]
-			}
+		// 		]
+		// 	}
 
-		});
+		// });
 		frm.set_query("repair_warehouse", function() {
 			return {
 				filters: [

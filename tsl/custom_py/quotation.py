@@ -363,9 +363,12 @@ def get_quotation_history(source,type = None):
 	}, target_doc, postprocess)
 	for ic in doclist.get('items'):
 		if ic.item_code:
-			ic.rate = float(ic.margin_amount)
-		if not ic.margin_amount:
-			ic.rate = doc.after_discount_cost
+			frappe.errprint(ic.rate)
+
+			ic.rate = (doc.after_discount_cost)
+
+		# if not ic.margin_amount:
+		# 	ic.rate = doc.after_discount_cost
 
 		
 	# for i in doc.items:
@@ -424,7 +427,7 @@ def advance_pay(source):
 @frappe.whitelist()
 def final_price_validate(source):
 	doc = frappe.get_doc("Quotation",source)
-	return round(doc.final_approved_price / doc.total_qty,2) or 0
+	return round(doc.after_discount_cost / doc.total_qty,2) or 0
 
 @frappe.whitelist()
 def final_price_validate_si(wod):

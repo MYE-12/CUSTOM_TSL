@@ -1,0 +1,117 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"MNrmNWsHWD\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Forms</b>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"OgJQ1dEnf1\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Work Order Data</b>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"2eBgyFo400\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}}]",
+ "creation": "2023-09-02 09:23:39.501916",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "organization",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "TSL KW LC",
+ "links": [],
+ "modified": "2023-09-05 08:47:33.709901",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "TSL KW LC",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Lab Coordinator"
+  }
+ ],
+ "sequence_id": 6.0,
+ "shortcuts": [
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "W - UTR/NE",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"in\",[\"NE-Need Evaluation\",\"UTR-Under Technician Repair\",null]]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - Approved",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"A-Approved\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W - Searching Parts",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"SP-Searching Parts\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Work Order Data",
+   "link_to": "Work Order Data",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "W - Available Parts",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"AP-Available Parts\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Initial Evaluation",
+   "link_to": "Initial Evaluation",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "W - Extra Parts",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"EP-Extra Parts\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "Evaluation Report",
+   "link_to": "Evaluation Report",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W - Waiting Parts",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"WP-Waiting Parts\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W -Need Evaluation Return",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "type": "DocType"
+  }
+ ],
+ "title": "TSL KW LC"
+}

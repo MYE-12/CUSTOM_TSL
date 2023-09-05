@@ -123,6 +123,7 @@ frappe.ui.form.on('Work Order Data', {
 						"wod": frm.doc.name
 					},
 					callback: function(r) {
+						console.log(r.message)
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
@@ -182,7 +183,6 @@ frappe.ui.form.on('Work Order Data', {
                                                 }
                                         }
                                 });
-								console.log("ji")
                         },__('Create'));
 		}
 		if(frm.doc.docstatus == 1 && (frm.doc.status == "RSC-Repaired and Shipped Client")) {

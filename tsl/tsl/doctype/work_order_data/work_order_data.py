@@ -415,6 +415,7 @@ def create_sal_inv(wod):
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
+		frappe.errprint(qi_details)
 		r = 0
 		amt = 0
 		if qi_details:

@@ -54,8 +54,10 @@ def get_wod_items_from_quotation(wod):
 			rate = 0
 			price_details = frappe.db.sql('''select qi.rate as rate,qi.amount as amount  from `tabQuotation` as q join `tabQuotation Item` as qi on qi.parent = q.name where q.party_name = %s and workflow_state = "Approved By Customer"
 							and qi.item_code = %s and q.docstatus = 1''',(doc.customer,i.item_code),as_dict=1)
-			if len(price_details) and 'rate' in price_details[0]:
-				rate = price_details[0]['rate']
+			# frappe.errprint(price_details[-1])
+			
+			if len(price_details) and 'rate' in price_details[-0]:
+				rate = price_details[-1]['rate']
 			l.append(frappe._dict({
 				"item" :i.item_code,
 				"item_name" : i.item_name0,
@@ -70,6 +72,7 @@ def get_wod_items_from_quotation(wod):
 				"work_order_data":doc.name,
 				"cost_center":doc.department,
 				"branch":branch,
+				"income_account":"6001002 - Revenue from Service - TSL"
 
 			}))
 	return l

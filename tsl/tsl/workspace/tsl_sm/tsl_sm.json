@@ -1,0 +1,244 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"Eka9QZU0gM\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Q</b> - Quotation / <b>W</b> - Work Order Data / <b>I</b> - Invoice\",\"col\":12}},{\"id\":\"AonM2MC_ts\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"-Yle2-FEVZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">FORMS</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"50mBgN3h_N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data Lookup\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"nuzb-DcYAF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Report\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"Cs3oe7n-yc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":3}},{\"id\":\"Meyv3IRadu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"8TntjXqDmA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"51sprxX_uO\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7bBVsa6p1j\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Quotation</b>\",\"col\":12}},{\"id\":\"psk4XAUxzj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Not Approved\",\"col\":3}},{\"id\":\"Rr_QQ4hinW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved\",\"col\":3}},{\"id\":\"PvrFY9pTpv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Pending\",\"col\":3}},{\"id\":\"WN-WYOhciy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"kG5GFRRutd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Invoice</b>\",\"col\":12}},{\"id\":\"TJAwcrtXQ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Unpaid\",\"col\":3}},{\"id\":\"BlH9RvKxMa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Paid\",\"col\":3}},{\"id\":\"dkcF8BlkNU\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Work Order Data</b>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"8Be6aN1Zdq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Repair and Shipped\",\"col\":3}},{\"id\":\"oDSXlYKJAh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -  Repair and Shipped to Client\",\"col\":3}},{\"id\":\"91PitxKuom\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return No Fault\",\"col\":3}},{\"id\":\"p5uORckn6f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return No Fault Client\",\"col\":3}},{\"id\":\"7Z3QygGSdj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return Not Repaired\",\"col\":3}},{\"id\":\"dsbrQgKv9e\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return Not Repaired Client\",\"col\":3}}]",
+ "creation": "2023-09-04 10:23:11.104950",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "organization",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "TSL SM",
+ "links": [],
+ "modified": "2023-09-05 08:47:33.575126",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "TSL SM",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Sales Manager"
+  }
+ ],
+ "sequence_id": 2.0,
+ "shortcuts": [
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Return Note",
+   "link_to": "Return Note",
+   "stats_filter": "{\"status\":[\"=\",\"Return\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Q - Not Approved",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Quoted to Customer\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - Return No Fault",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RNF-Return No Fault\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "I - Unpaid",
+   "link_to": "Sales Invoice",
+   "stats_filter": "{\"status\":[\"=\",\"Unpaid\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - Return Not Repaired",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RNR-Return Not Repaired\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Invoice",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Q - Internal Pending",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Pending For Approval\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Work Order Data Lookup",
+   "link_to": "Work Order Data Lookup",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "I - Paid",
+   "link_to": "Sales Invoice",
+   "stats_filter": "{\"status\":[\"=\",\"Paid\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Create Work Order",
+   "link_to": "Create Work Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - Return No Fault Client",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RNFC-Return No Fault Client\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Q - Internal Approved",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Management\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "W - UTR/NE",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"in\",[\"NE-Need Evaluation\",\"UTR-Under Technician Repair\",null]]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Work Order Data",
+   "link_to": "Work Order Data",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - Return Not Repaired Client",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RNRC-Return Not Repaired Client\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Initial Evaluation",
+   "link_to": "Initial Evaluation",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "Evaluation Report",
+   "link_to": "Evaluation Report",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W -Need Evaluation Return",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "W - Repair and Shipped",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RS-Repaired and Shipped\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Delivery Note",
+   "link_to": "Delivery Note",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W -  Repair and Shipped to Client",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RSC-Repaired and Shipped Client\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Sales Report",
+   "link_to": "Sales Track",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Q - Customer Approved",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Customer\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Purchase Order",
+   "link_to": "Purchase Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Purchase Receipt",
+   "link_to": "Purchase Receipt",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Purchase Invoice",
+   "link_to": "Purchase Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Payment",
+   "link_to": "Payment Entry",
+   "type": "DocType"
+  }
+ ],
+ "title": "TSL SM"
+}
