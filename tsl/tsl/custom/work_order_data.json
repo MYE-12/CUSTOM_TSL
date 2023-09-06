@@ -335,7 +335,7 @@
    "property": "options",
    "property_type": "Text",
    "row_name": null,
-   "value": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nCT-Customer Testing\nRNP-Return No Parts\nRNPC-Return No Parts Client\nA-Approved\nEP-Extra Parts\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nTR-Technician Repair\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nW-Working\nP-Paid\nC-Comparison\nCC-Comparison Client\nNER-Need Evaluation Return\nUE-Under Evaluation\nIQ-Internally Quoted\nUTR-Under Technician Repair\nRNF-Return No Fault\nRNFC-Return No Fault Client\n"
+   "value": "NE-Need Evaluation\nAP-Available Parts\nSP-Searching Parts\nQ-Quoted\nCT-Customer Testing\nRNP-Return No Parts\nRNPC-Return No Parts Client\nA-Approved\nEP-Extra Parts\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nTR-Technician Repair\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nWP-Waiting Parts\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nW-Working\nP-Paid\nC-Comparison\nCC-Comparison Client\nNER-Need Evaluation Return\nUE-Under Evaluation\nIQ-Internally Quoted\nUTR-Under Technician Repair\nRNF-Return No Fault\nRNFC-Return No Fault Client\nParts Priced\n"
   },
   {
    "_assign": null,

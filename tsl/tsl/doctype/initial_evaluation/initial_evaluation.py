@@ -87,8 +87,13 @@ class InitialEvaluation(Document):
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			if self.parts_availability == "Yes":
 				doc.status = "AP-Available Parts"
-			else:
-				doc.status = "SP-Searching Parts"
+			if self.parts_availability != "Yes":
+				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
+				if sq:
+					doc.status = "Parts Priced"
+				else:
+					doc.status = "SP-Searching Parts"
+			
 			doc.save(ignore_permissions=True)
 	def on_update_after_submit(self):
 		add = total = 0
@@ -226,4 +231,24 @@ class InitialEvaluation(Document):
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")-i.qty))
 
+@frappe.whitelist()
+def create_material_issue_from_ini_eval(name):
+	new_doc = frappe.new_doc("Stock Entry")
+	new_doc.stock_entry_type = "Material Issue"
+	# new_doc.company = self.company
+	new_doc.to_warehouse = "Kuwait - TSL"
 
+	new_doc.to_warehouse = "Kuwait - TSL"
+	ini= frappe.get_doc('Initial Evaluation',name)
+	for i in ini.items:
+		frappe.errprint(i)
+	new_doc.append("items",{
+		's_warehouse':"Kuwait - TSL",
+		'item_code':i.part,
+		'qty':i.qty,
+		'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+		# 'conversion_factor':1,
+		# 'allow_zero_valuation_rate':1
+	})
+	new_doc.save(ignore_permissions = True)
+	# new_doc.submit()

@@ -117,6 +117,20 @@ frappe.ui.form.on('Initial Evaluation', {
 				}
 			});
 		}, __('Create'));
+		frm.add_custom_button(__("Release Parts"), function () {
+			frappe.call({
+				method: "tsl.tsl.doctype.initial_evaluation.initial_evaluation.create_material_issue_from_ini_eval",
+				args:{
+					'name':frm.doc.name
+				},
+				callback: function (r) {
+					if (r.message) {
+						console.log(r.message)
+						// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+					}
+				}
+			});
+		}, __('Create'));
 
 		// if(frm.doc.work_order_data){
 		// 	

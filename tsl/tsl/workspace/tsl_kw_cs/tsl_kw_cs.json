@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px;\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W- Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"Iv4oQSO7rk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Quotation</span>\",\"col\":12}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}}]",
+ "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px;\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"s3rAaHfJ_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Parts Priced\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W- Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"Iv4oQSO7rk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Quotation</span>\",\"col\":12}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}}]",
  "creation": "2023-08-31 08:47:37.856270",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-09-05 08:47:33.681307",
+ "modified": "2023-09-06 15:53:10.629890",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -42,6 +42,14 @@
    "label": "Q - Internal Approved",
    "link_to": "Quotation",
    "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Management\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "W - Parts Priced",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"Parts Priced\"]}",
    "type": "DocType"
   },
   {

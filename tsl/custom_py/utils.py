@@ -27,8 +27,7 @@ import requests
 # 	print((data['rates']['KWD']))
 
 @frappe.whitelist()
-def send_sales_reminder():
-	# fri = ["06-01-2023,13-01-2023,20-01-2023,27-01-2023,03-02-2023,10-02-2023,17-02-2023,24-02-2023,03-03-2023,10-03-2023,17-03-2023,24-03-2023,31-03-2023,07-04-2023,14-04-2023,21-04-2023,28-04-2023,05-05-2023,12-05-2023,19-05-2023,26-05-2023,02-06-2023,09-06-2023,16-06-2023,23-06-2023,30-06-2023,07-07-2023,14-07-2023,21-07-2023,28-07-2023,04-08-2023,11-08-2023,18-08-2023,25-08-2023,01-09-2023,08-09-2023,15-09-2023,22-09-2023,29-09-2023,06-10-2023,13-10-2023,20-10-2023,27-10-2023,03-11-2023,10-11-2023,17-11-2023,24-11-2023,01-12-2023,08-12-2023,15-12-2023,22-12-2023,29-12-2023"]
+def send_sales_reminder(): # Reflects in Sales Track
 	
 	sales_person = ["maaz@tsl-me.com","vazeem@tsl-me.com"]
 	sales_report = frappe.db.sql("""select date,sales_user from `tabSales Track` where date = CURDATE()""",as_dict=1)
@@ -72,7 +71,7 @@ def send_sales_reminder():
 							)
 
 @frappe.whitelist()
-def create_rfq_int(ps):
+def create_rfq_int(ps): # Request For Quotation
 	doc = frappe.get_doc("Initial Evaluation",ps)
 	new_doc = frappe.new_doc("Request for Quotation")
 	new_doc.company = doc.company
@@ -111,7 +110,7 @@ def create_rfq_int(ps):
 			})
 	return new_doc
 
-@frappe.whitelist()
+@frappe.whitelist() # Stock against the Parts requested in initial Evaluation
 def getstock_detail(item_details,company):
 	item_details = json.loads(item_details)
 	data = ''
@@ -191,11 +190,13 @@ def getstock_detail(item_details,company):
 #         })
 #         sjt.save(ignore_permissions=True)
 
-def enque_qty():
-	frappe.enqueue(
-					item_qty, queue="long", enqueue_after_commit=True
-				)
-@frappe.whitelist()
+# def enque_qty():
+# 	frappe.enqueue(
+# 					item_qty, queue="long", enqueue_after_commit=True
+# 				)
+
+
+@frappe.whitelist() # Low Balance Email Trigger
 def item_qty():
 	item = frappe.db.sql("""select name,model,category,sub_category,qty from `tabItem` where qty < 5 """,as_dict=1)
 	ir = 0
