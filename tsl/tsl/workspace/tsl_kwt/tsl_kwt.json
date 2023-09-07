@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KWT",
  "links": [],
- "modified": "2023-09-05 08:47:33.535336",
+ "modified": "2023-09-07 11:04:58.798999",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KWT",
@@ -23,7 +23,7 @@
  "quick_lists": [],
  "roles": [
   {
-   "role": "Technician"
+   "role": "Administrator"
   }
  ],
  "sequence_id": 1.0,
