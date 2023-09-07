@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL SU",
  "links": [],
- "modified": "2023-09-05 08:47:33.611671",
+ "modified": "2023-09-06 13:27:48.072975",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL SU",
@@ -50,6 +50,14 @@
    "label": "I - Paid",
    "link_to": "Sales Invoice",
    "stats_filter": "{\"status\":[\"=\",\"Paid\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Q - Customer Approved",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Customer\"],\"creation\":[\"Timespan\",\"last week\"]}",
    "type": "DocType"
   },
   {
@@ -185,14 +193,6 @@
    "doc_view": "List",
    "label": "Sales Report",
    "link_to": "Sales Track",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Q - Customer Approved",
-   "link_to": "Quotation",
-   "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Customer\"]}",
    "type": "DocType"
   },
   {
