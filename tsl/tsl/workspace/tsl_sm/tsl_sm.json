@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL SM",
  "links": [],
- "modified": "2023-09-05 08:47:33.575126",
+ "modified": "2023-09-07 09:03:59.490201",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL SM",
@@ -63,6 +63,14 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Q - Internal Pending",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Waiting For Approval\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "W - Return Not Repaired",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"RNR-Return Not Repaired\"]}",
@@ -73,14 +81,6 @@
    "doc_view": "List",
    "label": "Invoice",
    "link_to": "Sales Invoice",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Q - Internal Pending",
-   "link_to": "Quotation",
-   "stats_filter": "{\"workflow_state\":[\"=\",\"Pending For Approval\"]}",
    "type": "DocType"
   },
   {

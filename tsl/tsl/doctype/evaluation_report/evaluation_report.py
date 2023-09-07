@@ -56,11 +56,18 @@ class EvaluationReport(Document):
 			elif  self.status == "Customer Testing":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "CT-Customer Testing"
-			else:
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "AP-Available Parts"
+			# else:
+			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			# 	doc.status = "AP-Available Parts"
 			doc.save()
 	def on_submit(self):
+		if self.if_parts_required:
+			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			if self.parts_availability == "Yes":
+				doc.status = "AP-Available Parts"
+			else:
+				doc.status = "SP-Searching Parts"
+			doc.save(ignore_permissions=True)
 		if self.status:
 			if self.status == "Working":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -87,13 +94,7 @@ class EvaluationReport(Document):
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "CT-Customer Testing"
 			doc.save(ignore_permissions = True)
-		if self.if_parts_required:
-			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-			if self.parts_availability == "Yes":
-				doc.status = "AP-Available Parts"
-			else:
-				doc.status = "SP-Searching Parts"
-			doc.save(ignore_permissions=True)
+		
 			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 #			for i in self.items:
 #				if i.part and i.parts_availability == "Yes":
@@ -224,8 +225,8 @@ class EvaluationReport(Document):
 					doc.status = "RNR-Return Not Repaired"
 				elif self.status == "Return No Fault":
 					doc.status = "RNF-Return No Fault"
-				else:
-					doc.status = "AP-Available Parts"
+				# else:
+				# 	doc.status = "AP-Available Parts"
 				doc.save(ignore_permissions=True)
 			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 			for i in self.items:
