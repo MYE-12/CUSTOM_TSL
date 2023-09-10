@@ -123,7 +123,7 @@ frappe.ui.form.on('Quotation', {
 				}
 			})
 		}
-		cur_frm.clear_table('technician_hours_spent')
+		// cur_frm.clear_table('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
 		$.each(frm.doc.item_price_details,function(i,v){

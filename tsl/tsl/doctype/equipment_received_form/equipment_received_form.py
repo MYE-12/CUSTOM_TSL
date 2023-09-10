@@ -228,7 +228,7 @@ def create_workorder_data(order_no, f):
             if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
                 frappe.defaults.set_user_default("warehouse", None)
                 sn_doc = frappe.new_doc("Serial No")
-                sn_doc.serial_no = i['serial_no']
+                sn_doc.serial_no = i['serial_no'] or ''
                 sn_doc.item_code = i['item_code']
                 sn_doc.save(ignore_permissions=True)
                 if sn_doc.name:
@@ -251,29 +251,22 @@ def create_workorder_data(order_no, f):
                                        "delivery", "warranty"], as_dict=1)
             print(warr)
             if warr['delivery'] and warr['warranty']:
-                date = frappe.utils.add_to_date(
-                    warr['delivery'], days=int(warr['warranty']))
+                date = frappe.utils.add_to_date(warr['delivery'], days=int(warr['warranty']))
                 print(date, type(date))
-                frappe.db.set_value("Work Order Data",
-                                    doc.work_order_data, "expiry_date", date)
-                frappe.db.set_value(
-                    "Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
+                frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
+                frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
                 if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
-                    frappe.db.set_value(
-                        "Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
                     if not doc.name == "Create Work Order":
-                        frappe.db.set_value(
-                            "Work Order Data", doc.work_order_data, "equipment_recieved_form", doc.name)
+                        frappe.db.set_value("Work Order Data", doc.work_order_data, "equipment_recieved_form", doc.name)
                     link0.append(
                         """ <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
                     frappe.msgprint("Work Order Updated: "+', '.join(link0))
                     return True
                 else:
-                    frappe.throw(
-                        "Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+                    frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
             else:
-                frappe.throw(
-                    "No Warranty Period or Delivery Date is Mentioned In work order")
+                frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
         if i["no_power"]:
             new_doc.no_power = 1
         if i["no_output"]:

@@ -40,6 +40,8 @@
   "if_parts_required",
   "update_availability_status",
   "items",
+  "needed_with_available_parts",
+  "all_parts_needed",
   "parts_availability",
   "section_break_34",
   "total_qty",
@@ -47,12 +49,11 @@
   "total_amount",
   "section_break_25",
   "evaluation_time",
-  "estimated_repair_time",
-  "column_break_hmowd",
   "extra_repair_time",
+  "column_break_hmowd",
+  "estimated_repair_time",
   "return_repair_time",
-  "actions_section",
-  "status",
+  "status_repair",
   "technician_on_work_section",
   "technician_details",
   "technician_comment_section",
@@ -281,12 +282,14 @@
    "fieldname": "parts_availability",
    "fieldtype": "Select",
    "label": "All Parts Availability Status",
-   "options": "Yes\nNo"
+   "options": "Yes\nNo",
+   "read_only": 1
   },
   {
    "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "section_break_34",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "allow_on_submit": 1,
@@ -342,19 +345,6 @@
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Return Repair Time"
-  },
-  {
-   "fieldname": "actions_section",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Actions"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nReturn Not Repaired\nReturn No Fault"
   },
   {
    "fieldname": "technician_on_work_section",
@@ -460,12 +450,30 @@
    "fieldname": "signature",
    "fieldtype": "Signature",
    "label": "Signature"
+  },
+  {
+   "default": "0",
+   "fieldname": "needed_with_available_parts",
+   "fieldtype": "Check",
+   "label": "Need Available Parts"
+  },
+  {
+   "default": "0",
+   "fieldname": "all_parts_needed",
+   "fieldtype": "Check",
+   "label": "All Parts Needed"
+  },
+  {
+   "fieldname": "status_repair",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Under Testing"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-08-19 11:47:03.282849",
+ "modified": "2023-09-10 14:03:42.113302",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

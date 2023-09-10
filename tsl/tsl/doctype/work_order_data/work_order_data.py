@@ -25,7 +25,6 @@ from frappe.utils.data import (
 # @frappe.whitelist()
 # def get_item_image(erf_no,item):
 # 	image = frappe.db.sql('''select attach_image as image from `tabRecieved Equipment` where parent = %s and item_code = %s and docstatus = 1 ''',(erf_no,item),as_dict=1)
-# 	frappe.errprint(image)
 # 	if image[0]['image']:
 # 		img = image[0]['image'].replace(" ","%20")
 # 		return img
@@ -33,8 +32,6 @@ from frappe.utils.data import (
 @frappe.whitelist()
 def create_quotation(wod):
 	doc = frappe.get_doc("Work Order Data",wod)
-	frappe.errprint('doc')
-	frappe.errprint(doc)
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer
@@ -56,6 +53,19 @@ def create_quotation(wod):
 	new_doc.contact_person = doc.incharge
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation - Repair"
+	for i in doc.material_list:
+		frappe.errprint(i.item_code)
+		new_doc.append("items",{
+			"item_code":i.item_code,
+			"item_name":i.item_name,
+			"description":i.item_name,
+			"uom":'1',
+			"qty":'1',
+			"model_no":i.model_no,
+			"mfg":i.mfg,
+			"serial_no":i.serial_no,
+			"wod_no":doc.name,
+		})
 	if doc.branch:
 		d = {
 			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-"},
@@ -72,7 +82,6 @@ def create_quotation(wod):
 	
 	ths = frappe.db.sql('''select status,hours_spent,ratehour,extra_repair_time as ext,evaluation_time as et,estimated_repair_time as ert from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
 	thst = frappe.db.sql('''select evaluation_time as et,estimated_repair_time as ert from `tabInitial Evaluation` where docstatus = 0 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
-	frappe.errprint(thst)
 	if len(ths):
 		total = 0
 		if ths[0]["status"] == "Others":
@@ -89,7 +98,6 @@ def create_quotation(wod):
 			"total_price":total*20
 		})
 	elif len(thst):
-		frappe.errprint("EXE")
 		total = 0
 		if 'et' in thst[0] and 'ert' in thst[0] and thst[0]['ert'] and thst[0]['et']:
 			total = round(((thst[0]['et']/3600) + (thst[0]['ert']/3600)),2)
@@ -248,7 +256,6 @@ def create_initial_eval(doc_no):
 
 		})
 	for j in doc.get("items"):
-		frappe.errprint(j)
 		new_doc.append("items",{
 			"part":j.part,
 			"model":j.model,
@@ -415,7 +422,6 @@ def create_sal_inv(wod):
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
-		frappe.errprint(qi_details)
 		r = 0
 		amt = 0
 		if qi_details:
