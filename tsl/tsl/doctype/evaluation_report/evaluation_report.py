@@ -166,7 +166,7 @@ class EvaluationReport(Document):
 				item_doc.model = model
 				item_doc.category_ = category
 				item_doc.sub_category = sub_cat
-				item_doc.package = package
+				# item_doc.package = package
 				item_doc.item_group = "Components"
 				if frappe.session.user == "purchase@tsl-me.com":
 					item_doc.save(ignore_permissions = True)
