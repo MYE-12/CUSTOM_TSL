@@ -155,7 +155,7 @@ def show_details(self,method):
 			labour_value = t.total_price
 		for i in self.get("items"):
 			total_qtn_rate = 0
-			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
 			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
 			for j in  part_sheet_ini:
 				doc = frappe.get_doc("Initial Evaluation",j['name']) 
@@ -218,7 +218,7 @@ def show_details(self,method):
 						price = k.price_ea
 						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
-								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
+								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)						
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:
@@ -243,7 +243,7 @@ def show_details(self,method):
 					# i.amount = total_qtn_rate /i.qty + labour_value
 					# i.rate = total_qtn_rate/i.qty + labour_value
 		if not self.is_multiple_quotation:
-			self.actual_price = i.rate
+			self.actual_price = round(i.rate)
 		if self.after_discount_cost:
 			self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
@@ -363,7 +363,6 @@ def get_quotation_history(source,type = None):
 	}, target_doc, postprocess)
 	for ic in doclist.get('items'):
 		if ic.item_code:
-			frappe.errprint(ic.rate)
 
 			ic.rate = (doc.after_discount_cost)
 

@@ -303,8 +303,8 @@ def create_workorder_data(order_no, f):
         new_doc.priority_status = doc.sts
         new_doc.naming_series = d[new_doc.branch]
         new_doc.attach_image = (i['attach_image'])
-        # new_doc.image = (i['attach_image']).replace(
-            # " ", "%20")
+        new_doc.image = (i['attach_image']).replace(
+            " ", "%20")
         # serial_no=""
         # if i['has_serial_no'] and i['serial_no']:
         # 	serial_no = i['serial_no']
@@ -395,7 +395,7 @@ def get_wod_details(wod):
             "model_no": i.model_no,
             "serial_no": i.serial_no,
             "qty": i.quantity,
-            "sales_rep": doc.sales_rep,
+            "sales_rep": doc.sales_person,
             "customer": doc.customer,
             "incharge": doc.incharge,
             "address": doc.address,

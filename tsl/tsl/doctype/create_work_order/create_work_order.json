@@ -155,11 +155,11 @@
   {
    "fieldname": "sales_person",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Sales Person",
    "options": "User"
   },
   {
+   "fetch_from": "sales_person.full_name",
    "fetch_if_empty": 1,
    "fieldname": "sales_person_name",
    "fieldtype": "Data",
@@ -245,7 +245,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-08-05 11:00:41.604618",
+ "modified": "2023-09-12 10:12:58.516921",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

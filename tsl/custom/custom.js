@@ -123,7 +123,7 @@ frappe.ui.form.on('Quotation', {
 				}
 			})
 		}
-		// cur_frm.clear_table('technician_hours_spent')
+		cur_frm.clear_table('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
 		$.each(frm.doc.item_price_details,function(i,v){
@@ -183,7 +183,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -726,7 +725,6 @@ frappe.ui.form.on("Quotation Item",{
 
 				}
 				var act = frm.doc.actual_price
-				console.log(act)
 				frm.set_value("final_approved_price",act);
 				cur_frm.refresh_fields();
 

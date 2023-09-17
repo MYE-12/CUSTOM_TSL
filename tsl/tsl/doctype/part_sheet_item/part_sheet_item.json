@@ -100,7 +100,7 @@
    "options": "Item Mfg"
   },
   {
-   "columns": 1,
+   "columns": 2,
    "fetch_from": "part.model",
    "fieldname": "model",
    "fieldtype": "Link",
@@ -123,6 +123,7 @@
    "label": "Part Number"
   },
   {
+   "allow_on_submit": 1,
    "columns": 1,
    "fetch_from": "part.category_",
    "fieldname": "category",
@@ -132,6 +133,7 @@
    "options": "Category"
   },
   {
+   "allow_on_submit": 1,
    "columns": 1,
    "fetch_from": "part.sub_category",
    "fieldname": "sub_category",
@@ -200,11 +202,12 @@
    "label": "Scrap "
   },
   {
+   "allow_on_submit": 1,
+   "fetch_from": "part.package",
    "fieldname": "part_description",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Part Description",
-   "options": "Part Description"
+   "label": "Package Name"
   },
   {
    "fetch_from": "part.bin",
@@ -216,12 +219,13 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-18 15:29:47.162268",
+ "modified": "2023-09-17 08:20:39.940173",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

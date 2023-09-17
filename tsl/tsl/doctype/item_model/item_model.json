@@ -48,7 +48,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-02 09:35:33.683405",
+ "modified": "2023-09-12 14:05:05.403341",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Item Model",
@@ -69,7 +69,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "model",
+ "search_fields": "category,sub_category",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

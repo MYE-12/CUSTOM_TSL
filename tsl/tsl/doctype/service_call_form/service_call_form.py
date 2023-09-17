@@ -24,7 +24,8 @@ def create_qtn(source):
 	new_doc.technician_name = doc.technician_name
 	new_doc.branch_name = doc.branch
 	new_doc.append("items",{
-		"item_code":"Service Item",
+		"item_code":"010760",
+		"item_name":"Service Item",
 		"description":"Service Item",
 		"qty":1,
 		"uom":"Nos",

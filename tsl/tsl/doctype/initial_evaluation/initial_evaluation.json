@@ -14,6 +14,7 @@
   "hours_spent",
   "ratehour",
   "parts_returned",
+  "technician",
   "column_break_3",
   "company",
   "branch",
@@ -66,7 +67,6 @@
   "attach_image",
   "column_break_55",
   "technician_image",
-  "lab_coordinator",
   "amended_from",
   "signature"
  ],
@@ -251,7 +251,7 @@
    "allow_on_submit": 1,
    "fieldname": "column_break_13",
    "fieldtype": "Tab Break",
-   "label": "Testing Part Sheet"
+   "label": "Testing Part Sheet / Comments"
   },
   {
    "allow_on_submit": 1,
@@ -428,13 +428,6 @@
    "label": "Parts Returned"
   },
   {
-   "fieldname": "lab_coordinator",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Lab Coordinator",
-   "options": "User"
-  },
-  {
    "fieldname": "column_break_hmowd",
    "fieldtype": "Column Break"
   },
@@ -468,12 +461,19 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Under Testing"
+  },
+  {
+   "fieldname": "technician",
+   "fieldtype": "Link",
+   "label": "Technician",
+   "options": "User",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-10 14:03:42.113302",
+ "modified": "2023-09-13 10:54:37.730328",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

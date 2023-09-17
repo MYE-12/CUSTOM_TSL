@@ -22,12 +22,13 @@ from frappe.utils.data import (
 )
 
 
-# @frappe.whitelist()
-# def get_item_image(erf_no,item):
-# 	image = frappe.db.sql('''select attach_image as image from `tabRecieved Equipment` where parent = %s and item_code = %s and docstatus = 1 ''',(erf_no,item),as_dict=1)
-# 	if image[0]['image']:
-# 		img = image[0]['image'].replace(" ","%20")
-# 		return img
+@frappe.whitelist()
+def get_item_image(erf_no,item):
+	image = frappe.db.sql('''select attach_image as image from `tabRecieved Equipment` where parent = %s and item_code = %s and docstatus = 1 ''',(erf_no,item),as_dict=1)
+	frappe.errprint(image)
+	if image[0]['image']:
+		img = image[0]['image'].replace(" ","%20")
+		return img
 
 @frappe.whitelist()
 def create_quotation(wod):
@@ -53,19 +54,19 @@ def create_quotation(wod):
 	new_doc.contact_person = doc.incharge
 	new_doc.branch_name = doc.branch
 	new_doc.quotation_type = "Internal Quotation - Repair"
-	for i in doc.material_list:
-		frappe.errprint(i.item_code)
-		new_doc.append("items",{
-			"item_code":i.item_code,
-			"item_name":i.item_name,
-			"description":i.item_name,
-			"uom":'1',
-			"qty":'1',
-			"model_no":i.model_no,
-			"mfg":i.mfg,
-			"serial_no":i.serial_no,
-			"wod_no":doc.name,
-		})
+	# for i in doc.material_list:
+	# 	frappe.errprint(i.item_code)
+	# 	new_doc.append("items",{
+	# 		"item_code":i.item_code,
+	# 		"item_name":i.item_name,
+	# 		"description":i.item_name,
+	# 		"uom":'1',
+	# 		"qty":'1',
+	# 		"model_no":i.model_no,
+	# 		"mfg":i.mfg,
+	# 		"serial_no":i.serial_no,
+	# 		"wod_no":doc.name,
+	# 	})
 	if doc.branch:
 		d = {
 			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-"},
@@ -122,6 +123,7 @@ def create_evaluation_report(doc_no):
 	new_doc.attn = doc.sales_rep
 	new_doc.work_order_data = doc.name
 	new_doc.attach_image = doc.attach_image
+	new_doc.technician = doc.technician
 	
 	if doc.no_power:
 		new_doc.no_power = 1
@@ -169,6 +171,7 @@ def create_test_evaluation_report(doc_no):
         new_doc.attn = doc.sales_rep_name
         new_doc.work_order_data = doc.name
         new_doc.attach_image = doc.attach_image
+        new_doc.technician = doc.technician
 
         if doc.no_power:
                 new_doc.no_power = 1

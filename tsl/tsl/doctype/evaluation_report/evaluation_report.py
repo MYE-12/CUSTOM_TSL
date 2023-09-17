@@ -10,6 +10,8 @@ from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 # @frappe.whitelist()
 # def get_item_image(wod_no):
 # 	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
+# 	frappe.errprint(erf_no)
+
 # 	image = img(erf_no)
 # 	return image
 
@@ -155,6 +157,7 @@ class EvaluationReport(Document):
 			part_no = pm.part
 			category = pm.category
 			sub_cat = pm.sub_category
+			package = pm.part_description
 			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 			if not part_no:
 				item_doc = frappe.new_doc("Item")
@@ -163,8 +166,10 @@ class EvaluationReport(Document):
 				item_doc.model = model
 				item_doc.category_ = category
 				item_doc.sub_category = sub_cat
+				item_doc.package = package
 				item_doc.item_group = "Components"
-				item_doc.save(ignore_permissions = True)
+				if frappe.session.user == "purchase@tsl-me.com":
+					item_doc.save(ignore_permissions = True)
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0

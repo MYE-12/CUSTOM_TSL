@@ -90,16 +90,21 @@ frappe.ui.form.on('Create Work Order', {
 					}
 					if (r.message[1]) {
 						console.log(r.message[1][0])
-						frappe.db.get_value('User', r.message[1][0], 'full_name', (values) => {
-							frm.set_value("sales_person_name", values.full_name);
-							console.log(values)
-						});
+						// frappe.db.get_value('User', r.message[1][0], 'full_name', (values) => {
+						// 	frm.set_value("sales_person_name", values.full_name);
+						// 	console.log(values)
+						// });
 						frm.set_query("sales_person", function () {
+							frm.set_value("sales_person",r.message[1] );
+
 							return {
 								"filters": {
 									"name": ["in", r.message[1]]
+									
 								}
+
 							};
+							
 
 						});
 
