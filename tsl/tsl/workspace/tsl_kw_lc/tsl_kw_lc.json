@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW LC",
  "links": [],
- "modified": "2023-09-05 08:47:33.709901",
+ "modified": "2023-09-13 09:41:43.449162",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW LC",
@@ -26,7 +26,7 @@
    "role": "Lab Coordinator"
   }
  ],
- "sequence_id": 6.0,
+ "sequence_id": 7.0,
  "shortcuts": [
   {
    "color": "Pink",

@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-09-07 10:06:43.919817",
+ "modified": "2023-09-13 09:42:11.606122",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -26,7 +26,7 @@
    "role": "Admin"
   }
  ],
- "sequence_id": 5.0,
+ "sequence_id": 6.0,
  "shortcuts": [
   {
    "color": "Red",

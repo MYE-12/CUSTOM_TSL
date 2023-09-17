@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KWT",
  "links": [],
- "modified": "2023-09-07 11:04:58.798999",
+ "modified": "2023-09-13 09:41:43.026196",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KWT",
@@ -26,7 +26,7 @@
    "role": "Administrator"
   }
  ],
- "sequence_id": 1.0,
+ "sequence_id": 2.0,
  "shortcuts": [
   {
    "color": "Grey",
