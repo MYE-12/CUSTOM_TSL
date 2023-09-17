@@ -183,7 +183,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r)
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 
@@ -726,7 +725,6 @@ frappe.ui.form.on("Quotation Item",{
 
 				}
 				var act = frm.doc.actual_price
-				console.log(act)
 				frm.set_value("final_approved_price",act);
 				cur_frm.refresh_fields();
 

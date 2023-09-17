@@ -74,9 +74,8 @@
  "fields": [
   {
    "fieldname": "sales_rep",
-   "fieldtype": "Link",
-   "label": "Sales Rep",
-   "options": "User"
+   "fieldtype": "Data",
+   "label": "Sales Rep"
   },
   {
    "fetch_from": "customer.customer_name",
@@ -174,6 +173,7 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
@@ -195,6 +195,7 @@
    "allow_on_submit": 1,
    "fieldname": "technician",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Technician",
    "options": "User"
   },
@@ -292,7 +293,6 @@
   {
    "fieldname": "attach_image",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Attach Image"
   },
   {
@@ -489,7 +489,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-06 15:11:57.571645",
+ "modified": "2023-09-13 09:01:09.892545",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

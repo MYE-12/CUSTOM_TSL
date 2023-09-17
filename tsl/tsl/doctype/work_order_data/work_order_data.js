@@ -16,6 +16,13 @@ frappe.ui.form.on('Work Order Data', {
 		frm.refresh_field('status')
 		}
 	},
+	onload(frm){
+		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator")){
+			frm.set_df_property("technician","read_only",1)
+			frm.set_df_property("status","read_only",1)
+			frm.set_df_property("advance_payment_amount","hidden",1)
+		}
+	},
 	refresh: function(frm) {
 		
 		// if(frm.doc.docstatus === 1) {
@@ -58,20 +65,22 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 		}
 		  if(frm.doc.docstatus == 1) {
-                        frm.add_custom_button(__("Initial Evaluation"), function(){
-                                frappe.call({
-                                        method: "tsl.tsl.doctype.work_order_data.work_order_data.create_test_evaluation_report",
-                                        args: {
-                                                "doc_no": frm.doc.name
-                                        },
-                                        callback: function(r) {
-                                                if(r.message) {
-                                                        var doc = frappe.model.sync(r.message);
-                                                        frappe.set_route("Form", doc[0].doctype, doc[0].name);
-                                                }
-                                        }
-                                });
-                        },__('Create'));
+            // if(!frappe.user.has_role("Technician")){
+				frm.add_custom_button(__("Initial Evaluation"), function(){
+					frappe.call({
+							method: "tsl.tsl.doctype.work_order_data.work_order_data.create_test_evaluation_report",
+							args: {
+									"doc_no": frm.doc.name
+							},
+							callback: function(r) {
+									if(r.message) {
+											var doc = frappe.model.sync(r.message);
+											frappe.set_route("Form", doc[0].doctype, doc[0].name);
+									}
+							}
+					});
+			},__('Create'));
+			// }
                 }
 		if(frm.doc.docstatus == 1) {
 		if(!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){
@@ -96,7 +105,7 @@ frappe.ui.form.on('Work Order Data', {
 }
 		}
 		if(frm.doc.docstatus == 1) {
-		if (! frappe.user.has_role ("Technician")){
+		if (!frappe.user.has_role ("Admin") && ! frappe.user.has_role ("Technician")){
 			frm.add_custom_button(__("Stock Transfer"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_stock_entry",

@@ -14,6 +14,7 @@
   "hours_spent",
   "ratehour",
   "parts_returned",
+  "technician",
   "column_break_3",
   "company",
   "branch",
@@ -40,6 +41,8 @@
   "if_parts_required",
   "update_availability_status",
   "items",
+  "needed_with_available_parts",
+  "all_parts_needed",
   "parts_availability",
   "section_break_34",
   "total_qty",
@@ -47,12 +50,11 @@
   "total_amount",
   "section_break_25",
   "evaluation_time",
-  "estimated_repair_time",
-  "column_break_hmowd",
   "extra_repair_time",
+  "column_break_hmowd",
+  "estimated_repair_time",
   "return_repair_time",
-  "actions_section",
-  "status",
+  "status_repair",
   "technician_on_work_section",
   "technician_details",
   "technician_comment_section",
@@ -65,7 +67,6 @@
   "attach_image",
   "column_break_55",
   "technician_image",
-  "lab_coordinator",
   "amended_from",
   "signature"
  ],
@@ -250,7 +251,7 @@
    "allow_on_submit": 1,
    "fieldname": "column_break_13",
    "fieldtype": "Tab Break",
-   "label": "Testing Part Sheet"
+   "label": "Testing Part Sheet / Comments"
   },
   {
    "allow_on_submit": 1,
@@ -281,12 +282,14 @@
    "fieldname": "parts_availability",
    "fieldtype": "Select",
    "label": "All Parts Availability Status",
-   "options": "Yes\nNo"
+   "options": "Yes\nNo",
+   "read_only": 1
   },
   {
    "depends_on": "eval:(doc.if_parts_required == 1);",
    "fieldname": "section_break_34",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "allow_on_submit": 1,
@@ -342,19 +345,6 @@
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Return Repair Time"
-  },
-  {
-   "fieldname": "actions_section",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Actions"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nReturn Not Repaired\nReturn No Fault"
   },
   {
    "fieldname": "technician_on_work_section",
@@ -438,13 +428,6 @@
    "label": "Parts Returned"
   },
   {
-   "fieldname": "lab_coordinator",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Lab Coordinator",
-   "options": "User"
-  },
-  {
    "fieldname": "column_break_hmowd",
    "fieldtype": "Column Break"
   },
@@ -460,12 +443,37 @@
    "fieldname": "signature",
    "fieldtype": "Signature",
    "label": "Signature"
+  },
+  {
+   "default": "0",
+   "fieldname": "needed_with_available_parts",
+   "fieldtype": "Check",
+   "label": "Need Available Parts"
+  },
+  {
+   "default": "0",
+   "fieldname": "all_parts_needed",
+   "fieldtype": "Check",
+   "label": "All Parts Needed"
+  },
+  {
+   "fieldname": "status_repair",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Under Testing"
+  },
+  {
+   "fieldname": "technician",
+   "fieldtype": "Link",
+   "label": "Technician",
+   "options": "User",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-08-19 11:47:03.282849",
+ "modified": "2023-09-13 10:54:37.730328",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

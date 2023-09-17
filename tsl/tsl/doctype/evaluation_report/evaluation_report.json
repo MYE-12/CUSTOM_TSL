@@ -12,6 +12,7 @@
   "attn",
   "specify_1",
   "hours_spent",
+  "technician",
   "ratehour",
   "column_break_3",
   "company",
@@ -64,8 +65,7 @@
   "section_break_52",
   "attach_image",
   "column_break_55",
-  "technician_image",
-  "lab_coordinator"
+  "technician_image"
  ],
  "fields": [
   {
@@ -121,7 +121,7 @@
    "allow_on_submit": 1,
    "fieldname": "column_break_13",
    "fieldtype": "Tab Break",
-   "label": "Parts Used"
+   "label": "Parts/Comments"
   },
   {
    "fieldname": "section_break_17",
@@ -162,7 +162,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nReturn Not Repaired\nReturn No Fault"
+   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault"
   },
   {
    "allow_on_submit": 1,
@@ -198,7 +198,7 @@
   },
   {
    "fieldname": "section_break_25",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Section Break",
    "label": "Time Used"
   },
   {
@@ -206,6 +206,7 @@
    "default": "0",
    "fieldname": "total_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Total Qty",
    "read_only": 1
   },
@@ -435,21 +436,20 @@
    "options": "Initial Evaluation"
   },
   {
-   "fieldname": "lab_coordinator",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Lab Coordinator",
-   "options": "User"
-  },
-  {
    "fieldname": "column_break_cb5ok",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "technician",
+   "fieldtype": "Data",
+   "label": "Technician",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-08-03 12:49:25.548269",
+ "modified": "2023-09-16 16:22:21.946520",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

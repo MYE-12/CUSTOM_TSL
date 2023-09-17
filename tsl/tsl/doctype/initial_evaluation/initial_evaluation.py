@@ -74,15 +74,15 @@ class InitialEvaluation(Document):
 			category = pm.category
 			sub_cat = pm.sub_category
 			# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
-			if not part_no:
-				
+			if not part_no:		
 				item_doc = frappe.new_doc("Item")
 				item_doc.naming_series = "P.######"
 				item_doc.model = model
 				item_doc.category_ = category
 				item_doc.sub_category = sub_cat
 				item_doc.item_group = "Components"
-				item_doc.save(ignore_permissions = True)
+				if frappe.session.user == "purchase@tsl-me.com":
+					item_doc.save(ignore_permissions = True)
 		if self.if_parts_required:
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			if self.parts_availability == "Yes":
@@ -242,13 +242,13 @@ def create_material_issue_from_ini_eval(name):
 	ini= frappe.get_doc('Initial Evaluation',name)
 	for i in ini.items:
 		frappe.errprint(i)
-	new_doc.append("items",{
-		's_warehouse':"Kuwait - TSL",
-		'item_code':i.part,
-		'qty':i.qty,
-		'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-		# 'conversion_factor':1,
-		# 'allow_zero_valuation_rate':1
-	})
+		new_doc.append("items",{
+			's_warehouse':"Kuwait - TSL",
+			'item_code':i.part,
+			'qty':i.qty,
+			'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+			# 'conversion_factor':1,
+			# 'allow_zero_valuation_rate':1
+		})
 	new_doc.save(ignore_permissions = True)
 	# new_doc.submit()

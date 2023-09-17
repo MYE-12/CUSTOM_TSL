@@ -117,29 +117,33 @@ frappe.ui.form.on('Initial Evaluation', {
 				}
 			});
 		}, __('Create'));
-		frm.add_custom_button(__("Release Parts"), function () {
-			frappe.call({
-				method: "tsl.tsl.doctype.initial_evaluation.initial_evaluation.create_material_issue_from_ini_eval",
-				args:{
-					'name':frm.doc.name
-				},
-				callback: function (r) {
-					if (r.message) {
-						console.log(r.message)
-						// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+		if(frappe.user.has_role("Procurement")){
+			frm.add_custom_button(__("Release Parts"), function () {
+				frappe.call({
+					method: "tsl.tsl.doctype.initial_evaluation.initial_evaluation.create_material_issue_from_ini_eval",
+					args:{
+						'name':frm.doc.name
+					},
+					callback: function (r) {
+						if (r.message) {
+							console.log(r.message)
+							// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+						}
 					}
-				}
-			});
-		}, __('Create'));
+				});
+			}, __('Create'));
+		}
+		
 
 		// if(frm.doc.work_order_data){
-		// 	
-		//frappe.call({
+			
+		// frappe.call({
 		// 		method: "tsl.tsl.doctype.evaluation_report.evaluation_report.get_item_image",
 		// 		args: {
 		// 			"wod_no":frm.doc.work_order_data,
 		// 		},
 		// 		callback: function(r) {
+		// 			console.log(r)
 		// 			if(r.message) {
 		// 				cur_frm.set_df_property("item_photo", "options","<img src="+r.message+"></img>");
 		// 				cur_frm.refresh_fields();
