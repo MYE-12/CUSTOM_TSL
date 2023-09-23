@@ -124,14 +124,14 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	cur_frm.refresh_fields()
 		// }
 		if(!frm.doc.if_parts_required){
-			    set_field_options("status", ["Installed and Completed","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
+			    set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
 		}
 		if(frm.doc.if_parts_required && frm.doc.items.length>0){
 		if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
-			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
+			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
 		}
 		else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1){
-			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
 		}}
 		if(frm.doc.attach_image){
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
@@ -197,7 +197,6 @@ frappe.ui.form.on('Evaluation Report', {
 						if(child.sub_category){
 							d['sub_category'] = child.sub_category;
 						}
-						console.log(d)
 						return{
 							filters: d
 						}
@@ -221,18 +220,18 @@ frappe.ui.form.on('Evaluation Report', {
 	},
 	if_parts_required:function(frm){
 		if(frm.doc.if_parts_required){
-			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
                         frm.set_value("status","Spare Parts")
 			frm.refresh_fields()
                 	if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
-                        	set_field_options("status", ["Installed and Completed","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
+                        	set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault"])
                 	}
                 	else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1 ){
-                        	set_field_options("status", ["Installed and Completed","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
+                        	set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault"])
                 	}
 		}
 		else{
-			set_field_options("status", ["Installed and Completed","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
+			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault"])
 		}
 	},
 	setup:function(frm){
@@ -341,7 +340,6 @@ frappe.ui.form.on('Part Sheet Item', {
 				"warehouse":frappe.user_defaults.company
 			},
 			callback :function(r){
-				console.log(r)
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
 				frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
 				row.total = row.qty * r.message[0];

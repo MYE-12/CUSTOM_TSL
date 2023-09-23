@@ -63,7 +63,6 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
                 },
             }
         }, target_doc, postprocess)
-        frappe.errprint(doclist)
         doclist.save()
         l.append(doclist.name)
     if l:
@@ -82,7 +81,6 @@ def on_submit(self,method):
 
 
     if (self.part_sheet and self.initial_evaluation):
-        frappe.errprint("JIX")
         items = self.get("items")
         for it in items:
             ie = frappe.get_doc("Initial Evaluation",it.initial_evaluation)
@@ -102,13 +100,11 @@ def on_submit(self,method):
             for i in ie.items:
                 add += j.total
             ie.total_amount = add
-            frappe.errprint('updated')
 
             ie.save(ignore_permissions=True)
 
 
     if self.part_sheet:
-        frappe.errprint("on submit SQ1")
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
             url = "https://api.exchangerate.host/%s"%(self.currency)
@@ -130,7 +126,6 @@ def on_submit(self,method):
         doc.save(ignore_permissions=True)
    
     elif self.initial_evaluation:
-        frappe.errprint("on submit SQ")
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
         
         for i in self.get("items"):

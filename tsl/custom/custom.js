@@ -103,17 +103,39 @@ frappe.ui.form.on('Quotation', {
         },
 	default_discount_percentage(frm){
 		if(frm.doc.default_discount_percentage){
-		var disc_val = (frm.doc.final_approved_price/100)*frm.doc.default_discount_percentage
-		var disc = Math.ceil(frm.doc.final_approved_price - disc_val).toFixed(2)
+		var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
+		var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
 		frm.set_value("after_discount_cost",disc)
+		frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
+		
+		}
+		if(frm.doc.default_discount_percentage){
+			frm.set_value("after_discount_cost",frm.doc.final_approved_price)
+
 		}
 
 	},
+	final_approved_price(frm){
+		if(frm.doc.final_approved_price){
+			var add_val = (frm.doc.final_approved_price/100)*5
+			var add_v = Math.ceil(add_val).toFixed(2)
+			var ds = parseInt(add_v )+ frm.doc.final_approved_price
+			frm.set_value("unit_rate_price",ds)
+			
+
+		}
+		else{
+			frm.set_value("unit_rate_price","")
+
+		}
+	},
 	validate(frm){
+		cur_frm.clear_table('technician_hours_spent')
+
 		if(frm.doc.is_multiple_quotation){
 			$.each(frm.doc.items, function(i,v){
 				if(v.margin_amount <= 0){
-					frappe.msgprint({
+					frappe.throw({
 						title: __('<b style = color:green>Alert</b>'),
 						indicator: 'green',
 						message: __('<center><b style=color:red>Note : Please Give the Suggested Price for each Work Order Line Item !!</b></center>')
@@ -132,6 +154,7 @@ frappe.ui.form.on('Quotation', {
 			} 
 			else{
 				sup_amt += v.amount
+				console.log(sup_amt)
 			}
 		})
 		cur_frm.clear_table("parts_price_list_");
@@ -182,6 +205,7 @@ frappe.ui.form.on('Quotation', {
 						"type":"Customer Quotation - Repair"
 					},
 					callback: function(r) {
+						console.log(r)
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);

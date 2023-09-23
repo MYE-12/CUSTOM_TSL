@@ -50,6 +50,9 @@ class InitialEvaluation(Document):
 		self.total_amount = add
 		doc = frappe.get_doc("Work Order Data",self.work_order_data)
 		doc.status = "UE-Under Evaluation"
+		if self.status_repair == "Comprasion":
+			doc.status = "C-Comparison"
+
 		doc.save(ignore_permissions = True)
 		if self.if_parts_required:
 			f=0
@@ -61,7 +64,11 @@ class InitialEvaluation(Document):
 			if f:
 				self.parts_availability = "No"
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "SP-Searching Parts"
+
+				if self.status_repair == "Comprasion":
+					doc.status = "C-Comparison"
+				else:
+					doc.status = "SP-Searching Parts"
 			else:
 				self.parts_availability = "Yes"
 				doc.status = "AP-Available Parts"
@@ -91,6 +98,8 @@ class InitialEvaluation(Document):
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
 				if sq:
 					doc.status = "Parts Priced"
+				if self.status_repair == "Comprasion":
+					doc.status = "C-Comparison"
 				else:
 					doc.status = "SP-Searching Parts"
 			

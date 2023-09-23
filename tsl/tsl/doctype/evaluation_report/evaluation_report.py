@@ -10,7 +10,6 @@ from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 # @frappe.whitelist()
 # def get_item_image(wod_no):
 # 	erf_no = frappe.db.get_value("Work Order Data",wod_no,"equipment_recieved_form")
-# 	frappe.errprint(erf_no)
 
 # 	image = img(erf_no)
 # 	return image
@@ -46,13 +45,19 @@ class EvaluationReport(Document):
 			elif self.status == "Comparison":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
+			elif self.status == "Spare Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "Parts Priced"
+			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "Parts Priced"
 			elif self.status == "Return Not Repaired":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNR-Return Not Repaired"
 			elif self.status == "Return No Fault":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNF-Return No Fault"
-			elif self.status in ["Installed and Completed","Customer Testing"]:
+			elif self.status in ["Installed and Completed/Repaired","Customer Testing"]:
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RS-Repaired and Shipped"
 			elif  self.status == "Customer Testing":
@@ -61,24 +66,20 @@ class EvaluationReport(Document):
 			# else:
 			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			# 	doc.status = "AP-Available Parts"
-			doc.save()
+				doc.save(ignore_permissions=True)
 	def on_submit(self):
 		if self.if_parts_required:
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			if self.parts_availability == "Yes":
 				doc.status = "AP-Available Parts"
 			if self.parts_availability == "No":
-				frappe.errprint('yes-2.')
-
+	
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
-				frappe.errprint(sq)
 				
 				if sq:
-					frappe.errprint('yes-2')
 
 					doc.status = "Parts Priced"
 				else:
-					frappe.errprint("1")
 					doc.status = "SP-Searching Parts"
 			doc.save(ignore_permissions=True)
 		if self.status:
@@ -89,11 +90,9 @@ class EvaluationReport(Document):
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
 				if sq:
-					frappe.errprint('yes-1')
 
 					doc.status = "Parts Priced"
 				else:
-					frappe.errprint("2")
 					doc.status = "SP-Searching Parts"
 			elif self.status == "Extra Parts":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -107,7 +106,7 @@ class EvaluationReport(Document):
 			elif self.status == "Return No Fault":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNF-Return No Fault"
-			elif self.status in ["Installed and Completed","Customer Testing"]:
+			elif self.status in ["Installed and Completed/Repaired","Customer Testing"]:
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RS-Repaired and Shipped"
 			elif  self.status == "Customer Testing":
@@ -184,19 +183,26 @@ class EvaluationReport(Document):
 		#self.total_amount = add
 		frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
 		if self.status:
-			sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
-
-			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			sq = frappe.db.sql("""select (`tabSupplier Quotation Item`.work_order_data) as wod ,`tabSupplier Quotation`.name as sq 
+					  from `tabSupplier Quotation` left join `tabSupplier Quotation Item` on `tabSupplier Quotation`.name = `tabSupplier Quotation Item`.parent  
+					  where `tabSupplier Quotation`.docstatus = 1 """,as_dict=1)
+			
+			for s in sq:
+				# frappe.errprint(s.wod)
+				if s.wod:
+					if self.status == "Spare Parts":
+						doc = frappe.get_doc("Work Order Data",s.wod)
+						doc.status = "Parts Priced"
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			if self.status == "Working":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
-
-			elif self.status == "Spare Parts" and sq:
+			
+			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "Parts Priced"
-			elif self.status == "Spare Parts":
+			elif self.status == "Spare Parts" and self.parts_availability == "No":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				frappe.errprint("1r")
 				doc.status = "SP-Searching Parts"
 
 			elif self.status == "Extra Parts":
@@ -211,7 +217,7 @@ class EvaluationReport(Document):
 			elif self.status == "Return No Fault":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNF-Return No Fault"
-			elif self.status == "Installed and Completed":
+			elif self.status == "Installed and Completed/Repaired":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RS-Repaired and Shipped"
 			elif  self.status == "Customer Testing":
@@ -231,14 +237,12 @@ class EvaluationReport(Document):
 					f=1
 			if len(self.items)>0 and self.items[-1].part_sheet_no:
 				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
-					frappe.errprint("Extra")
 					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
 			if f:
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
 
 				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "No" where name = %s ''',(self.name))
 				if self.parts_availability == "No" and sq:
-					frappe.errprint(sq)
 					doc = frappe.get_doc("Work Order Data",self.work_order_data)
 
 					doc.status = "Parts Priced"
@@ -246,17 +250,15 @@ class EvaluationReport(Document):
 					doc = frappe.get_doc("Work Order Data",self.work_order_data)
 
 					self.parts_availability == "No"
-					frappe.errprint("io")
 				
 					doc.status = "SP-Searching Parts"
 				# doc.save(ignore_permissions=True)
 				#	scrap = frappe.db.sql('''select * from `tabPart Sheet Item` where name = %s ''', (self.name),as_dict=1)
-				#	frappe.errprint(scrap)
 			else:
 				self.parts_availability = "Yes"
 				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				if self.status == "Installed and Completed":
+				if self.status == "Installed and Completed/Repaired":
 					doc.status = "RS-Repaired and Shipped"
 				elif self.status == "Customer Testing":
 					doc.status == "CT-Customer Testing"
@@ -287,14 +289,19 @@ class EvaluationReport(Document):
 				part_no = pm.part
 				category = pm.category
 				sub_cat = pm.sub_category
+				package = pm.part_description
 				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 				if  not part_no:
-					frappe.errprint('ijt')
 					item_doc = frappe.new_doc("Item")
 					item_doc.naming_series = 'P.#####'
 					item_doc.model = model
+					mod = frappe.db.get_value("Item Model",model,"model")
+					item_doc.model_num = mod
 					item_doc.category_ = category
+					scn = frappe.db.get_value("Sub Category",sub_cat,"sub_category")
 					item_doc.sub_category = sub_cat
+					item_doc.sub_category_name = scn
+					item_doc.package = package
 					item_doc.item_group = "Components"
 					item_doc.save(ignore_permissions = True)
 		

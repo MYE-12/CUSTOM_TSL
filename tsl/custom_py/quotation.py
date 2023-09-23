@@ -363,19 +363,26 @@ def get_quotation_history(source,type = None):
 	}, target_doc, postprocess)
 	for ic in doclist.get('items'):
 		if ic.item_code:
+			ic.rate = round(doc.unit_rate_price)
+			frappe.errprint(ic.rate)
+			
+		if not ic.margin_amount:
+			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+			unit_disc = disc
 
-			ic.rate = (doc.after_discount_cost)
+			ic.rate = doc.after_discount_cost+disc
+			frappe.errprint(ic.rate )
 
-		# if not ic.margin_amount:
-		# 	ic.rate = doc.after_discount_cost
 
 		
-	# for i in doc.items:
-	# 	rate = i.margin_amount
-	# 	if rate:
-
-	# 		for i in range(len(doclist.items)):
-	# 			doclist.items[i].rate = (rate)
+		for i in doc.items:
+			rate = i.margin_amount
+			if rate:
+				for i in range(len(doclist.items)):
+					doclist.items[i].rate = (rate)
+					doclist.after_discount_cost = doc.actual_price
+					
+				
 	return doclist
 
 

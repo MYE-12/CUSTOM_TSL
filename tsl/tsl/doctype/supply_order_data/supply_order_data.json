@@ -304,10 +304,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-02-15 10:12:24.979763",
+ "modified": "2023-09-19 11:00:36.951487",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -324,5 +325,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

@@ -86,7 +86,7 @@ frappe.ui.form.on('Request for Quotation', {
                                         // for(var i=0;i<r.message.length;i++){
                                                 console.log(r)
                                                 $.each(r.message, function(i,v){
-                                                        console.log(v)
+                                                        console.log(v.qty)
                                                         var item_child = cur_frm.add_child("items");
                                                         item_child.item_code = v.part,
                                                         item_child.item_name = v.part_name,
