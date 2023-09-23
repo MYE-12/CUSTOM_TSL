@@ -162,7 +162,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault"
+   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault"
   },
   {
    "allow_on_submit": 1,
@@ -441,15 +441,16 @@
   },
   {
    "fieldname": "technician",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Technician",
+   "options": "User",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-16 16:22:21.946520",
+ "modified": "2023-09-21 13:10:03.275885",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

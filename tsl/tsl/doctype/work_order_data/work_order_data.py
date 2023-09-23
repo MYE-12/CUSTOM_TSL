@@ -220,6 +220,7 @@ def create_initial_eval(doc_no):
 	new_doc.work_order_data = doc.work_order_data
 	new_doc.initial_evaluation = doc.name
 	new_doc.parts_availability = doc.parts_availability
+	new_doc.technician = doc.technician
 	new_doc.attach_image = doc.attach_image
 	if doc.no_power:
 		new_doc.no_power = 1

@@ -18,6 +18,7 @@ def get_items_from_ps(wod):
                     d["wod"] = i
                     d["part_sheet"] = j["name"]
                     l.append(d)
+                    frappe.errprint(l)
         for j in ie:
             doc = frappe.get_doc("Initial Evaluation",j['name'])
             for k in doc.items:

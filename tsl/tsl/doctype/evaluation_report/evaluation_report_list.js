@@ -1,7 +1,7 @@
 frappe.listview_settings['Evaluation Report'] = {
 	add_fields: ["status","name"],
 	get_indicator: function (doc) {
-            if (doc.status === "Installed and Completed") {
+            if (doc.status === "Installed and Completed/Repaired") {
                   return [__("Installed and Completed"), "yellow", "status,=,Installed and Completed"];
 
             } 
