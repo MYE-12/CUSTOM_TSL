@@ -362,25 +362,26 @@ def get_quotation_history(source,type = None):
 		},
 	}, target_doc, postprocess)
 	for ic in doclist.get('items'):
-		if ic.item_code:
-			ic.rate = round(doc.unit_rate_price)
-			frappe.errprint(ic.rate)
-			
 		if not ic.margin_amount:
 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
 			unit_disc = disc
 
 			ic.rate = doc.after_discount_cost+disc
 			frappe.errprint(ic.rate )
+		if ic.item_code  :
+			ic.rate = round(doc.unit_rate_price)
+			frappe.errprint(ic.rate)
+			
+		
 
 
 		
-		for i in doc.items:
-			rate = i.margin_amount
-			if rate:
-				for i in range(len(doclist.items)):
-					doclist.items[i].rate = (rate)
-					doclist.after_discount_cost = doc.actual_price
+	# for i in doc.items:
+	# 	rate = i.margin_amount
+	# 	if rate:
+	# 		for i in range(len(doclist.items)):
+	# 			doclist.items[i].rate = (rate)
+	# 			doclist.after_discount_cost = doc.actual_price
 					
 				
 	return doclist
@@ -407,8 +408,20 @@ def create_sal_inv(source):
 			
 		},
 	}, target_doc)
-	for i in doclist.get('items'):
-		doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
+	for mg in doc.get('items'):
+		frappe.errprint(mg.item_code)
+		
+		for i in doclist.get('items'):
+			frappe.errprint(i.item_code)
+
+			doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
+			if mg.item_code == i.item_code and doc.is_multiple_quotation:
+				i.rate= mg.margin_amount
+			else:
+				i.rate= mg.rate
+
+
+
 	return doclist
 @frappe.whitelist()
 def advance_pay(source):
