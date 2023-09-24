@@ -111,7 +111,7 @@ frappe.ui.form.on('Quotation', {
 		}
 		else{
 			frm.set_value("after_discount_cost",'')
-			// frm.set_value("default_discount_value",'')
+			frm.set_value("default_discount_value",'')
 		}
 		if(frm.doc.default_discount_percentage){
 			frm.set_value("after_discount_cost",frm.doc.final_approved_price)
