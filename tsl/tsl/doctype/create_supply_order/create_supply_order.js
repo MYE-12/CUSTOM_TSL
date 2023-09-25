@@ -31,32 +31,32 @@ frappe.ui.form.on('Create Supply Order', {
 		});
 	},
 
-	// branch:function(frm){
-	// 	if(frm.doc.company && frm.doc.branch){
-	// 		var d = {
-	// 			"Kuwait - TSL":"Supply - Kuwait - TSL",
-	// 			"Dammam - TSL-SA":"Supply - Dammam - TSL-SA",
-	// 			"Jeddah - TSL-SA":"Supply - Jeddah - TSL-SA",
-	// 			"Riyadh - TSL-SA":"Supply - Riyadh - TSL-SA"
-	// 		}
-	// 		frm.set_value("repair_warehouse",d[frm.doc.branch]);
-	// 		// var d = {
-	// 		// 	"Dammam - TSL-SA":"ERF-D.YY.-",
-	// 		// 	"Riyadh - TSL-SA":"ERF-R.YY.-",
-	// 		// 	"Jeddah - TSL-SA":"ERF-J.YY.-",
-	// 		// 	"Kuwait - TSL":"ERF-K.YY.-"
-	// 		// };
-	// 		// if(frm.doc.branch){
-	// 		// 	frm.set_value("naming_series",d[frm.doc.branch]);
-	// 		// }
+	branch:function(frm){
+		if(frm.doc.company && frm.doc.branch){
+			var d = {
+				"Kuwait - TSL":"Supply - Kuwait - TSL",
+				"Dammam - TSL-SA":"Supply - Dammam - TSL-SA",
+				"Jeddah - TSL-SA":"Supply - Jeddah - TSL-SA",
+				"Riyadh - TSL-SA":"Supply - Riyadh - TSL-SA"
+			}
+			frm.set_value("repair_warehouse",d[frm.doc.branch]);
+			// var d = {
+			// 	"Dammam - TSL-SA":"ERF-D.YY.-",
+			// 	"Riyadh - TSL-SA":"ERF-R.YY.-",
+			// 	"Jeddah - TSL-SA":"ERF-J.YY.-",
+			// 	"Kuwait - TSL":"ERF-K.YY.-"
+			// };
+			// if(frm.doc.branch){
+			// 	frm.set_value("naming_series",d[frm.doc.branch]);
+			// }
 
-	// 	}
+		}
 
 
-	// },
-	// company:function(frm){
-	// 	frm.trigger("branch")
-	// },
+	},
+	company:function(frm){
+		frm.trigger("branch")
+	},
 	customer:function(frm){
 		if(!frm.doc.customer){
 				return
