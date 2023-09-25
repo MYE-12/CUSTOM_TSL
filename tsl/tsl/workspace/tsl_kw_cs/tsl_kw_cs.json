@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-09-25 10:36:07.435904",
+ "modified": "2023-09-24 08:19:02.095497",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -37,33 +37,11 @@
    "type": "DocType"
   },
   {
-   "color": "Pink",
-   "doc_view": "List",
-   "label": "W - Under Tech Repair",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"in\",[\"UTR-Under Technician Repair\",null]]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Create Supply Order",
-   "link_to": "Create Supply Order",
-   "type": "DocType"
-  },
-  {
    "color": "Red",
    "doc_view": "List",
    "label": "W - Ready To Quote",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"RS-Repaired and Shipped\",\"W-Working\",null]]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Supply Order Data",
-   "link_to": "Supply Order Data",
    "type": "DocType"
   },
   {
@@ -87,6 +65,14 @@
    "doc_view": "List",
    "label": "Create Work Order",
    "link_to": "Create Work Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W - Ready To Quote",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"W-Working\",null]]}",
    "type": "DocType"
   },
   {

@@ -462,6 +462,75 @@ frappe.ui.form.on('Quotation', {
 					});
 				}, __("Get Items From"), "btn-default");
 		}
+	// 	if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Repair") {
+	// 		frm.add_custom_button(__('Approved Internal'),
+	// 		function() {
+	// 			var from_date = frappe.datetime.add_months(frappe.datetime.get_today(), -1)
+	// 					var to_date = frappe.datetime.get_today()
+	// 			new frappe.ui.form.MultiSelectDialog({
+	// 				doctype: "Quotation",
+	// 				target: frm,
+	// 				setters: {
+	// 					customer:frm.doc.party_name,
+	// 					wod_component:null
+	// 				},
+					
+	// 				add_filters_group: 1,
+	// 				// get_query() {
+	// 				// 	return {
+	// 				// 		filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name, posting_date:["between",[from_date,to_date]]}
+	// 				// 	}
+	// 				// },
+	// 				action(selections) {
+	// 					frappe.call({
+	// 						method: "tsl.custom_py.quotation.get_wod_items",
+	// 						args: {
+	// 							"wod": selections
+	// 						},
+	// 						callback: function(r) {
+	// 							if(r.message) {
+	// 								cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
+	// 								var tot_amt = 0;
+	// 								var tot_qty=0;
+	// 								for(var i=0;i<r.message.length;i++){
+	// 									var childTable = cur_frm.add_child("items");
+	// 									childTable.item_code = r.message[i]["item"],
+	// 									childTable.item_name = r.message[i]["item_name"],
+	// 									childTable.wod_no = r.message[i]["wod"],
+	// 									childTable.model_no = r.message[i]["model_no"],
+	// 									childTable.manufacturer = r.message[i]["manufacturer"],
+	// 									childTable.serial_no = r.message[i]["serial_no"],
+	// 									childTable.description = r.message[i]["description"],
+	// 									childTable.type = r.message[i]['type'],
+	// 									childTable.qty = r.message[i]["qty"]
+	// 									// childTable.rate = r.message[i]["total_amt"]
+	// 									// if(r.message[i]["total_amt"]){
+	// 									// 	var amt = r.message[i]["qty"] * r.message[i]["total_amt"];
+	// 									// 	childTable.amount = amt		
+	// 									// }										
+	// 									tot_qty += r.message[i]["qty"];
+	// 									cur_frm.refresh_fields("items");
+	// 								}
+	// 								frm.doc.total = tot_amt;
+	// 								frm.doc.total_qty = tot_qty;
+	// 								frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
+	// 								frm.doc.rounded_total = frm.doc.grand_total;
+	// 								// frm.doc.actual_price = frm.doc.rounded_total;
+	// 								// if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].total_price){
+	// 								// 	frm.doc.actual_price = frm.doc.rounded_total + frm.doc.technician_hours_spent[0].total_price;
+	// 								// }
+	// 								// frm.doc.final_approved_price = frm.doc.actual_price;
+	// 								cur_frm.refresh_fields();
+
+	// 							}
+	// 						}
+	// 					});
+	// 					cur_dialog.hide();
+	// 				}
+
+	// 			});
+	// 		}, __("Get Items From"), "btn-default");
+	// }
 		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Supply") {
 			frm.add_custom_button(__('Supply Order Data'),
 				function() {

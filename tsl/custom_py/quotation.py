@@ -179,6 +179,7 @@ def show_details(self,method):
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
 						if len(sq_no):
 								sq_no = sq_no[0]["sq"]
+								frappe.errprint(sq_no)
 						else:
 							sq_no =  ""
 					else:

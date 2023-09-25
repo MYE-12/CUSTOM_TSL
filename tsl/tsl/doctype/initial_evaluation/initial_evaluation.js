@@ -127,6 +127,7 @@ frappe.ui.form.on('Initial Evaluation', {
 					callback: function (r) {
 						if (r.message) {
 							console.log(r.message)
+							frappe.msgprint("Material Released")
 							// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
 						}
 					}
