@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-09-24 08:00:36.612706",
+ "modified": "2023-09-24 08:19:02.095497",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -37,14 +37,6 @@
    "type": "DocType"
   },
   {
-   "color": "Red",
-   "doc_view": "List",
-   "label": "W - Ready To Quote",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"RS-Repaired and Shipped\",\"W-Working\",null]]}",
-   "type": "DocType"
-  },
-  {
    "color": "Grey",
    "doc_view": "List",
    "label": "Q - Internal Pending",
@@ -65,6 +57,14 @@
    "doc_view": "List",
    "label": "Create Work Order",
    "link_to": "Create Work Order",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W - Ready To Quote",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"W-Working\",null]]}",
    "type": "DocType"
   },
   {

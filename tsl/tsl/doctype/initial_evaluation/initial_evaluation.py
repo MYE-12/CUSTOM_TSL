@@ -260,4 +260,4 @@ def create_material_issue_from_ini_eval(name):
 			# 'allow_zero_valuation_rate':1
 		})
 	new_doc.save(ignore_permissions = True)
-	# new_doc.submit()
+	new_doc.submit()
