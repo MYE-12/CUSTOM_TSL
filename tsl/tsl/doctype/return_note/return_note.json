@@ -417,6 +417,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Accounting Dimensions"
@@ -485,6 +486,7 @@
    "collapsible": 1,
    "fieldname": "address_and_contact",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Address and Contact"
@@ -616,6 +618,7 @@
    "depends_on": "customer",
    "fieldname": "currency_and_price_list",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Currency and Price List"
@@ -699,6 +702,7 @@
   {
    "fieldname": "sec_warehouse",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Warehouse"
@@ -851,6 +855,7 @@
   {
    "fieldname": "section_break_30",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1
   },
@@ -922,6 +927,7 @@
   {
    "fieldname": "taxes_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "oldfieldtype": "Section Break",
@@ -1176,6 +1182,7 @@
   {
    "fieldname": "totals",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "oldfieldtype": "Section Break",
@@ -2067,7 +2074,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-08-30 16:12:31.039415",
+ "modified": "2023-09-25 09:37:57.044861",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Return Note",
