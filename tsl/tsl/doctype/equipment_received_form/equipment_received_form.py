@@ -154,6 +154,7 @@ def create_workorder_data(order_no, f):
                 "link_name": doc.customer
             })
             addr.save(ignore_permissions=True)
+            frappe.errprint("ji")
     if int(f) == 0:
         for i in doc.get("received_equipment"):
             if i["no_power"]:
