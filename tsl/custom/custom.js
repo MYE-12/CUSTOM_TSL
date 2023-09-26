@@ -55,7 +55,6 @@ frappe.ui.form.on('Quotation', {
 					},
 					callback: function(r) {
 						if(r.message) {
-							console.log(r)
 							for(var i=0;i<frm.doc.items.length;i++){
 								frm.doc.items[i].rate = r.message
 								frm.doc.items[i].amount = frm.doc.items[i].qty*r.message
@@ -209,7 +208,6 @@ frappe.ui.form.on('Quotation', {
 						"type":"Customer Quotation - Repair"
 					},
 					callback: function(r) {
-						console.log(r)
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);

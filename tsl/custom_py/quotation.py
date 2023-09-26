@@ -179,7 +179,6 @@ def show_details(self,method):
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
 						if len(sq_no):
 								sq_no = sq_no[0]["sq"]
-								frappe.errprint(sq_no)
 						else:
 							sq_no =  ""
 					else:
@@ -217,9 +216,12 @@ def show_details(self,method):
 					if k.parts_availability == "No":
 						source = "Supplier"
 						price = k.price_ea
-						sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
-								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)						
+								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
+						for sq in sq_no:
+							frappe.errprint(sq.spc)				
+								
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:
@@ -368,10 +370,10 @@ def get_quotation_history(source,type = None):
 			unit_disc = disc
 
 			ic.rate = doc.after_discount_cost+disc
-			frappe.errprint(ic.rate )
+		
 		if ic.item_code  :
 			ic.rate = round(doc.unit_rate_price)
-			frappe.errprint(ic.rate)
+	
 			
 		
 
@@ -410,11 +412,10 @@ def create_sal_inv(source):
 		},
 	}, target_doc)
 	for mg in doc.get('items'):
-		frappe.errprint(mg.item_code)
+		
 		
 		for i in doclist.get('items'):
-			frappe.errprint(i.item_code)
-
+			
 			doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
 			if mg.item_code == i.item_code and doc.is_multiple_quotation:
 				i.rate= mg.margin_amount

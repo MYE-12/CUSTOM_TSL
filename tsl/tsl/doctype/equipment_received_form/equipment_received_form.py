@@ -396,7 +396,7 @@ def get_wod_details(wod):
             "model_no": i.model_no,
             "serial_no": i.serial_no,
             "qty": i.quantity,
-            "sales_rep": doc.sales_person,
+            "sales_rep": doc.sales_rep_name,
             "customer": doc.customer,
             "incharge": doc.incharge,
             "address": doc.address,
