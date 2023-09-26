@@ -184,8 +184,9 @@ def create_workorder_data(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value(
-                "Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            frappe.errprint(item)
+
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
             elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
