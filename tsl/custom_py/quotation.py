@@ -4,7 +4,7 @@ from re import L
 import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
-import pandas as pd
+# import pandas as pd
 from frappe import get_print
 import datetime
 import requests
