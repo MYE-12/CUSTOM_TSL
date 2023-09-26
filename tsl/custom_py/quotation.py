@@ -38,7 +38,40 @@ def get_wod_items(wod):
 
 			}))
 	return l
+# Approved Quotation Multiselect
+@frappe.whitelist()
+def get_qtn_items(qtn):
+	qtn = json.loads(qtn)
+	l=[]
+	for k in list(qtn):
+		tot = 0
+		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=0 group by work_order_data''',k,as_dict=1)
+		doc = frappe.get_doc("Quotation",k)
+		# branch = doc.branch
+		if len(tot) and 'total_amount' in tot[0]:
+			tot = tot[0]['total_amount']
+		else:
+			tot = 0
+		for i in doc.get("items"):
+			l.append(frappe._dict({
+				"item" :i.item_code,
+				"item_name" : i.item_name,
+				"description":i.item_name,
+				"wod_no": i.wod_no,
+				"type": i.type,
+				"model_no": i.model_no,
+				"manufacturer": i.manufacturer,
+				"serial_no": i.serial_no,
+				"qty": i.qty,
+				"margin_amount": i.margin_amount,
+				"margin_amount_value": i.margin_amount_value,
+				"unit_price": i.unit_price,
+				# "sales_rep":doc.sales_rep,
+				# "total_amt":float(tot)/float(i.quantity),
+				# "branch":branch,
 
+			}))
+	return l
 @frappe.whitelist()
 def get_sqtn_items(sod):
 	sod = json.loads(sod)
@@ -142,9 +175,14 @@ def sum_amount(doc,method):
 def show_details(self,method):
 	if self.is_multiple_quotation == 1:
 		tot = 0
+		up=0
 		for i in self.get("items"):
-			tot += i.margin_amount
-		self.actual_price = tot
+			# tot += i.margin_amount
+			up += i.unit_price
+			actual_percentage = (up/100)*5
+			price = up - actual_percentage
+		self.actual_price = price
+		self.default_discount_value = round(actual_percentage)
 
 	if self.quotation_type == "Internal Quotation - Repair":
 		
@@ -467,7 +505,10 @@ def on_update(self, method):
 			if i.wod_no:
 				doc = frappe.get_doc("Work Order Data",i.wod_no)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Management":
-					doc.status = "IQ-Internally Quoted"	
+					doc.status = "IQ-Internally Quoted"
+				else:
+					doc.status = "Pending Internal Approval"
+
 				doc.save(ignore_permissions=True)
 	if self.quotation_type == "Internal Quotation - Supply":
 		for i in self.get("items"):
