@@ -98,6 +98,9 @@ frappe.listview_settings['Work Order Data'] = {
             else if (doc.status === "Parts Priced") {
                   return [__("Parts Priced"), "green", "status,=,Parts Priced"];
             }
+            else if (doc.status === "Pending Internal Approval") {
+                  return [__("Pending Internal Approval"), "orange", "status,=,Pending Internal Approval"];
+            }
             else if(doc.status === "NE-Need Evaluation"){
                   return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
             }
