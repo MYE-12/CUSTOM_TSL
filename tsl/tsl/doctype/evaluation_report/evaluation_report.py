@@ -321,7 +321,7 @@ class EvaluationReport(Document):
 			if extra_ps:
 				wod.append("extra_part_sheets",{
 					"part_sheet_name":self.name,
-					"technician":self.attn,
+					"technician":self.technician,
 				})
 				wod.save(ignore_permissions = True)
 
