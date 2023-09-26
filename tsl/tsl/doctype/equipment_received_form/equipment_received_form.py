@@ -386,6 +386,7 @@ def complaint_issue(args):
 @frappe.whitelist()
 def get_wod_details(wod):
     l = []
+    frappe.errprint("o")
     doc = frappe.get_doc("Work Order Data", wod)
     for i in doc.get("material_list"):
         l.append(frappe._dict({
