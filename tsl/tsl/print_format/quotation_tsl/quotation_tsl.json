@@ -1,38 +1,3 @@
-<<<<<<< HEAD
-// {
-//  "absolute_value": 0,
-//  "align_labels_right": 0,
-//  "creation": "2023-02-09 12:41:16.363911",
-//  "css": "letter-head{\n    max-width:100px !important;\n    margin-top: -200px !important;\n}\n\n.print-format{\n    font-size:12px;\n    font-family: 'Soleto';\n    margin-left:5px;\n    margin-right:5px;\n}\n\n\n\n",
-//  "custom_format": 1,
-//  "default_print_language": "en",
-//  "disabled": 0,
-//  "doc_type": "Quotation",
-//  "docstatus": 0,
-//  "doctype": "Print Format",
-//  "font": "Default",
-//  "font_size": 14,
-//  "html": "<meta name=\"pdfkit-orientation\" content=\"portrait\" />\n<meta name=\"page-size\" content ='A4'/>\n<header id='header-html'>\n{% set letter_head = frappe.db.get_value(\"Letter Head\",doc.letter_head,['image']) %}\n    <img src = \"{{ letter_head }}\" />\n\n</header>\n<div style= \" text-align: center; font-size: 30px; text-decoration: underline; color:#798bc4;\"><b>Quotation</b>  </div>\n\n<table style= \"margin: 10px 0px 0px 0px; width: 100%; font-size:12px; border:0px;\">\n    <tr>\n        <td>Customer Name</td>\n        <td>{{doc.party_name or \"\"}}</td>\n        <td>Date</td>\n        <td>{{doc.get_formatted('transaction_date' or \"\")}}</td>\n    </tr>\n      <tr>\n        <td>Atten</td>\n        <td>Purchasing Dept</td>\n        <td>Quote Ref.No:</td>\n        <td>{{doc.name or \"\"}}</td>\n    </tr>\n      <tr>\n        <td>Customer Ref</td>\n        <td>{{doc.customer_reference_number or \"\"}}</td>\n        <td>Quotation Validity</td>\n        <td>{{doc.get_formatted('valid_till' or \"\")}}</td>\n    </tr>\n      <tr>\n        <td>PR No</td>\n        <td></td>\n        <td>Sales Rep</td>\n        {% set sales_name = frappe.db.get_value(\"User\",doc.sales_rep,\"first_name\")%}\n        <td>{{sales_name or \"\"}}</td>\n    </tr>\n   \n    \n\n    \n</table>\n\n<table border=\"1\" style = \"width:100%\">\n        <tr>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>Work Order No</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>DESCRIPTION</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>MFG</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>Model</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>Serial No.</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>Unit Price</b></td>\n            <td style=\"background-color:#3a4d86;color:white;text-align:center\"><b>TOTAL AMOUNT</b></td>\n            \n        </tr>\n        {% for row in doc.items %}\n        <tr >\n            <td style= \"text-align:center\">{{row.wod_no or \"NA\"}}</td>\n            <td style= \"text-align:center\">{{row.description or \"NA\"}}</td>\n            <td style= \"text-align:center\">{{row.manufacturer or \"NA\"}}</td>\n            {% set model = frappe.db.get_value(\"Item Model\",row.model_no,['model']) %}\n                \n            <td style= \"text-align:center\">{{model or \"NA\"}}</td>\n            <td style= \"text-align:center\">{{row.serial_no or \"NA\"}}</td>\n            {% if doc.is_multiple_quotation %}\n             <td style= \"text-align:center\">{{row.margin_amount}}</td>\n             <td style= \"text-align:center\">{{row.margin_amount}}</td>\n             {% else %}\n            <td style= \"text-align:center\">{{'%0.2f'| format((doc.unit_rate_price)|round)}}</td>\n            <td style= \"text-align:center\">{{'%0.2f'| format((doc.unit_rate_price)|round)}}</td>\n\n            {% endif %}\n           \n        </tr>\n        {% endfor %}\n</table>\n<table border = \"1\" width ='100%'>\n    <tr>\n        <td colspan = '5'>Repair Evaluation: Need to Repair / Replace Defective Parts</td>\n       <td>Discount {% if doc.default_discount_percentage %}\n       \n      ({{doc.default_discount_percentage}})%</td>\n        {% endif %}\n        <td>{{doc.default_discount_value}}</td>\n\n    </tr>\n    <tr>\n        <td colspan = '5'> </td>\n        <td>Shipping Cost</td>\n        <td>0.0</td>\n        \n    </tr>\n    <tr>\n        <td colspan = '5'></td>\n        <td>Total</td>\n        {% if doc.is_multiple_quotation %}\n        <td>{{doc.actual_price}}</td>\n        {% else %}\n        <td>KWD {{'%0.2f'| format((doc.after_discount_cost or \"\")|round)}}</td>\n        {% endif %}\n        \n    </tr>\n</table>\n<table border=\"1\" style = \"width:100%\" >\n    <tr>\n        <td colspan =\"2\" style =\"background-color:#3a4d86;color: white;\">Terms & Condition</td>\n    </tr>\n    <tr >\n        <td colspan =\"2\"> Payment terms&nbsp;&nbsp;&nbsp;: {{doc.payment_term or \"\"}} <br>\n            Delivery time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 2-3 Days<br>\n            Warranty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 3 Months<br>\n        </td>\n        \n    </tr>\n    <tr>\n        <td style =\"background-color:#3a4d86;color: white;\">Customer Approval\n        </td>\n        <td style =\"background-color:#3a4d86;color: white;\">Bank Details\n        </td>\n    </tr>\n    <tr>\n        <td> Purchaser Name : <br>\n            PO.NO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>\n            Approval Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>\n            Authorized Sign<br>\n            with CO.stamp\n        </td>\n        <td><span style=\"color:red\">Payments by Cheque or Wire transfer to be made out to TSL.</span><br>\n            BENEFICARY NAME : TSL COMPANY<br>\n            BANK : BOUBYAN BANK,<br>\n            ACCOUNT NUMBER :<span style=\"color:#02af51\"> 0566112001</span> <br>\n            IBAN #<span style=\"color:#02af51\"> KW35 BBYN 0000 0000 0000 0566 1120 01</span>\n        </td>\n    </tr>\n    \n</table>\n<br>\n<br>\n<span style= \"text-decoration: underline;\">TSl Authorized Signature:</span>\n<br><br><br><br>\n<p style=\"text-align:justify;\">Our quotation covers only the repair of the subject unit mentioned above to the OEM specification. TSL is not responsible in any way for any additional\nproblems that you may still have on your machine, other units or any programming pertaining to your machine\n<br><b>Note</b>: Please take the appropriate action within 30 days of the quoted date. Otherwise we will not be responsible for your item</p>\n\n\n<footer id=\"footer-html\" class=\"footer-html\">\n    {% set footer = frappe.db.get_value(\"Letter Head\",doc.letter_head,['footer']) %}\n                {{ footer }}\n                </footer>\n     \n    \n   \n\n\n\n    \n    \n",
-//  "idx": 0,
-//  "line_breaks": 0,
-//  "margin_bottom": 15.0,
-//  "margin_left": 15.0,
-//  "margin_right": 15.0,
-//  "margin_top": 15.0,
-//  "modified": "2023-09-26 13:37:04.153395",
-//  "modified_by": "Administrator",
-//  "module": "Tsl",
-//  "name": "Quotation TSL",
-//  "owner": "Administrator",
-//  "page_number": "Hide",
-//  "print_format_builder": 0,
-//  "print_format_builder_beta": 0,
-//  "print_format_type": "Jinja",
-//  "raw_printing": 0,
-//  "show_section_headings": 0,
-//  "standard": "Yes"
-// }
-=======
 {
  "absolute_value": 0,
  "align_labels_right": 0,
@@ -66,4 +31,3 @@
  "show_section_headings": 0,
  "standard": "Yes"
 }
->>>>>>> a73e02d2a80c1d0d10d56eac5a4ef397612af4a9
