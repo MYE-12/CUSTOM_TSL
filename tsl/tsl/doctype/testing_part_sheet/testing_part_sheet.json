@@ -17,6 +17,7 @@
   "sub_category",
   "price_ea",
   "total",
+  "released",
   "part_sheet_no",
   "column_break_8",
   "qty",
@@ -229,12 +230,18 @@
    "fieldname": "parts_website",
    "fieldtype": "Data",
    "label": "Parts Website"
+  },
+  {
+   "default": "0",
+   "fieldname": "released",
+   "fieldtype": "Check",
+   "label": "Released"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-08-22 15:19:56.534077",
+ "modified": "2023-09-26 20:41:11.373771",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Testing Part Sheet",
