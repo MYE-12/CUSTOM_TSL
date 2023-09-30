@@ -116,7 +116,11 @@ doc_events = {
 	"Supplier Quotation":{
 		"on_submit":[
 			"tsl.custom_py.supplier_quotation.on_submit"
-		]
+		],
+        "validate":[
+			"tsl.custom_py.supplier_quotation.validate"
+
+		],
 
 	},
 	"Purchase Order":{

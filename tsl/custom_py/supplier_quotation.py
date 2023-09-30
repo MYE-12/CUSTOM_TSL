@@ -71,12 +71,24 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
             link.append(""" <a href='/app/supplier-quotation/{0}'>{0}</a> """.format(i))
         frappe.msgprint("Supplier Quotation created for each Supplier: "+', '.join(link))
         return True
+def validate(self,method):
+    for i in self.items:
+        if i.work_order_data:
+            doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' """%(i.work_order_data),as_dict=1)
+        for d in doc:
+            ev = frappe.get_doc("Evaluation Report",d.name)
+            ev.status = "Supplier Quoted"
+            ev.save()
 
 def on_submit(self,method):
-    # doc = frappe.get_doc("Work Order Data",self.work_order_data)
-    # if doc:
-    #     doc.status = "Parts Priced"
-       
+    
+    for i in self.items:
+        if i.work_order_data:
+            doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
+        for d in doc:
+            ev = frappe.get_doc("Work Order Data",d.name)
+            ev.status = "Parts Priced"
+            ev.save()
         
 
 
@@ -107,7 +119,9 @@ def on_submit(self,method):
     if self.part_sheet:
         doc = frappe.get_doc("Evaluation Report",self.part_sheet)
         for i in self.get("items"):
-            url = "https://api.exchangerate.host/%s"%(self.currency)
+            # url = "https://api.exchangerate.host/%s"%(self.currency)
+            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+
             payload = {}
             headers = {}
             response = requests.request("GET", url, headers=headers, data=payload)

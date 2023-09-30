@@ -80,6 +80,8 @@ class EvaluationReport(Document):
 				if sq:
 
 					doc.status = "Parts Priced"
+				if sq:
+					self.status = "Supplier Quoted"
 				else:
 					doc.status = "SP-Searching Parts"
 			doc.save(ignore_permissions=True)
@@ -189,7 +191,7 @@ class EvaluationReport(Document):
 					  where `tabSupplier Quotation`.docstatus = 1 """,as_dict=1)
 			
 			for s in sq:
-				# frappe.errprint(s.wod)
+				frappe.errprint(s.wod)
 				if s.wod:
 					if self.status == "Spare Parts":
 						doc = frappe.get_doc("Work Order Data",s.wod)
@@ -204,7 +206,7 @@ class EvaluationReport(Document):
 				doc.status = "Parts Priced"
 			elif self.status == "Spare Parts" and self.parts_availability == "No":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "SP-Searching Parts"
+				doc.status = "Parts Priced"
 
 			elif self.status == "Extra Parts":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
