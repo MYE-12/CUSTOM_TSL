@@ -254,12 +254,25 @@ def show_details(self,method):
 					if k.parts_availability == "No":
 						source = "Supplier"
 						price = k.price_ea
-						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 						for sq in sq_no:
-							frappe.errprint(sq.spc)				
-								
+							frappe.errprint(sq.spc)		
+							url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+							frappe.errprint(url)		
+
+							payload = {}
+							headers = {}
+
+							response = requests.request("GET", url, headers=headers, data=payload)
+							data = response.json()
+							rates_kw = data['rates']['KWD']
+							conv_rate = sq.spc * rates_kw
+							frappe.errprint(conv_rate)	
+							self.shipping_cost = conv_rate
+
+							
 						if len(sq_no):
 							sq_no = sq_no[0]["sq"]
 						else:
@@ -278,7 +291,7 @@ def show_details(self,method):
 						"work_order_data":doc.work_order_data
 
 					})
-					
+				
 					if sq_no:
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 					# i.amount = total_qtn_rate /i.qty + labour_value
