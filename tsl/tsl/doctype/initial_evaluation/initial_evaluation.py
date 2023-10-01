@@ -14,7 +14,6 @@ class InitialEvaluation(Document):
 		for i in self.items:
 			if i.part and i.parts_availability == "No" :
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
-				frappe.errprint(bin)
 				if len(bin) and 'name' in bin[0]:
 					sts = "Yes"
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
@@ -110,6 +109,7 @@ class InitialEvaluation(Document):
 		for i in self.items:
 			if i.part and get_valuation_rate(i.part,self.company,i.qty)[1] == "Yes" and not i.from_scrap:
 				price_sts = get_valuation_rate(i.part,self.company,i.qty)
+				frappe.errprint(price_sts)
 				i.price_ea = price_sts[0] if len(price_sts) else 0
 				i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
