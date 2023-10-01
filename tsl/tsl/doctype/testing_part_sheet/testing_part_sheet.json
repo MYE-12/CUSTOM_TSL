@@ -232,16 +232,18 @@
    "label": "Parts Website"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "released",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Released"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-26 20:41:11.373771",
+ "modified": "2023-10-01 08:42:00.225244",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Testing Part Sheet",
