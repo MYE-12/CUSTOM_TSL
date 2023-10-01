@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW P",
  "links": [],
- "modified": "2023-09-27 14:04:19.536433",
+ "modified": "2023-09-30 12:59:25.089776",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW P",
@@ -31,17 +31,17 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Needed Parts",
-   "link_to": "Initial Evaluation",
-   "stats_filter": "{\"parts_availability\":[\"=\",\"Yes\"],\"docstatus\":[\"=\",\"0\"]}",
+   "label": "Submitted RFQ",
+   "link_to": "Request for Quotation",
+   "stats_filter": "{\"status\":[\"=\",\"Submitted\"]}",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Submitted RFQ",
-   "link_to": "Request for Quotation",
-   "stats_filter": "{\"status\":[\"=\",\"Submitted\"]}",
+   "label": "Needed Parts",
+   "link_to": "Initial Evaluation",
+   "stats_filter": "{\"parts_availability\":[\"=\",\"Yes\"],\"docstatus\":[\"=\",\"0\"]}",
    "type": "DocType"
   },
   {
