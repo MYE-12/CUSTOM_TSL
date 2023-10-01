@@ -109,7 +109,7 @@ class InitialEvaluation(Document):
 		self.total_amount = 0
 		for i in self.items:
 			if i.part and get_valuation_rate(i.part,self.company,i.qty)[1] == "Yes" and not i.from_scrap:
-				price_sts = get_valuation_rate(i.part,i.qty,self.company)
+				price_sts = get_valuation_rate(i.part,self.company,i.qty)
 				i.price_ea = price_sts[0] if len(price_sts) else 0
 				i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
