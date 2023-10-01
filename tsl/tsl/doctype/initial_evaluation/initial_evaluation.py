@@ -138,7 +138,6 @@ class InitialEvaluation(Document):
 				# doc.status = "SP-Searching Parts"
 				# doc.save(ignore_permissions=True)
 				#	scrap = frappe.db.sql('''select * from `tabTesting Part Sheet` where name = %s ''', (self.name),as_dict=1)
-				#	frappe.errprint(scrap)
 			else:
 				self.parts_availability = "Yes"
 				frappe.db.sql('''update `tabInitial Evaluation` set parts_availability = "Yes" where name = %s ''',(self.name))
@@ -161,7 +160,6 @@ class InitialEvaluation(Document):
 				sub_cat = pm.sub_category
 				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 				if  not part_no:
-					frappe.errprint('ijt')
 					item_doc = frappe.new_doc("Item")
 					item_doc.naming_series = 'P.######'
 					item_doc.model = model
@@ -200,7 +198,6 @@ class InitialEvaluation(Document):
 						if new_doc.name:
 							new_doc.submit()
 				if i.part and i.parts_availability == "Yes" and i.used_qty > 0:
-					frappe.errprint("Status")
 					new_doc = frappe.new_doc("Stock Entry")
 					new_doc.stock_entry_type = "Material Issue"
 					new_doc.company = self.company
@@ -250,7 +247,6 @@ def create_material_issue_from_ini_eval(name):
 	new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Initial Evaluation',name)
 	for i in ini.items:
-		frappe.errprint(i)
 		new_doc.append("items",{
 			's_warehouse':"Kuwait - TSL",
 			'item_code':i.part,
