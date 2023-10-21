@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"MNrmNWsHWD\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Forms</b>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"OgJQ1dEnf1\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Work Order Data</b>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"2eBgyFo400\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}},{\"id\":\"nTKYPR5kSc\",\"type\":\"paragraph\",\"data\":{\"text\":\"Evaluation Report\",\"col\":12}},{\"id\":\"SBxBxWsLU2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"4qI163WJA8\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Testing Part Sheet</b>\",\"col\":12}},{\"id\":\"AY36bfUAhZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Needed Parts\",\"col\":3}}]",
+ "content": "[{\"id\":\"MNrmNWsHWD\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"OgJQ1dEnf1\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Evaluation\",\"col\":3}},{\"id\":\"YZupc94HY5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Evaluation\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Evaluation Return\",\"col\":3}},{\"id\":\"2eBgyFo400\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}},{\"id\":\"AkmH0tKyeA\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Test Part Sheet</span>\",\"col\":12}},{\"id\":\"RTqsLcPkFV\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Need Inventory Parts\",\"col\":3}},{\"id\":\"UVhGvVS51x\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Partial Parts Needed\",\"col\":3}},{\"id\":\"HElsH6tyZ1\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Evaluation Part Sheet</span>\",\"col\":12}},{\"id\":\"q9OsueAYn-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Extra Parts\",\"col\":3}},{\"id\":\"MmshgxMsHU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Parts Needed to Buy\",\"col\":3}},{\"id\":\"eLsfRHAR5C\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Master</b>\",\"col\":12}},{\"id\":\"tl1d2G8to2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}}]",
  "creation": "2023-09-02 09:23:39.501916",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW LC",
  "links": [],
- "modified": "2023-10-03 12:10:39.819120",
+ "modified": "2023-09-19 16:32:17.224960",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW LC",
@@ -58,6 +58,30 @@
    "label": "W - Approved",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"A-Approved\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Need Inventory Parts",
+   "link_to": "Initial Evaluation",
+   "stats_filter": "{\"parts_availability\":[\"=\",\"Yes\"],\"needed_with_available_parts\":[\"=\",1]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Partial Parts Needed",
+   "link_to": "Initial Evaluation",
+   "stats_filter": "{\"parts_availability\":[\"=\",\"No\"],\"needed_with_available_parts\":[\"=\",1]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "W - Need Evaluation",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"NE-Need Evaluation\"]}",
    "type": "DocType"
   },
   {

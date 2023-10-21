@@ -104,12 +104,8 @@ frappe.ui.form.on('Quotation', {
 		if(frm.doc.is_multiple_quotation){
 			var disc_val = (frm.doc.actual_price/100)*frm.doc.default_discount_percentage
 			var disc = Math.ceil(frm.doc.actual_price - disc_val).toFixed(2)
-			var act_disc_val = frm.doc.default_discount_value 
-			var act_disc_val =+ disc_val
 			frm.set_value("after_discount_cost",disc)
-
-			frm.set_value("default_discount_value",Math.floor(act_disc_val)).toFixed(2)
-
+			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		}
 		if(frm.doc.default_discount_percentage){
 		var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
@@ -118,10 +114,11 @@ frappe.ui.form.on('Quotation', {
 		frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		
 		}
-		else{
-			frm.set_value("after_discount_cost",'')
-			frm.set_value("default_discount_value",'')
-		}
+		
+		// else{
+		// 	frm.set_value("after_discount_cost",'')
+		// 	frm.set_value("default_discount_value",'')
+		// }
 		if(frm.doc.default_discount_percentage){
 			frm.set_value("after_discount_cost",frm.doc.final_approved_price)
 
