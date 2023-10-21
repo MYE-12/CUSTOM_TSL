@@ -74,7 +74,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 def validate(self,method):
     for i in self.items:
         if i.work_order_data:
-            doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' """%(i.work_order_data),as_dict=1)
+            doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' and docstatus != 2 """%(i.work_order_data),as_dict=1)
         for d in doc:
             ev = frappe.get_doc("Evaluation Report",d.name)
             ev.status = "Supplier Quoted"
@@ -143,11 +143,12 @@ def on_submit(self,method):
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
         
         for i in self.get("items"):
-            url = "https://api.exchangerate.host/%s"%(self.currency)
+            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
             payload = {}
             headers = {}
             response = requests.request("GET", url, headers=headers, data=payload)
             data = response.json()
+            frappe.errprint(data)
             rate_kw = data['rates']['KWD']
             conv_rate = i.rate * rate_kw
             for j in doc.get("items"):

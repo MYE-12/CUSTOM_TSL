@@ -68,7 +68,8 @@
   "column_break_55",
   "technician_image",
   "amended_from",
-  "signature"
+  "signature",
+  "technician_image_multiple"
  ],
  "fields": [
   {
@@ -469,12 +470,19 @@
    "label": "Technician",
    "options": "User",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_image_multiple",
+   "fieldtype": "Table",
+   "label": "Technician Image Multiple",
+   "options": "Technician Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-30 08:25:49.579271",
+ "modified": "2023-10-04 16:36:51.508059",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

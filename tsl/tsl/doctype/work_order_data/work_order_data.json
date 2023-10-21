@@ -4,6 +4,7 @@
  "autoname": "naming_series:",
  "creation": "2021-12-20 09:08:58.952963",
  "doctype": "DocType",
+ "document_type": "Document",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
@@ -170,6 +171,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -182,6 +184,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_preview": 1,
    "label": "Naming Series",
    "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-"
   },
@@ -488,8 +491,13 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2023-09-26 20:21:07.141383",
+ "links": [
+  {
+   "link_doctype": "Initial Evaluation",
+   "link_fieldname": "name"
+  }
+ ],
+ "modified": "2023-10-15 10:15:08.847884",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
@@ -509,6 +517,9 @@
    "write": 1
   }
  ],
+ "search_fields": "naming_series",
+ "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

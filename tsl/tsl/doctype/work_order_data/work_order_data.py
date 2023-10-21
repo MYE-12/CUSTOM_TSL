@@ -489,7 +489,7 @@ def create_dn(wod):
 			"qty":i.quantity,
 			"rate":r,
 			"amount":amt,
-			"work_order_data":wod,
+			"wod_no":wod,
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,

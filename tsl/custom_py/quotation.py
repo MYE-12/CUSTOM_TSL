@@ -45,9 +45,12 @@ def get_qtn_items(qtn):
 	l=[]
 	for k in list(qtn):
 		tot = 0
+		totd = 0
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=0 group by work_order_data''',k,as_dict=1)
 		doc = frappe.get_doc("Quotation",k)
-		# branch = doc.branch
+		totd += doc.default_discount_value
+		# frappe.errprint(totd)
+
 		if len(tot) and 'total_amount' in tot[0]:
 			tot = tot[0]['total_amount']
 		else:
@@ -63,9 +66,9 @@ def get_qtn_items(qtn):
 				"manufacturer": i.manufacturer,
 				"serial_no": i.serial_no,
 				"qty": i.qty,
-				"margin_amount": i.margin_amount,
-				"margin_amount_value": i.margin_amount_value,
-				"unit_price": i.unit_price,
+				"margin_amount": i.margin_amount or doc.after_discount_cost,
+				"margin_amount_value": i.margin_amount_value or totd,
+				"unit_price": i.unit_price or doc.unit_rate_price,
 				# "sales_rep":doc.sales_rep,
 				# "total_amt":float(tot)/float(i.quantity),
 				# "branch":branch,
@@ -182,7 +185,8 @@ def show_details(self,method):
 			actual_percentage = (up/100)*5
 			price = up - actual_percentage
 		self.actual_price = price
-		self.default_discount_value = round(actual_percentage)
+		if not self.default_discount_value:
+			self.default_discount_value = round(actual_percentage)
 
 	if self.quotation_type == "Internal Quotation - Repair":
 		
@@ -194,7 +198,7 @@ def show_details(self,method):
 		for i in self.get("items"):
 			total_qtn_rate = 0
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
-			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 0 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus != 2 order by creation desc''',i.wod_no,as_dict=1)
 			for j in  part_sheet_ini:
 				doc = frappe.get_doc("Initial Evaluation",j['name']) 
 				total = 0
@@ -258,19 +262,20 @@ def show_details(self,method):
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 						for sq in sq_no:
-							frappe.errprint(sq.spc)		
-							url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
-							frappe.errprint(url)		
+							frappe.errprint(sq.spc)	
+							if sq.spc:	
+								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+								frappe.errprint(url)		
 
-							payload = {}
-							headers = {}
+								payload = {}
+								headers = {}
 
-							response = requests.request("GET", url, headers=headers, data=payload)
-							data = response.json()
-							rates_kw = data['rates']['KWD']
-							conv_rate = sq.spc * rates_kw
-							frappe.errprint(conv_rate)	
-							self.shipping_cost = conv_rate
+								response = requests.request("GET", url, headers=headers, data=payload)
+								data = response.json()
+								rates_kw = data['rates']['KWD']
+								conv_rate = sq.spc * rates_kw
+								frappe.errprint(conv_rate)	
+								self.shipping_cost = conv_rate
 
 							
 						if len(sq_no):
@@ -422,7 +427,7 @@ def get_quotation_history(source,type = None):
 
 			ic.rate = doc.after_discount_cost+disc
 		
-		if ic.item_code  :
+		if ic.item_code:
 			ic.rate = round(doc.unit_rate_price)
 	
 			
@@ -566,10 +571,10 @@ def before_submit(self,method):
 		for i in self.get("items"):
 			if i.wod_no:
 				frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",1)
-		if self.item_price_details:
-			for i in self.get("item_price_details"):
-				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
-				frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
+		# if self.item_price_details:
+		# 	for i in self.get("item_price_details"):
+		# 		frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
+		# 		frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
 	if self.quotation_type == "Internal Quotation - Supply":
 		d = {}
 		for i in self.get('items'):

@@ -95,6 +95,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "columns": 1,
    "fetch_from": "part.category_",
    "fieldname": "category",
@@ -104,6 +105,7 @@
    "options": "Category"
   },
   {
+   "allow_on_submit": 1,
    "columns": 1,
    "fetch_from": "part.sub_category",
    "fieldname": "sub_category",
@@ -241,7 +243,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-26 20:41:11.373771",
+ "modified": "2023-10-03 08:47:53.473414",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Testing Part Sheet",

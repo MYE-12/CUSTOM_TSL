@@ -46,9 +46,9 @@ class EvaluationReport(Document):
 			elif self.status == "Comparison":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
-			elif self.status == "Spare Parts":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "Parts Priced"
+			# elif self.status == "Spare Parts":
+			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			# 	doc.status = "Parts Priced"
 			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "Parts Priced"
@@ -179,12 +179,12 @@ class EvaluationReport(Document):
 			if i.part and get_valuation_rate(i.part,self.company,i.qty)[1] == "Yes" and not i.from_scrap:
 				price_sts = get_valuation_rate(i.part,self.company,i.qty)
 				i.price_ea = price_sts[0] if len(price_sts) else 0
-				i.total = i.price_ea*i.qty
+				# i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
-				frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
+				# frappe.db.sql('''update `tabPart Sheet Item` set price_ea = %s,total = %s,parts_availability = %s where name = %s''',(i.price_ea,(i.price_ea*i.qty),i.parts_availability,i.name))
 			#add += (i.price_ea * i.qty)
 		#self.total_amount = add
-		frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
+		# frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
 		if self.status:
 			sq = frappe.db.sql("""select (`tabSupplier Quotation Item`.work_order_data) as wod ,`tabSupplier Quotation`.name as sq 
 					  from `tabSupplier Quotation` left join `tabSupplier Quotation Item` on `tabSupplier Quotation`.name = `tabSupplier Quotation Item`.parent  
@@ -333,6 +333,26 @@ class EvaluationReport(Document):
 			if i.part and i.parts_availability == "Yes" and not i.from_scrap:
 				frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")-i.qty))
 
+@frappe.whitelist()
+def create_material_issue_from_ini_eval(name):
+	new_doc = frappe.new_doc("Stock Entry")
+	new_doc.stock_entry_type = "Material Issue"
+	# new_doc.company = self.company
+	new_doc.to_warehouse = "Kuwait - TSL"
+
+	new_doc.to_warehouse = "Kuwait - TSL"
+	ini= frappe.get_doc('Evaluation Report',name)
+	for i in ini.items:
+		new_doc.append("items",{
+			's_warehouse':"Kuwait - TSL",
+			'item_code':i.part,
+			'qty':i.qty,
+			'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+			# 'conversion_factor':1,
+			# 'allow_zero_valuation_rate':1
+		})
+	new_doc.save(ignore_permissions = True)
+	new_doc.submit()
 
 #	def onload(self):
 #		self.append("technician_details",{

@@ -217,6 +217,23 @@ frappe.ui.form.on('Evaluation Report', {
 				});
 			},__('Create'));
 		}
+		if(frappe.user.has_role("Procurement") && frm.doc.parts_availability == "Yes"){
+			frm.add_custom_button(__("Release Parts"), function () {
+				frappe.call({
+					method: "tsl.tsl.doctype.evaluation_report.evaluation_report.create_material_issue_from_ini_eval",
+					args:{
+						'name':frm.doc.name
+					},
+					callback: function (r) {
+						if (r.message) {
+							console.log(r.message)
+							frappe.msgprint("Material Released")
+							// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+						}
+					}
+				});
+			}, __('Create'));
+		}
 	},
 	if_parts_required:function(frm){
 		if(frm.doc.if_parts_required){

@@ -65,7 +65,8 @@
   "section_break_52",
   "attach_image",
   "column_break_55",
-  "technician_image"
+  "technician_image",
+  "technician_image_multiple"
  ],
  "fields": [
   {
@@ -163,7 +164,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault"
+   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nSupplier Quoted"
   },
   {
    "allow_on_submit": 1,
@@ -382,6 +383,7 @@
    "label": "Evaluation Time"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "estimated_repair_time",
    "fieldtype": "Duration",
    "hide_days": 1,
@@ -446,12 +448,19 @@
    "label": "Technician",
    "options": "User",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_image_multiple",
+   "fieldtype": "Table",
+   "label": "Technician Image Multiple",
+   "options": "Technician Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-09-21 13:10:03.275885",
+ "modified": "2023-10-12 12:48:42.338844",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

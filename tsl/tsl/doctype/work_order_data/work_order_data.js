@@ -17,7 +17,7 @@ frappe.ui.form.on('Work Order Data', {
 		}
 	},
 	onload(frm){
-		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator")){
+		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator" ) && !frappe.user.has_role("Admin")){
 			frm.set_df_property("technician","read_only",1)
 			frm.set_df_property("status","read_only",1)
 			frm.set_df_property("advance_payment_amount","hidden",1)
@@ -164,7 +164,7 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 		}
 }
-		if(frm.doc.docstatus == 1 && (frm.doc.status == "RNR-Return Not Repaired" || frm.doc.status == "RNRC-Return Not Repaired Client" ||frm.doc.status == "RNF-Return No Fault")){
+		if(frm.doc.docstatus == 1 && (frm.doc.status == "RNR-Return Not Repaired" || frm.doc.status == "RNRC-Return Not Repaired Client" ||frm.doc.status == "RNF-Return No Fault" ||frm.doc.status == "RNA-Return Not Approved")){
 			frm.add_custom_button(__("Supply Order Form"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sof",

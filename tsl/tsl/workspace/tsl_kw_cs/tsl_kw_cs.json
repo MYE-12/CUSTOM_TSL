@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-09-27 11:19:30.517233",
+ "modified": "2023-10-03 16:44:21.972058",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -28,6 +28,14 @@
  ],
  "sequence_id": 6.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Q - Internal Pending",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Waiting For Approval\"],\"quotation_type\":[\"=\",\"Internal Quotation - Repair\"]}",
+   "type": "DocType"
+  },
   {
    "color": "Red",
    "doc_view": "List",
@@ -64,14 +72,6 @@
    "doc_view": "List",
    "label": "Supply Order Data",
    "link_to": "Supply Order Data",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Q - Internal Pending",
-   "link_to": "Quotation",
-   "stats_filter": "{\"workflow_state\":[\"=\",\"Waiting For Approval\"]}",
    "type": "DocType"
   },
   {

@@ -101,6 +101,16 @@ frappe.ui.form.on('Quotation', {
     
         },
 	default_discount_percentage(frm){
+		if(frm.doc.is_multiple_quotation){
+			var disc_val = (frm.doc.actual_price/100)*frm.doc.default_discount_percentage
+			var disc = Math.ceil(frm.doc.actual_price - disc_val).toFixed(2)
+			var act_disc_val = frm.doc.default_discount_value 
+			var act_disc_val =+ disc_val
+			frm.set_value("after_discount_cost",disc)
+
+			frm.set_value("default_discount_value",Math.floor(act_disc_val)).toFixed(2)
+
+		}
 		if(frm.doc.default_discount_percentage){
 		var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
 		var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
@@ -488,29 +498,55 @@ frappe.ui.form.on('Quotation', {
 							},
 							callback: function(r) {
 								if(r.message) {
-									console.log(r.message)
 									cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 									var tot_amt = 0;
 									var tot_qty=0;
-									for(var i=0;i<r.message.length;i++){
+									var sa=0
+									var ur=0
+									var urv=0
+									$.each(r.message,function(i,s){
 										var childTable = cur_frm.add_child("items");
-										childTable.item_code = r.message[i]["item"],
-										childTable.item_name = r.message[i]["item_name"],
-										childTable.wod_no = r.message[i]["wod_no"],
-										childTable.model_no = r.message[i]["model_no"],
-										childTable.manufacturer = r.message[i]["manufacturer"],
-										childTable.serial_no = r.message[i]["serial_no"],
-										childTable.description = r.message[i]["description"],
-										childTable.type = r.message[i]['type'],
-										childTable.qty = r.message[i]["qty"]
-										childTable.margin_amount = r.message[i]["margin_amount"]
-										childTable.margin_amount_value = r.message[i]["margin_amount_value"]
-										childTable.unit_price = r.message[i]["unit_price"]									
-										tot_qty += r.message[i]["qty"];
+										childTable.item_code = s.item,
+										childTable.item_name = s.item_name,
+										childTable.wod_no = s.wod_no
+										childTable.model_no = s.model_no,
+										childTable.manufacturer =s.manufacturer,
+										childTable.serial_no = s.serial_no,
+										childTable.description = s.description,
+										childTable.type = s.type,
+										childTable.qty = s.qty,
+										childTable.margin_amount = s.margin_amount,
+										childTable.margin_amount_value = s.margin_amount_value,
+										childTable.unit_price = s.unit_price,							
+										tot_qty += s.qty,
 										cur_frm.refresh_fields("items");
-									}
-									// frm.doc.actual_price += r.message[i]["margin_amount"];
-									// frm.doc.total_qty = tot_qty;
+										sa += s.margin_amount;	
+										ur += s.unit_price;
+										urv += s.margin_amount_value;
+										console.log(sa)
+									})
+									// for(var i=0;i<r.message.length;i++){
+									// 	var childTable = cur_frm.add_child("items");
+									// 	childTable.item_code = r.message[i]["item"],
+									// 	childTable.item_name = r.message[i]["item_name"],
+									// 	childTable.wod_no = r.message[i]["wod_no"],
+									// 	childTable.model_no = r.message[i]["model_no"],
+									// 	childTable.manufacturer = r.message[i]["manufacturer"],
+									// 	childTable.serial_no = r.message[i]["serial_no"],
+									// 	childTable.description = r.message[i]["description"],
+									// 	childTable.type = r.message[i]['type'],
+									// 	childTable.qty = r.message[i]["qty"]
+									// 	childTable.margin_amount = r.message[i]["margin_amount"]
+									// 	childTable.margin_amount_value = r.message[i]["margin_amount_value"]
+									// 	childTable.unit_price = r.message[i]["unit_price"]									
+									// 	tot_qty += r.message[i]["qty"];
+									// 	cur_frm.refresh_fields("items");
+									// 	frm.doc.actual_price += r.message[i]["margin_amount"];
+
+									// }
+									frm.doc.after_discount_cost = sa;
+									frm.doc.unit_rate_price = ur;
+									frm.doc.default_discount_value = urv;
 									// frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 									// frm.doc.rounded_total = frm.doc.grand_total;
 									cur_frm.refresh_fields();
