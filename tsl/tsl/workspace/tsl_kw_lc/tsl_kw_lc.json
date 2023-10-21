@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW LC",
  "links": [],
- "modified": "2023-09-19 16:32:17.224960",
+ "modified": "2023-10-21 15:03:01.490087",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW LC",
@@ -26,30 +26,21 @@
    "role": "Lab Coordinator"
   }
  ],
- "sequence_id": 7.0,
+ "sequence_id": 8.0,
  "shortcuts": [
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Evaluation Report",
-   "link_to": "Evaluation Report",
-   "stats_filter": "{\"parts_availability\":[\"=\",\"No\"],\"status\":[\"in\",[\"Spare Parts\",\"Extra Parts\",null]]}",
-   "type": "DocType"
+   "label": "Work Order Status",
+   "link_to": "Work Order Status",
+   "type": "Report"
   },
   {
-   "color": "Grey",
+   "color": "Red",
    "doc_view": "List",
-   "label": "Needed Parts",
-   "link_to": "Initial Evaluation",
-   "stats_filter": "{\"needed_with_available_parts\":[\"=\",1],\"parts_availability\":[\"=\",\"Yes\"],\"docstatus\":[\"=\",\"1\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Pink",
-   "doc_view": "List",
-   "label": "W - UTR/NE",
+   "label": "W - Need Evaluation Return",
    "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"in\",[\"NE-Need Evaluation\",\"UTR-Under Technician Repair\",null]]}",
+   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
    "type": "DocType"
   },
   {
@@ -58,6 +49,14 @@
    "label": "W - Approved",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"A-Approved\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Extra Parts",
+   "link_to": "Evaluation Report",
+   "stats_filter": "{\"part_number\":[\"like\",\"%2%\"]}",
    "type": "DocType"
   },
   {
@@ -100,6 +99,22 @@
    "type": "DocType"
   },
   {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "W - Under Evaluation",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"UE-Under Evaluation\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Parts Needed to Buy",
+   "link_to": "Evaluation Report",
+   "stats_filter": "{\"parts_availability\":[\"=\",\"No\"],\"status\":[\"=\",\"Spare Parts\"]}",
+   "type": "DocType"
+  },
+  {
    "color": "Green",
    "doc_view": "List",
    "label": "W - Available Parts",
@@ -123,19 +138,18 @@
    "type": "DocType"
   },
   {
-   "color": "Red",
+   "color": "Pink",
    "doc_view": "List",
-   "label": "W - Waiting Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"WP-Waiting Parts\"]}",
+   "label": "Evaluation Report",
+   "link_to": "Evaluation Report",
    "type": "DocType"
   },
   {
    "color": "Red",
    "doc_view": "List",
-   "label": "W -Need Evaluation Return",
+   "label": "W - Waiting Parts",
    "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
+   "stats_filter": "{\"status\":[\"=\",\"WP-Waiting Parts\"]}",
    "type": "DocType"
   },
   {

@@ -222,6 +222,8 @@ def create_initial_eval(doc_no):
 	new_doc.parts_availability = doc.parts_availability
 	new_doc.technician = doc.technician
 	new_doc.attach_image = doc.attach_image
+	new_doc.evaluation_time = doc.evaluation_time
+	new_doc.estimated_repair_time = doc.estimated_repair_time
 	if doc.no_power:
 		new_doc.no_power = 1
 	if doc.no_output:

@@ -103,6 +103,7 @@ frappe.ui.form.on('Initial Evaluation', {
 		}
 	},
 	refresh: function (frm) {
+	if(frm.doc.docstatus == 1){
 		frm.add_custom_button(__("Evaluation Report"), function () {
 			frappe.call({
 				method: "tsl.tsl.doctype.work_order_data.work_order_data.create_initial_eval",
@@ -117,6 +118,7 @@ frappe.ui.form.on('Initial Evaluation', {
 				}
 			});
 		}, __('Create'));
+	}
 		if(frappe.user.has_role("Procurement")){
 			frm.add_custom_button(__("Release Parts"), function () {
 				frappe.call({
@@ -252,24 +254,24 @@ frappe.ui.form.on('Initial Evaluation', {
 				filters: d
 			}
 		}
-		if (frm.doc.parts_availability == "No") {
-			if (!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")) {
-				frm.add_custom_button(__("Request for Quotation"), function () {
-					frappe.call({
-						method: "tsl.custom_py.utils.create_rfq_int",
-						args: {
-							"ps": frm.doc.name
-						},
-						callback: function (r) {
-							if (r.message) {
-								var doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", doc[0].doctype, doc[0].name);
-							}
-						}
-					});
-				}, __('Create'));
-			}
-		}
+		// if (frm.doc.parts_availability == "No") {
+		// 	if (!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")) {
+		// 		frm.add_custom_button(__("Request for Quotation"), function () {
+		// 			frappe.call({
+		// 				method: "tsl.custom_py.utils.create_rfq_int",
+		// 				args: {
+		// 					"ps": frm.doc.name
+		// 				},
+		// 				callback: function (r) {
+		// 					if (r.message) {
+		// 						var doc = frappe.model.sync(r.message);
+		// 						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+		// 					}
+		// 				}
+		// 			});
+		// 		}, __('Create'));
+		// 	}
+		// }
 	},
 	// if_parts_required:function(frm){
 	// 	if(frm.doc.if_parts_required){
