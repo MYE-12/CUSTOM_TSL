@@ -36,6 +36,7 @@ def create_quotation(wod):
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer
+	new_doc.sales_rep = doc.sales_rep
 	# new_doc.customer_email = doc.customer_email
 	# new_doc.party_name = new_doc.party_name[0]
 	new_doc.department = doc.department
