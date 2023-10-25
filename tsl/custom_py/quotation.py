@@ -193,66 +193,25 @@ def show_details(self,method):
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
 		tc = self.technician_hours_spent
-		for t in tc:
-			labour_value = t.total_price
+		parts_priced = self.parts_price_list_
+		
+		
 		for i in self.get("items"):
 			total_qtn_rate = 0
 			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
-			# part_sheet_ini = frappe.db.sql('''select name from `tabInitial Evaluation` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
-			# for j in  part_sheet_ini:
-			# 	doc = frappe.get_doc("Initial Evaluation",j['name']) 
-			# 	total = 0
-			# 	if doc.evaluation_time and doc.estimated_repair_time:
-			# 		total = round(((doc.evaluation_time/3600) + (doc.estimated_repair_time/3600)),2)
-			# 		self.append("technician_hours_spent",{
-			# 			"total_hours_spent":total,
-			# 			"value":20,
-			# 			"total_price":total*20,
-			# 			"work_order_data":doc.work_order_data
-			# 		})
-			# 	for k in doc.get("items"):
-			# 		price =0
-			# 		total_qtn_rate += k.total
-			# 		if k.parts_availability == "No":
-			# 			source = "Supplier"
-			# 			price = k.price_ea
-			# 			sq_no = frappe.db.sql('''select sq.name as sq from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
-            #                             			where sq.docstatus = 1 and sqi.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
-			# 					order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)
-			# 			if len(sq_no):
-			# 					sq_no = sq_no[0]["sq"]
-			# 			else:
-			# 				sq_no =  ""
-			# 		else:
-			# 			price = k.price_ea
-			# 			source = "TSL Inventory"
-			# 			sq_no = ""
-			# 		self.append("item_price_details",{
-			# 			"item":k.part,
-			# 			"item_source":source,
-			# 			"model":k.model,
-			# 			"price":price,
-			# 			"amount":k.total,
-			# 			"supplier_quotation":sq_no,
-			# 			"work_order_data":doc.work_order_data
-
-
-			# 		})
-					
-			# 		if sq_no:
-			# 			frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 		
 			for j in  part_sheet:
 				doc = frappe.get_doc("Evaluation Report",j['name']) 
 				total = 0
 				if doc.evaluation_time and doc.estimated_repair_time:
 					total = round(((doc.evaluation_time/3600) + (doc.estimated_repair_time/3600)),2)
-					self.append("technician_hours_spent",{
-						"total_hours_spent":total,
-						"value":20,
-						"total_price":total*20,
-						"work_order_data":doc.work_order_data
-					})
+					if not self.technician_hours_spent:
+						self.append("technician_hours_spent",{
+							"total_hours_spent":total,
+							"value":20,
+							"total_price":total*20,
+							"work_order_data":doc.work_order_data
+						})
 				for k in doc.get("items"):
 					total_qtn_rate += k.total
 					if k.parts_availability == "No":
@@ -295,15 +254,18 @@ def show_details(self,method):
 						"work_order_data":doc.work_order_data
 
 					})
-				
+				for t in tc:
+					labour_value = t.total_price
+				for pp in parts_priced:
+					cost = float(pp.total_material_cost)
 					if sq_no:
 						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 					# i.amount = total_qtn_rate /i.qty + labour_value
 					# i.rate = total_qtn_rate/i.qty + labour_value
-		if not self.is_multiple_quotation:
-			self.actual_price = round(i.rate)
-		if self.after_discount_cost:
-			self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
+					if not self.is_multiple_quotation and self.technician_hours_spent:
+							self.actual_price = round(labour_value + cost)
+					if self.after_discount_cost:
+						self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []

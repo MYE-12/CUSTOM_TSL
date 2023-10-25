@@ -140,7 +140,7 @@ frappe.ui.form.on('Quotation', {
 		}
 	},
 	validate(frm){
-		cur_frm.clear_table('technician_hours_spent')
+		// cur_frm.clear_table('technician_hours_spent')
 
 		if(frm.doc.is_multiple_quotation){
 			$.each(frm.doc.items, function(i,v){
@@ -164,7 +164,7 @@ frappe.ui.form.on('Quotation', {
 
 		}
 	
-		cur_frm.clear_table('technician_hours_spent')
+		frm.refresh_field('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
 		$.each(frm.doc.item_price_details,function(i,v){
@@ -175,14 +175,16 @@ frappe.ui.form.on('Quotation', {
 				sup_amt += v.amount
 			}
 		})
-		cur_frm.clear_table("parts_price_list_");
-		var child = cur_frm.add_child("parts_price_list_");
-		var spc = frm.doc.shipping_cost
-		child.tsl_inventory = Math.ceil(amt).toFixed(2),
-		child.supplier = Math.ceil(sup_amt).toFixed(2),
-		child.total_material_cost = Math.ceil(sup_amt + amt + spc).toFixed(2),
-		cur_frm.refresh_fields("parts_price_list_");
-	
+		if(frm.doc.item_price_details){
+			cur_frm.clear_table("parts_price_list_");
+			var child = cur_frm.add_child("parts_price_list_");
+			var spc = frm.doc.shipping_cost
+			child.tsl_inventory = Math.ceil(amt).toFixed(2),
+			child.supplier = Math.ceil(sup_amt).toFixed(2),
+			child.total_material_cost = Math.ceil(sup_amt + amt + spc).toFixed(2) || 0,
+			cur_frm.refresh_fields("parts_price_list_");
+		
+		}
 	},
     refresh:function(frm){
 		// frm.add_custom_button(__('Customer Quotation'), function(){
