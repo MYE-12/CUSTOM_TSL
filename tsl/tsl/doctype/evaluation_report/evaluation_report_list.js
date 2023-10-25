@@ -22,10 +22,13 @@ frappe.listview_settings['Evaluation Report'] = {
             }
             
             else if (doc.status === "Return Not Repaired") {
-                   return [__("Return Not Repaired"), "grey", "status,=,Return Not Repaired"];
+                   return [__("Return Not Repaired"), "red", "status,=,Return Not Repaired"];
             }
             else if (doc.status === "Return No Fault") {
                   return [__("Return No Fault"), "green", "status,=,Return No Fault"];
+            }
+            else if (doc.status === "Supplier Quoted") {
+                  return [__("Supplier Quoted"), "green", "status,=,Supplier Quoted"];
             }
             else if(doc.docstatus === 0){
                   return [__("ghgffh"), "green", "docstatus,=,0"];

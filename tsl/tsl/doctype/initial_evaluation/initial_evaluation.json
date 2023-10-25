@@ -69,7 +69,8 @@
   "technician_image",
   "amended_from",
   "signature",
-  "technician_image_multiple"
+  "technician_image_multiple",
+  "evaluation_report"
  ],
  "fields": [
   {
@@ -477,12 +478,24 @@
    "fieldtype": "Table",
    "label": "Technician Image Multiple",
    "options": "Technician Image"
+  },
+  {
+   "fieldname": "evaluation_report",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Evaluation Report",
+   "options": "Evaluation Report"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2023-10-04 16:36:51.508059",
+ "links": [
+  {
+   "link_doctype": "Evaluation Report",
+   "link_fieldname": "name"
+  }
+ ],
+ "modified": "2023-10-22 10:20:43.256740",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

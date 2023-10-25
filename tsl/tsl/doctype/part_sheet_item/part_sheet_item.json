@@ -13,10 +13,11 @@
   "part_number",
   "marking_code",
   "serial_no",
-  "column_break_8",
   "category",
   "sub_category",
   "qty",
+  "released",
+  "column_break_8",
   "part_name",
   "websitelink",
   "part_description",
@@ -223,12 +224,19 @@
    "fieldname": "websitelink",
    "fieldtype": "Data",
    "label": "Website/Link"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "released",
+   "fieldtype": "Check",
+   "label": "Released"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-03 15:58:20.992988",
+ "modified": "2023-10-25 09:21:26.878141",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

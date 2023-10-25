@@ -155,6 +155,15 @@ frappe.ui.form.on('Quotation', {
 				}
 			})
 		}
+		if(frm.doc.quotation_type != "Internal Quotation - Repair"){
+			frm.set_value("letter_head",'TSL New')
+			frappe.msgprint("Letter Head Placed Successufully")
+		}
+		else{
+			frm.set_value("letter_head",'')
+
+		}
+	
 		cur_frm.clear_table('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
@@ -164,7 +173,6 @@ frappe.ui.form.on('Quotation', {
 			} 
 			else{
 				sup_amt += v.amount
-				console.log(sup_amt)
 			}
 		})
 		cur_frm.clear_table("parts_price_list_");

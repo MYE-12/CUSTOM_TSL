@@ -430,8 +430,7 @@
    "fetch_from": "sales_rep.full_name",
    "fieldname": "sales_rep_name",
    "fieldtype": "Data",
-   "label": "Sales Rep Name",
-   "read_only": 1
+   "label": "Sales Rep Name"
   },
   {
    "depends_on": "eval:frappe.user.has_role('Administrator')",
@@ -497,7 +496,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-10-15 10:15:08.847884",
+ "modified": "2023-10-25 14:46:50.006833",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

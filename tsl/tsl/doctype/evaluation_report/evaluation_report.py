@@ -152,8 +152,11 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
-		if not self.evaluation_time or not self.estimated_repair_time:
-			frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
+		if self.status in ("Return No Fault","Return Not Repaired"):
+			pass
+		else:
+			if not self.evaluation_time or not self.estimated_repair_time:
+				frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
 		for pm in self.get("items"):
 			model = pm.model
 			part_no = pm.part
@@ -296,7 +299,7 @@ class EvaluationReport(Document):
 				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 				if  not part_no:
 					item_doc = frappe.new_doc("Item")
-					item_doc.naming_series = 'P.#####'
+					item_doc.naming_series = 'P.######'
 					item_doc.model = model
 					mod = frappe.db.get_value("Item Model",model,"model")
 					item_doc.model_num = mod
