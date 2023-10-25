@@ -400,7 +400,7 @@ def create_rn(wod):
 			"serial_number":i.serial_no,
 			"description":i.item_name,
 			"qty":i.quantity,
-			"work_order_data":wod, 
+			"wod_no":doc.name, 
 			"uom":"Nos",
 			"stock_uom":"Nos",
 			"conversion_factor":1,
