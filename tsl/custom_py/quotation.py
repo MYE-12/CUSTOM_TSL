@@ -221,10 +221,8 @@ def show_details(self,method):
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 						for sq in sq_no:
-							frappe.errprint(sq.spc)	
 							if sq.spc:	
 								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
-								frappe.errprint(url)		
 
 								payload = {}
 								headers = {}

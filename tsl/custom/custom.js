@@ -530,7 +530,6 @@ frappe.ui.form.on('Quotation', {
 										sa += s.margin_amount;	
 										ur += s.unit_price;
 										urv += s.margin_amount_value;
-										console.log(sa)
 									})
 									// for(var i=0;i<r.message.length;i++){
 									// 	var childTable = cur_frm.add_child("items");
