@@ -295,7 +295,7 @@ def create_workorder_data(order_no, f):
         new_doc.wod_component = i["item_code"] if "item_code" in i else ""
         new_doc.customer = doc.customer
         new_doc.received_date = doc.received_date
-        new_doc.sales_rep_name = doc.sales_person_name or ''
+        new_doc.sales_rep = doc.sales_person or ''
         new_doc.branch = doc.branch
         new_doc.department = frappe.db.get_value(
             "Cost Center", {"company": doc.company, "is_repair": 1})
