@@ -152,7 +152,7 @@ class EvaluationReport(Document):
 				self.parts_availability = "No"
 			else:
 				self.parts_availability = "Yes"
-		if self.status in ("Return No Fault","Return Not Repaired"):
+		if self.status in ("Return No Fault","Return Not Repaired","Comparison"):
 			pass
 		else:
 			if not self.evaluation_time or not self.estimated_repair_time:
