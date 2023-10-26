@@ -49,7 +49,6 @@ def get_qtn_items(qtn):
 		tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=0 group by work_order_data''',k,as_dict=1)
 		doc = frappe.get_doc("Quotation",k)
 		totd += doc.default_discount_value
-		# frappe.errprint(totd)
 
 		if len(tot) and 'total_amount' in tot[0]:
 			tot = tot[0]['total_amount']
@@ -252,18 +251,18 @@ def show_details(self,method):
 						"work_order_data":doc.work_order_data
 
 					})
-				for t in tc:
-					labour_value = t.total_price
-				for pp in parts_priced:
-					cost = float(pp.total_material_cost)
-					if sq_no:
-						frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
-					# i.amount = total_qtn_rate /i.qty + labour_value
-					# i.rate = total_qtn_rate/i.qty + labour_value
-					if not self.is_multiple_quotation and self.technician_hours_spent:
-							self.actual_price = round(labour_value + cost)
-					if self.after_discount_cost:
-						self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
+			for t in tc:
+				labour_value = t.total_price
+			for pp in parts_priced:
+				cost = float(pp.total_material_cost)
+				if sq_no:
+					frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+				# i.amount = total_qtn_rate /i.qty + labour_value
+				# i.rate = total_qtn_rate/i.qty + labour_value
+				if not self.is_multiple_quotation and self.technician_hours_spent:
+						self.actual_price = round(labour_value + cost)
+				if self.after_discount_cost:
+					self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []

@@ -209,7 +209,7 @@ class EvaluationReport(Document):
 				doc.status = "AP-Available Parts"
 			elif self.status == "Spare Parts" and self.parts_availability == "No":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "Parts Priced"
+				doc.status = "SP-Searching Parts"
 
 			elif self.status == "Extra Parts":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
