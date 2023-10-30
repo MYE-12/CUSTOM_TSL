@@ -219,6 +219,8 @@ def show_details(self,method):
 						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
+						if sq_no:
+							frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 						for sq in sq_no:
 							if sq.spc:	
 								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
@@ -251,12 +253,11 @@ def show_details(self,method):
 						"work_order_data":doc.work_order_data
 
 					})
-			for t in tc:
-				labour_value = t.total_price
-			for pp in parts_priced:
-				cost = float(pp.total_material_cost)
-				if sq_no:
-					frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+				for t in tc:
+					labour_value = t.total_price
+				for pp in parts_priced:
+					cost = float(pp.total_material_cost)
+			
 				# i.amount = total_qtn_rate /i.qty + labour_value
 				# i.rate = total_qtn_rate/i.qty + labour_value
 				if not self.is_multiple_quotation and self.technician_hours_spent:
@@ -425,11 +426,8 @@ def create_sal_inv(source):
 			
 		},
 	}, target_doc)
-	for mg in doc.get('items'):
-		
-		
-		for i in doclist.get('items'):
-			
+	for mg in doc.get('items'):	
+		for i in doclist.get('items'):		
 			doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
 			if mg.item_code == i.item_code and doc.is_multiple_quotation:
 				i.rate= mg.margin_amount

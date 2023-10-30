@@ -1633,7 +1633,6 @@
    "collapsible": 1,
    "fieldname": "edit_printing_settings",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Printing Settings"
@@ -2074,7 +2073,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-09-25 09:37:57.044861",
+ "modified": "2023-10-28 08:28:51.242951",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Return Note",

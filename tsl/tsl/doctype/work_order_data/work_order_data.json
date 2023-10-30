@@ -496,7 +496,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-10-25 14:46:50.006833",
+ "modified": "2023-10-29 09:22:56.014040",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
@@ -516,7 +516,7 @@
    "write": 1
   }
  ],
- "search_fields": "naming_series",
+ "search_fields": "sales_rep,customer",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
