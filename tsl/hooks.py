@@ -101,6 +101,7 @@ doc_events = {
 	"Quotation":{
 		"on_update": [
 			"tsl.custom_py.quotation.on_update"
+            
 		],
 		"before_submit":[
 			"tsl.custom_py.quotation.before_submit"
@@ -108,8 +109,9 @@ doc_events = {
 		"validate":[
 			"tsl.custom_py.quotation.sum_amount",
             "tsl.custom_py.quotation.show_details"
+            
 		],
-		# "before_save":[
+		# "after_save":[
 			
 		# ]
 	},

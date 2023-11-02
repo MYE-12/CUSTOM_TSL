@@ -179,11 +179,15 @@ def show_details(self,method):
 		tot = 0
 		up=0
 		for i in self.get("items"):
-			# tot += i.margin_amount
-			up += i.unit_price
-			actual_percentage = (up/100)*5
+			tot += i.unit_price
+			# frappe.errprint('tot')
+			# frappe.errprint(tot)
+
+			up += i.margin_amount
+			actual_percentage = (tot/100)*5
 			price = up - actual_percentage
-		self.actual_price = price
+		self.final_approved_price = up
+		self.unit_rate_price = tot
 		if not self.default_discount_value:
 			self.default_discount_value = round(actual_percentage)
 
@@ -191,6 +195,7 @@ def show_details(self,method):
 		
 		self.item_price_details=[]
 		self.similar_items_quoted_before=[]
+		self.technician_hours_spent =[]
 		tc = self.technician_hours_spent
 		parts_priced = self.parts_price_list_
 		
@@ -202,15 +207,16 @@ def show_details(self,method):
 			for j in  part_sheet:
 				doc = frappe.get_doc("Evaluation Report",j['name']) 
 				total = 0
+				# if not self.technician_hours_spent:
 				if doc.evaluation_time and doc.estimated_repair_time:
 					total = round(((doc.evaluation_time/3600) + (doc.estimated_repair_time/3600)),2)
-					if not self.technician_hours_spent:
-						self.append("technician_hours_spent",{
-							"total_hours_spent":total,
-							"value":20,
-							"total_price":total*20,
-							"work_order_data":doc.work_order_data
-						})
+					
+					self.append("technician_hours_spent",{
+						"total_hours_spent":total,
+						"value":20,
+						"total_price":total*20,
+						"work_order_data":doc.work_order_data
+					})
 				for k in doc.get("items"):
 					total_qtn_rate += k.total
 					if k.parts_availability == "No":
@@ -219,8 +225,8 @@ def show_details(self,method):
 						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
                                         			where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
-						if sq_no:
-							frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+						# if sq_no:
+						# 	frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 						for sq in sq_no:
 							if sq.spc:	
 								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
@@ -253,15 +259,22 @@ def show_details(self,method):
 						"work_order_data":doc.work_order_data
 
 					})
+				labour_value = 0
 				for t in tc:
-					labour_value = t.total_price
+					labour_value += t.total_price
 				for pp in parts_priced:
 					cost = float(pp.total_material_cost)
 			
 				# i.amount = total_qtn_rate /i.qty + labour_value
 				# i.rate = total_qtn_rate/i.qty + labour_value
+				
 				if not self.is_multiple_quotation and self.technician_hours_spent:
 						self.actual_price = round(labour_value + cost)
+				else:
+					# frappe.errprint( labour_value)
+
+					self.actual_price = round(labour_value + cost)
+						
 				if self.after_discount_cost:
 					self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
@@ -430,9 +443,14 @@ def create_sal_inv(source):
 		for i in doclist.get('items'):		
 			doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
 			if mg.item_code == i.item_code and doc.is_multiple_quotation:
+				# frappe.errprint(mg.item_code)
+				# frappe.errprint(mg.margin_amount)
+				i.item_code = mg.item_code
 				i.rate= mg.margin_amount
+				i.model= mg.model_no
+				i.manufacturer= mg.manufacturer
 			else:
-				i.rate= mg.rate
+				i.rate= doc.after_discount_cost
 
 
 

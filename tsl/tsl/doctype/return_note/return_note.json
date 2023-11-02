@@ -227,7 +227,7 @@
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "RET-NT-.YYYY.-",
+   "options": "RE-K.YY.-\nRE-D.YY.-\nRE-R.YY.-\nRE-J.YY.-\nRE-DU.YY.-",
    "print_hide": 1,
    "reqd": 1,
    "set_only_once": 1
@@ -2073,7 +2073,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-10-28 08:28:51.242951",
+ "modified": "2023-11-01 13:03:19.289806",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Return Note",

@@ -168,6 +168,7 @@
    "fieldtype": "Table",
    "label": "Material List",
    "options": "Material List",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -294,6 +295,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "attach_image",
    "fieldtype": "Data",
    "label": "Attach Image"
@@ -496,7 +498,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-10-29 09:22:56.014040",
+ "modified": "2023-11-01 11:33:16.467442",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

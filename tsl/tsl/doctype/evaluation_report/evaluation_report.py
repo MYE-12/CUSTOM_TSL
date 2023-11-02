@@ -200,14 +200,28 @@ class EvaluationReport(Document):
 						doc = frappe.get_doc("Work Order Data",s.wod)
 						doc.status = "Parts Priced"
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-			if self.status == "Working":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "W-Working"
-			
-			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "AP-Available Parts"
-			elif self.status == "Spare Parts" and self.parts_availability == "No":
+			qtn = frappe.db.sql("""select (`tabQuotation Item`.wod_no) as wod ,`tabQuotation`.name as qtn
+					from `tabQuotation` left join `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent  
+					where `tabQuotation`.workflow_state = 'Approved By Customer'""",as_dict=1)
+			for qt in qtn:
+				if self.status == "Working":
+					if qt.wod == self.work_order_data:
+						doc = frappe.get_doc("Work Order Data",qt.wod)
+						frappe.errprint(doc)
+						doc.status = "RS-Repaired and Shipped"
+
+					elif not doc:
+						doc.status = "W-Working"
+		
+				if self.status == "Spare Parts" and self.parts_availability == "Yes":
+					if qt.wod == self.work_order_data:
+							doc = frappe.get_doc("Work Order Data",qt.wod)
+							frappe.errprint(doc)
+							doc.status = "A-Approved"
+
+					elif not doc:
+						doc.status = "AP-Available Parts"
+			if self.status == "Spare Parts" and self.parts_availability == "No":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "SP-Searching Parts"
 

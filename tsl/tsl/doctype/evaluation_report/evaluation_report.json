@@ -70,11 +70,11 @@
  ],
  "fields": [
   {
+   "allow_on_submit": 1,
    "fieldname": "customer",
    "fieldtype": "Link",
    "label": "Customer",
-   "options": "Customer",
-   "read_only": 1
+   "options": "Customer"
   },
   {
    "fieldname": "attn",
@@ -106,11 +106,11 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "evaluation_details",
    "fieldtype": "Table",
    "label": "Evaluation Details",
-   "options": "Evaluation Item",
-   "read_only": 1
+   "options": "Evaluation Item"
   },
   {
    "allow_on_submit": 1,
@@ -462,7 +462,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-29 11:53:28.492417",
+ "modified": "2023-11-02 09:22:17.261745",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

@@ -271,6 +271,8 @@ def create_initial_eval(doc_no):
 			"qty":j.used_qty,
 			"part_description":j.part_description,
 			"parts_availability":j.parts_availability,
+			"price_ea":j.price_ea,
+			"total":j.total,
 
 		})
 	return new_doc

@@ -102,8 +102,8 @@ frappe.ui.form.on('Quotation', {
         },
 	default_discount_percentage(frm){
 		if(frm.doc.is_multiple_quotation){
-			var disc_val = (frm.doc.actual_price/100)*frm.doc.default_discount_percentage
-			var disc = Math.ceil(frm.doc.actual_price - disc_val).toFixed(2)
+			var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
+			var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
 			frm.set_value("after_discount_cost",disc)
 			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		}
@@ -141,7 +141,12 @@ frappe.ui.form.on('Quotation', {
 	},
 	validate(frm){
 		// cur_frm.clear_table('technician_hours_spent')
-
+		var name = frm.doc.name
+		var split_name = name.split("-")
+		var doc_name = split_name[1]
+		var branch = split_name[3]
+		var no = split_name[4]
+		frm.set_value('qtn_no',doc_name+'-'+ branch +'-'+ no)
 		if(frm.doc.is_multiple_quotation){
 			$.each(frm.doc.items, function(i,v){
 				if(v.margin_amount <= 0){
@@ -157,12 +162,10 @@ frappe.ui.form.on('Quotation', {
 		}
 		if(frm.doc.quotation_type != "Internal Quotation - Repair"){
 			frm.set_value("letter_head",'TSL New')
-			frappe.msgprint("Letter Head Placed Successufully")
+			// frappe.msgprint("Letter Head Placed Successufully")
 		}
-		else{
-			frm.set_value("letter_head",'')
 
-		}
+		
 	
 		frm.refresh_field('technician_hours_spent')
 		var amt = 0
