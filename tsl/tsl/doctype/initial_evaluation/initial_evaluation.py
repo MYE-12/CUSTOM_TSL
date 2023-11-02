@@ -244,16 +244,17 @@ def create_material_issue_from_ini_eval(name):
 	# new_doc.company = self.company
 	new_doc.to_warehouse = "Kuwait - TSL"
 
-	new_doc.to_warehouse = "Kuwait - TSL"
+	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Initial Evaluation',name)
 	for i in ini.items:
-		new_doc.append("items",{
-			's_warehouse':"Kuwait - TSL",
-			'item_code':i.part,
-			'qty':i.qty,
-			'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-			# 'conversion_factor':1,
-			# 'allow_zero_valuation_rate':1
-		})
+		if not i.released:
+			new_doc.append("items",{
+				's_warehouse':"Kuwait - TSL",
+				'item_code':i.part,
+				'qty':i.qty,
+				'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+				# 'conversion_factor':1,
+				# 'allow_zero_valuation_rate':1
+			})
 	new_doc.save(ignore_permissions = True)
 	new_doc.submit()

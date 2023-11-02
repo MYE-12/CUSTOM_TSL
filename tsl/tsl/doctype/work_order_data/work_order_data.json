@@ -79,6 +79,7 @@
    "label": "Sales Rep"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
@@ -470,6 +471,7 @@
    "options": "Initial Evaluation"
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "customer.email_id",
    "fieldname": "customer_email",
    "fieldtype": "Data",
@@ -498,7 +500,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-11-01 11:33:16.467442",
+ "modified": "2023-11-02 09:37:17.923020",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
