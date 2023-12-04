@@ -249,16 +249,22 @@ def create_workorder_data(order_no, f):
         new_doc = frappe.new_doc("Work Order Data")
         if doc.work_order_data:
             link0 = []
-            warr = frappe.db.get_value("Work Order Data", doc.work_order_data, [
-                                       "delivery", "warranty"], as_dict=1)
+            warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
             print(warr)
             if warr['delivery'] and warr['warranty']:
                 date = frappe.utils.add_to_date(warr['delivery'], days=int(warr['warranty']))
                 print(date, type(date))
                 frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
                 frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
+                eval = frappe.db.exists("Evaluation Report",{"work_order_data":doc.work_order_data})
+
                 if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
+                    if eval:
+                        frappe.errprint(eval)
+                        # frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
+                        
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
                     if not doc.name == "Create Work Order":
                         frappe.db.set_value("Work Order Data", doc.work_order_data, "equipment_recieved_form", doc.name)
                     link0.append(

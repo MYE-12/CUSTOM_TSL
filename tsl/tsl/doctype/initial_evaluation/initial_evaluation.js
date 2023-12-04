@@ -128,7 +128,6 @@ frappe.ui.form.on('Initial Evaluation', {
 					},
 					callback: function (r) {
 						if (r.message) {
-							console.log(r.message)
 							frappe.msgprint("Material Released")
 							// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
 						}
@@ -254,24 +253,24 @@ frappe.ui.form.on('Initial Evaluation', {
 				filters: d
 			}
 		}
-		// if (frm.doc.parts_availability == "No") {
-		// 	if (!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")) {
-		// 		frm.add_custom_button(__("Request for Quotation"), function () {
-		// 			frappe.call({
-		// 				method: "tsl.custom_py.utils.create_rfq_int",
-		// 				args: {
-		// 					"ps": frm.doc.name
-		// 				},
-		// 				callback: function (r) {
-		// 					if (r.message) {
-		// 						var doc = frappe.model.sync(r.message);
-		// 						frappe.set_route("Form", doc[0].doctype, doc[0].name);
-		// 					}
-		// 				}
-		// 			});
-		// 		}, __('Create'));
-		// 	}
-		// }
+		if (frm.doc.parts_availability == "No") {
+			if (!frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")) {
+				frm.add_custom_button(__("Request for Quotation"), function () {
+					frappe.call({
+						method: "tsl.custom_py.utils.create_rfq_int",
+						args: {
+							"ps": frm.doc.name
+						},
+						callback: function (r) {
+							if (r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							}
+						}
+					});
+				}, __('Create'));
+			}
+		}
 	},
 	// if_parts_required:function(frm){
 	// 	if(frm.doc.if_parts_required){
@@ -313,7 +312,6 @@ frappe.ui.form.on('Initial Evaluation', {
 			frappe.call({
 				method:"tsl.custom_py.utils.get_item_warehouse",
 				callback: function(r) {
-					console.log(r)
 				}
 			})
 			if (child.model) {
@@ -414,7 +412,6 @@ frappe.ui.form.on('Testing Part Sheet', {
 					"warehouse": frappe.user_defaults.company
 				},
 				callback: function (r) {
-					console.log(r)
 					frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);
 					frappe.model.set_value(cdt, cdn, "parts_availability", r.message[1]);
 					row.total = row.qty * r.message[0];

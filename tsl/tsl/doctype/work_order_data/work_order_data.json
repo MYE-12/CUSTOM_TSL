@@ -24,6 +24,7 @@
   "expiry_date",
   "equipment_recieved_form",
   "priority_status",
+  "status_cap",
   "column_break_7",
   "received_date",
   "company",
@@ -121,15 +122,13 @@
    "fieldname": "dn_no",
    "fieldtype": "Link",
    "label": "Delivery Note",
-   "options": "Delivery Note",
-   "read_only": 1
+   "options": "Delivery Note"
   },
   {
    "fetch_from": "dn_no.posting_date",
    "fieldname": "dn_date",
    "fieldtype": "Date",
-   "label": "Delivery Note Date",
-   "read_only": 1
+   "label": "Delivery Note Date"
   },
   {
    "allow_on_submit": 1,
@@ -490,6 +489,11 @@
   {
    "fieldname": "section_break_oy5vi",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "status_cap",
+   "fieldtype": "Data",
+   "label": "Status Cap"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -500,7 +504,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-11-02 09:37:17.923020",
+ "modified": "2023-12-03 08:29:12.646544",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

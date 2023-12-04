@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW LC",
  "links": [],
- "modified": "2023-10-21 15:03:01.490087",
+ "modified": "2023-11-21 08:06:19.487635",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW LC",
@@ -36,6 +36,14 @@
    "type": "Report"
   },
   {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Extra Parts",
+   "link_to": "Evaluation Report",
+   "stats_filter": "{\"status\":[\"=\",\"Extra Parts\"]}",
+   "type": "DocType"
+  },
+  {
    "color": "Red",
    "doc_view": "List",
    "label": "W - Need Evaluation Return",
@@ -49,14 +57,6 @@
    "label": "W - Approved",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"A-Approved\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Extra Parts",
-   "link_to": "Evaluation Report",
-   "stats_filter": "{\"part_number\":[\"like\",\"%2%\"]}",
    "type": "DocType"
   },
   {

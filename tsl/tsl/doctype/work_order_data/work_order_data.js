@@ -12,7 +12,7 @@ frappe.ui.form.on('Work Order Data', {
 	},
 	delivery:function(frm){
 		if(frm.doc.delivery){
-		frm.set_value("status",'RSC-Repaired and Shipped Client');
+		frm.set_value("status",'CT-Customer Testing');
 		frm.refresh_field('status')
 		}
 	},
@@ -124,7 +124,7 @@ frappe.ui.form.on('Work Order Data', {
 }
 		}
 		if(frm.doc.docstatus == 1) {
-		if(! frappe.user.has_role("Technician")|| frappe.user.has_role("Administrator")){
+		// if(! frappe.user.has_role("Technician")){
 			frm.add_custom_button(__("Sales Invoice"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
@@ -134,6 +134,9 @@ frappe.ui.form.on('Work Order Data', {
 					callback: function(r) {
 						console.log(r.message)
 						if(r.message) {
+							// $.each(r.message,function(i,v){
+							// 	console.log(v.name)
+							// })
 							var doc = frappe.model.sync(r.message);
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							
@@ -142,7 +145,7 @@ frappe.ui.form.on('Work Order Data', {
 					}
 				});
 			},__('Create'));
-		}
+		// }
 }
 		if(frm.doc.docstatus === 1) {
 		if(! frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){

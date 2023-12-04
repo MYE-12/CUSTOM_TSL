@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+import json
 
 class ReturnNote(Document):
 	def on_submit(self):
@@ -30,3 +31,33 @@ class ReturnNote(Document):
 			})
 		se_doc.save(ignore_permissions = True)
 		se_doc.submit()
+
+@frappe.whitelist()
+def get_wod_items(wod):
+	wod = json.loads(wod)
+	l=[]
+	for k in list(wod):
+		doc = frappe.get_doc("Work Order Data",k)
+		branch = doc.branch
+		for i in doc.material_list:
+			l.append(frappe._dict({
+				"item_name":i.item_name,
+				"item_code":i.item_code,
+				"manufacturer":i.mfg,
+				"model":i.model_no,
+				"type":i.type,
+				"serial_number":i.serial_no,
+				"description":i.item_name,
+				"qty":i.quantity,
+				"wod_no":doc.name, 
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"cost_center":doc.department,
+				"rate":1,
+				"amount":1,
+				"income_account":"6001002 - Revenue from Service - TSL",
+				"warehouse":branch
+
+			}))
+	return l

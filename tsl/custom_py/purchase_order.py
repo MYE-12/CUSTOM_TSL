@@ -39,3 +39,5 @@ def on_submit(self,method):
         sod = frappe.get_doc("Supply Order Data",self.supply_order_data)
         sod.status = "Ordered"
         sod.save(ignore_permissions = True)
+
+        

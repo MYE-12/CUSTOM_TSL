@@ -109,7 +109,6 @@ class InitialEvaluation(Document):
 		for i in self.items:
 			if i.part and get_valuation_rate(i.part,self.company,i.qty)[1] == "Yes" and not i.from_scrap:
 				price_sts = get_valuation_rate(i.part,self.company,i.qty)
-				frappe.errprint(price_sts)
 				i.price_ea = price_sts[0] if len(price_sts) else 0
 				i.total = i.price_ea*i.qty
 				i.parts_availability = price_sts[1] if len(price_sts) else "No"
@@ -128,9 +127,9 @@ class InitialEvaluation(Document):
 					self.part_no = i.part_sheet_no
 				if i.parts_availability == "No" and not i.from_scrap:
 					f=1
-			if len(self.items)>0 and self.items[-1].part_sheet_no:
-				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
-					frappe.db.sql('''update `tabInitial Evaluation` set status = %s where name = %s ''',("Extra Parts",self.name))
+			# if len(self.items)>0 and self.items[-1].part_sheet_no:
+			# 	if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
+			# 		frappe.db.sql('''update `tabInitial Evaluation` set status = %s where name = %s ''',("Extra Parts",self.name))
 			if f:
 				frappe.db.sql('''update `tabInitial Evaluation` set parts_availability = "No" where name = %s ''',(self.name))
 				self.parts_availability == "No"
@@ -247,7 +246,7 @@ def create_material_issue_from_ini_eval(name):
 	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Initial Evaluation',name)
 	for i in ini.items:
-		if not i.released:
+		if i.released != 1:
 			new_doc.append("items",{
 				's_warehouse':"Kuwait - TSL",
 				'item_code':i.part,
@@ -256,5 +255,7 @@ def create_material_issue_from_ini_eval(name):
 				# 'conversion_factor':1,
 				# 'allow_zero_valuation_rate':1
 			})
+	frappe.msgprint("Parts Released and Material Issue is Created")
+
 	new_doc.save(ignore_permissions = True)
 	new_doc.submit()

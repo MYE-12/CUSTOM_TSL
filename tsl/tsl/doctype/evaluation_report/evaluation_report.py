@@ -51,7 +51,10 @@ class EvaluationReport(Document):
 			# 	doc.status = "Parts Priced"
 			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "Parts Priced"
+				doc.status = "AP-Available Parts"
+			# elif self.status == "Spare Parts" and self.parts_availability == "No":
+			# 	doc.status = "SP-Searching Parts"
+			
 			elif self.status == "Return Not Repaired":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNR-Return Not Repaired"
@@ -74,15 +77,16 @@ class EvaluationReport(Document):
 			if self.parts_availability == "Yes":
 				doc.status = "AP-Available Parts"
 			if self.parts_availability == "No":
-	
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
 				
 				if sq:
 
 					doc.status = "Parts Priced"
-				if sq:
 					self.status = "Supplier Quoted"
+				# if sq:
+				# 	self.status = "Supplier Quoted"
 				else:
+	
 					doc.status = "SP-Searching Parts"
 			doc.save(ignore_permissions=True)
 		if self.status:
@@ -96,11 +100,15 @@ class EvaluationReport(Document):
 
 					doc.status = "Parts Priced"
 				else:
+	
 					doc.status = "SP-Searching Parts"
-			elif self.status == "Extra Parts":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "EP-Extra Parts"
-			elif self.status == "Comparison":
+			# if self.status == "Extra Parts" and self.parts_availability == "Yes":
+			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			# 	doc.status = "AP-Available Parts"
+			# else:
+			# 	doc.status = "EP-Extra Parts"
+
+			if self.status == "Comparison":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
 			elif self.status == "Return Not Repaired":
@@ -194,7 +202,7 @@ class EvaluationReport(Document):
 					  where `tabSupplier Quotation`.docstatus = 1 """,as_dict=1)
 			
 			for s in sq:
-				# frappe.errprint(s.wod)
+				
 				if s.wod:
 					if self.status == "Spare Parts":
 						doc = frappe.get_doc("Work Order Data",s.wod)
@@ -207,7 +215,6 @@ class EvaluationReport(Document):
 				if self.status == "Working":
 					if qt.wod == self.work_order_data:
 						doc = frappe.get_doc("Work Order Data",qt.wod)
-						frappe.errprint(doc)
 						doc.status = "RS-Repaired and Shipped"
 
 					elif not doc:
@@ -215,19 +222,35 @@ class EvaluationReport(Document):
 		
 				if self.status == "Spare Parts" and self.parts_availability == "Yes":
 					if qt.wod == self.work_order_data:
-							doc = frappe.get_doc("Work Order Data",qt.wod)
-							frappe.errprint(doc)
-							doc.status = "A-Approved"
+						doc = frappe.get_doc("Work Order Data",qt.wod)
+						doc.status = "A-Approved"
 
-					elif not doc:
+					else:
 						doc.status = "AP-Available Parts"
-			if self.status == "Spare Parts" and self.parts_availability == "No":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "SP-Searching Parts"
+				else:
+					sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
+					if sq:
+						doc.status == "Parts Priced"
+					else:
+		
+						doc.status = "SP-Searching Parts"
+			
+			if self.status == "Extra Parts" and self.parts_availability != "Yes":
 
-			elif self.status == "Extra Parts":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "EP-Extra Parts"
+			
+			# if self.status == "Spare Parts" and self.parts_availability == "No":
+			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			# 	doc.status = "SP-Searching Parts"
+			# else:
+			# 	doc.status = "AP-Available Parts"
+
+
+
+			if self.status == "RNP-Return No Parts":
+				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				doc.status = "RNP-Return No Parts"
 			elif self.status == "Comparison":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
@@ -256,8 +279,10 @@ class EvaluationReport(Document):
 				if i.parts_availability == "No" and not i.from_scrap:
 					f=1
 			if len(self.items)>0 and self.items[-1].part_sheet_no:
-				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts",""]:
+
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Working","Comparison",""]:
 					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+
 			if f:
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
 
@@ -266,12 +291,12 @@ class EvaluationReport(Document):
 					doc = frappe.get_doc("Work Order Data",self.work_order_data)
 
 					doc.status = "Parts Priced"
-				else:
-					doc = frappe.get_doc("Work Order Data",self.work_order_data)
+				# else:
+				# 	# doc = frappe.get_doc("Work Order Data",self.work_order_data)
 
-					self.parts_availability == "No"
+				# 	# self.parts_availability == "No"
 				
-					doc.status = "SP-Searching Parts"
+				# 	doc.status = "SP-Searching Parts"
 				# doc.save(ignore_permissions=True)
 				#	scrap = frappe.db.sql('''select * from `tabPart Sheet Item` where name = %s ''', (self.name),as_dict=1)
 			else:
@@ -357,17 +382,20 @@ def create_material_issue_from_ini_eval(name):
 	# new_doc.company = self.company
 	new_doc.to_warehouse = "Kuwait - TSL"
 
-	new_doc.to_warehouse = "Kuwait - TSL"
+	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Evaluation Report',name)
 	for i in ini.items:
-		new_doc.append("items",{
-			's_warehouse':"Kuwait - TSL",
-			'item_code':i.part,
-			'qty':i.qty,
-			'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-			# 'conversion_factor':1,
-			# 'allow_zero_valuation_rate':1
-		})
+		if i.released != 1:
+			new_doc.append("items",{
+				's_warehouse':"Kuwait - TSL",
+				'item_code':i.part,
+				'qty':i.qty,
+				'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+				# 'conversion_factor':1,
+				# 'allow_zero_valuation_rate':1
+			})
+		frappe.msgprint("Parts Released and Material Issue is Created")
+
 	new_doc.save(ignore_permissions = True)
 	new_doc.submit()
 

@@ -24,6 +24,9 @@ frappe.listview_settings['Evaluation Report'] = {
             else if (doc.status === "Return Not Repaired") {
                    return [__("Return Not Repaired"), "red", "status,=,Return Not Repaired"];
             }
+            else if (doc.status === "RNP-Return No Parts") {
+                  return [__("RNP-Return No Parts"), "red", "status,=,RNP-Return No Parts"];
+           }
             else if (doc.status === "Return No Fault") {
                   return [__("Return No Fault"), "green", "status,=,Return No Fault"];
             }

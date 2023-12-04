@@ -392,18 +392,28 @@ def get_quotation_history(source,type = None):
 			
 		},
 	}, target_doc, postprocess)
-	for ic in doclist.get('items'):
-		if not ic.margin_amount:
-			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-			unit_disc = disc
+	if doc.quotation_type != "Internal Quotation - Supply":
+		for ic in doclist.get('items'):
+			if not ic.margin_amount:
+				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+				unit_disc = disc
 
-			ic.rate = doc.after_discount_cost+disc
-		
-		if ic.item_code:
-			ic.rate = round(doc.unit_rate_price)
-	
+				ic.rate = doc.after_discount_cost+disc
 			
+			if ic.item_code:
+				ic.rate = round(doc.unit_rate_price)
 		
+	else:
+		for ic in doclist.get('items'):
+			if not ic.margin_amount:
+				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+				unit_disc = disc
+
+				ic.rate = ic.rate
+			
+			if ic.item_code:
+				ic.rate = ic.rate
+			
 
 
 		

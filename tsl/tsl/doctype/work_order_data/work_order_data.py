@@ -431,11 +431,18 @@ def create_sal_inv(wod):
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
+		frappe.errprint(qi_details)
+		
 		r = 0
 		amt = 0
 		if qi_details:
+			# frappe.errprint(qi_details)
 			r = qi_details[0]['rate']
+			# frappe.errprint(r)
+
 			amt = qi_details[0]['amount']
+			# frappe.errprint(amt)
+
 		new_doc.append("items",{
 			"item_name":i.item_name,
 			"item_code":i.item_code,
@@ -456,7 +463,7 @@ def create_sal_inv(wod):
 			"warehouse":d[doc.branch]
 
 		})
-	return new_doc
+		return new_doc
 
 
 @frappe.whitelist()
@@ -564,8 +571,7 @@ class WorkOrderData(Document):
 #		if self.technician and self.status == "NE-Need Evaluation":
 #			self.status = "UE-Under Evaluation"
 		if self.warranty and self.delivery:
-#			self.status = 'RSC-Repaired and Shipped Client'
-			date = frappe.utils.add_to_date(self.delivery, days=int(self.warranty))
+			date = frappe.utils.add_to_date(self.delivery, months=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date

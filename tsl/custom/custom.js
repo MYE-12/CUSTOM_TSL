@@ -164,6 +164,10 @@ frappe.ui.form.on('Quotation', {
 			frm.set_value("letter_head",'TSL New')
 			// frappe.msgprint("Letter Head Placed Successufully")
 		}
+		else{
+			frm.set_value("letter_head",'')
+
+		}
 
 		
 	
@@ -442,12 +446,16 @@ frappe.ui.form.on('Quotation', {
 										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
 										var tot_qty=0;
+										var wo_no_txt = r.message[0]["wod"]
+										var wo = wo_no_txt.split("-")
+
 										for(var i=0;i<r.message.length;i++){
 											var childTable = cur_frm.add_child("items");
 											childTable.item_code = r.message[i]["item"],
 											childTable.item_name = r.message[i]["item_name"],
 											childTable.wod_no = r.message[i]["wod"],
 											childTable.model_no = r.message[i]["model_no"],
+											childTable.wo_no = wo[2],
 											childTable.manufacturer = r.message[i]["manufacturer"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["description"],

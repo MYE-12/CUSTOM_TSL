@@ -44,6 +44,16 @@ def create_sal_inv(source):
 	new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.company = doc.company
+	new_doc.append("items",{
+		"item_code":"000353",
+		"item_name":"Service Item",
+		"description":"Service Item",
+		"qty":1,
+		"uom":"Nos",
+		"stock_uom":"Nos",
+		"conversion_factor":1,
+		"stock_qty":1,
+	})
 	return new_doc
 
 	

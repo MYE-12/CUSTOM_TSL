@@ -15,6 +15,7 @@
   "technician",
   "ratehour",
   "column_break_3",
+  "ner_field",
   "company",
   "date",
   "priority_status",
@@ -57,6 +58,7 @@
   "technician_comment_section",
   "comment",
   "column_break_45",
+  "purchaser_comment",
   "test_result",
   "technician_on_work_section",
   "technician_details",
@@ -164,7 +166,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nSupplier Quoted"
+   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted"
   },
   {
    "allow_on_submit": 1,
@@ -457,12 +459,23 @@
    "fieldtype": "Table",
    "label": "Technician Image Multiple",
    "options": "Technician Image"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "purchaser_comment",
+   "fieldtype": "Small Text",
+   "label": "Purchaser Comment"
+  },
+  {
+   "fieldname": "ner_field",
+   "fieldtype": "Data",
+   "label": "NER Field"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-02 09:22:17.261745",
+ "modified": "2023-12-03 09:10:16.863504",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

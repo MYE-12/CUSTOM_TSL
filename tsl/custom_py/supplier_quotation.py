@@ -75,20 +75,23 @@ def validate(self,method):
     for i in self.items:
         if i.work_order_data:
             doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' and docstatus != 2 """%(i.work_order_data),as_dict=1)
-        for d in doc:
-            ev = frappe.get_doc("Evaluation Report",d.name)
-            ev.status = "Supplier Quoted"
-            ev.save()
+        
+            for d in doc:
+                ev = frappe.get_doc("Evaluation Report",d.name)
+                ev.status = "Supplier Quoted"
+                ev.save()
+    
+        
 
 def on_submit(self,method):
     
     for i in self.items:
         if i.work_order_data:
             doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
-        for d in doc:
-            ev = frappe.get_doc("Work Order Data",d.name)
-            ev.status = "Parts Priced"
-            ev.save()
+            for d in doc:
+                ev = frappe.get_doc("Work Order Data",d.name)
+                ev.status = "Parts Priced"
+                ev.save()
         
 
 
@@ -162,6 +165,8 @@ def on_submit(self,method):
 
         doc.save(ignore_permissions=True)
 
+#Supplier quotation supply order rate conversion
+
     if self.supply_order_data:
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         for i in self.get('items'):
@@ -172,8 +177,16 @@ def on_submit(self,method):
                     j.supplier_quotation = self.name
             for j in doc.get('material_list'):
                 if j.item_code == i.item_code:
-                    j.price = i.rate
-                    j.amount = float(i.rate) * float(j.quantity or 1)
+                    url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+                    payload = {}
+                    headers = {}
+                    response = requests.request("GET", url, headers=headers, data=payload)
+                    data = response.json()
+                    frappe.errprint(data)
+                    rate_kw = data['rates']['KWD']
+                    conv_rate = i.rate * rate_kw
+                    j.price = conv_rate      
+                    j.amount = conv_rate * float(j.quantity)
                     j.supplier_quotation = self.name
         doc.save(ignore_permissions=True)
 
