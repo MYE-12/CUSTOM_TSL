@@ -163,6 +163,7 @@
    "fetch_if_empty": 1,
    "fieldname": "sales_person_name",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Sales Person Name"
   },
   {
@@ -238,6 +239,7 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Branch",
    "options": "Branch"
   }
@@ -245,7 +247,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-09-12 10:12:58.516921",
+ "modified": "2023-12-10 09:43:58.275365",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

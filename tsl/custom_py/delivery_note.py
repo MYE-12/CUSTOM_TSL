@@ -6,6 +6,7 @@ def on_submit(self,method):
       if i.wod_no:
            frappe.db.set_value("Work Order Data",i.wod_no,"dn_no",self.name)
            frappe.db.set_value("Work Order Data",i.wod_no,"dn_date",self.posting_date)
+           frappe.db.set_value("Work Order Data",i.wod_no,"delivery",self.posting_date)
            doc = frappe.get_doc("Work Order Data",i.wod_no)
            doc.status = 'CT-Customer Testing'
            doc.save(ignore_permissions = True)

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"ZyHcin_9Eb\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"WQy6m66AFf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"nuzb-DcYAF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"RFQ\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier Quotation\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"Meyv3IRadu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"ixTHpmrHW2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry\",\"col\":3}},{\"id\":\"Cs3oe7n-yc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":3}},{\"id\":\"8TntjXqDmA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"_EzRWxRIXI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"ePHiia7p57\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"cMRr98DOGF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Available Parts\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"OlDMM-vm8W\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W/Q - Approved\",\"col\":3}},{\"id\":\"C_ydhPE4fB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNR & RNP (Look For Replacement or Prices)\",\"col\":3}},{\"id\":\"02A89ItrJH\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Stock &amp;&nbsp;Item Master</span>\",\"col\":12}},{\"id\":\"kZJzRLyta4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry Report\",\"col\":3}},{\"id\":\"2f8nqL4g4L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Ledger\",\"col\":3}},{\"id\":\"9il2tnyBrh\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Testing Part Sheet</span>\",\"col\":12}},{\"id\":\"2-PvC1RWLw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Needed Parts for Testing\",\"col\":3}},{\"id\":\"elZAhtVAXP\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Evaluation Part Sheet</span>\",\"col\":12}},{\"id\":\"BFuSZIlT0O\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Order Parts\",\"col\":3}},{\"id\":\"2Uk188QFlO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"EXTRA PARTS\",\"col\":3}},{\"id\":\"aPANnGewKl\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">RFQ / Supplier Quotation</span>\",\"col\":12}},{\"id\":\"F2Ijee_BhA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Submitted RFQ\",\"col\":3}},{\"id\":\"ujzDRh2-Ik\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"GoqxmJgb64\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}}]",
+ "content": "[{\"id\":\"ZyHcin_9Eb\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"WQy6m66AFf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":3}},{\"id\":\"nuzb-DcYAF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"RFQ\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier Quotation\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"Meyv3IRadu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"_EzRWxRIXI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"ePHiia7p57\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"OlDMM-vm8W\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W/Q - Approved\",\"col\":3}},{\"id\":\"C_ydhPE4fB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNR & RNP (Look For Replacement or Prices)\",\"col\":3}},{\"id\":\"02A89ItrJH\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Stock &amp;&nbsp;Item Master</span>\",\"col\":12}},{\"id\":\"kZJzRLyta4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item List\",\"col\":3}},{\"id\":\"iYKQjbEUeG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Entry\",\"col\":3}},{\"id\":\"1QNKvB2CEK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Ledger\",\"col\":3}},{\"id\":\"9il2tnyBrh\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Initial Evaluation Part Sheet</span>\",\"col\":12}},{\"id\":\"2-PvC1RWLw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Parts for Testing\",\"col\":3}},{\"id\":\"elZAhtVAXP\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Evaluation Part Sheet</span>\",\"col\":12}},{\"id\":\"BFuSZIlT0O\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Order Parts\",\"col\":3}},{\"id\":\"2Uk188QFlO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Extra Parts\",\"col\":3}},{\"id\":\"ujzDRh2-Ik\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Reports &amp; Masters</span>\",\"col\":12}},{\"id\":\"GoqxmJgb64\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}}]",
  "creation": "2023-09-02 09:55:20.640217",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW P",
  "links": [],
- "modified": "2023-11-27 09:56:23.245843",
+ "modified": "2023-12-09 13:36:58.841738",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW P",
@@ -38,17 +38,9 @@
   },
   {
    "color": "Grey",
-   "doc_view": "List",
-   "label": "Stock Ledger",
-   "link_to": "Stock Ledger",
-   "type": "Report"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Needed Parts for Testing",
-   "link_to": "Initial Evaluation",
-   "stats_filter": "{\"docstatus\":[\"=\",\"0\"],\"parts_availability\":[\"=\",\"Yes\"],\"if_parts_required\":[\"=\",1]}",
+   "doc_view": "Report Builder",
+   "label": "Item List",
+   "link_to": "Item",
    "type": "DocType"
   },
   {
@@ -62,17 +54,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Submitted RFQ",
-   "link_to": "Request for Quotation",
-   "stats_filter": "{\"status\":[\"=\",\"Submitted\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "EXTRA PARTS",
-   "link_to": "Evaluation Report",
-   "stats_filter": "{\"status\":[\"=\",\"Extra Parts\"]}",
+   "label": "Stock Entry",
+   "link_to": "Stock Entry",
    "type": "DocType"
   },
   {
@@ -83,19 +66,26 @@
    "type": "DocType"
   },
   {
-   "color": "Green",
+   "color": "Grey",
    "doc_view": "List",
-   "format": "{}",
-   "label": "W - Available Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"AP-Available Parts\"]}",
-   "type": "DocType"
+   "label": "Stock Ledger",
+   "link_to": "Stock Ledger",
+   "type": "Report"
   },
   {
    "color": "Grey",
-   "doc_view": "Report Builder",
-   "label": "Stock Entry Report",
-   "link_to": "Stock Entry",
+   "doc_view": "List",
+   "label": "Parts for Testing",
+   "link_to": "Initial Evaluation",
+   "stats_filter": "{\"docstatus\":[\"=\",\"0\"],\"parts_availability\":[\"=\",\"Yes\"],\"if_parts_required\":[\"=\",1]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Extra Parts",
+   "link_to": "Evaluation Report",
+   "stats_filter": "{\"status\":[\"=\",\"Extra Parts\"]}",
    "type": "DocType"
   },
   {
@@ -173,13 +163,6 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Stock Entry",
-   "link_to": "Stock Entry",
-   "type": "DocType"
-  },
-  {
    "color": "Pink",
    "doc_view": "List",
    "label": "Evaluation Report",
@@ -198,20 +181,6 @@
    "doc_view": "List",
    "label": "Purchase Receipt",
    "link_to": "Purchase Receipt",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Purchase Invoice",
-   "link_to": "Purchase Invoice",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Payment",
-   "link_to": "Payment Entry",
    "type": "DocType"
   }
  ],

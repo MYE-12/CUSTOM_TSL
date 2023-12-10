@@ -179,6 +179,7 @@ def create_workorder_data(order_no, f):
                 f = 1
             if i["other"]:
                 f = 1
+                
             if int(f) == 0:
                 return "Confirm"
             
@@ -226,15 +227,16 @@ def create_workorder_data(order_no, f):
                         sn_doc.save(ignore_permissions=True)
                         if sn_doc.name:
                             sn_no = sn_doc.name
-        else:
-            if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
-                frappe.defaults.set_user_default("warehouse", None)
-                sn_doc = frappe.new_doc("Serial No")
-                sn_doc.serial_no = i['serial_no'] or ''
-                sn_doc.item_code = i['item_code']
-                sn_doc.save(ignore_permissions=True)
-                if sn_doc.name:
-                    sn_no = sn_doc.name
+        # else:
+        #     if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
+        #         frappe.errprint("hiu")
+        #         frappe.defaults.set_user_default("warehouse", None)
+        #         sn_doc = frappe.new_doc("Serial No")
+        #         sn_doc.serial_no = i['serial_no'] or ''
+        #         sn_doc.item_code = i['item_code']
+        #         sn_doc.save(ignore_permissions=True)
+        #         if sn_doc.name:
+        #             sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
@@ -298,6 +300,7 @@ def create_workorder_data(order_no, f):
         if i["other"]:
             new_doc.others = 1
             new_doc.specify = i["specify"]
+        
         new_doc.wod_component = i["item_code"] if "item_code" in i else ""
         new_doc.customer = doc.customer
         new_doc.received_date = doc.received_date

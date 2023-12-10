@@ -17,7 +17,7 @@ frappe.ui.form.on('Work Order Data', {
 		}
 	},
 	onload(frm){
-		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator" ) && !frappe.user.has_role("Admin")){
+		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator" ) && !frappe.user.has_role("Procurement" ) && !frappe.user.has_role("Admin")){
 			frm.set_df_property("technician","read_only",1)
 			frm.set_df_property("status","read_only",1)
 			frm.set_df_property("advance_payment_amount","hidden",1)
