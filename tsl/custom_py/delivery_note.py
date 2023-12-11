@@ -15,3 +15,9 @@ def on_submit(self,method):
 #            doc.status = "Delivered and Invoiced"
 #            doc.save(ignore_permissions = True)
 
+
+@frappe.whitelist()
+def wo_status_count():
+    wo_status = frappe.db.sql("""select status from `tabWork Order Data` status""")
+    for wo in wo_status:
+      print(wo_status)

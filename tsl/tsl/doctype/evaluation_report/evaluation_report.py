@@ -348,7 +348,8 @@ class EvaluationReport(Document):
 					item_doc.sub_category_name = scn
 					item_doc.package = package
 					item_doc.item_group = "Components"
-					item_doc.save(ignore_permissions = True)
+					if frappe.session.user == "purchase@tsl-me.com":
+						item_doc.save(ignore_permissions = True)
 		
 	def before_submit(self):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]	
