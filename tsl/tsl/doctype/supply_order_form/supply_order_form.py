@@ -82,9 +82,9 @@ def create_supply_order_data(order_no):
 							sn_doc.save(ignore_permissions = True)
 							if sn_doc.name:
 								sn_no = sn_doc.name
-			else:
-				if frappe.db.get_value("Item",i['item_code'],"has_serial_no") and not i['has_serial_no']:
-					frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))
+			# else:
+			# 	if frappe.db.get_value("Item",i['item_code'],"has_serial_no") and not i['has_serial_no']:
+			# 		frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))
 			new_doc.append("material_list",{
 				"item_code": i['item_code'],
 				"item_name":i['item_name'],

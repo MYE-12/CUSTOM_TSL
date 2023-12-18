@@ -280,7 +280,7 @@ class EvaluationReport(Document):
 					f=1
 			if len(self.items)>0 and self.items[-1].part_sheet_no:
 
-				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Working","Comparison",""]:
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison",""]:
 					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
 
 			if f:

@@ -1693,7 +1693,6 @@
    "depends_on": "customer",
    "fieldname": "more_information",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "More Information"
@@ -2072,7 +2071,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2023-12-02 13:47:49.796260",
+ "modified": "2023-12-18 09:41:58.021272",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Return Note",
