@@ -166,7 +166,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted"
+   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted\nInternal Extra Parts"
   },
   {
    "allow_on_submit": 1,
@@ -475,7 +475,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-03 09:10:16.863504",
+ "modified": "2023-12-19 09:38:23.294511",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

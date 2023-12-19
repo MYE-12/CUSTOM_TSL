@@ -261,8 +261,7 @@ def create_workorder_data(order_no, f):
                 if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
                     
                     if eval:
-                        frappe.errprint(eval)
-                        # frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
+                        frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
                         
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")

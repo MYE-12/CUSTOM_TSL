@@ -278,10 +278,12 @@ class EvaluationReport(Document):
 					self.part_no = i.part_sheet_no
 				if i.parts_availability == "No" and not i.from_scrap:
 					f=1
-			if len(self.items)>0 and self.items[-1].part_sheet_no:
+			if len(self.items)>0 and self.items[-1].part_sheet_no :
+					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison",""] and self.ner_field == "NER-Need Evaluation Return":
+						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+					else:
 
-				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison",""]:
-					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Internal Extra Parts",self.name))
 
 			if f:
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))

@@ -233,3 +233,8 @@ def item_qty():
 	
 			
 	)
+
+@frappe.whitelist()
+def get_count():
+	wo = frappe.db.sql("""select count(status) from `tabWork Order Data` where status ='RSC-Repaired and Shipped Client'""")
+	print(wo)
