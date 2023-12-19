@@ -265,66 +265,7 @@ def create_workorder_data(order_no, f):
                         
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
-                if i["no_power"]:
-                    new_doc.no_power = 1
-                if i["no_output"]:
-                    new_doc.no_output = 1
-                if i["no_display"]:
-                    new_doc.no_display = 1
-                if i["no_communication"]:
-                    new_doc.no_communication = 1
-                if i["supply_voltage"]:
-                    new_doc.supply_voltage = 1
-                if i["touchkeypad_not_working"]:
-                    new_doc.touch_keypad_not_working = 1
-                if i["no_backlight"]:
-                    new_doc.no_backlight = 1
-                if i["error_code"]:
-                    new_doc.error_code =1
-                if i["short_circuit"]:
-                    new_doc.short_circuit=1
-                if i["overloadovercurrent"]:
-                    new_doc.overload_overcurrent =1
-                if i["other"]:
-                    new_doc.others = 1
-                    new_doc.specify = i["specify"]
-                new_doc.wod_component = i["item_code"] if "item_code" in i else ""
-                new_doc.customer = doc.customer
-                new_doc.received_date = doc.received_date
-        #		new_doc.sales_rep = doc.sales_person or ''
-                new_doc.branch = doc.branch
-                new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
-                new_doc.repair_warehouse = doc.repair_warehouse
-                new_doc.address = doc.address
-                new_doc.incharge = doc.incharge
-                new_doc.priority_status = doc.sts
-                new_doc.naming_series = d[new_doc.branch]
-                new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
-                # serial_no=""
-                # if i['has_serial_no'] and i['serial_no']:
-                # 	serial_no = i['serial_no']
-                # 	sn_doc = frappe.new_doc("Serial No")
-                # 	sn_doc.serial_no = i['serial_no']
-                # 	sn_doc.item_code = i['item_code']
-                # 	sn_doc.warehouse = ""
-                # 	sn_doc.status = "Inactive"
-                # 	sn_doc.save(ignore_permissions = True)
-                if "type" in i:
-                    item_type = i['type']
-                new_doc.append("material_list",{
-                    "item_code": i['item_code'],
-                    "item_name":i['item_name'],
-                    "type":item_type,
-                    "model_no":i['model'],
-                    "mfg":i['manufacturer'],
-                    "serial_no":sn_no,
-                    "quantity":i['qty'],
-                })
-        #
-                new_doc.save(ignore_permissions = True)
-                if new_doc.name and "attach_image" in i:
-                    frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
-                new_doc.submit()
+              
                 if i['item_code']:
                     se_doc = frappe.new_doc("Stock Entry")
                     se_doc.stock_entry_type = "Material Receipt"
