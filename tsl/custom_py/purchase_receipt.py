@@ -24,7 +24,7 @@ def on_submit(self,method):
             doc.parts_availability = "Yes"
         doc.save(ignore_permissions = True)
         wod = frappe.get_doc("Work Order Data",self.work_order_data)
-        wod.status = "AP-Available Parts"
+        wod.status = "TR-Technician Repair"
         wod.save(ignore_permissions = True)
     if self.supply_order_data:
         wod = frappe.get_doc("Supply Order Data",self.supply_order_data)

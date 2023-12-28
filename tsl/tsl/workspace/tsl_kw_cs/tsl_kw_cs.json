@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"eHgRXYVvPj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Supply Order\",\"col\":3}},{\"id\":\"64teJCNQ-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"TrOGgNNNd7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Form\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Tech Repair\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Searching Parts\",\"col\":3}},{\"id\":\"s3rAaHfJ_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Ready To Quote\",\"col\":3}},{\"id\":\"aunzWFpWTp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W- Available Parts\",\"col\":3}},{\"id\":\"hz22FOg75k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Extra Parts\",\"col\":3}},{\"id\":\"ig560hQjkm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Waiting Parts\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"Iv4oQSO7rk\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Approved\",\"col\":3}},{\"id\":\"2y6Hi1XYG9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Repaired & Shipped\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Quotation</span>\",\"col\":12}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}},{\"id\":\"JeWgCQic1I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Pending\",\"col\":3}}]",
+ "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"eHgRXYVvPj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Supply Order\",\"col\":3}},{\"id\":\"64teJCNQ-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"TrOGgNNNd7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Form\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"s3rAaHfJ_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Ready To Quote\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - SP\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - NER\",\"col\":3}},{\"id\":\"2y6Hi1XYG9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RS\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Quotation</span>\",\"col\":12}},{\"id\":\"JeWgCQic1I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Pending\",\"col\":3}},{\"id\":\"f7vfK0s_X5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q-Customer Quoted\",\"col\":3}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}}]",
  "creation": "2023-08-31 08:47:37.856270",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL KW CS",
  "links": [],
- "modified": "2023-10-21 15:03:01.453400",
+ "modified": "2023-12-20 08:56:21.957074",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW CS",
@@ -39,17 +39,9 @@
   {
    "color": "Red",
    "doc_view": "List",
-   "label": "Return Note",
-   "link_to": "Return Note",
-   "stats_filter": "{\"status\":[\"=\",\"Return\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Pink",
-   "doc_view": "List",
-   "label": "W - Under Tech Repair",
+   "label": "W - SP",
    "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"in\",[\"UTR-Under Technician Repair\",null]]}",
+   "stats_filter": "{\"status\":[\"=\",\"SP-Searching Parts\"]}",
    "type": "DocType"
   },
   {
@@ -58,6 +50,38 @@
    "label": "W - Ready To Quote",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"W-Working\",null]]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Q-Customer Quoted",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Quoted to Customer\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Return Note",
+   "link_to": "Return Note",
+   "stats_filter": "{\"status\":[\"=\",\"Return\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "W - NER",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "W - RS",
+   "link_to": "Work Order Data",
+   "stats_filter": "{\"status\":[\"=\",\"RS-Repaired and Shipped\"]}",
    "type": "DocType"
   },
   {
@@ -92,14 +116,6 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "W - Repaired & Shipped",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"RS-Repaired and Shipped\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
    "label": "Service Call Form",
    "link_to": "Service Call Form",
    "type": "DocType"
@@ -120,42 +136,10 @@
    "type": "DocType"
   },
   {
-   "color": "Red",
-   "doc_view": "List",
-   "label": "W - Searching Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"SP-Searching Parts\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "W- Available Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"AP-Available Parts\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Yellow",
-   "doc_view": "List",
-   "label": "W - Extra Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"EP-Extra Parts\"]}",
-   "type": "DocType"
-  },
-  {
    "color": "Pink",
    "doc_view": "List",
    "label": "Evaluation Report",
    "link_to": "Evaluation Report",
-   "type": "DocType"
-  },
-  {
-   "color": "Red",
-   "doc_view": "List",
-   "label": "W - Waiting Parts",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"WP-Waiting Parts\"]}",
    "type": "DocType"
   },
   {
@@ -166,26 +150,10 @@
    "type": "DocType"
   },
   {
-   "color": "Red",
-   "doc_view": "List",
-   "label": "W -Need Evaluation Return",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
-   "type": "DocType"
-  },
-  {
    "color": "Yellow",
    "doc_view": "List",
    "label": "Sales Invoice",
    "link_to": "Sales Invoice",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "W - Approved",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"status\":[\"=\",\"A-Approved\"]}",
    "type": "DocType"
   },
   {

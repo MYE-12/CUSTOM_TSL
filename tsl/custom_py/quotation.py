@@ -262,21 +262,22 @@ def show_details(self,method):
 				labour_value = 0
 				for t in tc:
 					labour_value += t.total_price
-				for pp in parts_priced:
-					cost = float(pp.total_material_cost)
+				if parts_priced:
+					for pp in parts_priced:
+						cost = float(pp.total_material_cost)
 			
 				# i.amount = total_qtn_rate /i.qty + labour_value
 				# i.rate = total_qtn_rate/i.qty + labour_value
 				
-				if not self.is_multiple_quotation and self.technician_hours_spent:
-						self.actual_price = round(labour_value + cost)
-				else:
-					# frappe.errprint( labour_value)
+					if not self.is_multiple_quotation and self.technician_hours_spent:
+							self.actual_price = round(labour_value + cost)
+					else:
+						# frappe.errprint( labour_value)
 
-					self.actual_price = round(labour_value + cost)
+						self.actual_price = round(labour_value + cost)
 						
-				if self.after_discount_cost:
-					self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
+					if self.after_discount_cost:
+						self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
 	
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []

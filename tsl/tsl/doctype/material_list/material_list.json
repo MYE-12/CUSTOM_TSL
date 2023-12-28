@@ -67,7 +67,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Type",
-   "options": "Item Type"
+   "options": "Item Type",
+   "read_only": 1
   },
   {
    "columns": 2,
@@ -97,8 +98,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "SKU",
-   "options": "Item",
-   "read_only": 1
+   "options": "Item"
   },
   {
    "fetch_from": "item_code.item_name",
@@ -123,7 +123,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-05 16:52:29.678367",
+ "modified": "2023-12-26 14:25:01.352439",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",

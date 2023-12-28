@@ -235,6 +235,14 @@ def item_qty():
 	)
 
 @frappe.whitelist()
-def get_count():
-	wo = frappe.db.sql("""select count(status) from `tabWork Order Data` where status ='RSC-Repaired and Shipped Client'""")
-	print(wo)
+def amount(amount,currency):
+	url = "https://api.exchangerate-api.com/v4/latest/%s"%(currency)
+	payload = {}
+	headers = {}
+	response = requests.request("GET", url, headers=headers, data=payload)
+	data = response.json()
+	
+	rate_kw = data['rates']['KWD']
+	conv_rate = float(amount) / 0.31
+	return conv_rate
+	

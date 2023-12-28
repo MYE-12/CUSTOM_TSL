@@ -20,7 +20,9 @@ frappe.listview_settings['Evaluation Report'] = {
             else if (doc.status === "Comparison") {
                    return [__("Comparison"), "yellow", "status,=,Comparison"];
             }
-            
+            else if (doc.status === "Internal Extra Parts") {
+                  return [__("Internal Extra Parts"), "pink", "status,=,Internal Extra Parts"];
+           }
             else if (doc.status === "Return Not Repaired") {
                    return [__("Return Not Repaired"), "red", "status,=,Return Not Repaired"];
             }
