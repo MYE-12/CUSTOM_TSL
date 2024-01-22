@@ -55,10 +55,11 @@
    "options": "SOD-.YY.-\nST-K.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sales_rep",
    "fieldtype": "Link",
    "label": "Sales Rep",
-   "options": "User"
+   "options": "Sales Person"
   },
   {
    "fieldname": "customer",
@@ -307,7 +308,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-25 13:03:54.408499",
+ "modified": "2024-01-09 11:12:21.281738",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

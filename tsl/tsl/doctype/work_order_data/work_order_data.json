@@ -76,9 +76,11 @@
  ],
  "fields": [
   {
+   "allow_on_submit": 1,
    "fieldname": "sales_rep",
-   "fieldtype": "Data",
-   "label": "Sales Rep"
+   "fieldtype": "Link",
+   "label": "Sales Rep",
+   "options": "Sales Person"
   },
   {
    "allow_on_submit": 1,
@@ -430,7 +432,6 @@
    "mandatory_depends_on": "eval:(doc.others==1);"
   },
   {
-   "fetch_from": "sales_rep.full_name",
    "fieldname": "sales_rep_name",
    "fieldtype": "Data",
    "label": "Sales Rep Name"
@@ -512,7 +513,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-12-26 14:28:40.758962",
+ "modified": "2024-01-08 12:54:50.781646",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

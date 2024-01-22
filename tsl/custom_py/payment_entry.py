@@ -1,11 +1,11 @@
 import frappe,json
 
 def on_submit(self,method):
-    if self.supply_order_data and len(self.references)>0:
+    if self.supply_order_data and len(self.references)>0 and self.payment_type == 'Receive':
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         doc.status = "Paid"
         doc.save(ignore_permissions = True)
-    if self.work_order_data and len(self.references)>0:
+    if self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive':
         doc = frappe.get_doc("Work Order Data",self.work_order_data)
         doc.status = "P-Paid"
         doc.save(ignore_permissions = True)

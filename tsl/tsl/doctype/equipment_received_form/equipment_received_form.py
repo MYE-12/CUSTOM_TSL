@@ -102,11 +102,11 @@ def get_contacts(customer):
     default_sp = ""
     for i in doc.get("contact_details"):
         l.append(i.name1)
-    for i in doc.get("sales_person_details"):
+    for i in doc.get("sales_team"):
         sp.append(i.sales_person)
-        if i.is_default:
-            default_sp = i.sales_person
-    return [l, sp, default_sp]
+        # if i.is_default:
+        #     default_sp = i.sales_person
+    return [l, sp]
 
 # @frappe.whitelist()
 # def get_sku(model,mfg,type,serial_no):
@@ -228,14 +228,21 @@ def create_workorder_data(order_no, f):
                             sn_no = sn_doc.name
         else:
             if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
-                
                 frappe.defaults.set_user_default("warehouse", None)
                 sn_doc = frappe.get_doc("Serial No",i['serial_no'])
+
                 sn_doc.serial_no = i['serial_no'] or ''
                 sn_doc.item_code = i['item_code']
                 sn_doc.save(ignore_permissions=True)
                 if sn_doc.name:
                     sn_no = sn_doc.name
+            # else:
+            #     sn_doc = frappe.get_doc("Serial No")
+            #     sn_doc.serial_no = i['serial_no'] or ''
+            #     sn_doc.item_code = i['item_code']
+            #     sn_doc.save(ignore_permissions=True)
+            #     if sn_doc.name:
+            #         sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
@@ -330,7 +337,7 @@ def create_workorder_data(order_no, f):
         new_doc.wod_component = i["item_code"] if "item_code" in i else ""
         new_doc.customer = doc.customer
         new_doc.received_date = doc.received_date
-#		new_doc.sales_rep = doc.sales_person or ''
+        new_doc.sales_rep = doc.sales_person or ''
         new_doc.branch = doc.branch
         new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
         new_doc.repair_warehouse = doc.repair_warehouse

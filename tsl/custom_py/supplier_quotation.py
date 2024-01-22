@@ -36,8 +36,8 @@ def item_allocate_to_supplier(sod):
 def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=None):
 
     doc = frappe.get_doc("Request for Quotation",source_name)
-    if frappe.db.get_value("Supplier Quotation",{"work_order_data":doc.work_order_data}):
-        frappe.throw("Supplier Quotations already created for this RFQ")
+    # if frappe.db.get_value("Supplier Quotation",{"work_order_data":doc.work_order_data}):
+    #     frappe.throw("Supplier Quotations already created for this RFQ")
     l = []
     for i in doc.get("suppliers"):
         def postprocess(source, target_doc):

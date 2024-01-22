@@ -181,7 +181,7 @@ class EvaluationReport(Document):
 				item_doc.sub_category = sub_cat
 				# item_doc.package = package
 				item_doc.item_group = "Components"
-				if frappe.session.user == "purchase@tsl-me.com":
+				if frappe.session.user == "purchase@tsl-me.com" or "admin1@tsl-me.com":
 					item_doc.save(ignore_permissions = True)
 	def on_update_after_submit(self):
 		add = total = 0
@@ -301,8 +301,11 @@ class EvaluationReport(Document):
 				# doc.save(ignore_permissions=True)
 				#	scrap = frappe.db.sql('''select * from `tabPart Sheet Item` where name = %s ''', (self.name),as_dict=1)
 			else:
-				self.parts_availability = "Yes"
-				frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
+				if self.parts_availability == "Yes"  and i.parts_availability == 'No':
+					frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "No" where name = %s ''',(self.name))
+				else:
+					frappe.db.sql('''update `tabEvaluation Report` set parts_availability = "Yes" where name = %s ''',(self.name))
+
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				if self.status == "Installed and Completed/Repaired":
 					doc.status = "RS-Repaired and Shipped"
@@ -349,7 +352,7 @@ class EvaluationReport(Document):
 					item_doc.sub_category_name = scn
 					item_doc.package = package
 					item_doc.item_group = "Components"
-					if frappe.session.user == "purchase@tsl-me.com":
+					if frappe.session.user == "purchase@tsl-me.com" or "admin1@tsl-me.com":
 						item_doc.save(ignore_permissions = True)
 		
 	def before_submit(self):

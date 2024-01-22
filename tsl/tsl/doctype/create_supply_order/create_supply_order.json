@@ -164,10 +164,9 @@
    "fieldname": "sales_person",
    "fieldtype": "Link",
    "label": "Sales Person",
-   "options": "User"
+   "options": "Sales Person"
   },
   {
-   "fetch_from": "sales_person.full_name",
    "fieldname": "sales_person_name",
    "fieldtype": "Data",
    "label": "Sales Person Name",
@@ -256,7 +255,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-09-03 14:12:13.799504",
+ "modified": "2024-01-08 14:27:17.592812",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",
