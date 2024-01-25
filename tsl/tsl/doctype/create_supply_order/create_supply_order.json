@@ -23,6 +23,7 @@
   "column_break_3",
   "company",
   "branch",
+  "department",
   "repair_warehouse",
   "received_date",
   "sales_person",
@@ -250,12 +251,18 @@
    "hidden": 1,
    "label": "TSL Inventory(Spare Parts)",
    "options": "Supply Data Item"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Cost Center"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-01-08 14:27:17.592812",
+ "modified": "2024-01-23 09:44:13.330226",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",

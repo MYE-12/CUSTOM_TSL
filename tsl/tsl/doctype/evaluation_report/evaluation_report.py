@@ -21,14 +21,18 @@ class EvaluationReport(Document):
 		for i in self.items:
 			if i.part and i.parts_availability == "No":
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
+				sts = "Yes"
 				if len(bin) and 'name' in bin[0]:
-					sts = "Yes"
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
 					i.price_ea = price
 					i.parts_availability = sts
 					frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
+				if i.parts_availability == sts:
 					frappe.db.sql('''update `tabWork Order Data` set status = 'AP-Available Parts' where name ='{0}' '''.format(self.work_order_data))
-					frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
+				else:
+					frappe.db.sql('''update `tabWork Order Data` set status = 'WP-Waiting Parts' where name ='{0}' '''.format(self.work_order_data))
+		
+					# frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 
 		f = 0
 		for i in self.items:

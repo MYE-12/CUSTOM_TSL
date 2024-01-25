@@ -104,9 +104,12 @@ frappe.listview_settings['Work Order Data'] = {
             else if(doc.status === "NE-Need Evaluation"){
                   return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
             }
-            else if (doc.status === "CT-Customer Testing") {
-            return[__("CT-Customer Testing"),"yellow","status,=,CT-Customer Testing"];
+            else if (doc.status === "RSI-Repaired and Shipped Invoiced") {
+            return[__("RSI-Repaired and Shipped Invoiced"),"red","status,=,RSI-Repaired and Shipped Invoiced"];
             }
+            else if (doc.status === "CT-Customer Testing") {
+                  return[__("CT-Customer Testing"),"red","status,=,CT-Customer Testing"];
+                  }
           
       },
 };
