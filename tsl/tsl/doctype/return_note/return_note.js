@@ -61,7 +61,7 @@ frappe.ui.form.on('Return Note', {
 									cur_frm.refresh_fields("items");
 								}
 								frm.doc.total = tot_amt;
-								frm.doc.total_qty = tot_qty;
+								// frm.doc.total_qty = tot_qty;
 								frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
 								frm.doc.rounded_total = frm.doc.grand_total;
 								cur_frm.refresh_fields();

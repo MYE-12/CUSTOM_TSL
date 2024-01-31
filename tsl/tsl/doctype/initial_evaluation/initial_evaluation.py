@@ -246,7 +246,7 @@ def create_material_issue_from_ini_eval(name):
 	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Initial Evaluation',name)
 	for i in ini.items:
-		if i.released != 1:
+		if i.released != 1 and i.parts_availability == "Yes":
 			new_doc.append("items",{
 				's_warehouse':"Kuwait - TSL",
 				'item_code':i.part,

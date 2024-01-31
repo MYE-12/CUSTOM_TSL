@@ -185,7 +185,7 @@ class EvaluationReport(Document):
 				item_doc.sub_category = sub_cat
 				# item_doc.package = package
 				item_doc.item_group = "Components"
-				if frappe.session.user == "purchase@tsl-me.com" or "admin1@tsl-me.com":
+				if frappe.session.user == "purchase@tsl-me.com" :
 					item_doc.save(ignore_permissions = True)
 	def on_update_after_submit(self):
 		add = total = 0
@@ -356,7 +356,7 @@ class EvaluationReport(Document):
 					item_doc.sub_category_name = scn
 					item_doc.package = package
 					item_doc.item_group = "Components"
-					if frappe.session.user == "purchase@tsl-me.com" or "admin1@tsl-me.com":
+					if frappe.session.user == "purchase@tsl-me.com" :
 						item_doc.save(ignore_permissions = True)
 		
 	def before_submit(self):
