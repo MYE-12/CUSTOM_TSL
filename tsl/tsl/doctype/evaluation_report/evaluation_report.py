@@ -357,7 +357,6 @@ class EvaluationReport(Document):
                     item_doc.package = package
                     item_doc.item_group = "Components"
                     if frappe.session.user == "purchase@tsl-me.com" :
-                        frappe.errprint("ji")
                         item_doc.save(ignore_permissions = True)
         
     def before_submit(self):
