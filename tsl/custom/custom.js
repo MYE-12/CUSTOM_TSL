@@ -16,6 +16,7 @@ frappe.ui.form.on('Quotation', {
                         ]
                 };
         });
+		
         frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 		var d = {};
