@@ -67,6 +67,15 @@ frappe.ui.form.on('Create Work Order', {
 	company: function (frm) {
 		frm.trigger("branch")
 	},
+	onload: function(frm) {
+		frm.set_query('customer', function(doc) {
+			return {
+				filters: {
+					"territory": "Kuwait"
+				}
+			};
+		});
+	},
 	customer: function (frm) {
 		if (!frm.doc.customer) {
 			return

@@ -89,6 +89,7 @@ frappe.ui.form.on('Equipment Received Form', {
 	company: function (frm) {
 		frm.trigger("branch")
 	},
+	
 	customer: function (frm) {
 		if (!frm.doc.customer) {
 			return

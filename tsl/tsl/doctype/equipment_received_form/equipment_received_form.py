@@ -135,7 +135,9 @@ def create_workorder_data(order_no, f):
             "Kuwait - TSL": "Repair - Kuwait - TSL",
             "Dammam - TSL-SA": "Dammam - TSL-SA",
             "Jeddah - TSL-SA": "Jeddah - TSL-SA",
-            "Riyadh - TSL-SA": "Riyadh - TSL-SA"
+            "Riyadh - TSL-SA": "Riyadh - TSL-SA",
+            "Dubai - TSL": "Repair - Dubai - TSL-UAE"
+            
         }
         doc.repair_warehouse = d[doc.branch]
     if doc.address:
@@ -248,7 +250,9 @@ def create_workorder_data(order_no, f):
             "Dammam - TSL-SA": "WOD-D.YY.-",
             "Riyadh - TSL-SA": "WOD-R.YY.-",
             "Jeddah - TSL-SA": "WOD-J.YY.-",
-            "Kuwait - TSL": "WOD-K.YY.-"
+            "Kuwait - TSL": "WOD-K.YY.-",
+            "Dubai - TSL": "WOD-DU.YY.-"
+            
         }
         if frappe.db.get_value("Item", i['item_code'], "has_serial_no") and not i['has_serial_no']:
             frappe.throw(

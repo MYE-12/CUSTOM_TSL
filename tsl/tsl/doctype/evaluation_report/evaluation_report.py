@@ -90,7 +90,6 @@ class EvaluationReport(Document):
                 # if sq:
                 # 	self.status = "Supplier Quoted"
                 else:
-                    frappe.errprint("o")
                     doc.status = "SP-Searching Parts"
             doc.save(ignore_permissions=True)
         if self.status:
@@ -104,7 +103,6 @@ class EvaluationReport(Document):
 
                     doc.status = "Parts Priced"
                 else:
-                    frappe.errprint("I")
                     doc.status = "SP-Searching Parts"
             # if self.status == "Extra Parts" and self.parts_availability == "Yes":
             # 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -236,7 +234,6 @@ class EvaluationReport(Document):
                     if sq:
                         doc.status == "Parts Priced"
                     elif self.status == "Spare Parts":
-                        frappe.errprint("P")
                         doc.status = "SP-Searching Parts"
             
             if self.status == "Extra Parts" and self.parts_availability != "Yes":
@@ -357,7 +354,6 @@ class EvaluationReport(Document):
                     item_doc.package = package
                     item_doc.item_group = "Components"
                     if frappe.session.user == "purchase@tsl-me.com" :
-                        frappe.errprint("ji")
                         item_doc.save(ignore_permissions = True)
         
     def before_submit(self):

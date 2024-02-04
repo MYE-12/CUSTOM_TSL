@@ -70,12 +70,12 @@ def create_quotation(wod):
 	# 	})
 	if doc.branch:
 		d = {
-			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-"},
-			"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-"},
-			"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-"},
-			"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-"},
-			"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-"},
-			"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-"},
+			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-","Dubai - TSL":"REP-QTN-INT-DU.YY.-"},
+			"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-","Dubai - TSL":"REP-QTN-CUS-DU.YY.-"},
+			"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-","Dubai - TSL":"REP-QTN-REV-DU.YY.-"},
+			"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
+			"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
+			"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
 			"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL-SA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
 			}
 		new_doc.naming_series = d[new_doc.quotation_type][doc.branch]
@@ -482,59 +482,66 @@ def create_dn(wod):
 	d['Dammam - TS'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
 	d['Riyadh - TS'] = 'Repair - Riyadh - TSL-SA'
+	d['Dubai - TSL'] = 'Repair - Dubai - TSL-UAE'
+ 
 	for i in doc.get("material_list"):
-		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
+		frappe.errprint('qi_details')
+     
+		qi_details = frappe.db.sql('''select q.name,q.final_approved_price,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
+		frappe.errprint(qi_details)
 		r = 0
 		amt = 0
 		if qi_details:
-			r = qi_details[0]['rate']
-			amt = qi_details[0]['amount']
-		new_doc.append("items",{
-			"item_name":i.item_name0,
-			"item_code":i.item_code,
-			"manufacturer":i.mfg,
-			"model":i.model_no,
-			"serial_number":i.serial_no,
-			"serial_no":i.serial_no,
-			"description":i.item_name,
-			'type':i.type,
-			"qty":i.quantity,
-			"rate":r,
-			"amount":amt,
-			"wod_no":wod,
-			"uom":"Nos",
-			"stock_uom":"Nos",
-			"conversion_factor":1,
-			"cost_center":doc.department,
-			"warehouse":d[doc.branch]
-
-		})
-		c = 2
-		psi = frappe.db.sql('''select ei.serial_no,ei.manufacturer,ei.type,ei.part,ei.part_name,ei.category,ei.sub_category,ei.model,ei.qty,ei.price_ea,ei.total from `tabPart Sheet Item` as ei join `tabEvaluation Report` as e on ei.parent=e.name where e.work_order_data = %s and e.docstatus = 1''',wod,as_dict=1)
-		for j in psi:
+			r = qi_details[0]['final_approved_price']
+			frappe.errprint(r)
+   
+			amt = qi_details[0]['final_approved_price']
 			new_doc.append("items",{
-			"sr_no":c,
-                        "item_name":j['part_name'],
-                        "item_code":j['part'],
-                        "manufacturer":j['manufacturer'],
-                        "model":j['model'],
-                        "serial_number":j['serial_no'],
-			"serial_no":j['serial_no'],
-                        "description":j['part_name'],
-                        'type':j['type'],
-                        "qty":j['qty'],
-                        "rate":j['price_ea'],
-                        "amount":j['total'],
-                        "work_order_data":wod,
-                        "uom":"Nos",
-                        "stock_uom":"Nos",
-                        "conversion_factor":1,
-                        "cost_center":doc.department,
-                        "warehouse":d[doc.branch]
+				"item_name":i.item_name0,
+				"item_code":i.item_code,
+				"manufacturer":i.mfg,
+				"model":i.model_no,
+				"serial_number":i.serial_no,
+				"serial_no":i.serial_no,
+				"description":i.item_name,
+				'type':i.type,
+				"qty":i.quantity,
+				"rate":r,
+				"amount":amt,
+				"wod_no":wod,
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"cost_center":doc.department,
+				"warehouse":d[doc.branch]
 
-                	})
-			c += 1
-	return new_doc
+			})
+			# c = 2
+		# psi = frappe.db.sql('''select ei.serial_no,ei.manufacturer,ei.type,ei.part,ei.part_name,ei.category,ei.sub_category,ei.model,ei.qty,ei.price_ea,ei.total from `tabPart Sheet Item` as ei join `tabEvaluation Report` as e on ei.parent=e.name where e.work_order_data = %s and e.docstatus = 1''',wod,as_dict=1)
+		# for j in psi:
+		# 	new_doc.append("items",{
+		# 	"sr_no":c,
+        #                 "item_name":j['part_name'],
+        #                 "item_code":j['part'],
+        #                 "manufacturer":j['manufacturer'],
+        #                 "model":j['model'],
+        #                 "serial_number":j['serial_no'],
+		# 	"serial_no":j['serial_no'],
+        #                 "description":j['part_name'],
+        #                 'type':j['type'],
+        #                 "qty":j['qty'],
+        #                 "rate":j['price_ea'],
+        #                 "amount":j['total'],
+        #                 "work_order_data":wod,
+        #                 "uom":"Nos",
+        #                 "stock_uom":"Nos",
+        #                 "conversion_factor":1,
+        #                 "cost_center":doc.department,
+        #                 "warehouse":d[doc.branch]
+
+        #         	})
+		# 	c += 1
+		return new_doc
 
 
 @frappe.whitelist()
