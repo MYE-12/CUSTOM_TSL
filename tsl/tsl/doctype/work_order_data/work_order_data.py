@@ -516,6 +516,7 @@ def create_dn(wod):
 				"warehouse":d[doc.branch]
 
 			})
+   
 			# c = 2
 		# psi = frappe.db.sql('''select ei.serial_no,ei.manufacturer,ei.type,ei.part,ei.part_name,ei.category,ei.sub_category,ei.model,ei.qty,ei.price_ea,ei.total from `tabPart Sheet Item` as ei join `tabEvaluation Report` as e on ei.parent=e.name where e.work_order_data = %s and e.docstatus = 1''',wod,as_dict=1)
 		# for j in psi:
