@@ -29,8 +29,8 @@ class EvaluationReport(Document):
                     frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
                 if i.parts_availability == sts:
                     frappe.db.sql('''update `tabWork Order Data` set status = 'AP-Available Parts' where name ='{0}' '''.format(self.work_order_data))
-                else:
-                    frappe.db.sql('''update `tabWork Order Data` set status = 'WP-Waiting Parts' where name ='{0}' '''.format(self.work_order_data))
+                # else:
+                #     frappe.db.sql('''update `tabWork Order Data` set status = 'WP-Waiting Parts' where name ='{0}' '''.format(self.work_order_data))
         
                     # frappe.db.set_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value("Bin",{'item_code':i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
 

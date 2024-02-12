@@ -136,7 +136,7 @@ def create_workorder_data(order_no, f):
             "Dammam - TSL-SA": "Dammam - TSL-SA",
             "Jeddah - TSL-SA": "Jeddah - TSL-SA",
             "Riyadh - TSL-SA": "Riyadh - TSL-SA",
-            "Dubai - TSL": "Repair - Dubai - TSL-UAE"
+            "Dubai - TSL": "Dubai - Repair - TSL-UAE"
             
         }
         doc.repair_warehouse = d[doc.branch]
@@ -186,7 +186,6 @@ def create_workorder_data(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            frappe.errprint("ijyg")
             item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
 
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
@@ -260,6 +259,8 @@ def create_workorder_data(order_no, f):
 
         new_doc = frappe.new_doc("Work Order Data")
         if doc.work_order_data:
+            frappe.errprint("ijyg")
+
             link0 = []
             warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
             if warr['delivery'] and warr['warranty']:

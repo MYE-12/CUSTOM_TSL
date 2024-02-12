@@ -482,7 +482,7 @@ def create_dn(wod):
 	d['Dammam - TS'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
 	d['Riyadh - TS'] = 'Repair - Riyadh - TSL-SA'
-	d['Dubai - TSL'] = 'Repair - Dubai - TSL-UAE'
+	d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
  
 	for i in doc.get("material_list"):
 		frappe.errprint('qi_details')
@@ -516,7 +516,28 @@ def create_dn(wod):
 				"warehouse":d[doc.branch]
 
 			})
-   
+		else:
+			new_doc.append("items",{
+				"item_name":i.item_name0,
+				"item_code":i.item_code,
+				"manufacturer":i.mfg,
+				"model":i.model_no,
+				"serial_number":i.serial_no,
+				"serial_no":i.serial_no,
+				"description":i.item_name,
+				'type':i.type,
+				"qty":i.quantity,
+				"rate":r,
+				"amount":amt,
+				"wod_no":wod,
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"cost_center":doc.department,
+				"warehouse":d[doc.branch]
+
+			})
+			
 			# c = 2
 		# psi = frappe.db.sql('''select ei.serial_no,ei.manufacturer,ei.type,ei.part,ei.part_name,ei.category,ei.sub_category,ei.model,ei.qty,ei.price_ea,ei.total from `tabPart Sheet Item` as ei join `tabEvaluation Report` as e on ei.parent=e.name where e.work_order_data = %s and e.docstatus = 1''',wod,as_dict=1)
 		# for j in psi:

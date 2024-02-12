@@ -40,7 +40,10 @@ def create_supply_order_data(order_no):
 	new_doc.repair_warehouse = doc.repair_warehouse
 	new_doc.address = doc.address
 	new_doc.incharge = doc.incharge
-	new_doc.naming_series = d[new_doc.branch]
+	if doc.department == "Supply Tender - TSL":
+		new_doc.naming_series ="ST-K.YY.-"
+	else:
+		new_doc.naming_series = d[new_doc.branch]
 	if doc.department != "Supply Tender - TSL":
 		if len(doc.get('received_equipment')):
 			for i in doc.get("received_equipment"):

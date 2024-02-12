@@ -59,7 +59,8 @@ frappe.ui.form.on('Create Work Order', {
 				"Kuwait - TSL": "Repair - Kuwait - TSL",
 				"Dammam - TSL-SA": "Repair - Dammam - TSL-SA",
 				"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
-				"Riyadh - TSL-SA": "Riyadh - TSL-SA"
+				"Riyadh - TSL-SA": "Riyadh - TSL-SA",
+				"Dubai - TSL": "Dubai - Repair - TSL-UAE"
 			}
 			frm.set_value("repair_warehouse", d[frm.doc.branch]);
 		}
@@ -68,13 +69,24 @@ frappe.ui.form.on('Create Work Order', {
 		frm.trigger("branch")
 	},
 	onload: function(frm) {
-		frm.set_query('customer', function(doc) {
-			return {
-				filters: {
-					"territory": "Kuwait"
-				}
-			};
-		});
+		if(frm.doc.company == "TSL COMPANY - Kuwait"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Kuwait"
+					}
+				};
+			});
+		}
+		if(frm.doc.company == "TSL COMPANY - UAE"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Dubai"
+					}
+				};
+			});
+		}
 	},
 	customer: function (frm) {
 		if (!frm.doc.customer) {
