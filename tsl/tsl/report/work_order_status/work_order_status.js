@@ -9,7 +9,8 @@ frappe.query_reports["Work Order Status"] = {
 			"label": __("From Date"),
 			"fieldtype": "Date",
 			"width": "80",
-			"reqd": 1
+			"reqd": 1,
+			"default": "2023-09-23"
 		},
 		{
 			"fieldname":"to_date",
@@ -17,7 +18,7 @@ frappe.query_reports["Work Order Status"] = {
 			"fieldtype": "Date",
 			"width": "80",
 			"reqd": 1,
-			// "default": frappe.datetime.get_today(),
+			"default": frappe.datetime.get_today(),
 		},
 		{
 			"fieldname":"company",
@@ -28,15 +29,17 @@ frappe.query_reports["Work Order Status"] = {
 		}
 
 	],
+
+	
 	after_datatable_render: table_instance => {
 		let data = table_instance.datamanager.data;
-		let col = 21;
+		let col = 12;
 		for (let row = 0; row < data.length; ++row) {
 			if (data[row]['status'] == 'NE-Need Evaluation') {
 			table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#f04864'});
 			}
 			else if(data[row]['status'] == 'SP-Searching Parts'){
-				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#938e52'});
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#F08080'});
 
 			}
 			else if(data[row]['status'] == 'AP-Available Parts'){
@@ -68,7 +71,7 @@ frappe.query_reports["Work Order Status"] = {
 
 			}
 			else if(data[row]['status'] == 'Q-Quoted'){
-				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#f25b00'});
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#FDC27E'});
 
 			}
 			else if(data[row]['status'] == 'RNA-Return Not Approved'){
@@ -112,7 +115,7 @@ frappe.query_reports["Work Order Status"] = {
 
 			}
 			else if(data[row]['status'] == 'WP-Waiting Parts'){
-				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#836300'});
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#FFFEB6'});
 
 			}
 			else if(data[row]['status'] == 'UE-Under Evaluation'){
@@ -135,8 +138,36 @@ frappe.query_reports["Work Order Status"] = {
 				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#6176ff'});
 
 			}
+			else if(data[row]['status'] == 'RSI-Repaired and Shipped Invoiced'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#6176ff'});
 
+			}
 
+			else if(data[row]['status'] == 'RNAC-Return Not Approved Client'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#FF9195'});
+
+			}
+
+			else if(data[row]['status'] == 'RNAC-Return Not Approved Client'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#FF9195'});
+
+			}
+
+			else if(data[row]['status'] == 'CT-Customer Testing'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#FB9DF3'});
+
+			}
+
+			else if(data[row]['status'] == 'Pending Internal Approval'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#D3FFF5'});
+
+			}
+
+			else if(data[row]['status'] == 'Parts Priced'){
+				table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#EBEBBC'});
+
+			}
+		
 
 		}
 	    table_instance.style.setStyle(`.dt-scrollable`, {height: '600px;'});

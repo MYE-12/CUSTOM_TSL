@@ -119,6 +119,24 @@ def get_contacts(customer):
 # 		return x
 
 
+
+def delete_single_doctype(doc_type, doc_name):
+    try:
+        # Load the document
+        doc = frappe.get_doc(doc_type, doc_name)
+        
+        # Delete the document
+        doc.delete()
+        
+        
+        print(f"{doc_type} '{doc_name}' deleted successfully.")
+        
+    except frappe.DoesNotExistError:
+        print(f"{doc_type} '{doc_name}' does not exist.")
+        
+    except Exception as e:
+        print(f"Error deleting {doc_type} '{doc_name}': {e}")
+
 @frappe.whitelist()
 def create_workorder_data(order_no, f):
     l = []
@@ -230,20 +248,21 @@ def create_workorder_data(order_no, f):
         else:
             if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
                 frappe.defaults.set_user_default("warehouse", None)
-                sn_doc = frappe.get_doc("Serial No",i['serial_no'])
-
-                sn_doc.serial_no = i['serial_no'] or ''
-                sn_doc.item_code = i['item_code']
-                sn_doc.save(ignore_permissions=True)
-                if sn_doc.name:
-                    sn_no = sn_doc.name
-            # else:
-            #     sn_doc = frappe.get_doc("Serial No")
-            #     sn_doc.serial_no = i['serial_no'] or ''
-            #     sn_doc.item_code = i['item_code']
-            #     sn_doc.save(ignore_permissions=True)
-            #     if sn_doc.name:
-            #         sn_no = sn_doc.name
+                sn_exist = frappe.db.exists("Serial No",i['serial_no'])
+                if sn_exist:
+                    sn_doc = frappe.get_doc("Serial No",i['serial_no'])
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
+                else:
+                    sn_doc = frappe.new_doc("Serial No")
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
@@ -310,7 +329,8 @@ def create_workorder_data(order_no, f):
                     if not doc.name == "Create Work Order":
                         frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
                         link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
-                    frappe.msgprint("Work Order Updated: "+', '.join(link0))
+                    frappe.msgprint(" ".join(["Work Order Updated"]))
+                    delete_single_doctype("Create Work Order", "Create Work Order")
                     return True
                 else:
                     frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))

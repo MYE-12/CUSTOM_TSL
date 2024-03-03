@@ -15,6 +15,7 @@ from frappe.utils import (
 )
 from frappe.utils import add_to_date
 import requests
+from datetime import datetime
 #from frappe.permissions import has_role
 # @frappe.whitelist()
 # def currency():
@@ -246,3 +247,257 @@ def amount(amount,currency):
 	conv_rate = float(amount) / 0.31
 	return conv_rate
 	
+
+@frappe.whitelist()
+def get_wod(data):
+	data = json.loads(data)
+	wods = []
+	for i in data:
+		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.work_order_data as wo from `tabSales Invoice` 
+		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+		where `tabSales Invoice`.name = '%s' """ %(i["reference_name"]),as_dict =1)
+		for j in wo:
+			
+			wods.append(j["wo"])
+
+	return wods
+
+@frappe.whitelist()
+def set_payment(data,pe,date):
+	data = json.loads(data)
+	for i in data:
+		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_date",date)
+		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_entry_reference",pe)
+		
+@frappe.whitelist()
+def get_receivable(customer):	
+	data = ''
+	data += '<table class="table table-bordered">'
+	data += '<tr>'
+	data += '<td style="border-color:#000000;width:15%"><b>Date</b></td>'
+	data += '<td style="border-color:#000000;width:15%"><b>Activity</b></td>'
+	data += '<td style="border-color:#000000;width:30%;"><b>Reference(WOD/PO)</b></td>'
+	data += '<td style="border-color:#000000;width:15%;"><b>Invoiced</b></td>'
+	data += '<td style="border-color:#000000;width:10%;"><b>Paid</b></td>'
+	data += '<td style="border-color:#000000;width:15%;"><b>Outstanding</b></td>'
+	data += '</tr>'
+	si = frappe.get_all("Sales Invoice",{"status":"Overdue","customer":customer},["*"])
+	os = 0
+	for i in si:
+		os = os + i.outstanding_amount
+		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.po_no as po_no,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.previous_wod_no as pwo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+		where `tabSales Invoice`.name = '%s' """ %(i.name),as_dict =1)
+		wods = []
+
+		for j in wo:
+			if j["wo"]:
+				original_string = str(j["wo"])
+				substring = original_string[8:] 
+				wods.append(substring)
+				
+			elif j["w"]:
+				original_string = str(j["w"])
+				substring = original_string[8:] 
+				wods.append(substring)
+			
+			elif j["pwo"]:
+				wods.append(j["pwo"])
+
+			# else:
+			# 	wods.append('')
+
+		po_no = frappe.get_value("Sales Invoice",{"name":i.name},["po_no"])
+		if [po_no]:
+			wods.append(po_no)
+		
+		# Input date string
+		input_date_string = str(i.due_date)
+
+		# Convert string to datetime object
+		input_date = datetime.strptime(input_date_string, "%Y-%m-%d")
+
+		# Format the date in the desired format
+		formatted_due_date = input_date.strftime("%d-%m-%Y")
+		wod = str(wods).strip('[]')
+		wod = wod.replace("'", '')
+		if wod == None:
+			wod = ''
+		data += '<tr>'
+		data += '<td style="border-color:#000000;">%s</td>'%(formatted_due_date)
+		data += '<td style="border-color:#000000;"><a href="https://erp.tsl-me.com/app/sales-invoice/%s">%s</a></td>'%(i.name,i.name)
+		data += '<td style="border-color:#000000;">%s</td>'%(wod)
+		data += '<td style="border-color:#000000;">%s</td>'%(i.grand_total)
+		data += '<td style="border-color:#000000;">%s</td>'%(i.grand_total-i.outstanding_amount)
+		data += '<td style="border-color:#000000;">%s</td>'%(i.outstanding_amount)
+		data += '</tr>'
+		wods = []
+	data += '<tr>'
+	data += '<td colspan = 6 style="border-color:#000000;"><b>Balance Due : %s</b></td>'%(os)
+	data += '</tr>'
+	data += '</table>'
+
+	return data
+
+@frappe.whitelist()
+def get_wod():
+	data = ''
+	data += '<div class="table-container">'
+	data += '<table class="table table-bordered" width: 100%;>'
+	data += '<tr>'
+	data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+	data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b>TSL Company</b></center></h2></td>'
+	data += '<td colspan = 3 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+	
+	data += '</tr>'
+
+	data += '<tr>'
+	data += '<td colspan = 9 style="border-color:#000000;"><b>RSC & Quoted Summary</b></td>'
+		
+	data += '</tr>'
+
+	data += '<tr>'
+	data += '<td colspan = 1 style="border-color:#000000;"><center><b></b></center></td>'
+	data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RSI)</b></center></td>'
+	data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RSC)</b></center></td>'
+	data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RS)</b></center></td>'
+	data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(Quoted)</b></center></td>'
+	
+	data += '</tr>'
+	wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` """,as_dict =1)
+	data += '<tr>'
+	data += '<td style="border-color:#000000;width:10%"><center><b>Salesman</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+	data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'  
+	data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'	
+	data += '</tr>'
+	current_date_time = datetime.now()
+
+	# Extract and print the current date
+	current_date = current_date_time.date()
+	# Week_start = add_days(current_date,-6)
+	Week_start = "2024-01-01"
+
+	total_rsi = 0
+	total_rsc = 0
+	total_rs = 0
+	total_quotation = 0
+	for i in wo:
+		if not i["sales_rep"] == None:
+			if not i["sales_rep"] == '':
+				wds = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]})
+				 # RSI
+				squot = 0
+				for j in wds:
+					rsi_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+					
+					for k in rsi_q:
+						squot = squot + k["after_discount_cost"]
+			
+
+				mquot = 0
+				for j in wds:
+					rsi_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+					
+					for k in rsi_mq:
+						mquot = mquot + k["margin_amount"]
+			
+				rsi_total = squot + mquot
+
+				# RSC	
+				
+				wds_rsc = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSC-Repaired and Shipped Client","posting_date": ["between", (Week_start,current_date)]})
+				
+				rsc_squot = 0
+				for j in wds_rsc:
+					rsc_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+					
+					for k in rsc_q:
+						rsc_squot = rsc_squot + k["after_discount_cost"]
+			
+
+				rsc_mquot = 0
+				for j in wds_rsc:
+					rsc_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+					
+					for k in rsc_mq:
+						rsc_mquot = rsc_mquot + k["margin_amount"]
+
+				#RS				
+				wds_rs = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RS-Repaired and Shipped","posting_date": ["between", (Week_start,current_date)]})
+				
+				rs_squot = 0
+				for j in wds_rs:
+					rs_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+					
+					for k in rs_q:
+						rs_squot = rs_squot + k["after_discount_cost"]
+			
+
+				rs_mquot = 0
+				for j in wds_rs:
+					rs_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+					
+					for k in rs_mq:
+						rs_mquot = rs_mquot + k["margin_amount"]
+			
+				rsi_total = squot + mquot
+				rsc_total = rsc_squot + rsc_mquot
+				rs_total = rs_squot + rs_mquot
+
+				total_rsi = total_rsi + rsi_total
+				total_rsc = total_rsc + rsc_total
+				total_rs = total_rs + rs_total 
+
+				total_q = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
+				where Workflow_state = "Approved By Customer"  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+				print(total_q[0]["t"])
+				if total_q[0]["t"] == None:
+					total_q[0]["t"] = 0
+
+				total_quotation = total_quotation + total_q[0]["t"] 
+
+				data += '<tr>'
+				data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(i["sales_rep"])
+				data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rsi_total)
+				data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+				data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rsc_total)
+				data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+				data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(rs_total)
+				data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+				data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_q[0]["t"])
+				data += '<td style="border-color:#000000;"><center><b></b></center></td>'	
+				data += '</tr>'
+	data += '<tr>'
+	data += '<td style="border-color:#000000;"><center><b>Total</b></center></td>'
+	data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsi)
+	data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+	data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsc)
+	data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+	data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_rs)
+	data += '<td style="border-color:#000000;"><center><b></b></center></td>'
+	data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_quotation )
+	data += '<td style="border-color:#000000;"><center><b></b></center></td>' 
+	data += '</tr>'
+
+	data += '</table>'
+	data += '</div>'
+	
+	return data

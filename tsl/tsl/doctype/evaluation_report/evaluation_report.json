@@ -370,12 +370,12 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:(doc.status == \"Extra Parts\");",
    "fieldname": "extra_repair_time",
    "fieldtype": "Duration",
    "hide_days": 1,
    "hide_seconds": 1,
-   "label": "Extra Repair Time"
+   "label": "Extra Repair Time",
+   "mandatory_depends_on": "eval:(doc.status == \"Extra Parts\");"
   },
   {
    "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status != \"Return No Fault\" && doc.status!= \"Comparison\"",
@@ -472,10 +472,11 @@
    "label": "NER Field"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-19 09:38:23.294511",
+ "modified": "2024-02-29 12:48:24.585028",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

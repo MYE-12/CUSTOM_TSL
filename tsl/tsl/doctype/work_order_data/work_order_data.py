@@ -429,6 +429,7 @@ def create_sal_inv(wod):
 	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
+	d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 		frappe.errprint(qi_details)

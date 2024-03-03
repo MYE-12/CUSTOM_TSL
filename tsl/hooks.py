@@ -10,6 +10,13 @@ app_color = "grey"
 app_email = "Tsl"
 app_license = "MIT"
 
+
+jinja = {
+	"methods": [
+		"tsl.custom_py.utils.get_receivable",
+        "tsl.custom_py.utils.get_wod"
+	]
+}
 # Includes in <head>
 # ------------------
 
@@ -100,7 +107,11 @@ doctype_js = {
 doc_events = {
 	"Quotation":{
 		"on_update": [
-			"tsl.custom_py.quotation.on_update"
+			"tsl.custom_py.quotation.on_update"   
+		],
+
+		"after_insert": [
+			"tsl.custom_py.quotation.update_cq"
             
 		],
 		"before_submit":[

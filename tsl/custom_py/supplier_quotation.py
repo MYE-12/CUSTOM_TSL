@@ -86,8 +86,8 @@ def validate(self,method):
 def on_submit(self,method):
     
     for i in self.items:
-        if i.work_order_data:
-            doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
+        if i.work_order_data or self.work_order_data:
+            doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data or self.work_order_data),as_dict=1)
             for d in doc:
                 ev = frappe.get_doc("Work Order Data",d.name)
                 ev.status = "Parts Priced"

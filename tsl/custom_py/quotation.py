@@ -496,13 +496,20 @@ def final_price_validate_si(wod):
 	qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
 	return qi_details
 
-def on_update(self, method):
-	if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved","Approved By Management", "Approved By Customer", "Cancelled"]:
-		if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
+def update_cq(self, method):
+	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply":
+		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
+	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
 
-		else:
-			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
+
+def on_update(self, method):
+	# if self.workflow_state not in ["Rejected", "Rejected by Customer", "Approved","Approved By Management", "Approved By Customer", "Cancelled"]:
+	# 	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
+	# 		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
+
+		# else:
+		# 	frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
 	if self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
 			if i.wod_no:
