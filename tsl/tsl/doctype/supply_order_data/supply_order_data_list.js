@@ -39,6 +39,9 @@ frappe.listview_settings['Supply Order Data'] = {
         else if (doc.status === "Delivered and Invoiced") {
 			return [__("Delivered and Invoiced"), "cyan", "status,=,Delivered and Invoiced"];
         }
+        else if (doc.status === "Parts Priced") {
+              return [__("Parts Priced"), "green", "status,=,Parts Priced"];
+ }
         
 
 

@@ -42,14 +42,14 @@
    "fieldname": "reports",
    "fieldtype": "Select",
    "label": "Reports",
-   "options": "\nStatement of Customer\nSales Person Summary"
+   "options": "\nStatement of Customer\nSales Person Summary\nWork Order Data Time Log"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-02 08:39:36.688989",
+ "modified": "2024-03-25 09:44:05.598014",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

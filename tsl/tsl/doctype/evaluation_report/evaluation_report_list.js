@@ -41,3 +41,8 @@ frappe.listview_settings['Evaluation Report'] = {
  },
 	
 };
+
+frappe.listview_settings['Evaluation Report'].refresh = function(listview) {
+	$('.btn-primary').hide();
+};
+

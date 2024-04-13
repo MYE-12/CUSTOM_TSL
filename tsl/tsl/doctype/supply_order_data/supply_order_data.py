@@ -137,8 +137,8 @@ def create_dn(sod):
 			"description":i.item_name,
 			"qty":qty,
 			"supply_order_data":sod,
-			"uom":"Nos",
-			"stock_uom":"Nos",
+			# "uom":"Nos",
+			# "stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
 			"income_account":"",
@@ -157,7 +157,7 @@ def create_dn(sod):
 			qty = qi_details[0]['qty']
 			new_doc.due_date = qi_details[0]['valid_till']
 			new_doc.overall_discount_amount = qi_details[0]['discount']
-		new_doc.append("items",{
+			new_doc.append("items",{
 			"item_name":i.part_name,
 			"item_code":i.part,
 			"manufacturer":i.manufacturer,

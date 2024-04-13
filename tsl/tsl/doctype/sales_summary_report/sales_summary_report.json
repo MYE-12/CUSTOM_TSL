@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-03-05 10:37:20.420559",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "from_date",
+  "to_date",
+  "report",
+  "download",
+  "column_break_n9f6e",
+  "customer",
+  "work_order_data",
+  "sales_person",
+  "section_break_6g2tw",
+  "html"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "To date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report",
+   "fieldtype": "Select",
+   "label": "Report",
+   "options": "\nRSI-Repaired and Shipped Invoiced\nRSC-Repaired and Shipped Client\nQ-Quoted"
+  },
+  {
+   "fieldname": "html",
+   "fieldtype": "HTML",
+   "label": "Html"
+  },
+  {
+   "fieldname": "column_break_n9f6e",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "label": "Work Order Data",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "section_break_6g2tw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "label": "Sales Person",
+   "options": "Sales Person"
+  },
+  {
+   "fieldname": "download",
+   "fieldtype": "Button",
+   "label": "Download"
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-03-07 10:58:45.519150",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Sales Summary Report",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

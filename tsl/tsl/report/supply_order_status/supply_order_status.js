@@ -9,7 +9,8 @@ frappe.query_reports["Supply Order Status"] = {
 			"label": __("From Date"),
 			"fieldtype": "Date",
 			"width": "80",
-			"reqd": 1
+			"reqd": 1,
+			"default": "2023-09-23"
 		},
 		{
 			"fieldname":"to_date",
@@ -17,7 +18,7 @@ frappe.query_reports["Supply Order Status"] = {
 			"fieldtype": "Date",
 			"width": "80",
 			"reqd": 1,
-			// "default": frappe.datetime.get_today(),
+			"default": frappe.datetime.get_today(),
 		},
 		{
 			"fieldname":"company",

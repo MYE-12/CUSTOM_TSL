@@ -91,7 +91,14 @@ def on_submit(self,method):
             for d in doc:
                 ev = frappe.get_doc("Work Order Data",d.name)
                 ev.status = "Parts Priced"
-                ev.save()
+                ev.save(ignore_permissions =1)
+        
+        if i.supply_order_data or self.supply_order_data:
+            doc = frappe.db.sql("""select name from `tabSupply Order Data` where name = '%s' """%(i.supply_order_data or self.supply_order_data),as_dict=1)
+            for d in doc:
+                ev = frappe.get_doc("Supply Order Data",d.name)
+                ev.status = "Parts Priced"
+                ev.save(ignore_permissions =1)
         
 
 

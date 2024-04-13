@@ -497,7 +497,7 @@ def final_price_validate_si(wod):
 	return qi_details
 
 def update_cq(self, method):
-	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply":
+	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair":
 		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
 	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
@@ -533,6 +533,7 @@ def on_update(self, method):
 				doc = frappe.get_doc("Work Order Data",i.wod_no)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Quoted to Customer":
 					doc.status = "Q-Quoted"
+					doc.is_quotation_created = 1
 					doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
 					doc.status = "A-Approved"

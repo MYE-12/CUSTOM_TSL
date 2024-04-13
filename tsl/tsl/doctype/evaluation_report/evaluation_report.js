@@ -5,6 +5,7 @@ frappe.ui.form.on('Evaluation Report', {
 	// refresh: function(frm) {
 
 	// }
+	
 	/*on_update_before_submit:function(frm){
 		console.log("opn_update")
 	   if(frm.doc.status){
@@ -124,14 +125,17 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	cur_frm.refresh_fields()
 		// }
 		if(!frm.doc.if_parts_required){
-			    set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
-		}
+			    // set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+				set_field_options("status", ["Installed and Completed/Repaired","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			}
 		if(frm.doc.if_parts_required && frm.doc.items.length>0){
 		if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
-			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			set_field_options("status", ["Installed and Completed/Repaired","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 		}
 		else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1){
-			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			set_field_options("status", ["Installed and Completed/Repaired","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 		}}
 		if(frm.doc.attach_image){
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
@@ -237,18 +241,22 @@ frappe.ui.form.on('Evaluation Report', {
 	},
 	if_parts_required:function(frm){
 		if(frm.doc.if_parts_required){
-			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			set_field_options("status", ["Installed and Completed/Repaired","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
                         // frm.set_value("status","Spare Parts")
 			frm.refresh_fields()
                 	if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
-                        	set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+                        // set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])	
+						set_field_options("status", ["Installed and Completed/Repaired","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
                 	}
                 	else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1 ){
-                        	set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+                        // set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])	
+						set_field_options("status", ["Installed and Completed/Repaired","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
                 	}
 		}
 		else{
-			set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
+			set_field_options("status", ["Installed and Completed/Repaired","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 		}
 	},
 	setup:function(frm){

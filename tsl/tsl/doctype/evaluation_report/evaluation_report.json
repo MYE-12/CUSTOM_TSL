@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2021-12-21 07:59:59.583576",
  "doctype": "DocType",
@@ -166,7 +165,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nInstalled and Completed/Repaired\nCustomer Testing\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted\nInternal Extra Parts"
+   "options": "\nInstalled and Completed/Repaired\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted\nInternal Extra Parts"
   },
   {
    "allow_on_submit": 1,
@@ -472,11 +471,10 @@
    "label": "NER Field"
   }
  ],
- "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-02-29 12:48:24.585028",
+ "modified": "2024-04-03 10:51:33.535169",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

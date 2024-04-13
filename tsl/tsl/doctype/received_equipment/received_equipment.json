@@ -219,6 +219,7 @@
   {
    "fieldname": "repair_warehouse",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Repair Warehouse",
    "options": "Warehouse"
   },
@@ -239,6 +240,7 @@
   {
    "fieldname": "online_price_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Online Price"
   },
   {
@@ -278,9 +280,11 @@
   {
    "fieldname": "attach_customer_image",
    "fieldtype": "Attach",
+   "hidden": 1,
    "label": "Attach Customer Image"
   },
   {
+   "default": ".",
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "label": "Description"
@@ -294,7 +298,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-23 11:25:29.550016",
+ "modified": "2024-03-26 11:06:27.485769",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",

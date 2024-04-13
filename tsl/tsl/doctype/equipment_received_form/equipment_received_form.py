@@ -9,6 +9,7 @@ from re import X
 import frappe
 from frappe.model.document import Document
 from datetime import datetime
+from frappe.utils.file_manager import save_file
 # from tsl.tsl.custom_py.quotation import before_submit
 
 
@@ -229,6 +230,7 @@ def create_workorder_data(order_no, f):
                 new_doc.item_group = "Equipments"
                 new_doc.description = i['item_name']
                 new_doc.model = i['model']
+                new_doc.image = i["attach_image"]
                 new_doc.is_stock_item = 1
                 new_doc.mfg = i['manufacturer']
                 new_doc.type = i['type']
@@ -368,6 +370,7 @@ def create_workorder_data(order_no, f):
         new_doc.repair_warehouse = doc.repair_warehouse
         new_doc.address = doc.address
         new_doc.incharge = doc.incharge
+        new_doc.customer_reference_number = doc.customer_reference_number
         new_doc.priority_status = doc.sts
         new_doc.naming_series = d[new_doc.branch]
         new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""

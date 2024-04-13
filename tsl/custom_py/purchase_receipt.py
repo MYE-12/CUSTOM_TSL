@@ -5,9 +5,9 @@ def before_save(self,method):
     for i in self.items:
         if i.item_code and frappe.db.get_value("Item",i.item_code,"has_serial_no"):
             serial_nos = frappe.db.get_list("Serial No",{"item_code":i.item_code},"name")
-            if len(serial_nos)>1:
-                frappe.throw("Choose Serial No for this Item {0}".format(i.item_code))
-            i.serial_no = serial_nos[0]["name"]
+            # if len(serial_nos)>1:
+            #     frappe.throw("Choose Serial No for this Item {0}".format(i.item_code))
+            # i.serial_no = serial_nos[0]["name"]
 
 def on_submit(self,method):
     if self.part_sheet:
@@ -24,9 +24,6 @@ def on_submit(self,method):
             doc.parts_availability = "Yes"
         doc.save(ignore_permissions = True)
     for i in self.get("items"):
-        frappe.errprint("po")
-
-        frappe.errprint(i.work_order_data)
         if i.work_order_data:
             wod = frappe.get_doc("Work Order Data",i.work_order_data)
             wod.status = "TR-Technician Repair"
@@ -42,3 +39,13 @@ def on_submit(self,method):
                 if i.item_code == j.item_code:
                     j.parts_availability = "Yes"
         wod.save(ignore_permissions = True)
+
+
+def check_item(self,method):
+    for i in self.items:
+        if i.serial_no:
+            frappe.errprint(i.item_code)
+            item = frappe.get_value("Item",{"name":i.item_code},["has_serial_no"])
+            if item == 0:   
+                frappe.db.set_value("Item",i.item_code,"has_serial_no",1)
+

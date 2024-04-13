@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Tsl and contributors
+    # Copyright (c) 2023, Tsl and contributors
 # For license information, please see license.txt
 
 import frappe
@@ -16,7 +16,9 @@ class ReturnNote(Document):
             elif doc.status == "RNR-Return Not Repaired":
                 frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNRC-Return Not Repaired Client",wo.wod_no))
             elif doc.status == "RNF-Return Not Fault":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNFC-Return Not Fault Client",wo.wod_no))
+                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNFC-Return No Fault Client",wo.wod_no))
+            elif doc.status == "C-Comparison":
+                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("CC-Comparison Client",wo.wod_no))
             
             se_doc = frappe.new_doc("Stock Entry")
             se_doc.stock_entry_type = "Material Issue"
@@ -54,6 +56,7 @@ class ReturnNote(Document):
             for i in doc.material_list:
                 se_doc.append("items",{
                     's_warehouse': doc.repair_warehouse,
+                    't_warehouse': doc.repair_warehouse,
                     'item_code':i.item_code,
                     'item_name':i.item_name,
                     'description':i.item_name,

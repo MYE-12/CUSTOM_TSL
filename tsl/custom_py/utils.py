@@ -13,9 +13,12 @@ from frappe.utils import (
 	rounded,
 	today,
 )
+from frappe.utils.file_manager import save_file
+from frappe.utils.file_manager import get_file
 from frappe.utils import add_to_date
 import requests
 from datetime import datetime
+from frappe.utils.csvutils import read_csv_content
 #from frappe.permissions import has_role
 # @frappe.whitelist()
 # def currency():
@@ -249,16 +252,18 @@ def amount(amount,currency):
 	
 
 @frappe.whitelist()
-def get_wod(data):
+def get_work_orders(data):
 	data = json.loads(data)
 	wods = []
 	for i in data:
-		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.work_order_data as wo from `tabSales Invoice` 
+		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
 		where `tabSales Invoice`.name = '%s' """ %(i["reference_name"]),as_dict =1)
 		for j in wo:
-			
-			wods.append(j["wo"])
+			if j["wo"]:
+				wods.append(j["wo"])
+			else:
+				wods.append(j["w"])
 
 	return wods
 
@@ -268,18 +273,22 @@ def set_payment(data,pe,date):
 	for i in data:
 		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_date",date)
 		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_entry_reference",pe)
+		frappe.db.set_value("Work Order Data",i["work_order_data"],"status","P-Paid")
+		
 		
 @frappe.whitelist()
 def get_receivable(customer):	
+
 	data = ''
 	data += '<table class="table table-bordered">'
 	data += '<tr>'
-	data += '<td style="border-color:#000000;width:15%"><b>Date</b></td>'
-	data += '<td style="border-color:#000000;width:15%"><b>Activity</b></td>'
-	data += '<td style="border-color:#000000;width:30%;"><b>Reference(WOD/PO)</b></td>'
-	data += '<td style="border-color:#000000;width:15%;"><b>Invoiced</b></td>'
-	data += '<td style="border-color:#000000;width:10%;"><b>Paid</b></td>'
-	data += '<td style="border-color:#000000;width:15%;"><b>Outstanding</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:15%"><b>Date</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:25%"><b>Invoice No</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:25%;"><b>Ref(WOD)</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:25%;"><b>Ref(PO)</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:15%;"><b>Invoiced</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:10%;"><b>Paid</b></td>'
+	data += '<td align = center style="border-color:#000000;font-size: 11px;width:15%;"><b>Outstanding</b></td>'
 	data += '</tr>'
 	si = frappe.get_all("Sales Invoice",{"status":"Overdue","customer":customer},["*"])
 	os = 0
@@ -308,8 +317,8 @@ def get_receivable(customer):
 			# 	wods.append('')
 
 		po_no = frappe.get_value("Sales Invoice",{"name":i.name},["po_no"])
-		if [po_no]:
-			wods.append(po_no)
+		# if [po_no]:
+		# 	wods.append(po_no)
 		
 		# Input date string
 		input_date_string = str(i.due_date)
@@ -324,18 +333,28 @@ def get_receivable(customer):
 		if wod == None:
 			wod = ''
 		data += '<tr>'
-		data += '<td style="border-color:#000000;">%s</td>'%(formatted_due_date)
-		data += '<td style="border-color:#000000;"><a href="https://erp.tsl-me.com/app/sales-invoice/%s">%s</a></td>'%(i.name,i.name)
-		data += '<td style="border-color:#000000;">%s</td>'%(wod)
-		data += '<td style="border-color:#000000;">%s</td>'%(i.grand_total)
-		data += '<td style="border-color:#000000;">%s</td>'%(i.grand_total-i.outstanding_amount)
-		data += '<td style="border-color:#000000;">%s</td>'%(i.outstanding_amount)
+		data += '<td style="border-color:#000000;font-size: 10px;">%s</td>'%(formatted_due_date)
+		data += '<td align = center style="border-color:#000000;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice TSL&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+		data += '<td style="border-color:#000000;font-size: 10px;">%s</td>'%(wod)
+		data += '<td style="border-color:#000000;font-size: 10px;">%s</td>'%(po_no)
+		gt = "{:,.3f}".format(i.grand_total)
+		p = i.grand_total-i.outstanding_amount
+		paid = "{:,.3f}".format(p)
+		outs= "{:,.3f}".format(i.outstanding_amount)
+		data += '<td align = center style="border-color:#000000;font-size: 10px;">%s</td>'%(gt)
+		data += '<td align = center style="border-color:#000000;font-size: 10px;">%s</td>'%(paid)
+		data += '<td align = center style="border-color:#000000;font-size: 10px;">%s</td>'%(outs)
 		data += '</tr>'
 		wods = []
 	data += '<tr>'
-	data += '<td colspan = 6 style="border-color:#000000;"><b>Balance Due : %s</b></td>'%(os)
+	frmtd_num = "{:,.3f}".format(os)
+	data += '<td align = right colspan = 6 style="border-color:#000000;"><b>Balance Due</b></td>'
+	data += '<td align = center colspan = 2 style="border-color:#000000;"><b>%s</b></td>'%(frmtd_num)
 	data += '</tr>'
 	data += '</table>'
+
+	data += '<p><p>'
+
 
 	return data
 
@@ -501,3 +520,304 @@ def get_wod():
 	data += '</div>'
 	
 	return data
+
+
+@frappe.whitelist()
+def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
+	if report == "RSI-Repaired and Shipped Invoiced":
+		data= ""
+		data += '<table class="table table-bordered">'
+
+		data += '<tr>'
+		data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+		data += '<td colspan = 4 style="border-color:#000000;"><h1><center><b>Sales Summary Report</b></center></h1></td>'
+		
+		data += '</tr>'
+
+
+		data += '<tr>'
+		data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">S.No</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Date</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Work Order</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Sales Person</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Sales Invoice</td>'
+		data += '<td style="border-color:#000000;width:35%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Customer</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Amount</td>'
+		data += '</tr>'
+		
+		if customer:
+			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date, `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+			where `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice`.customer = '%s' """ %(from_date,to_date,customer),as_dict =1)
+		
+		elif sales_person:
+			si = frappe.db.sql(""" select DISTINCT  `tabSales Invoice`.due_date,`tabSales Team`.sales_person,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+			right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
+			where `tabSales Team`.sales_person = '%s' and `tabSales Invoice`.due_date between '%s' and '%s' ORDER BY `tabSales Invoice`.due_date ASC """ %(sales_person,from_date,to_date),as_dict =1)
+
+		elif work_order_data:
+			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+			where `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice Item`.work_order_data = '%s' """ %(from_date,to_date,work_order_data),as_dict =1)
+			if not si:
+				si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				where `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice Item`.wod_no = '%s' """ %(from_date,to_date,work_order_data),as_dict =1)
+
+
+		else:
+			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date, `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+			where `tabSales Invoice`.due_date between '%s' and '%s' """ %(from_date,to_date),as_dict =1)
+
+
+			
+		wod_list = []
+		for j in si:
+			if j["wo"]:
+				wod_list.append(j["wo"])
+			else:
+				wod_list.append(j["w"])
+				
+		sn = 0
+		total_amt = 0
+		for i in wod_list:
+			st = frappe.get_value("Work Order Data",{"name":i},["Status"])
+			if st == "RSI-Repaired and Shipped Invoiced":
+				if i:
+					sid_1 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
+					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+
+					sid_2 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
+					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+					where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+				
+
+					sales_rep_1 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
+					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+					right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
+					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+						
+					sales_rep_2 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
+					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+					right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
+					where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+						
+					cust = frappe.get_value("Work Order Data",{"name":i},["customer"])
+				
+					if sid_1:
+						input_date_string = str(sid_1[0]["due_date"])
+					else:
+						input_date_string = str(sid_2[0]["due_date"])
+
+					if input_date_string:
+						input_date = datetime.strptime(input_date_string, "%Y-%m-%d")
+
+					
+					formatted_date = input_date.strftime("%d-%m-%Y")
+					
+					
+					wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name, `tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
+					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+					amt = 0
+					n = []
+					if wo:
+						amt = wo[0]["amount"]
+						n.append(wo[0]["name"])
+						n = str(n).strip('[]')
+						n = n.replace("'", '')
+						
+					
+					else:
+						wos = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name,`tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
+						left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+						where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+						amt = wos[0]["amount"]
+						n.append(wos[0]["name"])
+						n = str(n).strip('[]')
+						n = n.replace("'", '')
+					
+					
+					total_amt = total_amt + amt
+					sn = sn + 1
+					data += '<tr>'
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sn)
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date)
+						
+					
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/work-order-data/%s"target="_blank">%s</a><center></td>'%(i,i)
+					if sales_rep_1:
+						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_1[0]["sales_person"] or "-" )
+					elif sales_rep_2:
+						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_2[0]["sales_person"] or "-" )
+					else:
+						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%("-" )
+
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/sales-invoice/%s"target="_blank">%s</a><center></td>'%(n,n)
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(cust)
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(format(amt, ".2f"))
+				
+		data += '<tr>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Total</td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">%s</td>'%(format(total_amt, ".2f"))
+		data += '</tr>'
+		data += '</table>'
+	
+	if report == "RSC-Repaired and Shipped Client":
+		data= ""
+		data += '<table class="table table-bordered">'
+
+		data += '<tr>'
+		data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+		data += '<td colspan = 4 style="border-color:#000000;"><h1><center><b>Sales Summary Report</b></center></h1></td>'
+		
+		data += '</tr>'
+
+		data += '</tr>'
+		data += '<tr>'
+		data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">S.No</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Date</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Work Order</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Sales Person</td>'
+		data += '<td style="border-color:#000000;width:35%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Customer</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Delivery Note</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Delivery Date</td>'
+		data += '</tr>'
+		
+		if customer:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"RSC-Repaired and Shipped Client","customer":customer},["*"])
+
+		elif sales_person:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"RSC-Repaired and Shipped Client","sales_rep":sales_person},["*"])
+
+		elif work_order_data:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"RSC-Repaired and Shipped Client","name":work_order_data},["*"])
+
+		else:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"RSC-Repaired and Shipped Client"},["*"])
+		
+		sn = 0
+		for i in wd:
+			sn = sn+1
+
+			input_date_string_1 = str(i.posting_date)
+			input_date_string_2 = str(i.dn_date)
+
+			input_date_1 = datetime.strptime(input_date_string_1, "%Y-%m-%d")
+			input_date_2 = datetime.strptime(input_date_string_2, "%Y-%m-%d")
+
+
+			formatted_date_1 = input_date_1.strftime("%d-%m-%Y")
+			formatted_date_2 = input_date_2.strftime("%d-%m-%Y")
+			
+				
+			data += '<tr>'
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sn)
+				
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date_1)
+			
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/work-order-data/%s"target="_blank">%s</a><center></td>'%(i.name,i.name)
+				
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(i.sales_rep)
+
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(i.customer)
+				
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/delivery-note/%s"target="_blank">%s</a><center></td>'%(i.dn_no,i.dn_no)					
+
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date_2)
+				
+
+
+	if report == "Q-Quoted":
+		data= ""
+		data += '<table class="table table-bordered">'
+		
+		data += '<tr>'
+		data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+		data += '<td colspan = 4 style="border-color:#000000;"><h1><center><b>Sales Summary Report</b></center></h1></td>'
+		
+		data += '</tr>'
+		
+		data += '<tr>'
+		data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">S.No</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Date</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Work Order</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Sales Person</td>'
+		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Quotation</td>'
+		data += '<td style="border-color:#000000;width:35%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Customer</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Amount</td>'
+		data += '</tr>'
+		
+		if customer:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"Q-Quoted","customer":customer},["*"])
+
+		elif sales_person:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"Q-Quoted","sales_rep":sales_person},["*"])
+
+		elif work_order_data:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"Q-Quoted","name":work_order_data},["*"])
+
+		else:
+			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"Q-Quoted"},["*"])
+		
+		sn = 0
+		total_amt = 0
+		for i in wd:
+			sn = sn+1
+			ada  = si = frappe.db.sql(""" select DISTINCT `tabQuotation`.is_multiple_quotation as multi,`tabQuotation`.name as qname,`tabQuotation Item`.margin_amount as ma,`tabQuotation`.after_discount_cost as adc from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent 
+			where `tabQuotation Item`.wod_no = '%s' """ %(i.name),as_dict =1)
+			amt = 0
+			if ada:
+				if ada[0]["multi"] == 1:
+					amt = ada[0]["ma"]
+				else:
+					amt = ada[0]["adc"]
+
+			total_amt = total_amt + amt
+
+			
+			input_date_string = str(i.posting_date)
+
+			input_date = datetime.strptime(input_date_string, "%Y-%m-%d")
+
+			formatted_date = input_date.strftime("%d-%m-%Y")
+				
+
+			data += '<tr>'
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sn)
+				
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date)
+			
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/work-order-data/%s"target="_blank">%s</a><center></td>'%(i.name,i.name)
+				
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(i.sales_rep)
+
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/quotation/%s"target="_blank">%s</a><center></td>'%(ada[0]["qname"],ada[0]["qname"])					
+
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(i.customer)
+				
+		
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(amt)
+	
+		data += '<tr>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Total</td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">%s</td>' %(total_amt)
+		data += '</tr>'
+
+	
+	return data
+

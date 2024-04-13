@@ -80,8 +80,7 @@
    "fieldname": "material_list",
    "fieldtype": "Table",
    "label": "Material List",
-   "options": "Material List",
-   "read_only": 1
+   "options": "Material List"
   },
   {
    "fieldname": "amended_from",
@@ -109,7 +108,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-08-07 11:56:12.079587",
+ "modified": "2024-03-13 13:20:22.960115",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data Lookup",

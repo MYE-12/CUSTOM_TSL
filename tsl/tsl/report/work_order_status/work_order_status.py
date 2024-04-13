@@ -45,11 +45,13 @@ def get_columns(filters):
 	# 	"label": "City",
 	# 	"fieldtype": "Data",
 	# },
-	{
-		"fieldname":"branch_name",
-		"label": "Branch/Plant Name",
-		"fieldtype": "Data",
-	},
+
+	# {
+	# 	"fieldname":"branch_name",
+	# 	"label": "Branch/Plant Name",
+	# 	"fieldtype": "Data",
+	# },
+
 	{
 		"fieldname":"type",
 		"label": "Description",
@@ -87,6 +89,22 @@ def get_columns(filters):
 		"label": "Technician",
 		"fieldtype": "Link",
 		"options" : "User",
+		"width":150
+	},
+
+	{
+		"fieldname":"customer",
+		"label": "Customer",
+		"fieldtype": "Link",
+		"options" : "Customer",
+		"width":200
+	},
+
+	{
+		"fieldname":"customer_ref",
+		"label": "Customer Ref",
+		"fieldtype": "Data",
+		
 		"width":150
 	},
 	
@@ -185,6 +203,16 @@ def get_columns(filters):
 		"width":100
 
 	},
+
+	{
+		"fieldname":"payment_entry",
+		"label": "Payment Reference",
+		"fieldtype": "Link",
+		"options": "Payment Entry",
+		"width":150
+
+	},
+
 	{
 		"fieldname":"invoice_date",
 		"label": "Invoice Date",
@@ -197,6 +225,14 @@ def get_columns(filters):
 		"label": "Invoice No",
 		"fieldtype": "Link",
 		"options":"Sales Invoice",
+		"width":150
+
+	},
+
+	{
+		"fieldname":"po",
+		"label": "PO Number",
+		"fieldtype": "Data",
 		"width":150
 
 	},
@@ -231,11 +267,13 @@ def get_columns(filters):
 		"width":100
 
 	},
-	{
-		"fieldname":"customer_vat_no",
-		"label": "Customer VAT No",
-		"fieldtype": "Data",
-	},
+
+	
+	# {
+	# 	"fieldname":"customer_vat_no",
+	# 	"label": "Customer VAT No",
+	# 	"fieldtype": "Data",
+	# },
 	# {
 	# 	"fieldname":"vat_status",
 	# 	"label": "VAT Status",
@@ -246,11 +284,11 @@ def get_columns(filters):
 	# 	"label": "Unit Location",
 	# 	"fieldtype": "Data",
 	# },
-	{
-		"fieldname":"q_unit_status",
-		"label": "Q-Unit Status",
-		"fieldtype": "Data",
-	},
+	# {
+	# 	"fieldname":"q_unit_status",
+	# 	"label": "Q-Unit Status",
+	# 	"fieldtype": "Data",
+	# },
 	# {
 	# 	"fieldname":"contact_person_name",
 	# 	"label": "Contact Person Name",
@@ -285,8 +323,13 @@ def get_data(filters):
 	f = ""
 	if filters.get('company'):
 		f += "and company = '{0}' ".format(filters.get('company'))
-	work_order_entries = frappe.db.sql('''select name as wod_no,sales_rep,posting_date,remarks,expiry_date,customer,technician,status,department,returned_date,branch as branch_name,dn_no,dn_date,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>=%s and posting_date <= %s {0}'''.format(f),(filters.from_date,filters.to_date),as_dict=1)
+	work_order_entries = frappe.db.sql('''select  payment_entry_reference as payment_entry,payment_date as paid_date,name as wod_no,sales_rep,posting_date,remarks,expiry_date,customer,technician,status,department,returned_date,branch as branch_name,dn_no,dn_date,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>=%s and posting_date <= %s {0}'''.format(f),(filters.from_date,filters.to_date),as_dict=1)
 	for i in work_order_entries:
+		pdate = frappe.get_value("Work Order Data",{"name":i["wod_no"]},["payment_date"])
+		i["paid_date"] = pdate
+		payment_ref= frappe.get_value("Work Order Data",{"name":i["wod_no"]},["payment_entry_reference"])
+		i["payment_entry"] = payment_ref
+
 		doc = frappe.get_doc("Work Order Data",i["wod_no"])
 		if doc.status == "NER-Need Evaluation Return":
 			i['ner_date'] = doc.returned_date
@@ -303,7 +346,7 @@ def get_data(filters):
 		for j in frappe.db.sql('''select margin_amount,rate,amount,parent,q_unit_status from `tabQuotation Item` where wod_no = %s and parenttype = "Quotation"  ''',i.wod_no,as_dict=1):
 			i["pr_no"] = frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
 			is_multi = frappe.db.get_value("Quotation",j['parent'],["is_multiple_quotation","after_discount_cost"])
-			Quo_status = frappe.db.exists("Quotation",{"name":j['parent'],"workflow_state":"Approved By Customer" or "Quoted to Customer"})
+			Quo_status = frappe.db.exists("Quotation",{"name":j['parent'],"workflow_state":"Approved By Customer"})
 			if Quo_status:
 				if is_multi[0] == 1:
 					i["quoted_price"] = j["margin_amount"]
@@ -313,12 +356,63 @@ def get_data(filters):
 				i["price_after_dis"] = j["amount"]
 				i["gross"] = j["amount"]
 				i["approved_date"] = frappe.db.get_value("Quotation",j['parent'],"approval_date")
-				i["q_unit_status"] = j["q_unit_status"]
+				po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
+				i["po"] = po
+				crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
+				i["customer_ref"] = crn
+		
 				sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 				if sales_rep:
 					i["sales_rep"] = sales_rep
 				else:
 					i["sales_rep"] = frappe.get_value("Quotation",j["parent"],"sales_rep")
+			else:
+				Q_status = frappe.db.exists("Quotation",{"name":j['parent'],"workflow_state":"Quoted to Customer"})
+				if Q_status:
+					if is_multi[0] == 1:
+						i["quoted_price"] = j["margin_amount"]
+					else:
+						frappe.errprint(is_multi[-1])
+						i["quoted_price"] = is_multi[-1]
+					i["price_after_dis"] = j["amount"]
+					i["gross"] = j["amount"]
+					i["approved_date"] = frappe.db.get_value("Quotation",j['parent'],"approval_date")
+					i["q_unit_status"] = j["q_unit_status"]
+					po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
+					i["po"] = po
+					crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
+					i["customer_ref"] = crn
+					sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
+					if sales_rep:
+						i["sales_rep"] = sales_rep
+					else:
+						i["sales_rep"] = frappe.get_value("Quotation",j["parent"],"sales_rep")
+				
+				else:
+					Q_status_rev = frappe.db.exists("Quotation",{"name":j['parent'],"workflow_state":"Approved By Management","quotation_type":"Revised Quotation - Repair"})
+					if Q_status_rev:
+						if is_multi[0] == 1:
+							i["quoted_price"] = j["margin_amount"]
+						else:
+							frappe.errprint(is_multi[-1])
+							i["quoted_price"] = is_multi[-1]
+						i["price_after_dis"] = j["amount"]
+						i["gross"] = j["amount"]
+						i["approved_date"] = frappe.db.get_value("Quotation",j['parent'],"approval_date")
+						i["q_unit_status"] = j["q_unit_status"]
+						po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
+						i["po"] = po
+						crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
+						i["customer_ref"] = crn
+						sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
+						if sales_rep:
+							i["sales_rep"] = sales_rep
+						else:
+							i["sales_rep"] = frappe.get_value("Quotation",j["parent"],"sales_rep")
+
+
+
+				
 		if frappe.db.get_value("Status Duration Details",{"parent":i.wod_no,"status":"Q-Quoted","parenttype": "Work Order Data"},"date"):
 			i["quoted_date"] = frappe.db.get_value("Status Duration Details",{"parent":i.wod_no,"status":"Q-Quoted","parenttype": "Work Order Data"},"date").date()
 		

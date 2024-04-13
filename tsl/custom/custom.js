@@ -456,7 +456,7 @@ frappe.ui.form.on('Quotation', {
 											childTable.item_name = r.message[i]["item_name"],
 											childTable.wod_no = r.message[i]["wod"],
 											childTable.model_no = r.message[i]["model_no"],
-											childTable.wo_no = wo[2],
+											// childTable.wo_no = wo[2],
 											childTable.manufacturer = r.message[i]["manufacturer"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["description"],

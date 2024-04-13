@@ -14,7 +14,9 @@ app_license = "MIT"
 jinja = {
 	"methods": [
 		"tsl.custom_py.utils.get_receivable",
-        "tsl.custom_py.utils.get_wod"
+        "tsl.custom_py.utils.get_wod",
+        "tsl.custom_py.utils.get_wrk_ord",
+        # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"
 	]
 }
 # Includes in <head>
@@ -145,6 +147,12 @@ doc_events = {
 		"on_submit":[
 			"tsl.custom_py.purchase_receipt.on_submit"
 		],
+
+		"validate":[
+			"tsl.custom_py.purchase_receipt.check_item",
+
+		],
+        
 		"before_save":[
 			"tsl.custom_py.purchase_receipt.before_save"
 		]

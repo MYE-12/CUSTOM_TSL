@@ -15,8 +15,9 @@ frappe.ui.form.on('Work Order Data Lookup', {
 				},
 				callback: function(r) {
 					if(r.message){
+					console.log(r.message)
+
 					frm.clear_table("material_list");
-				
 					var c = frm.add_child("material_list");
 						c.item_code = r.message[0].material_list[0].item_code;
 						c.model_no = r.message[0].material_list[0].model_no;
