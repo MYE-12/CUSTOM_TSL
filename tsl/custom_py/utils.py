@@ -18,6 +18,7 @@ from frappe.utils.file_manager import get_file
 from frappe.utils import add_to_date
 import requests
 from datetime import datetime
+from erpnext.setup.utils import get_exchange_rate
 from frappe.utils.csvutils import read_csv_content
 #from frappe.permissions import has_role
 # @frappe.whitelist()
@@ -273,7 +274,31 @@ def set_payment(data,pe,date):
 	for i in data:
 		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_date",date)
 		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_entry_reference",pe)
-		frappe.db.set_value("Work Order Data",i["work_order_data"],"status","P-Paid")
+		wd = frappe.get_doc("Work Order Data",i["work_order_data"])
+		wd.status = "P-Paid"
+		ldate = wd.status_duration_details[-1].date
+		now = datetime.now()
+		time_date = str(ldate).split(".")[0]
+		format_data = "%Y-%m-%d %H:%M:%S"
+		date = datetime.strptime(time_date, format_data)
+		duration = now - date
+		duration_in_s = duration.total_seconds()
+		minutes = divmod(duration_in_s, 60)[0]/60
+		data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
+		frappe.errprint(wd.status_duration_details[-1].name)
+		frappe.errprint(data)
+		frappe.db.set_value("Status Duration Details",wd.status_duration_details[-1].name,"duration",data)
+		wd.append("status_duration_details",{
+			"status":wd.status,
+			"date":now,
+		})
+		doc = frappe.get_doc("Work Order Data",wd.name)
+		doc.append("status_duration_details",{
+			"status":wd.status,
+			"date":now,
+		})
+		wd.save(ignore_permissions = 1)
+		
 		
 		
 @frappe.whitelist()
@@ -400,7 +425,7 @@ def get_wod():
 	# Extract and print the current date
 	current_date = current_date_time.date()
 	# Week_start = add_days(current_date,-6)
-	Week_start = "2024-01-01"
+	Week_start = "2023-09-23"
 
 	total_rsi = 0
 	total_rsc = 0
@@ -548,18 +573,18 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 		if customer:
 			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date, `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-			where `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice`.customer = '%s' """ %(from_date,to_date,customer),as_dict =1)
+			where `tabSales Invoice`.status = "Overdue" and `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice`.customer = '%s' """ %(from_date,to_date,customer),as_dict =1)
 		
 		elif sales_person:
 			si = frappe.db.sql(""" select DISTINCT  `tabSales Invoice`.due_date,`tabSales Team`.sales_person,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
 			right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
-			where `tabSales Team`.sales_person = '%s' and `tabSales Invoice`.due_date between '%s' and '%s' ORDER BY `tabSales Invoice`.due_date ASC """ %(sales_person,from_date,to_date),as_dict =1)
+			where `tabSales Invoice`.status = "Overdue" and `tabSales Team`.sales_person = '%s' and `tabSales Invoice`.due_date between '%s' and '%s' ORDER BY `tabSales Invoice`.due_date ASC """ %(sales_person,from_date,to_date),as_dict =1)
 
 		elif work_order_data:
 			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-			where `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice Item`.work_order_data = '%s' """ %(from_date,to_date,work_order_data),as_dict =1)
+			where `tabSales Invoice`.status = "Overdue" and `tabSales Invoice`.due_date between '%s' and '%s' and `tabSales Invoice Item`.work_order_data = '%s' """ %(from_date,to_date,work_order_data),as_dict =1)
 			if not si:
 				si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date,`tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
@@ -569,7 +594,7 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 		else:
 			si = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.due_date, `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
 			left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-			where `tabSales Invoice`.due_date between '%s' and '%s' """ %(from_date,to_date),as_dict =1)
+			where `tabSales Invoice`.status = "Overdue" and `tabSales Invoice`.due_date between '%s' and '%s' """ %(from_date,to_date),as_dict =1)
 
 
 			
@@ -584,82 +609,82 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 		total_amt = 0
 		for i in wod_list:
 			st = frappe.get_value("Work Order Data",{"name":i},["Status"])
-			if st == "RSI-Repaired and Shipped Invoiced":
-				if i:
-					sid_1 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
-					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+			
+			if i:
+				sid_1 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
 
-					sid_2 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
+				sid_2 = frappe.db.sql(""" select `tabSales Invoice`.due_date from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+			
+
+				sales_rep_1 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
+				where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+					
+				sales_rep_2 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
+				where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+					
+				cust = frappe.get_value("Work Order Data",{"name":i},["customer"])
+			
+				if sid_1:
+					input_date_string = str(sid_1[0]["due_date"])
+				else:
+					input_date_string = str(sid_2[0]["due_date"])
+
+				if input_date_string:
+					input_date = datetime.strptime(input_date_string, "%Y-%m-%d")
+
+				
+				formatted_date = input_date.strftime("%d-%m-%Y")
+				
+				
+				wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name, `tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
+				left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+				where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
+				amt = 0
+				n = []
+				if wo:
+					amt = wo[0]["amount"]
+					n.append(wo[0]["name"])
+					n = str(n).strip('[]')
+					n = n.replace("'", '')
+					
+				
+				else:
+					wos = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name,`tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
 					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
 					where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
+					amt = wos[0]["amount"]
+					n.append(wos[0]["name"])
+					n = str(n).strip('[]')
+					n = n.replace("'", '')
 				
-
-					sales_rep_1 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
-					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-					right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
-					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
-						
-					sales_rep_2 = frappe.db.sql(""" select `tabSales Team`.sales_person from `tabSales Invoice` 
-					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-					right join `tabSales Team` on `tabSales Invoice`.name = `tabSales Team`.parent
-					where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
-						
-					cust = frappe.get_value("Work Order Data",{"name":i},["customer"])
 				
-					if sid_1:
-						input_date_string = str(sid_1[0]["due_date"])
-					else:
-						input_date_string = str(sid_2[0]["due_date"])
-
-					if input_date_string:
-						input_date = datetime.strptime(input_date_string, "%Y-%m-%d")
-
+				total_amt = total_amt + amt
+				sn = sn + 1
+				data += '<tr>'
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sn)
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date)
 					
-					formatted_date = input_date.strftime("%d-%m-%Y")
-					
-					
-					wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name, `tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
-					left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-					where `tabSales Invoice Item`.work_order_data = '%s' """ %(i),as_dict =1)
-					amt = 0
-					n = []
-					if wo:
-						amt = wo[0]["amount"]
-						n.append(wo[0]["name"])
-						n = str(n).strip('[]')
-						n = n.replace("'", '')
-						
-					
-					else:
-						wos = frappe.db.sql(""" select DISTINCT `tabSales Invoice`.name,`tabSales Invoice Item`.amount as amount from `tabSales Invoice` 
-						left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-						where `tabSales Invoice Item`.wod_no = '%s' """ %(i),as_dict =1)
-						amt = wos[0]["amount"]
-						n.append(wos[0]["name"])
-						n = str(n).strip('[]')
-						n = n.replace("'", '')
-					
-					
-					total_amt = total_amt + amt
-					sn = sn + 1
-					data += '<tr>'
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sn)
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date)
-						
-					
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/work-order-data/%s"target="_blank">%s</a><center></td>'%(i,i)
-					if sales_rep_1:
-						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_1[0]["sales_person"] or "-" )
-					elif sales_rep_2:
-						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_2[0]["sales_person"] or "-" )
-					else:
-						data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%("-" )
-
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/sales-invoice/%s"target="_blank">%s</a><center></td>'%(n,n)
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(cust)
-					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(format(amt, ".2f"))
 				
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/work-order-data/%s"target="_blank">%s</a><center></td>'%(i,i)
+				if sales_rep_1:
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_1[0]["sales_person"] or "-" )
+				elif sales_rep_2:
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(sales_rep_2[0]["sales_person"] or "-" )
+				else:
+					data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%("-" )
+
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/sales-invoice/%s"target="_blank">%s</a><center></td>'%(n,n)
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(cust)
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(format(amt, ".2f"))
+			
 		data += '<tr>'
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;"></td>'
@@ -677,7 +702,7 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 
 		data += '<tr>'
 		data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
-		data += '<td colspan = 4 style="border-color:#000000;"><h1><center><b>Sales Summary Report</b></center></h1></td>'
+		data += '<td colspan = 5 style="border-color:#000000;"><h1><center><b>Sales Summary Report</b></center></h1></td>'
 		
 		data += '</tr>'
 
@@ -687,9 +712,10 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Date</td>'
 		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Work Order</td>'
 		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Sales Person</td>'
-		data += '<td style="border-color:#000000;width:35%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Customer</td>'
-		data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Delivery Note</td>'
+		data += '<td style="border-color:#000000;width:30%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Customer</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Delivery Note</td>'
 		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Delivery Date</td>'
+		data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:12px;background-color:#4169E1;color:white;text-align:center;font-weight:bold;">Amount</td>'
 		data += '</tr>'
 		
 		if customer:
@@ -705,18 +731,34 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 			wd = frappe.get_all("Work Order Data",{"posting_date": ["between", (from_date,to_date)],"status":"RSC-Repaired and Shipped Client"},["*"])
 		
 		sn = 0
+		total_rsc = 0
 		for i in wd:
+			amount = 0
+			amt = frappe.db.sql(""" select `tabQuotation`.after_discount_cost as cost  from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent 
+			where `tabQuotation Item`.wod_no = '%s' and `tabQuotation`.workflow_state = 'Approved By Customer' """ %(i.name),as_dict =1)
+			if amt:
+				amount = amt[0]["cost"]
+			else:
+				am = frappe.db.sql(""" select `tabQuotation`.after_discount_cost as cos  from `tabQuotation` 
+				left join `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent 
+				where `tabQuotation Item`.wod_no = '%s' and `tabQuotation`.workflow_state = 'Approved By Management' """ %(i.name),as_dict =1)
+				if am:
+					amount = am[0]["cos"]
+					
 			sn = sn+1
 
 			input_date_string_1 = str(i.posting_date)
 			input_date_string_2 = str(i.dn_date)
 
 			input_date_1 = datetime.strptime(input_date_string_1, "%Y-%m-%d")
-			input_date_2 = datetime.strptime(input_date_string_2, "%Y-%m-%d")
+			if i.dn_date:
+				input_date_2 = datetime.strptime(input_date_string_2, "%Y-%m-%d")
 
 
 			formatted_date_1 = input_date_1.strftime("%d-%m-%Y")
-			formatted_date_2 = input_date_2.strftime("%d-%m-%Y")
+			if input_date_2:
+				formatted_date_2 = input_date_2.strftime("%d-%m-%Y")
 			
 				
 			data += '<tr>'
@@ -733,8 +775,20 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><a href="https://erp.tsl-me.com/app/delivery-note/%s"target="_blank">%s</a><center></td>'%(i.dn_no,i.dn_no)					
 
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(formatted_date_2)
-				
 
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'%(format(amount, ".2f"))
+			total_rsc = total_rsc + amount
+			
+		data += '<tr>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"></td>'
+		data += '<td align = center style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;font-weight:bold;">Total</td>'
+		data += '<td align = center style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;font-weight:bold;">%s</td>'%(format(total_rsc, ".2f"))
+		data += '</tr>'
 
 	if report == "Q-Quoted":
 		data= ""
@@ -821,3 +875,522 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 	
 	return data
 
+
+@frappe.whitelist()
+def change_shipping_cost(currency,sq):
+	ship_cost = frappe.get_value("Supplier Quotation",{"supply_order_data":sq,"workflow_state":"Approved By Management"},["Shipping_cost"])
+	base_total = frappe.get_value("Supplier Quotation",{"supply_order_data":sq,"workflow_state":"Approved By Management"},["base_total"])
+	supplier = frappe.get_value("Supplier Quotation",{"supply_order_data":sq},["supplier"])
+	cur = frappe.get_value("Supplier",{"name":supplier},["default_currency"])
+	if not cur:
+		frappe.throw("Please select default currency for the supplier %s " %(supplier))
+	exr = get_exchange_rate(cur,currency)
+	cost = ship_cost * exr
+	return cost,base_total,supplier
+
+@frappe.whitelist()
+def crt_wo(import_file):
+	from datetime import datetime
+	filepath = get_file(import_file)
+	data = read_csv_content(filepath[1])
+	count = 0
+	a_date = ''
+	p_date = ''
+	d_date = ''
+	Pd_date = ''
+
+	for i in data[1:]:
+		count = count + 1
+		print(count)
+		wo = frappe.new_doc("Work Order Data")
+		cus = frappe.db.exists("Customer",{"name": i[3]})
+		if not cus:
+			c = frappe.new_doc("Customer")
+			c.customer_name = i[3]
+			c.territory = "Kuwait"
+			c.customer_type = "Company"
+			c.company_group = "Kuwait"
+			c.save(ignore_permissions = 1)
+			
+		sp = frappe.db.exists("Sales Person",{"name": i[1]})
+		if not sp:
+			s = frappe.new_doc("Sales Person")
+			s.sales_person_name= i[1]
+			s.parent_sales_person = "Sales Team"
+			s.save(ignore_permissions =1)
+		
+		# Input date string
+		if i[2]:
+			date_ad = str(i[2])
+			day, month, year = date_ad.split("/")
+			if month == "Jan":
+				month = "1"
+			if month == "Feb":
+				month = "2"
+			if month == "Mar":
+				month = "3"
+			if month == "Apr":
+				month = "4"
+			if month == "May":
+				month = "5"
+			if month == "Jun":
+				month = "6"
+			if month == "Jul":
+				month = "7"
+			if month == "Aug":
+				month = "8"
+			if month == "Sep":
+				month = "9"
+			if month == "Oct":
+				month = "10"
+			if month == "Nov":
+				month = "11"
+			if month == "Dec":
+				month = "12"
+			
+			if year == "17":
+				year = "2017" 
+			if year == "18":
+				year = "2018" 
+			if year == "19":
+				year = "2019" 
+			if year == "20":
+				year = "2020" 
+			if year == "21":
+				year = "2021" 
+			if year == "22":
+				year = "2022" 
+			if year == "23":
+				year = "2023" 
+			if year == "24":
+				year = "2024" 
+
+
+			result = "-".join([year,month,day])
+			p_date = result
+		else:
+			p_date = ''
+		
+		
+
+		if i[7]:
+			date_ad = str(i[7])
+			day, month, year = date_ad.split("/")
+			if month == "Jan":
+				month = "1"
+			if month == "Feb":
+				month = "2"
+			if month == "Mar":
+				month = "3"
+			if month == "Apr":
+				month = "4"
+			if month == "May":
+				month = "5"
+			if month == "Jun":
+				month = "6"
+			if month == "Jul":
+				month = "7"
+			if month == "Aug":
+				month = "8"
+			if month == "Sep":
+				month = "9"
+			if month == "Oct":
+				month = "10"
+			if month == "Nov":
+				month = "11"
+			if month == "Dec":
+				month = "12"
+			
+			if year == "17":
+				year = "2017" 
+			if year == "18":
+				year = "2018" 
+			if year == "19":
+				year = "2019" 
+			if year == "20":
+				year = "2020" 
+			if year == "21":
+				year = "2021" 
+			if year == "22":
+				year = "2022" 
+			if year == "23":
+				year = "2023" 
+			if year == "24":
+				year = "2024" 
+
+
+			result = "-".join([year,month,day])
+			a_date = result
+		else:
+			a_date = ''
+		
+			
+
+		if i[8]:
+			date_ad = str(i[8])
+			day, month, year = date_ad.split("/")
+			if month == "Jan":
+				month = "1"
+			if month == "Feb":
+				month = "2"
+			if month == "Mar":
+				month = "3"
+			if month == "Apr":
+				month = "4"
+			if month == "May":
+				month = "5"
+			if month == "Jun":
+				month = "6"
+			if month == "Jul":
+				month = "7"
+			if month == "Aug":
+				month = "8"
+			if month == "Sep":
+				month = "9"
+			if month == "Oct":
+				month = "10"
+			if month == "Nov":
+				month = "11"
+			if month == "Dec":
+				month = "12"
+			
+			if year == "17":
+				year = "2017" 
+			if year == "18":
+				year = "2018" 
+			if year == "19":
+				year = "2019" 
+			if year == "20":
+				year = "2020" 
+			if year == "21":
+				year = "2021" 
+			if year == "22":
+				year = "2022" 
+			if year == "23":
+				year = "2023" 
+			if year == "24":
+				year = "2024" 
+
+
+			result = "-".join([year,month,day])
+			d_date = result
+		else:
+			d_date = ''
+		
+		
+
+		if i[9]:
+			date_ad = str(i[9])
+			day, month, year = date_ad.split("/")
+			if month == "Jan":
+				month = "1"
+			if month == "Feb":
+				month = "2"
+			if month == "Mar":
+				month = "3"
+			if month == "Apr":
+				month = "4"
+			if month == "May":
+				month = "5"
+			if month == "Jun":
+				month = "6"
+			if month == "Jul":
+				month = "7"
+			if month == "Aug":
+				month = "8"
+			if month == "Sep":
+				month = "9"
+			if month == "Oct":
+				month = "10"
+			if month == "Nov":
+				month = "11"
+			if month == "Dec":
+				month = "12"
+			
+			if year == "17":
+				year = "2017" 
+			if year == "18":
+				year = "2018" 
+			if year == "19":
+				year = "2019" 
+			if year == "20":
+				year = "2020" 
+			if year == "21":
+				year = "2021" 
+			if year == "22":
+				year = "2022" 
+			if year == "23":
+				year = "2023" 
+			if year == "24":
+				year = "2024" 
+
+
+			result = "-".join([year,month,day])
+			pd_date = result
+		else:
+			pd_date = ''
+		
+		print(i[0])
+		print(p_date)
+		print(a_date)
+		print(d_date)
+		print(pd_date)
+			
+		
+		if i[6] == "P" or i[6] == "p":
+			i[6] = 'P-Paid'
+		if i[6] == "RNRC":
+			i[6] = 'RNRC-Return Not Repaired Client'
+		if i[6] == "A":
+			i[6] = 'A-Approved'
+		if i[6] == "C":
+			i[6] = 'C-Comparison'
+		if i[6] == "CC":
+			i[6] = 'CC-Comparison Client'
+		if i[6] == "EP" or i[6] == "ED":
+			i[6] = 'EP-Extra Parts'
+		if i[6] == "NE":
+			i[6] = 'NE-Need Evaluation'
+		if i[6] == "NER":
+			i[6] = 'NER-Need Evaluation Return'
+		if i[6] == "Q":
+			i[6] = 'Q-Quoted'
+		if i[6] == "RNA":
+			i[6] = 'RNA-Return Not Approved'
+		if i[6] == "RNAC":
+			i[6] = 'RNAC-Return Not Approved Client'
+		if i[6] == "RNF":
+			i[6] = 'RNF-Return No Fault'
+		if i[6] == "RNFC":
+			i[6] = 'RNFC-Return No Fault Client'
+		if i[6] == "RNP":
+			i[6] = 'RNP-Return No Parts'
+		if i[6] == "RNPC":
+			i[6] = 'RNPC-Return No Parts Client'
+		if i[6] == "RNR":
+			i[6] = 'RNR-Return Not Repaired'
+		if i[6] == "RNRC":
+			i[6] = 'RNRC-Return Not Repaired Client'
+		if i[6] == "RS":
+			i[6] = 'RS-Repaired and Shipped'
+		if i[6] == "RSC":
+			i[6] = 'RSC-Repaired and Shipped Client'
+		if i[6] == "RSI":
+			i[6] = 'RSI-Repaired and Shipped Invoiced'
+		if i[6] == "SP":
+			i[6] = 'SP-Searching Parts'
+		if i[6] == "TR":
+			i[6] ='TR-Technician Repair'
+		if i[6] == "UE":
+			i[6] = 'UE-Under Evaluation'
+		if i[6] == "UTR":
+			i[6] = 'UTR-Under Technician Repair'
+		if i[6] == "W":
+			i[6] = "W-Working"
+		if i[6] == "WP":
+			i[6] = 'WP-Waiting Parts'
+
+		wo.naming_series = "WOD-KO.YY.-"
+		wo.customer = i[3]
+		wo.old_wo_no = i[0]
+		wo.status = i[6]
+		wo.sales_rep = i[1]
+		wo.posting_date = p_date
+		wo.old_wo_q_amount = i[5]
+		wo.quoted_date = a_date
+		wo.payment_date = pd_date
+		wo.delivery = d_date
+		wo.no_power = 1
+		wo.append("material_list", {
+				
+			'item_code': "001300",
+			'model_no': "Old",
+			"mfg":"Old mfg",
+			"type": "Old",
+			"item_name":"001300",
+			"quantity" :1
+				
+		})
+		wo.save(ignore_permissions = 1)
+
+@frappe.whitelist()
+def dlt_wo():
+	wo = frappe.db.sql(""" delete from `tabWork Order Data` where old_wo_no IS NOT NULL """)
+
+@frappe.whitelist()
+def update_wo():
+	wo = frappe.db.sql(""" UPDATE `tabWork Order Data` SET docstatus = 1 WHERE old_wo_no IS NOT NULL; """)
+
+
+@frappe.whitelist()
+def set_alert_urgent():
+	w = frappe.get_all("Work Order Data",["*"])
+	tody = datetime.now().date()
+	data = ""
+	data += '<p>Hi</p>'
+	data += '<p>Kindly find the below Work orders are pending for 2 days.Please take necessary action to click Work order</p>'
+	count = 0
+	for i in w:
+		if not i.old_wo_no and i.priority_status == "Urgent":
+			qu = frappe.db.sql(""" select `tabQuotation`.name  from `tabQuotation` left join 
+			`tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent
+			where `tabQuotation`.workflow_state  != "Rejected by Customer" and `tabQuotation Item`.wod_no = '%s' """ %(i.name) ,as_dict=1)
+			if not qu:
+				d = add_days(i.posting_date,2)
+				if d <= tody:
+					if not i.status == "RNA-Return Not Approved" and not i.status == "RNF-Return No Fault":
+						count = count + 1
+						data += '<p><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s-%s</a></p>' % (i.name,i.name,i.status)
+					# data += '<table class="table table-bordered">'
+					# data += '<tr>'
+					# data += '<td colspan = "2" style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;b"><center><b>Work Orders</b><center></td>'
+					# data += '</tr>'
+
+					# data += '<tr>'
+					# data += '<td colspan = "2" style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;b"><center><b>%s</b><center></td>' %(i.name)
+					# data += '</tr>'
+					# data += '</table>'
+
+	
+	# message = """{}""".format(data)
+	
+	if count > 0:
+		frappe.sendmail(recipients=["omar@tsl-me.com"],
+						sender="Notification from TSL <info@tsl-me.com>",
+						subject="Work Orders - Pending",
+						message=data)
+
+@frappe.whitelist()
+def set_alert_normal():
+	w = frappe.get_all("Work Order Data",["*"])
+	tody = datetime.now().date()
+	data = ""
+	data += '<p>Hi</p>'
+	data += '<p>Kindly find the below Work orders are pending for 6 days.Please take necessary action to click Work order</p>'
+	count = 0
+	for i in w:	
+		if not i.old_wo_no and i.priority_status == "Normal":
+			qu = frappe.db.sql(""" select `tabQuotation`.name  from `tabQuotation` left join 
+			`tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent
+			where `tabQuotation`.workflow_state  != "Rejected by Customer" and `tabQuotation Item`.wod_no = '%s' """ %(i.name) ,as_dict=1)
+			if not qu:
+				d = add_days(i.posting_date,6)
+				if d <= tody:
+					if not i.status == "RNA-Return Not Approved" and not i.status == "RNF-Return No Fault":
+						count = count + 1
+						data += '<p><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s</a></p>' % (i.name,i.name)
+
+					# data += '<table class="table table-bordered">'
+					# data += '<tr>'
+					# data += '<td colspan = "2" style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;b"><center><b>Work Orders</b><center></td>'
+					# data += '</tr>'
+
+					# data += '<tr>'
+					# data += '<td colspan = "2" style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;b"><center><b>%s</b><center></td>' %(i.name)
+					# data += '</tr>'
+					# data += '</table>'
+
+	
+	# message = """{}""".format(data)
+	# print(message)
+	if count > 0:
+		frappe.sendmail(recipients=["omar@tsl-me.com"],
+						sender="Notification from TSL <info@tsl-me.com>",
+						subject="Work Orders - Pending",
+						message=data)
+
+
+@frappe.whitelist()
+def send_mail_to_customer(q,type,email):
+	if type == "Customer Quotation - Repair":
+		if email:
+			frappe.sendmail(recipients=[email],
+			sender="Notification from TSL <info@tsl-me.com>",
+			subject="Quotation from TSL",
+			message=""" 
+			<p>Dear Mr / Mrs</p><br>
+			<p>Please find the attached quotation for the repair.
+			We are waiting for your approval for further processing.</p>
+			""",
+			attachments=get_attachments(q,"Quotation")
+			)
+			frappe.msgprint("Mail Successfully Sent to Customer")
+			
+	if type == "Customer Quotation - Supply":
+		if email:
+			frappe.sendmail(recipients=[email],
+			sender="Notification from TSL <info@tsl-me.com>",
+			subject="Quotation from TSL",
+			message=""" 
+			<p>Dear Mr / Mrs</p><br>
+			<p>Please find the attached quotation for the supply.
+			We are waiting for your approval for further processing.</p>
+			""",
+			attachments=get_attach(q,"Quotation")
+			)
+			frappe.msgprint("Mail Successfully Sent to Customer")
+		
+
+
+def get_attachments(name,doctype):
+	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL")
+	return [attachments]
+
+def get_attach(name,doctype):
+	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Supply Quotation")
+	return [attachments]
+
+@frappe.whitelist()
+def customer_notification():
+	si = frappe.get_all("Sales Invoice",["*"])
+	tody = datetime.now().date()
+	for i in si:
+		d = add_days(i.posting_date,6)
+		if tody == d and i.send_later:
+			email = frappe.get_value("Customer",{"name":i.customer},["email_id"])
+			if email:
+				frappe.sendmail(recipients=["karthiksrinivasan1996.ks@gmail.com"],
+				sender="Notification from TSL <info@tsl-me.com>",
+				subject="Quotatio from TSL - ",
+				message=""" 
+				<p>Dear Mr / ms</p><br>
+				Please find the attached Invoice and delivery copy as requested.
+				Kindly issue the payment as soon as possible.</p>
+				""",
+				attachments=get_attachments(i.name,"Sales Invoice")
+				)
+
+
+
+@frappe.whitelist()
+def cron_job_allocation():
+	job = frappe.db.exists('Scheduled Job Type', 'urgent_work_order')
+	if not job:
+		sjt = frappe.new_doc("Scheduled Job Type")  
+		sjt.update({
+			"method" : 'tsl.custom_py.utils.set_alert_normal',
+			"frequency" : 'Daily',
+			"cron_format" : '0 8 * * *'
+		})
+		sjt.save(ignore_permissions=True)
+
+@frappe.whitelist()
+def crt_item(import_file):
+	from datetime import datetime
+	filepath = get_file(import_file)
+	data = read_csv_content(filepath[1])
+	c = 0
+	for i in data:
+		s = frappe.db.exists("Item",{"name":i[1],"published_in_website":0})
+		if s:
+			frappe.db.set_value("Item",i[1],"published_in_website",1)
+			c = c +1
+			print(c)
+	
+@frappe.whitelist()
+def update_ner(wod):
+	frappe.errprint(wod)
+	# frappe.db.set_value("Work Order Data",wod,"status_cap","")
+	# ev = frappe.get_doc("Evaluation Report",{"work_order_data":wod})
+	# ev.ner_field = ""
+	# ev.save(ignore_permissions =1)

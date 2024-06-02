@@ -17,10 +17,12 @@ from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 class EvaluationReport(Document):
 	@frappe.whitelist()
 	def update_availability_status(self):
+		frappe.errprint("hi")
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
 			if i.part and i.parts_availability == "No":
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
+				frappe.errprint(bin)
 				sts = "Yes"
 				if len(bin) and 'name' in bin[0]:
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
@@ -514,7 +516,7 @@ def create_material_issue_from_ini_eval(name):
 	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Evaluation Report',name)
 	for i in ini.items:
-		if i.released != 1:
+		if i.released != 1 and i.parts_availability == "Yes":
 			new_doc.append("items",{
 				's_warehouse':"Kuwait - TSL",
 				'item_code':i.part,
@@ -523,10 +525,11 @@ def create_material_issue_from_ini_eval(name):
 				# 'conversion_factor':1,
 				# 'allow_zero_valuation_rate':1
 			})
-		frappe.msgprint("Parts Released and Material Issue is Created")
+			new_doc.save(ignore_permissions = True)
+			new_doc.submit()
+	frappe.msgprint("Parts Released and Material Issue is Created")
+			
 
-	new_doc.save(ignore_permissions = True)
-	new_doc.submit()
 
 #	def onload(self):
 #		self.append("technician_details",{

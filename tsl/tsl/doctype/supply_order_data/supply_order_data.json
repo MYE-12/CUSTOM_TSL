@@ -44,6 +44,7 @@
   "previously_quoted",
   "section_break_30",
   "status_duration_details",
+  "attach_image",
   "is_quotation_created",
   "amended_from"
  ],
@@ -150,7 +151,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Inquiry\nParts Priced\nSearching Items\nNot Found\nInternal Quotation\nQuoted\nApproved\nNot Approved\nOrdered\nShipped\nReceived\nDelivered and Invoiced\nPaid"
+   "options": "Inquiry\nParts Priced\nSearching Items\nNot Found\nInternal Quotation\nQuoted\nApproved\nNot Approved\nOrdered\nShipped\nReceived\nDelivered\nInvoiced\nPaid"
   },
   {
    "fieldname": "remarks",
@@ -303,12 +304,18 @@
    "fieldtype": "Date",
    "label": "Advance Paid Date",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "attach_image",
+   "fieldtype": "Attach",
+   "label": "Attach Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-04 13:22:21.385552",
+ "modified": "2024-06-01 13:58:07.918699",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

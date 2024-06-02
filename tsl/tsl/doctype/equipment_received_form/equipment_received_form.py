@@ -77,7 +77,7 @@ class EquipmentReceivedForm(Document):
                 elif item and i.serial_no not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                     i.item_code = item
                 else:
-                    if 'item_name' not in i:
+                    if not 'item_name' in i:
                         i['item_name'] = i['item_code']
                     new_doc = frappe.new_doc('Item')
                     new_doc.naming_series = '.######'
@@ -205,7 +205,7 @@ def create_workorder_data(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Itemis_re", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
 
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
@@ -258,13 +258,14 @@ def create_workorder_data(order_no, f):
                     sn_doc.save(ignore_permissions=True)
                     if sn_doc.name:
                         sn_no = sn_doc.name
-                else:
-                    sn_doc = frappe.new_doc("Serial No")
-                    sn_doc.serial_no = i['serial_no'] or ''
-                    sn_doc.item_code = i['item_code']
-                    sn_doc.save(ignore_permissions=True)
-                    if sn_doc.name:
-                        sn_no = sn_doc.name
+
+                # else:
+                #     sn_doc = frappe.new_doc("Serial No")
+                #     sn_doc.serial_no = i['serial_no'] or ''
+                #     sn_doc.item_code = i['item_code']
+                #     sn_doc.save(ignore_permissions=True)
+                #     if sn_doc.name:
+                #         sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
@@ -280,8 +281,6 @@ def create_workorder_data(order_no, f):
 
         new_doc = frappe.new_doc("Work Order Data")
         if doc.work_order_data:
-            frappe.errprint("ijyg")
-
             link0 = []
             warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
             if warr['delivery'] and warr['warranty']:
@@ -295,9 +294,13 @@ def create_workorder_data(order_no, f):
                     
                     if eval:
                         frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
-                        
-                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    
+                    wd = frappe.get_doc("Work Order Data",doc.work_order_data)
+                    wd.status = "NER-Need Evaluation Return"
+                    wd.save(ignore_permissions = 1)
+                    # frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap_date", datetime.now().date())
               
                 if i['item_code']:
                     se_doc = frappe.new_doc("Stock Entry")
@@ -370,6 +373,7 @@ def create_workorder_data(order_no, f):
         new_doc.repair_warehouse = doc.repair_warehouse
         new_doc.address = doc.address
         new_doc.incharge = doc.incharge
+        new_doc.company = doc.company
         new_doc.customer_reference_number = doc.customer_reference_number
         new_doc.priority_status = doc.sts
         new_doc.naming_series = d[new_doc.branch]

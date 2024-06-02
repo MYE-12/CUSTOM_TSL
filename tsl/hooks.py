@@ -174,7 +174,9 @@ doc_events = {
       #  },
 	"Sales Invoice":{
 		"on_submit":[
-			"tsl.custom_py.sales_invoice.on_submit"
+			"tsl.custom_py.sales_invoice.on_submit",
+            "tsl.custom_py.sales_invoice.send_mail"
+            
 		],
 		"on_update_after_submit":[
 			"tsl.custom_py.sales_invoice.on_update_after_submit"

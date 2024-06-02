@@ -2,6 +2,24 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Supply Order Data', {
+	onload(frm){
+		if(frappe.session.user != "info@tsl-me.com" && frappe.session.user != "Administrator"){
+			
+			var df = frappe.meta.get_docfield("Supply Order Table", "model_no", frm.doc.name);
+			df.read_only = 1;
+
+			var df = frappe.meta.get_docfield("Supply Order Table", "mfg", frm.doc.name);
+			df.read_only = 1;
+			
+			var df = frappe.meta.get_docfield("Supply Order Table", "type", frm.doc.name);
+			df.read_only = 1;
+
+			var df = frappe.meta.get_docfield("Supply Order Table", "item_name", frm.doc.name);
+			df.read_only = 1;
+			
+		}
+	},
+
 	refresh: function(frm) {
 		if(frm.doc.docstatus == 1){
 			frm.add_custom_button(__("Request for Quotation"), function(){
@@ -120,6 +138,10 @@ frappe.ui.form.on('Supply Order Data', {
 					}
 			
 		}
+	
+	
+	
+
 	},
 	branch:function(frm){
 		var d = {

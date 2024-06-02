@@ -17,6 +17,7 @@
   "customer_email",
   "address",
   "incharge",
+  "old_wo_q_amount",
   "quoted_date",
   "warranty",
   "delivery",
@@ -24,7 +25,9 @@
   "expiry_date",
   "equipment_recieved_form",
   "priority_status",
+  "mistaken_ner",
   "status_cap",
+  "status_cap_date",
   "column_break_7",
   "received_date",
   "company",
@@ -72,6 +75,7 @@
   "online_price_section",
   "initial_evaluation",
   "price_table",
+  "old_wo_no",
   "amended_from"
  ],
  "fields": [
@@ -92,7 +96,7 @@
   {
    "fieldname": "quoted_date",
    "fieldtype": "Date",
-   "label": "Quoted Date",
+   "label": "Quoted Date / Approved Date",
    "read_only": 1
   },
   {
@@ -190,7 +194,7 @@
    "hidden": 1,
    "in_preview": 1,
    "label": "Naming Series",
-   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-"
+   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-"
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -214,7 +218,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\n"
+   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced"
   },
   {
    "default": "Repair - TSL",
@@ -274,9 +278,9 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "read_only": 1
   },
   {
    "fieldname": "branch",
@@ -493,9 +497,11 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "status_cap",
    "fieldtype": "Data",
-   "label": "Status Cap"
+   "label": "Status Cap",
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
@@ -503,6 +509,33 @@
    "fieldname": "attach_customer_image",
    "fieldtype": "Attach",
    "label": "Attach Customer Image"
+  },
+  {
+   "fieldname": "old_wo_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Old WO No"
+  },
+  {
+   "fieldname": "old_wo_q_amount",
+   "fieldtype": "Float",
+   "label": "Old Wo Q Amount"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status_cap_date",
+   "fieldtype": "Date",
+   "label": "Status Cap Date",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "depends_on": "frappe.user.has_role('Lab Coordinator')\n",
+   "fieldname": "mistaken_ner",
+   "fieldtype": "Check",
+   "label": "Mistaken NER"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -513,7 +546,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2024-01-24 10:48:40.762422",
+ "modified": "2024-06-01 09:53:50.660701",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

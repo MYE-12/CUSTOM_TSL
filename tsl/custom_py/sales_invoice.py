@@ -3,6 +3,28 @@ import frappe,json
 def on_update_after_submit(self,method):
 	pass
 
+def send_mail(self,method):
+	email = frappe.get_value("Customer",{"name":self.customer},["email_id"])
+	if email:
+		frappe.sendmail(recipients=["karthiksrinivasan1996.ks@gmail.com"],
+		sender="Notification from TSL <info@tsl-me.com>",
+		subject="Invoice from TSL - ",
+		message=""" 
+		<p>Dear Mr / ms</p><br>
+		Please find the attached Invoice and delivery copy as requested.
+		Kindly issue the payment as soon as possible.</p>
+		""",
+		attachments=get_attachments(self.name,"Sales Invoice")
+		)
+		
+		frappe.msgprint("Mail Successfully Sent to Customer")
+	else:
+		frappe.msgprint("Customer Email not Found.Please Set Email for the Customer")
+
+def get_attachments(name,doctype):
+	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Sales Invoice")
+	return [attachments]
+
 def on_submit(self,method):
 	for i in self.items:
 		wod = i.work_order_data or i.wod_no
@@ -15,7 +37,7 @@ def on_submit(self,method):
 			frappe.db.set_value("Work Order Data",wod,"invoice_date",self.posting_date)
 		elif sod:
 			doc = frappe.get_doc("Supply Order Data",sod)
-			doc.status = 'Delivered and Invoiced'
+			doc.status = 'Invoiced'
 			doc.save(ignore_permissions = True)
 			frappe.db.set_value("Supply Order Data",self.supply_order_data,"invoice_no",self.name)
 			frappe.db.set_value("Supply Order Data",self.supply_order_data,"invoice_date",self.posting_date)
@@ -78,7 +100,7 @@ def get_wod_items_from_quotation(wod):
 				"work_order_data":doc.name,
 				"cost_center":doc.department,
 				"branch":branch,
-				"income_account":"6001002 - Revenue from Service - TSL"
+				"income_account":"4101002 - Revenue from Service - TSL"
 
 			}))
 	return l

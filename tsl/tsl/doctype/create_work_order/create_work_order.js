@@ -229,7 +229,19 @@ frappe.ui.form.on('Create Work Order', {
 			};
 		}
 
+		if(frm.doc.company == "TSL Company - UAE"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Dubai"
+					}
+				};
+			});
+		}
+
 	}
+
+
 });
 frappe.ui.form.on("Create Work Order", {
 	setup: function (frm) {

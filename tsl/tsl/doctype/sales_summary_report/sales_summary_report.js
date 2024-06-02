@@ -42,6 +42,14 @@ frappe.ui.form.on('Sales Summary Report', {
 		frm.trigger("get_data");
 	},
 
+	from_date(frm){
+		frm.trigger("get_data");
+	},
+
+	to_date(frm){
+		frm.trigger("get_data");
+	},
+
 	// report(frm) {
 	// 	if(frm.doc.report){
 	// 	frm.call('get_work_orders').then(r=>{

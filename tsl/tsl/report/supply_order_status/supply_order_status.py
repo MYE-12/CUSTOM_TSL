@@ -287,13 +287,29 @@ def get_data(filters):
 		for j in frappe.db.sql('''select margin_amount,rate,amount,parent,q_unit_status from `tabQuotation Item` where supply_order_data = %s and parenttype = "Quotation"  ''',i["name"],as_dict=1):
 			ap_date= frappe.db.get_value("Quotation",j['parent'],["approval_date"])
 			i["approval_date"] = ap_date
+			dn = frappe.db.sql(''' select posting_date from `tabDelivery Note` left join 
+			`tabDelivery Note Item` on `tabDelivery Note`.name = `tabDelivery Note Item`.parent
+			where `tabDelivery Note Item`.supply_order_data = %s ''',i["name"],as_dict=1)
+			if dn:
+				i["dn_date"] = dn[0]["posting_date"]
+			else:
+				i["dn_date"] = ''
+			
+			cq = frappe.db.sql(''' select approval_date from `tabQuotation` left join 
+			`tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent
+			where `tabQuotation Item`.supply_order_data = %s ''',i["name"],as_dict=1)
+			if cq:
+				i["approval_date"] = cq[0]["approval_date"]
+			else:
+				i["approval_date"] = ''
+
 			is_multi = frappe.db.get_value("Quotation",j['parent'],["is_multiple_quotation","after_discount_cost"])
 			Quo_status = frappe.db.exists("Quotation",{"name":j['parent'],"workflow_state":"Approved By Customer"})
 			if Quo_status:
 				if is_multi[0] == 1:
 					i["quoted_price"] = j["margin_amount"]
 				else:
-					frappe.errprint(is_multi[-1])
+					
 					i["quoted_price"] = is_multi[-1]
 				i["price_after_dis"] = j["amount"]
 				i["gross"] = j["amount"]
@@ -301,7 +317,7 @@ def get_data(filters):
 				po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 				i["po"] = po
 				im = frappe.get_value("Item Model",{"name":i["model_no"]},["model"])
-				frappe.errprint(im)
+	
 				i["model_no"] = im
 				
 				
@@ -311,7 +327,7 @@ def get_data(filters):
 					if is_multi[0] == 1:
 						i["quoted_price"] = j["margin_amount"]
 					else:
-						frappe.errprint(is_multi[-1])
+					
 						i["quoted_price"] = is_multi[-1]
 	
 	# 	i["city"] = frappe.db.get_value("Address",frappe.db.get_value("Customer",i.customer,"customer_primary_address"),"city")

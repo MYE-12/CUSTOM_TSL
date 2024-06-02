@@ -2,6 +2,21 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Evaluation Report', {
+	onload: function(frm) {
+		if(frm.doc.company == "TSL COMPANY - UAE" && frm.doc.__islocal){
+		frm.set_value("naming_series","EVAL-DU-REP-.YYYY.-")
+		}
+
+		if(frm.doc.company == "TSL COMPANY - Kuwait" && frm.doc.__islocal){
+			frm.set_value("naming_series","EVAL-REP-.YYYY.-")
+			}
+		// if(frappe.user.has_role("Technician") && frm.doc.status == "Spare Parts"){
+		// 	frm.set_df_property("repaired_time", "reqd", 1);
+		// 	console.log("sdfnfsn")
+		// }
+},
+
+
 	// refresh: function(frm) {
 
 	// }
@@ -221,23 +236,36 @@ frappe.ui.form.on('Evaluation Report', {
 				});
 			},__('Create'));
 		}
-		if(frappe.user.has_role("Procurement") && frm.doc.parts_availability == "Yes"){
-			frm.add_custom_button(__("Release Parts"), function () {
-				frappe.call({
-					method: "tsl.tsl.doctype.evaluation_report.evaluation_report.create_material_issue_from_ini_eval",
-					args:{
-						'name':frm.doc.name
-					},
-					callback: function (r) {
-						if (r.message) {
-							console.log(r.message)
-							frappe.msgprint("Material Released")
-							// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
-						}
-					}
-				});
-			}, __('Create'));
-		}
+
+
+		var s = 0 
+			$.each(frm.doc.items, function(i,d) {
+				if(d.parts_availability == "Yes"){
+					s = s + 1
+				}
+			})
+			
+			if(s > 0){
+				if(frappe.user.has_role("Procurement")){
+					frm.add_custom_button(__("Release Parts"), function () {
+						
+						frappe.call({
+							method: "tsl.tsl.doctype.evaluation_report.evaluation_report.create_material_issue_from_ini_eval",
+							args:{
+								'name':frm.doc.name,
+								'company':frm.doc.company,
+							},
+							callback: function (r) {
+								if (r.message) {
+									console.log(r.message)
+									frappe.msgprint("Material Released")
+									// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+								}
+							}
+						});
+					}, __('Create'));
+				}
+			}
 	},
 	if_parts_required:function(frm){
 		if(frm.doc.if_parts_required){

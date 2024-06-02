@@ -40,6 +40,9 @@
   "column_break_13",
   "if_parts_required",
   "update_availability_status",
+  "column_break_akgum",
+  "received",
+  "section_break_7dvtq",
   "items",
   "section_break_34",
   "total_qty",
@@ -53,6 +56,7 @@
   "extra_repair_time",
   "column_break_cb5ok",
   "estimated_repair_time",
+  "repaired_time",
   "return_repair_time",
   "technician_comment_section",
   "comment",
@@ -140,9 +144,9 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "Naming Series",
-   "options": "EVAL-REP-.YYYY.-"
+   "options": "EVAL-REP-.YYYY.-\nEVAL-DU-REP-.YYYY.-",
+   "read_only": 1
   },
   {
    "fieldname": "work_order_data",
@@ -156,7 +160,6 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -385,7 +388,6 @@
    "label": "Evaluation Time"
   },
   {
-   "allow_on_submit": 1,
    "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status != \"Return No Fault\" && doc.status!= \"Comparison\"",
    "fieldname": "estimated_repair_time",
    "fieldtype": "Duration",
@@ -466,15 +468,42 @@
    "label": "Purchaser Comment"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "ner_field",
    "fieldtype": "Data",
-   "label": "NER Field"
+   "label": "NER Field",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "repaired_time",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Repaired Time",
+   "mandatory_depends_on": "eval:doc.received == 1 && frappe.user.has_role(\"Technician\") && !frappe.user.has_role(\"Administrator\")"
+  },
+  {
+   "fieldname": "column_break_akgum",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_7dvtq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "received",
+   "fieldtype": "Check",
+   "label": "Parts Received",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-04-03 10:51:33.535169",
+ "modified": "2024-05-31 12:10:12.102500",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

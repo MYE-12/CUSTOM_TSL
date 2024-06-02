@@ -10,7 +10,9 @@
   "supply_order_data",
   "supplier_quotation",
   "supplier",
-  "price"
+  "price",
+  "converted_price",
+  "shippment"
  ],
  "fields": [
   {
@@ -27,7 +29,7 @@
   },
   {
    "fieldname": "price",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Price"
   },
@@ -36,12 +38,24 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Supply Order Data"
+  },
+  {
+   "fieldname": "shippment",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "shippment"
+  },
+  {
+   "fieldname": "converted_price",
+   "fieldtype": "Float",
+   "in_standard_filter": 1,
+   "label": "Converted Price"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-12 20:29:15.618429",
+ "modified": "2024-04-18 09:26:59.364349",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supplier Details",

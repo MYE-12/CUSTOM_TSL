@@ -407,7 +407,7 @@ def create_rn(wod):
 			"stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
-			"income_account":"6001002 - Revenue from Service - TSL",
+			"income_account":"4101002 - Revenue from Service - TSL",
 			"warehouse":d[doc.branch]
 
 			})
@@ -460,7 +460,7 @@ def create_sal_inv(wod):
 			"stock_uom":"Nos",
 			"conversion_factor":1,
 			"cost_center":doc.department,
-			"income_account":"6001002 - Revenue from Service - TSL",
+			"income_account":"4101002 - Revenue from Service - TSL",
 			"warehouse":d[doc.branch]
 
 		})
@@ -598,36 +598,45 @@ class WorkOrderData(Document):
 		# 		"date":now,
 		# 	})
 	def on_update_after_submit(self):
-#		if self.technician and self.status == "NE-Need Evaluation":
-#			self.status = "UE-Under Evaluation"
+		if self.mistaken_ner:
+			ev = frappe.get_value("Evaluation Report",{"work_order_data":self.name},["name"])
+			if ev:
+				frappe.db.set_value("Evaluation Report",ev,"ner_field","")
+		
+			
 		if self.warranty and self.delivery:
 			date = frappe.utils.add_to_date(self.delivery, months=int(self.warranty))
 			frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
-		if self.status != self.status_duration_details[-1].status:
-			ldate = self.status_duration_details[-1].date
-			now = datetime.now()
-			time_date = str(ldate).split(".")[0]
-			format_data = "%Y-%m-%d %H:%M:%S"
-			date = datetime.strptime(time_date, format_data)
-			duration = now - date
-			duration_in_s = duration.total_seconds()
-			minutes = divmod(duration_in_s, 60)[0]/60
-			data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
-			frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
-			self.append("status_duration_details",{
-				"status":self.status,
-				"date":now,
-			})
-			doc = frappe.get_doc("Work Order Data",self.name)
-			doc.append("status_duration_details",{
-				"status":self.status,
-				"date":now,
-			})
-			doc.save(ignore_permissions=True)
-#		if self.delivery:
-#			wod = frappe.get_doc("Work Order Data",self.name)
-#			wod.status = 'RSC-Repaired and Shipped Client'
-#			wod.save(ignore_permissions = True)
+		
+		if not self.old_wo_no:
+			if self.status != self.status_duration_details[-1].status:
+				ldate = self.status_duration_details[-1].date
+				
+				now = datetime.now()
+				
+				time_date = str(ldate).split(".")[0]
+				format_data = "%Y-%m-%d %H:%M:%S"
+				date = datetime.strptime(time_date, format_data)
+				duration = now - date
+				duration_in_s = duration.total_seconds()
+				minutes = divmod(duration_in_s, 60)[0]/60
+				data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
+
+				frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
+				self.append("status_duration_details",{
+					"status":self.status,
+					"date":now,
+				})
+
+				doc = frappe.get_doc("Work Order Data",self.name)
+
+				doc.append("status_duration_details",{
+					"status":self.status,
+					"date":now,
+				})
+				doc.save(ignore_permissions=True)
+				
+#		
 	def before_submit(self):
 
 		self.status = "NE-Need Evaluation"
@@ -636,17 +645,7 @@ class WorkOrderData(Document):
 				"status":self.status,
 				"date":now,
 			})
-		# if not self.branch:
-		# 	frappe.throw("Assign a Branch to Submit")
-		# if not self.technician:
-		# 	frappe.throw("Assign a Technician to Submit")
-		# if not self.department:
-		# 	frappe.throw("Set Department to Submit")
-		# self.status = "UE-Under Evaluation"
-		
-		# current_time = now.strftime("%H:%M:%S")
-		# self.status_duration_details =[]
-		
+	
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()

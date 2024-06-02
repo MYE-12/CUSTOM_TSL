@@ -102,19 +102,26 @@ frappe.ui.form.on('Quotation', {
     
         },
 	default_discount_percentage(frm){
-		if(frm.doc.is_multiple_quotation){
+		if(frm.doc.is_multiple_quotation == 0){
 			var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
 			var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
 			frm.set_value("after_discount_cost",disc)
 			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		}
-		if(frm.doc.default_discount_percentage){
-		var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
-		var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
-		frm.set_value("after_discount_cost",disc)
-		frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
-		
+
+		if(frm.doc.is_multiple_quotation == 1){
+			var disc_val = (frm.doc.grand_total/100)*frm.doc.default_discount_percentage
+			var disc = Math.ceil(frm.doc.unit_rate_price- disc_val).toFixed(2)
+			frm.set_value("after_discount_cost",disc)
+			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		}
+		// if(frm.doc.default_discount_percentage){
+		// var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
+		// var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
+		// frm.set_value("after_discount_cost",disc)
+		// frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
+		
+		// }
 		
 		// else{
 		// 	frm.set_value("after_discount_cost",'')
@@ -306,7 +313,7 @@ frappe.ui.form.on('Quotation', {
 	}
 
 		
-	if(frm.doc.quotation_type === "Internal Quotation - Supply" && frm.doc.docstatus===1){
+	if(frm.doc.quotation_type === "Internal Quotation - Supply" || frm.doc.quotation_type === "Revised Quotation - Supply" && frm.doc.docstatus===1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				
                 frappe.call({
@@ -578,7 +585,7 @@ frappe.ui.form.on('Quotation', {
 				});
 			}, __("Get Items From"), "btn-default");
 	}
-		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Supply") {
+		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Supply" || frm.doc.quotation_type == "Revised Quotation - Supply") {
 			frm.add_custom_button(__('Supply Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({
@@ -851,6 +858,7 @@ frappe.ui.form.on("Quotation Item",{
 			var item = locals[cdt][cdn];
 			if(item.qty){
 				item.amount = item.qty * item.rate;
+				item.margin_amount = item.qty * item.margin_amount;
 				item.final_approved_price = item.amount;
 				var tot_amt = 0;
 				var tot_qty=0;
@@ -885,7 +893,7 @@ frappe.ui.form.on("Quotation Item",{
 		frappe.model.set_value(cdt, cdn, "margin_amount_value",disc_val);
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
-
+		frappe.model.set_value(cdt, cdn, "rate",dic_val);
 		// item.margin_amount_value = disc_val
 		
 	   },

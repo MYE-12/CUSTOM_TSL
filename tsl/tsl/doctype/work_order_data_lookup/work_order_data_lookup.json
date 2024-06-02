@@ -108,7 +108,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-13 13:20:22.960115",
+ "modified": "2024-04-18 12:59:52.148514",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data Lookup",
@@ -122,6 +122,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Technician",
    "share": 1,
    "write": 1
   }

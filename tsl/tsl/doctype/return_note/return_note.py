@@ -15,7 +15,7 @@ class ReturnNote(Document):
                 frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNAC-Return Not Approved Client",wo.wod_no))
             elif doc.status == "RNR-Return Not Repaired":
                 frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNRC-Return Not Repaired Client",wo.wod_no))
-            elif doc.status == "RNF-Return Not Fault":
+            elif doc.status == "RNF-Return No Fault":
                 frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNFC-Return No Fault Client",wo.wod_no))
             elif doc.status == "C-Comparison":
                 frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("CC-Comparison Client",wo.wod_no))
@@ -98,7 +98,7 @@ def get_wod_items(wod):
                 "cost_center":doc.department,
                 "rate":1,
                 "amount":1,
-                "income_account":"6001002 - Revenue from Service - TSL",
+                "income_account":"4101002 - Revenue from Service - TSL",
                 "warehouse":branch
 
             }))

@@ -28,6 +28,11 @@ def on_submit(self,method):
             wod = frappe.get_doc("Work Order Data",i.work_order_data)
             wod.status = "TR-Technician Repair"
             wod.save(ignore_permissions = True)
+
+            wod = frappe.get_doc("Evaluation Report",{"work_order_data":i.work_order_data})
+            wod.received = 1
+            wod.save(ignore_permissions = True)
+
     if self.supply_order_data:
         wod = frappe.get_doc("Supply Order Data",self.supply_order_data)
         wod.status = "Received"

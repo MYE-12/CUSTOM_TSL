@@ -6029,7 +6029,7 @@
   "property": "options",
   "property_type": "Text",
   "row_name": null,
-  "value": "ACC-PAY-.YYYY.-\nPTA-K.YY.-"
+  "value": "ACC-PAY-.YYYY.-\nACC-PAY-DU-.YYYY.-\nPTA-K.YY.-"
  },
  {
   "default_value": null,
