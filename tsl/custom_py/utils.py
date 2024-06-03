@@ -1394,3 +1394,12 @@ def update_ner(wod):
 	# ev = frappe.get_doc("Evaluation Report",{"work_order_data":wod})
 	# ev.ner_field = ""
 	# ev.save(ignore_permissions =1)
+
+@frappe.whitelist()
+def update_item(model,item):
+	i = frappe.db.exists("Item",item)
+	if i:
+		it = frappe.get_doc("Item",item)
+		it.model = model
+		it.save(ignore_permissions = 1)
+		frappe.msgprint("Model Number Updated")

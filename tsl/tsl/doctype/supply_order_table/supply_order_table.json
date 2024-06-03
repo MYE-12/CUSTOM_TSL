@@ -9,6 +9,7 @@
   "item_code",
   "item_number",
   "model_no",
+  "update_model_no",
   "mfg",
   "type",
   "unit",
@@ -140,12 +141,17 @@
    "in_list_view": 1,
    "label": "Unit",
    "options": "UOM"
+  },
+  {
+   "fieldname": "update_model_no",
+   "fieldtype": "Button",
+   "label": "Update Model No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-02 13:58:38.401374",
+ "modified": "2024-06-03 12:56:17.231662",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Table",
