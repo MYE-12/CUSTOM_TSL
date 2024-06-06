@@ -11,6 +11,7 @@
   "to_date",
   "reports",
   "customer",
+  "month",
   "download"
  ],
  "fields": [
@@ -42,14 +43,21 @@
    "fieldname": "reports",
    "fieldtype": "Select",
    "label": "Reports",
-   "options": "\nStatement of Customer\nSales Person Summary\nWork Order Data Time Log"
+   "options": "\nStatement of Customer\nSales Person Summary\nWork Order Data Time Log\nSalary Summary"
+  },
+  {
+   "depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-25 09:44:05.598014",
+ "modified": "2024-06-04 20:36:58.072311",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

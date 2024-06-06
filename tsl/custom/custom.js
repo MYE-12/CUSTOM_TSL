@@ -134,6 +134,7 @@ frappe.ui.form.on('Quotation', {
 
 	},
 	final_approved_price(frm){
+		if(!frm.doc.company == "TSL COMPANY - UAE"){
 		if(frm.doc.final_approved_price){
 			var add_val = (frm.doc.final_approved_price/100)*5
 			var add_v = Math.ceil(add_val).toFixed(2)
@@ -145,6 +146,31 @@ frappe.ui.form.on('Quotation', {
 		else{
 			frm.set_value("unit_rate_price","")
 
+		}
+
+	}
+
+		else{
+		if(frm.doc.final_approved_price && !frm.doc.is_multiple_quotation == 1){
+			var add_val = (frm.doc.final_approved_price/100)*5
+			var add_v = Math.ceil(add_val).toFixed(2)
+			var ds = parseInt(add_v )+ frm.doc.final_approved_price
+			frm.set_value("unit_rate_price",ds)
+			
+
+		}
+		
+		else{
+			frm.set_value("unit_rate_price","")
+			var t = 0
+			$.each(frm.doc.items, function(i,v){
+					t = t + v.amount
+			})
+
+			frm.set_value("unit_rate_price",t)
+
+			
+		}
 		}
 	},
 	validate(frm){

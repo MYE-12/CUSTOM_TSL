@@ -42,6 +42,8 @@ def create_supply_order_data(order_no):
 	new_doc.incharge = doc.incharge
 	if doc.department == "Supply Tender - TSL":
 		new_doc.naming_series ="ST-K.YY.-"
+	elif doc.company == "TSL COMPANY - UAE":
+		new_doc.naming_series ="SOD-DU.YY.-"
 	else:
 		new_doc.naming_series = d[new_doc.branch]
 	if doc.department != "Supply Tender - TSL":

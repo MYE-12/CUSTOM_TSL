@@ -178,6 +178,37 @@ setup:function(frm){
 
 	}
 
+	if(frm.doc.company == "TSL COMPANY - UAE"){
+		frm.set_query('customer', function(doc) {
+			return {
+				filters: {
+					"territory": "Dubai"
+				}
+			};
+		});
+
+		frm.set_query('branch', function(doc) {
+			return {
+				filters: {
+					"company": frm.doc.company
+				}
+			};
+		});
+
+		frm.set_query('department', function(doc) {
+			return {
+				filters: {
+					"company": frm.doc.company
+				}
+			};
+		});
+
+
+	}
+
+	
+
+
 	frm.fields_dict['equipments_in_stock'].grid.get_field('part').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 			var d = {};
@@ -233,6 +264,9 @@ frappe.ui.form.on("Create Supply Order", {
 
 	}
 });
+
+
+
 
 frappe.ui.form.on('Create Supply Order', {
 	setup: function(frm) {

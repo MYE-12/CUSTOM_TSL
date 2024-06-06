@@ -15,6 +15,7 @@ jinja = {
 	"methods": [
 		"tsl.custom_py.utils.get_receivable",
         "tsl.custom_py.utils.get_wod",
+        "tsl.custom_py.utils.salary_register",
         "tsl.custom_py.utils.get_wrk_ord",
         # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"
 	]
@@ -43,6 +44,8 @@ jinja = {
 # include js in doctype views
 doctype_js = {
 	"Quotation" : ["custom/custom.js"],
+	"Employee" : ["custom/employee.js"],
+	"Leave Application" : ["custom/leave_application.js"],
 	"Request for Quotation" : ["custom/request_for_quotation.js"],
 	"Purchase Order":["custom/purchase_order.js"],
 	"Supplier Quotation":["custom/supplier_quotation.js"]
@@ -200,13 +203,21 @@ doc_events = {
 			"tsl.custom_py.payment_entry.on_submit"
 		]
 	},
-
+	"Leave Application": {
+		"on_submit": [
+			"tsl.custom_py.employee.update_used_tickets_in_employee"
+		]
+	}
 }
 
 # Scheduled Tasks
 # ---------------
 
 scheduler_events = {
+	"daily": [
+		"tsl.tsl.doctype.official_document.official_document.trigger_mail_notification",
+		"tsl.custom_py.employee.update_ticket_count"
+	],
 	"weekly": [
 		"tsl.custom_py.quotation.send_qtn_reminder_mail"
 	],

@@ -1403,3 +1403,68 @@ def update_item(model,item):
 		it.model = model
 		it.save(ignore_permissions = 1)
 		frappe.msgprint("Model Number Updated")
+
+@frappe.whitelist()
+def salary_register(month_name):
+	# month_name = "May"
+	from datetime import timedelta
+	current_year = datetime.now().year
+	month_number = datetime.strptime(month_name, '%B').month
+	
+	first_date = datetime(current_year, month_number, 1)
+	if month_number == 12:
+		last_date = datetime(current_year, month_number, 31)
+	else:
+		next_month = datetime(current_year, month_number + 1, 1)
+		last_date = next_month - timedelta(days=1)
+	data = ''
+	data += '<table border = 1><tr>'
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Employee")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Employee Name")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Department")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Designation")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Company")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Leave Without Pay")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Payment Days")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Currency")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Loan Deduction")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Basic")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Car Allowance")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Food Allowance")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Housing Allowance")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Gross Pay")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td>'%("Total Deduction")
+	data += '<td style = "font-size:6px;font-weight:bold">%s</td></tr>'%("Net Pay")
+	filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'KWD', 'company': 'TSL COMPANY - Kuwait', 'docstatus': 'Submitted'}
+	from hrms.payroll.report.salary_register.salary_register import execute
+	result = execute(filters)
+	
+	for key in result:
+		for i in key:
+			if 'salary_slip_id' in i.keys():
+				basic = i['basic'] if i['basic'] is not None else 0
+				total_loan_repayment = i['total_loan_repayment'] if i['total_loan_repayment'] is not None else 0
+				car_allowance = i['car_allowance'] if i['car_allowance'] is not None else 0
+				food_allowance = i['food_allowance'] if i['food_allowance'] is not None else 0
+				housing_allowance = i['housing_allowance'] if i['housing_allowance'] is not None else 0
+				gross_pay = i['gross_pay'] if i['gross_pay'] is not None else 0
+				total_deduction = i['total_deduction'] if i['total_deduction'] is not None else 0
+				net_pay = i['net_pay'] if i['net_pay'] is not None else 0
+				data += '<td style = "font-size:6px">%s</td>'%(i['employee'])
+				data += '<td style = "font-size:6px">%s</td>'%(i['employee_name'])
+				data += '<td style = "font-size:6px">%s</td>'%(i['department'])
+				data += '<td style = "font-size:6px">%s</td>'%(i['designation'])
+				data += '<td style = "font-size:6px">%s</td>'%(i['company'])
+				data += '<td style = "font-size:6px">%s</td>'%(int(i['leave_without_pay']))
+				data += '<td style = "font-size:6px">%s</td>'%(int(i['payment_days']))
+				data += '<td style = "font-size:6px">%s</td>'%(i['currency'])
+				data += '<td style = "font-size:6px">%s</td>'%(f"{total_loan_repayment:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{basic:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{car_allowance:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{food_allowance:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{housing_allowance:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{gross_pay:.3f}")
+				data += '<td style = "font-size:6px">%s</td>'%(f"{basic:.3f}")
+				data += '<td style = "font-size:6px">%s</td></tr>'%(f"{net_pay:.3f}")
+	data += '</table>'
+	return data

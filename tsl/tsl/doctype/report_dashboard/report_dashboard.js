@@ -35,6 +35,18 @@ frappe.ui.form.on('Report Dashboard', {
 				));
 			}
 
+			if(frm.doc.reports == "Salary Summary"){
+				var print_format ="Salary Summary";
+				var f_name = "Salary Summary";
+				window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
+					+ "doctype=" + encodeURIComponent("Report Dashboard")
+					+ "&name=" + encodeURIComponent(f_name)
+					+ "&trigger_print=1"
+					+ "&format=" + print_format
+					+ "&no_letterhead=0"
+				));
+			}
+
 
 			if(frm.doc.reports == "Work Order Data Time Log"){
 				

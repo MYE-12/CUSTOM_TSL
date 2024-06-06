@@ -10,6 +10,7 @@ import frappe
 from frappe.model.document import Document
 from datetime import datetime
 from frappe.utils.file_manager import save_file
+
 # from tsl.tsl.custom_py.quotation import before_submit
 
 
@@ -259,13 +260,13 @@ def create_workorder_data(order_no, f):
                     if sn_doc.name:
                         sn_no = sn_doc.name
 
-                # else:
-                #     sn_doc = frappe.new_doc("Serial No")
-                #     sn_doc.serial_no = i['serial_no'] or ''
-                #     sn_doc.item_code = i['item_code']
-                #     sn_doc.save(ignore_permissions=True)
-                #     if sn_doc.name:
-                #         sn_no = sn_doc.name
+                else:
+                    sn_doc = frappe.new_doc("Serial No")
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",

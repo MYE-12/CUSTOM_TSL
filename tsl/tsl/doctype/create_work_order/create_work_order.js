@@ -229,7 +229,7 @@ frappe.ui.form.on('Create Work Order', {
 			};
 		}
 
-		if(frm.doc.company == "TSL Company - UAE"){
+		if(frm.doc.company == "TSL COMPANY - UAE"){
 			frm.set_query('customer', function(doc) {
 				return {
 					filters: {
