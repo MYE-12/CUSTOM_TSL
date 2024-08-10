@@ -261,12 +261,13 @@ def create_workorder_data(order_no, f):
                         sn_no = sn_doc.name
 
                 else:
-                    sn_doc = frappe.new_doc("Serial No")
-                    sn_doc.serial_no = i['serial_no'] or ''
-                    sn_doc.item_code = i['item_code']
-                    sn_doc.save(ignore_permissions=True)
-                    if sn_doc.name:
-                        sn_no = sn_doc.name
+                    if i["serial_no"]:
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no'] or ''
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
@@ -298,6 +299,29 @@ def create_workorder_data(order_no, f):
                     
                     wd = frappe.get_doc("Work Order Data",doc.work_order_data)
                     wd.status = "NER-Need Evaluation Return"
+                    if i["no_power"]:
+                        wd.no_power = 1
+                    if i["no_output"]:
+                        wd.no_output = 1
+                    if i["no_display"]:
+                        wd.no_display = 1
+                    if i["no_communication"]:
+                        wd.no_communication = 1
+                    if i["supply_voltage"]:
+                        wd.supply_voltage = 1
+                    if i["touchkeypad_not_working"]:
+                        wd.touch_keypad_not_working = 1
+                    if i["no_backlight"]:
+                        wd.no_backlight = 1
+                    if i["error_code"]:
+                        wd.error_code =1
+                    if i["short_circuit"]:
+                        wd.short_circuit=1
+                    if i["overloadovercurrent"]:
+                        wd.overload_overcurrent =1
+                    if i["other"]:
+                        wd.others = 1
+                        wd.specify = i["specify"]
                     wd.save(ignore_permissions = 1)
                     # frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
                     frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")

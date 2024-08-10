@@ -9,17 +9,19 @@
  "field_order": [
   "naming_series",
   "date",
+  "company",
   "document_type",
   "related_doc",
+  "branch",
+  "department",
   "customer",
   "customer_name",
   "column_break_6",
-  "company",
-  "branch",
-  "department",
   "salesman_name",
   "salesman_name1",
+  "technician_name",
   "reason",
+  "status",
   "suitable_date_and_time_for_customer_section",
   "cus_date",
   "time",
@@ -28,7 +30,8 @@
   "day",
   "sch_time",
   "section_break_15",
-  "technician_name",
+  "quotation",
+  "sales_invoice",
   "amended_from"
  ],
  "fields": [
@@ -45,6 +48,7 @@
    "label": "Date"
   },
   {
+   "depends_on": "eval:doc.document_type != \"\"",
    "fieldname": "related_doc",
    "fieldtype": "Dynamic Link",
    "label": "Related WO/SO",
@@ -71,7 +75,7 @@
   },
   {
    "fieldname": "reason",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Job Description"
   },
   {
@@ -112,7 +116,8 @@
   },
   {
    "fieldname": "section_break_15",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Documents Linked"
   },
   {
    "fieldname": "technician_name",
@@ -155,22 +160,47 @@
    "fieldname": "document_type",
    "fieldtype": "Select",
    "label": "Document Type",
-   "options": "Work Order Data\nSupply Order Data"
+   "options": "\nWork Order Data\nSupply Order Data"
   },
   {
    "fetch_from": "salesman_name.full_name",
    "fieldname": "salesman_name1",
    "fieldtype": "Data",
    "label": "Salesman Name"
+  },
+  {
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "label": "Quotation",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "label": "Sales Invoice",
+   "options": "Sales Invoice"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nService Enquiry\nInternally Quoted\nQuoted\nInvoiced\nRejected\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2023-03-15 09:39:57.644794",
+ "links": [
+  {
+   "link_doctype": "Quotation",
+   "link_fieldname": "service_call_form"
+  }
+ ],
+ "modified": "2024-07-24 21:22:31.437171",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -187,5 +217,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

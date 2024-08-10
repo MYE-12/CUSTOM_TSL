@@ -41,7 +41,7 @@ frappe.ui.form.on('Quotation', {
 		};
 
 		}
-		if(frm.doc.quotation_type == "Customer Quotation - Repair" && frm.doc.docstatus == 0){
+		if(frm.doc.quotation_type == "Customer Quotation - Repair" && frm.doc.docstatus == 0 && frm.doc.company == "TSL COMPANY - Kuwait"){
 			for(var i=0;i<frm.doc.quotation_history.length;i++){
 				if(frm.doc.quotation_history[i].quotation_type == "Internal Quotation - Repair" && frm.doc.quotation_history[i].status == "Approved By Management" ){
 					var doc_name = frm.doc.quotation_history[i].quotation_name
@@ -151,6 +151,7 @@ frappe.ui.form.on('Quotation', {
 	}
 
 		else{
+
 		if(frm.doc.final_approved_price && !frm.doc.is_multiple_quotation == 1){
 			var add_val = (frm.doc.final_approved_price/100)*5
 			var add_v = Math.ceil(add_val).toFixed(2)
@@ -171,6 +172,7 @@ frappe.ui.form.on('Quotation', {
 
 			
 		}
+		
 		}
 	},
 	validate(frm){
@@ -248,6 +250,36 @@ frappe.ui.form.on('Quotation', {
 
 
 		// 			}, ('Create'))
+		if(frm.doc.quotation_type == "Site Visit Quotation - Internal"){
+			frm.add_custom_button(__('Customer Quotation'), function(){
+					// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+					// let inc_rate = diff / frm.doc.total_qty
+					// $.each(frm.doc.items,function(i,v){
+					// 	var mar = v.margin_amount
+					// })
+					// frappe.db.get_value('Quotation', frm.doc.items, 'margin_amount', (v) => {
+					// 	var mar = v
+						
+					// });
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quotation",
+						args: {
+							"source": frm.doc.name,
+							"type":"Site Visit Quotation - Customer"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+	
+	
+							}, ('Create'))
+		}
+
 		if(frm.doc.quotation_type == "Internal Quotation - Repair"){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
@@ -259,21 +291,45 @@ frappe.ui.form.on('Quotation', {
 				// 	var mar = v
 					
 				// });
-                frappe.call({
-					method: "tsl.custom_py.quotation.get_quotation_history",
-					args: {
-						"source": frm.doc.name,
-						// "rate":inc_rate,
-						"type":"Customer Quotation - Repair"
-					},
-					callback: function(r) {
-						if(r.message) {
-							var doc = frappe.model.sync(r.message);
-							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+				if(frm.doc.company == "TSL COMPANY - Kuwait"){
 
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quotation_history",
+						args: {
+							"source": frm.doc.name,
+							// "rate":inc_rate,
+							"type":"Customer Quotation - Repair"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
 						}
-					}
-				});
+					});
+				}
+
+				if(frm.doc.company == "TSL COMPANY - UAE"){
+
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quote",
+						args: {
+							"source": frm.doc.name,
+						
+							"type":"Customer Quotation - Repair"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+				}
+               
+               
 
 
                         }, ('Create'))
@@ -634,12 +690,12 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										
+									
 										cur_frm.clear_table("items");
 										var tot_amt = 0;
 										var tot_qty=0;
 										for(var i=0;i<r.message.length;i++){
-											
+							
 											var childTable = cur_frm.add_child("items");
 											childTable.item_code = r.message[i]["item_code"],
 											childTable.item_name = r.message[i]["item_name"],

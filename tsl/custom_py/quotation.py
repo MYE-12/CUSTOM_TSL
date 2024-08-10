@@ -10,6 +10,20 @@ import datetime
 import requests
 from erpnext.setup.utils import get_exchange_rate
 
+
+@frappe.whitelist()
+def on_submit(doc,method):
+	if doc.service_call_form:
+		if doc. quotation_type == "Site Visit Quotation - Internal":
+			sc = frappe.get_doc("Service Call Form",doc.service_call_form)
+			sc.status = "Internally Quoted"
+			sc.save(ignore_permissions = 1)
+		if doc. quotation_type == "Site Visit Quotation - Customer":
+			sc = frappe.get_doc("Service Call Form",doc.service_call_form)
+			sc.status = "Quoted"
+			sc.save(ignore_permissions = 1)
+		
+
 @frappe.whitelist()
 def get_wod_items(wod):
 	wod = json.loads(wod)
@@ -80,9 +94,11 @@ def get_qtn_items(qtn):
 def get_sqtn_items(sod):
 	sod = json.loads(sod)
 	l=[]
+	frappe.errprint(sod)
 	for k in list(sod):
 		l += frappe.db.sql('''select si.item_code as item_code,si.mfg as manufacturer,si.supplier_quotation as sqtn,si.model_no as model_no,si.type as type,si.serial_no as serial_no,si.item_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.quantity as qty,si.price as rate,si.amount as amount,s.name as sod from `tabSupply Order Table` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
 		l += frappe.db.sql('''select si.part as item_code,si.manufacturer as manufacturer,si.supplier_quotation as sqtn,si.model as model_no,si.type as type,si.serial_no as serial_no,si.part_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.qty as qty,si.price_ea as rate,si.total as amount,s.name as sod from `tabPart Sheet Item Supply` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
+	
 	return l
 
 
@@ -116,7 +132,7 @@ def get_similar_unit_details(name):
 			wod = frappe.get_doc("Work Order Data",j)
 			for i in wod.get('material_list'):
 				if i.model_no and i.mfg and i.type and i.serial_no:
-					for sod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Supply Order Data" ''',(i.model_no,i.mfg,i.type,i.serial_no),as_dict=1):
+					for sod in frappe.db.sql('''select parent from `tabMaterial List` where model_no = %s and mfg = %s and type = %s and serial_no = %s and parenttype = "Supply Order Data" ''',(i.model_no,i.mfg,i.type,i.serial_no),as_dict=1)[:4]:
 						prev_quoted = frappe.db.sql('''select q.party_name as customer,q.name as name,qi.rate as price from `tabQuotation Item` as qi inner join `tabQuotation` as q on qi.parent = q.name where qi.supply_order_data = %s and (q.quotation_type = "Customer Quotation - Supply" or q.quotation_type = "Revised Quotation - Supply") and q.workflow_state = "Approved By Customer" ''',sod['parent'],as_dict = 1)
 						doc.append("similar_unit_details",{
 							"customer":prev_quoted[0]['customer'],
@@ -142,20 +158,21 @@ def get_similar_unit_details(name):
 # 	return l
 @frappe.whitelist()
 def sum_amount(doc,method):
-	for sm in doc.items:
-		pi = frappe.db.sql("""select sum(amount)as amount,work_order_data from `tabItem Price Details` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)
-		ths = frappe.db.sql("""select sum(total_price) as price,work_order_data from `tabTechnician Hours Spent` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)	
-		for p in pi:
-			if p.work_order_data:
-				for th in ths:
-					if th.work_order_data:
-						if p.work_order_data == th.work_order_data:
-							th = th.price
-							pt= p.amount
-							tot_a = th + pt
-							sm.rate = tot_a
-						else:
-							sm.rate = p.amount
+	if not doc.company == "TSL COMPANY - UAE":
+		for sm in doc.items:
+			pi = frappe.db.sql("""select sum(amount)as amount,work_order_data from `tabItem Price Details` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)
+			ths = frappe.db.sql("""select sum(total_price) as price,work_order_data from `tabTechnician Hours Spent` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)	
+			for p in pi:
+				if p.work_order_data:
+					for th in ths:
+						if th.work_order_data:
+							if p.work_order_data == th.work_order_data:
+								th = th.price
+								pt= p.amount
+								tot_a = th + pt
+								sm.rate = tot_a
+							else:
+								sm.rate = p.amount
 
 
 def show_details(self,method):
@@ -240,7 +257,21 @@ def show_details(self,method):
 						price = k.price_ea
 						source = "TSL Inventory"
 						sq_no = ""
-					self.append("item_price_details",{
+					exr = get_exchange_rate("KWD","AED")
+
+					if self.company == "TSL COMPANY - UAE":
+						self.append("item_price_details",{
+						"item":k.part,
+						"item_source":source,
+						"model":k.model,
+						"price":price * exr,
+						"amount":k.total * exr,
+						"supplier_quotation":sq_no,
+						"work_order_data":doc.work_order_data
+
+						})
+					else:
+						self.append("item_price_details",{
 						"item":k.part,
 						"item_source":source,
 						"model":k.model,
@@ -249,7 +280,8 @@ def show_details(self,method):
 						"supplier_quotation":sq_no,
 						"work_order_data":doc.work_order_data
 
-					})
+						})
+					
 				labour_value = 0
 				for t in tc:
 					labour_value += t.total_price
@@ -261,7 +293,7 @@ def show_details(self,method):
 					if not self.is_multiple_quotation and self.technician_hours_spent:
 							self.actual_cost = round(labour_value + cost)
 					else:
-						# frappe.errprint( labour_value)
+						
 
 						self.actual_cost = round(labour_value + cost)
 						
@@ -300,13 +332,14 @@ def show_details(self,method):
 
 	for i in self.get("items"):
 		if i.item_code:
-			suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price
-				,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi
-				on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 and q.name != %s''',(i.item_code,self.name),as_dict =1 )
+			suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price,qi.margin_amount as margin_quoted_price
+			,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg ,q.after_discount_cost as adc from `tabQuotation` as q inner join `tabQuotation Item` as qi
+			on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 and q.name != %s''',(i.item_code,self.name),as_dict =1 )
 			
 			if suqb:
 				self.previously_quoted_unit = []
-				for j in suqb:
+			
+				for j in suqb[:1]:
 					if j.work_order_data:
 						w_doc = frappe.get_doc("Work Order Data",j.work_order_data)
 					
@@ -316,7 +349,7 @@ def show_details(self,method):
 						"model":j.model,
 						"type":j.type,
 						"mfg":j.mfg,
-						"quoted_price":j.quoted_price,
+						"quoted_price":j.margin_quoted_price or j.adc,
 						"quotation_no":j.quotation_no,
 						"work_order_data":j.work_order_data or "" ,
 						"wo_status":w_doc.status
@@ -354,6 +387,182 @@ def create_cust_qtn(type,source):
 	return target_doc
 	
 @frappe.whitelist()
+def get_quotation(source,type = None):
+	target_doc = frappe.new_doc("Quotation")
+	doc = frappe.get_doc("Quotation",source)
+	if not doc.is_multiple_quotation:
+		for i in doc.items:
+			rate = i.margin_amount
+
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		target_doc.naming_series = "SV-QTN-CUS-K.YY.-"
+		target_doc.workflow_state = "Quoted to Customer"
+		if type == "Customer Quotation - Repair":
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
+		target_doc.append("quotation_history",{
+			"quotation_type":"Site Visit Quotation - Customer",
+			"quotation_name":doc.name,
+		})
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+	}, target_doc, postprocess)
+
+	return doclist
+
+@frappe.whitelist()
+def get_quote(source,type = None):
+	target_doc = frappe.new_doc("Quotation")
+	doc = frappe.get_doc("Quotation",source)
+	if not doc.is_multiple_quotation:
+		for i in doc.items:
+			rate = i.margin_amount
+
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		if type == "Customer Quotation - Repair":
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
+		target_doc.append("quotation_history",{
+			"quotation_type":doc.quotation_type,
+			"status":doc.workflow_state,
+			"quotation_name":doc.name,
+		})
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+	}, target_doc, postprocess)
+	
+	if not doc.quotation_type == "Internal Quotation - Supply":
+		for ic in doclist.get('items'):
+			
+			if not ic.margin_amount:
+				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+				unit_disc = disc
+
+				ic.rate = doc.after_discount_cost+disc
+			
+			if not doc.is_multiple_quotation and ic.item_code:
+				ic.rate = round(doc.unit_rate_price)
+		
+	else:
+		for ic in doclist.get('items'):
+			if not ic.margin_amount:
+				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+				unit_disc = disc
+
+				ic.rate = ic.rate
+			
+			if ic.item_code:
+				ic.rate = ic.rate
+			
+
+
+		
+	# for i in doc.items:
+	# 	rate = i.margin_amount
+	# 	if rate:
+	# 		for i in range(len(doclist.items)):
+	# 			doclist.items[i].rate = (rate)
+	# 			doclist.after_discount_cost = doc.actual_price
+					
+				
+	return doclist
+	# doc = frappe.get_doc("Quotation",source)
+	# target_doc = frappe.new_doc("Quotation")
+	# target_doc.is_multiple_quotation = doc.is_multiple_quotation
+	# target_doc.quotation_type = type
+	# target_doc.naming_series = doc.naming_series
+	# target_doc.party_name = doc.party_name
+	# if type == "Customer Quotation - Repair":
+	# 	target_doc.overall_discount_amount = 0
+	# 	target_doc.margin_rate = 0
+	# 	target_doc.discount_amount = 0
+	# target_doc.append("quotation_history",{
+	# 	"quotation_type":doc.quotation_type,
+	# 	"status":doc.workflow_state,
+	# 	"quotation_name":doc.name,
+	# })
+
+	# for i in doc.get("items"):
+	# 	target_doc.append("items",{
+	# 	"item_code":i.item_code,
+	# 	"item_name":i.item_name,
+	# 	"margin_amount":i.margin_amount,
+	# 	"rate":i.rate,
+	# 	"description":i.description,
+	# 	"uom":i.uom,
+	# 	"qty":i.qty,
+	# 	"wod_no":i.wod_no
+
+	# })
+	# # target_doc.taxes_and_charges = doc.taxes_and_charges
+
+	# # for i in doc.get("taxes"):
+	# # 	target_doc.append("taxes",{
+	# # 	"charge_type":i.charge_type,
+	# # 	"account_head":i.account_head
+
+	# # })
+	# target_doc.save(ignore_permissions = 1)
+	
+	# return target_doc
+	# # target_doc = get_mapped_doc("Quotation",source , {
+	# # 	# "Quotation": {
+	# # 	# 	"doctype": "Quotation",
+			
+	# # 	# },
+	# # 	"Quotation Item": {
+	# # 		"doctype": "Quotation Item",
+			
+	# # 	},
+	# # }, target_doc, postprocess)
+	
+	# # if not doc.quotation_type == "Internal Quotation - Supply":
+	# # 	for ic in doclist.get('items'):
+	# # 		frappe.errprint(ic)
+	# # 		if not ic.margin_amount:
+	# # 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+	# # 			unit_disc = disc
+
+	# # 			ic.rate = doc.after_discount_cost+disc
+			
+	# # 		if not doc.is_multiple_quotation and ic.item_code:
+	# # 			ic.rate = round(doc.unit_rate_price)
+		
+	# # else:
+	# # 	for ic in doclist.get('items'):
+	# # 		if not ic.margin_amount:
+	# # 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+	# # 			unit_disc = disc
+
+	# # 			ic.rate = ic.rate
+			
+	# # 		if ic.item_code:
+	# # 			ic.rate = ic.rate
+			
+
+	
+
+@frappe.whitelist()
 def get_quotation_history(source,type = None):
 	target_doc = frappe.new_doc("Quotation")
 	doc = frappe.get_doc("Quotation",source)
@@ -383,8 +592,10 @@ def get_quotation_history(source,type = None):
 			
 		},
 	}, target_doc, postprocess)
-	if doc.quotation_type != "Internal Quotation - Supply":
+	
+	if not doc.quotation_type == "Internal Quotation - Supply":
 		for ic in doclist.get('items'):
+			
 			if not ic.margin_amount:
 				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
 				unit_disc = disc
@@ -421,6 +632,7 @@ def get_quotation_history(source,type = None):
 
 @frappe.whitelist()
 def create_sal_inv(source):
+
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
 	doclist = get_mapped_doc("Quotation",source , {
@@ -440,20 +652,30 @@ def create_sal_inv(source):
 			
 		},
 	}, target_doc)
-	for mg in doc.get('items'):	
-		for i in doclist.get('items'):		
-			doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
-			if mg.item_code == i.item_code and doc.is_multiple_quotation:
-				# frappe.errprint(mg.item_code)
-				# frappe.errprint(mg.margin_amount)
-				i.item_code = mg.item_code
-				i.rate= mg.margin_amount
-				i.model= mg.model_no
-				i.manufacturer= mg.manufacturer
-			else:
-				i.rate= doc.after_discount_cost
-
-
+	if doc.company == "TSL COMPANY - Kuwait":
+		for mg in doc.get('items'):	
+			for i in doclist.get('items'):		
+				doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
+				if mg.item_code == i.item_code and doc.is_multiple_quotation:
+					
+					i.item_code = mg.item_code
+					i.rate= mg.margin_amount
+					i.model= mg.model_no
+					i.manufacturer= mg.manufacturer
+				else:
+					i.rate= doc.after_discount_cost
+	elif doc.company == "TSL COMPANY - UAE":
+		for mg in doc.get('items'):	
+			for i in doclist.get('items'):		
+				doclist.department = frappe.db.get_value("Work Order Data",i.wod_no,"department")
+				if mg.item_code == i.item_code and doc.is_multiple_quotation:
+					
+					i.item_code = mg.item_code
+					i.rate= mg.margin_amount
+					i.model= mg.model_no
+					i.manufacturer= mg.manufacturer
+				# else:
+				# 	i.rate= doc.after_discount_cost
 
 	return doclist
 @frappe.whitelist()
@@ -487,7 +709,7 @@ def final_price_validate_si(wod):
 	return qi_details
 
 def update_cq(self, method):
-	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair":
+	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair" or self.quotation_type == "Site Visit Quotation - Internal" or self.quotation_type == "Site Visit Quotation - Customer":
 		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
 	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")

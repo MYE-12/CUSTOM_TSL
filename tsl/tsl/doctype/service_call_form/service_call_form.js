@@ -104,14 +104,14 @@ frappe.ui.form.on('Service Call Form', {
 });
 frappe.ui.form.on('Service Call Form', {
 	setup: function(frm) {
-		frm.set_query("branch", function() {
-			return {
-				filters: [
-					["Warehouse","company", "=", frm.doc.company],
-					["Warehouse","is_branch","=",1]
+		// frm.set_query("branch", function() {
+		// 	return {
+		// 		filters: [
+		// 			["Warehouse","company", "=", frm.doc.company],
+		// 			["Warehouse","is_branch","=",1]
 					
-				]
-			}
-		});
+		// 		]
+		// 	}
+		// });
 	}
 });

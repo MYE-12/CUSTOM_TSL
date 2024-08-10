@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "supply_order_data",
+  "so_no",
   "supplier_quotation",
   "supplier",
   "price",
@@ -50,12 +51,17 @@
    "fieldtype": "Float",
    "in_standard_filter": 1,
    "label": "Converted Price"
+  },
+  {
+   "fieldname": "so_no",
+   "fieldtype": "Data",
+   "label": "So No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-04-18 09:26:59.364349",
+ "modified": "2024-08-06 16:11:30.222832",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supplier Details",

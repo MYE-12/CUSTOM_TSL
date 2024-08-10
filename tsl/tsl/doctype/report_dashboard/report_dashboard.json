@@ -12,7 +12,10 @@
   "reports",
   "customer",
   "month",
-  "download"
+  "download",
+  "download_excel",
+  "company",
+  "cyrix_employee"
  ],
  "fields": [
   {
@@ -51,13 +54,34 @@
    "fieldtype": "Select",
    "label": "Month",
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
+  },
+  {
+   "depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "mandatory_depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "options": "Company"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "fieldname": "cyrix_employee",
+   "fieldtype": "Check",
+   "label": "Cyrix Employee"
+  },
+  {
+   "depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "fieldname": "download_excel",
+   "fieldtype": "Button",
+   "label": "Download Excel"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-04 20:36:58.072311",
+ "modified": "2024-07-08 22:31:02.584622",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

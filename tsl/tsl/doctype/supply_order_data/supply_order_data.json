@@ -172,6 +172,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "dn_no",
    "fieldtype": "Link",
    "label": "Delivery Note",
@@ -179,6 +180,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "dn_no.posting_date",
    "fieldname": "dn_date",
    "fieldtype": "Date",
@@ -186,6 +188,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "invoice_no",
    "fieldtype": "Link",
    "label": "Sales Invoice",
@@ -193,11 +196,11 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fetch_from": "invoice_no.posting_date",
    "fieldname": "invoice_date",
    "fieldtype": "Date",
-   "label": "Invoice Date",
-   "read_only": 1
+   "label": "Invoice Date"
   },
   {
    "fieldname": "section_break_14",
@@ -315,7 +318,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-05 10:41:01.166978",
+ "modified": "2024-07-23 09:59:55.713676",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

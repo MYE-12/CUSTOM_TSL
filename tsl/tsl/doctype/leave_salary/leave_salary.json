@@ -1,0 +1,282 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:employee",
+ "creation": "2024-06-24 19:22:02.978381",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee_details_section",
+  "employee",
+  "employee_name",
+  "date_of_joining",
+  "grade",
+  "column_break_4",
+  "leave_application",
+  "passport_number",
+  "department",
+  "designation",
+  "no_of_days_worked_section",
+  "from_date",
+  "to_date",
+  "no_of_days_worked",
+  "column_break_12",
+  "basic",
+  "food",
+  "other_allowance",
+  "hra_salary",
+  "column_break_20",
+  "mobile_allowance",
+  "transport_allowance",
+  "salary_amount_pay",
+  "total_amount",
+  "leave_salary_section",
+  "leave_start_date",
+  "leave_end_date",
+  "no_of_days",
+  "leave_balance",
+  "column_break_48",
+  "air_fair",
+  "total_salary",
+  "total_released_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "unique": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Data",
+   "label": "Date of Joining",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.grade",
+   "fieldname": "grade",
+   "fieldtype": "Link",
+   "label": "Grade",
+   "options": "Employee Grade",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.passport_number",
+   "fieldname": "passport_number",
+   "fieldtype": "Data",
+   "label": "Passport Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department ",
+   "options": "Department",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "no_of_days_worked_section",
+   "fieldtype": "Section Break",
+   "label": "Earned Salary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From date"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To date"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_of_days_worked",
+   "fieldtype": "Int",
+   "label": "No of days Worked"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": "employee.basic",
+   "fieldname": "basic",
+   "fieldtype": "Currency",
+   "label": "Basic",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "employee.food_allowance",
+   "fieldname": "food",
+   "fieldtype": "Currency",
+   "label": "Food Allowance",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "employee.other_allowances",
+   "fieldname": "other_allowance",
+   "fieldtype": "Currency",
+   "label": "Other Allowance",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.grade != \"Labour\"",
+   "fetch_from": "employee.housing_allowance",
+   "fieldname": "hra_salary",
+   "fieldtype": "Currency",
+   "label": "HRA",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.grade != \"Labour\"",
+   "fetch_from": "employee.mobile_allowance",
+   "fieldname": "mobile_allowance",
+   "fieldtype": "Currency",
+   "label": "Mobile Allowance",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.grade!=\"Factory Staff\"",
+   "fetch_from": "employee.transport_allowance",
+   "fieldname": "transport_allowance",
+   "fieldtype": "Currency",
+   "label": "Transport Allowance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "salary_amount_pay",
+   "fieldtype": "Currency",
+   "label": "Earned Basic",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Earned Salary"
+  },
+  {
+   "fieldname": "leave_salary_section",
+   "fieldtype": "Section Break",
+   "label": "Leave Salary"
+  },
+  {
+   "fieldname": "leave_start_date",
+   "fieldtype": "Date",
+   "label": "Leave Start Date"
+  },
+  {
+   "fieldname": "leave_end_date",
+   "fieldtype": "Date",
+   "label": "Leave End Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "leave_balance",
+   "fieldtype": "Float",
+   "label": "Leave Balance"
+  },
+  {
+   "fieldname": "column_break_48",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "no_of_days",
+   "fieldtype": "Data",
+   "label": "No of Days"
+  },
+  {
+   "default": "0",
+   "fieldname": "air_fair",
+   "fieldtype": "Currency",
+   "label": "Air Fair Allowance"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_salary",
+   "fieldtype": "Currency",
+   "label": "Total Leave Salary"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_released_amount",
+   "fieldtype": "Currency",
+   "label": "Total Released Amount"
+  },
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Link",
+   "label": "Leave Application",
+   "options": "Leave Application"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-24 19:04:24.811851",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Leave Salary",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

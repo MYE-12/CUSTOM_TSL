@@ -42,7 +42,8 @@
    "fieldname": "total_price",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Labor Cost"
+   "label": "Labor Cost",
+   "options": "currency"
   },
   {
    "fieldname": "work_order_data",
@@ -56,7 +57,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-08-28 11:48:41.713808",
+ "modified": "2024-07-29 13:37:50.483277",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Technician Hours Spent",

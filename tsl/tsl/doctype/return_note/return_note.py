@@ -10,15 +10,32 @@ class ReturnNote(Document):
         for wo in self.items:
             doc = frappe.get_doc("Work Order Data",wo.wod_no)
             if doc.status == "RNP-Return No Parts":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNPC-Return No Parts Client",wo.wod_no))
-            elif doc.status == "RNA-Return Not Approved":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNAC-Return Not Approved Client",wo.wod_no))
-            elif doc.status == "RNR-Return Not Repaired":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNRC-Return Not Repaired Client",wo.wod_no))
-            elif doc.status == "RNF-Return No Fault":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNFC-Return No Fault Client",wo.wod_no))
-            elif doc.status == "C-Comparison":
-                frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("CC-Comparison Client",wo.wod_no))
+                doc.status = "RNPC-Return No Parts Client"
+                doc.save(ignore_permissions = 1)
+            if doc.status == "RNA-Return Not Approved":
+                doc.status = "RNAC-Return Not Approved Client"
+                doc.save(ignore_permissions = 1)
+            if doc.status == "RNR-Return Not Repaired":
+                doc.status = "RNRC-Return Not Repaired Client"
+                doc.save(ignore_permissions = 1)
+            if doc.status == "RNF-Return No Fault":
+                doc.status = "RNFC-Return No Fault Client"
+                doc.save(ignore_permissions = 1)
+            if doc.status == "C-Comparison":
+                doc.status = "CC-Comparison Client"
+                doc.save(ignore_permissions = 1)
+
+            # doc = frappe.get_doc("Work Order Data",wo.wod_no)
+            # if doc.status == "RNP-Return No Parts":
+            #     frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNPC-Return No Parts Client",wo.wod_no))
+            # elif doc.status == "RNA-Return Not Approved":
+            #     frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNAC-Return Not Approved Client",wo.wod_no))
+            # elif doc.status == "RNR-Return Not Repaired":
+            #     frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNRC-Return Not Repaired Client",wo.wod_no))
+            # elif doc.status == "RNF-Return No Fault":
+            #     frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("RNFC-Return No Fault Client",wo.wod_no))
+            # elif doc.status == "C-Comparison":
+            #     frappe.db.sql('''update `tabWork Order Data` set status = %s where name = %s ''',("CC-Comparison Client",wo.wod_no))
             
             se_doc = frappe.new_doc("Stock Entry")
             se_doc.stock_entry_type = "Material Issue"

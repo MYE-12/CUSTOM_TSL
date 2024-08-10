@@ -1,5 +1,13 @@
 import frappe
 
+def on_update_after_submit(self,method):
+   for i in self.items:
+      if i.supply_order_data:
+         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+
+   
+
 def on_submit(self,method):
    for i in self.get("items"):
       wod = i.work_order_data or i.wod_no
@@ -28,7 +36,7 @@ def on_submit(self,method):
                wd.status = "P-Paid"
                wd.save(ignore_permissions = 1)
              
-            # if none no NRE or INVOICE it will be RSC
+            # if none no NER or INVOICE it will be RSC
             else:
                wd = frappe.get_doc("Work Order Data",wod)
                if not wd.status_cap == "NER-Need Evaluation Return":
@@ -43,10 +51,12 @@ def on_submit(self,method):
            
       if i.supply_order_data:
          doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
-         doc.status = "Delivered"
-   
+         doc.status = 'Invoiced'
          doc.save(ignore_permissions = True)
+         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
 
+   
 
 @frappe.whitelist()
 def wo_status_count():

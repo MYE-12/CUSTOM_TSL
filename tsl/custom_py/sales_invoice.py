@@ -1,7 +1,25 @@
 import frappe,json
 
 def on_update_after_submit(self,method):
-	pass
+	for i in self.items:
+		wod = i.work_order_data or i.wod_no
+		sod = i.supply_order_data
+	
+		if wod:
+			# doc = frappe.get_doc("Work Order Data",wod)
+			# doc.status = 'RSI-Repaired and Shipped Invoiced'
+			# doc.save(ignore_permissions = True)
+			frappe.db.set_value("Work Order Data",wod,"invoice_no",self.name)
+			frappe.db.set_value("Work Order Data",wod,"invoice_date",self.posting_date)
+		elif i.supply_order_data:
+			# doc = frappe.get_doc("Supply Order Data",sod)
+			# doc.status = 'Invoiced'
+			# doc.invoice_no = self.name
+			# doc.invoice_date = self.posting_date
+			# doc.save(ignore_permissions = True)
+			frappe.db.set_value("Supply Order Data",sod,"invoice_no",self.name)
+			frappe.db.set_value("Supply Order Data",sod,"invoice_date",self.posting_date)
+
 
 def send_mail(self,method):
 	email = frappe.get_value("Customer",{"name":self.customer},["email_id"])
@@ -26,21 +44,35 @@ def get_attachments(name,doctype):
 	return [attachments]
 
 def on_submit(self,method):
+	if self.service_call_form:
+		frappe.db.set_value("Service Call Form",self.service_call_form,"Sales Invoice",self.name)
+
+	if self.quotation:
+		ir = frappe.db.exists("Invoice Request",{"quotation":self.quotation})
+		if ir:
+			# frappe.db.set_value("Invoice Request",ir,"docstatus",1)
+			i = frappe.get_doc("Invoice Request",ir)
+			i.workflow_state == "Invoice Created"
+			i.save(ignore_permissions = 1)
+			i.submit()
+			
 	for i in self.items:
 		wod = i.work_order_data or i.wod_no
-		sod = i.supply_order_data or self.supply_order_data
+		sod = i.supply_order_data
 		if wod:
 			doc = frappe.get_doc("Work Order Data",wod)
 			doc.status = 'RSI-Repaired and Shipped Invoiced'
 			doc.save(ignore_permissions = True)
 			frappe.db.set_value("Work Order Data",wod,"invoice_no",self.name)
 			frappe.db.set_value("Work Order Data",wod,"invoice_date",self.posting_date)
-		elif sod:
+		elif i.supply_order_data:
 			doc = frappe.get_doc("Supply Order Data",sod)
 			doc.status = 'Invoiced'
 			doc.save(ignore_permissions = True)
-			frappe.db.set_value("Supply Order Data",self.supply_order_data,"invoice_no",self.name)
-			frappe.db.set_value("Supply Order Data",self.supply_order_data,"invoice_date",self.posting_date)
+			frappe.db.set_value("Supply Order Data",sod,"invoice_no",self.name)
+			frappe.db.set_value("Supply Order Data",sod,"invoice_date",self.posting_date)
+
+	
 
 def before_save(self,method):
 	if self.taxes:

@@ -5,7 +5,26 @@ frappe.ui.form.on('Report Dashboard', {
 	// refresh: function(frm) {
 
 	// }
+	download_excel(frm){
+		if(frm.doc.reports == "Salary Summary"){
+				
+			var path = "tsl.custom_py.utils.salary_register_excel"
+			var args = 'month_name=%(month_name)s&company=%(company)s&cyrix_employee=%(cyrix_employee)s'
+				
+		}
 
+		if (path) {
+			
+			window.location.href = repl(frappe.request.url +'?cmd=%(cmd)s&%(args)s', {
+				cmd: path,
+				args: args,
+				month_name: frm.doc.month,
+				company : frm.doc.company,
+				cyrix_employee : frm.doc.cyrix_employee,	
+			
+			});
+		}
+	},
 	download:function(frm){
 			if(frm.doc.reports == "Statement of Customer" && frm.doc.customer){
 				var print_format ="Account Receivable";
@@ -36,15 +55,20 @@ frappe.ui.form.on('Report Dashboard', {
 			}
 
 			if(frm.doc.reports == "Salary Summary"){
-				var print_format ="Salary Summary";
-				var f_name = "Salary Summary";
-				window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
-					+ "doctype=" + encodeURIComponent("Report Dashboard")
-					+ "&name=" + encodeURIComponent(f_name)
-					+ "&trigger_print=1"
-					+ "&format=" + print_format
-					+ "&no_letterhead=0"
-				));
+				if(frm.doc.company){
+					var print_format ="Salary Summary";
+					var f_name = "Salary Summary";
+					window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
+						+ "doctype=" + encodeURIComponent("Report Dashboard")
+						+ "&name=" + encodeURIComponent(f_name)
+						+ "&trigger_print=1"
+						+ "&format=" + print_format
+						+ "&no_letterhead=0"
+					));
+				}
+				else{
+					frappe.throw("Please select Company")
+				}			
 			}
 
 

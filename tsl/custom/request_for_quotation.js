@@ -40,6 +40,20 @@ frappe.ui.form.on('Request for Quotation', {
                                                                 
                         // });
                 }
+
+                if(frm.doc.items && frm.doc.supply_order_data){
+                        $.each(frm.doc.items, function(i,d) {
+                        frappe.db.get_value('Warehouse', {'company':frm.doc.company,"is_branch":1}, ['name'], (r) => {
+                        d.warehouse = r.name
+                                                        
+                            });
+                        });
+        
+                        // frappe.db.get_value('Department', {'company':frm.doc.company,"is_repair":1}, ['name'], (r) => {
+                        //         frm.set_value("department",r.name)
+                                                                
+                        // });
+                }
                 
         frm.set_query("branch", function() {
                 return {

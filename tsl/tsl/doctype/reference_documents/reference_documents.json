@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-06-30 15:15:39.801249",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "doc_name",
+  "documents",
+  "wo",
+  "so"
+ ],
+ "fields": [
+  {
+   "fieldname": "documents",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name"
+  },
+  {
+   "fieldname": "wo",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "WO"
+  },
+  {
+   "fieldname": "so",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "SO"
+  },
+  {
+   "fieldname": "doc_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Document"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-10 12:52:36.680318",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Reference Documents",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

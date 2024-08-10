@@ -17,12 +17,12 @@ from tsl.tsl.doctype.part_sheet.part_sheet import get_valuation_rate
 class EvaluationReport(Document):
 	@frappe.whitelist()
 	def update_availability_status(self):
-		frappe.errprint("hi")
+		
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
 			if i.part and i.parts_availability == "No":
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
-				frappe.errprint(bin)
+				
 				sts = "Yes"
 				if len(bin) and 'name' in bin[0]:
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
@@ -292,6 +292,7 @@ class EvaluationReport(Document):
 				item_doc.item_group = "Components"
 				if frappe.session.user == "purchase@tsl-me.com" :
 					item_doc.save(ignore_permissions = True)
+
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0
@@ -336,7 +337,6 @@ class EvaluationReport(Document):
 			for qt in  wod_status:
 				if self.status == "Working":
 					if qt.wod == self.work_order_data:
-						frappe.errprint("yes")
 						doc = frappe.get_doc("Work Order Data",qt.wod)
 						doc.status = "RS-Repaired and Shipped"
 				
@@ -358,7 +358,7 @@ class EvaluationReport(Document):
 				elif self.status == "Spare Parts":
 					doc.status = "SP-Searching Parts"
 			
-			if self.status == "Extra Parts" and self.parts_availability != "Yes":
+			if self.status == "Extra Parts" and not self.parts_availability == "Yes":
 
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "EP-Extra Parts"
@@ -403,10 +403,21 @@ class EvaluationReport(Document):
 				if i.parts_availability == "No" and not i.from_scrap:
 					f=1
 			if len(self.items)>0 and self.items[-1].part_sheet_no and self.docstatus ==1:
+					
 					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison","Internal Extra Parts"] and self.ner_field == "NER-Need Evaluation Return":
 						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
-					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  self.ner_field != "NER-Need Evaluation Return":
+						wd = frappe.get_doc("Work Order Data",self.work_order_data)
+						wd.status = "EP-Extra Parts"
+						wd.save(ignore_permissions = 1)
+					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  not self.ner_field == "NER-Need Evaluation Return":
 						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Internal Extra Parts",self.name))
+						wd = frappe.get_doc("Work Order Data",self.work_order_data)
+						wd.status = "EP-Extra Parts"
+						wd.save(ignore_permissions = 1)
+						
+					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  not self.ner_field == "NER-Need Evaluation Return" and self.parts_availability == "Yes":
+					
+						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Working",self.name))
 
 			if f:
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
@@ -508,28 +519,51 @@ class EvaluationReport(Document):
 
 @frappe.whitelist()
 def create_material_issue_from_ini_eval(name):
-	new_doc = frappe.new_doc("Stock Entry")
-	new_doc.stock_entry_type = "Material Issue"
-	# new_doc.company = self.company
-	new_doc.to_warehouse = "Kuwait - TSL"
-
 	# new_doc.to_warehouse = "Kuwait - TSL"
 	ini= frappe.get_doc('Evaluation Report',name)
-	for i in ini.items:
-		if i.released != 1 and i.parts_availability == "Yes":
-			new_doc.append("items",{
-				's_warehouse':"Kuwait - TSL",
-				'item_code':i.part,
-				'qty':i.qty,
-				'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-				# 'conversion_factor':1,
-				# 'allow_zero_valuation_rate':1
-			})
-			new_doc.save(ignore_permissions = True)
-			new_doc.submit()
-	frappe.msgprint("Parts Released and Material Issue is Created")
-			
+	
+	if ini.company == "TSL COMPANY - Kuwait":
+		new_doc = frappe.new_doc("Stock Entry")
+		new_doc.stock_entry_type = "Material Issue"
+		# new_doc.company = self.company
+		new_doc.to_warehouse = "Kuwait - TSL"
+		for i in ini.items:
+			if not i.released == 1 and i.parts_availability == "Yes":
+				new_doc.append("items",{
+					's_warehouse':"Kuwait - TSL",
+					'item_code':i.part,
+					'qty':i.qty,
+					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+					# 'conversion_factor':1,
+					# 'allow_zero_valuation_rate':1
+				})
+				new_doc.save(ignore_permissions = True)
+				new_doc.submit()
 
+		frappe.msgprint("Parts Released and Material Issue is Created")
+		
+	if ini.company == "TSL COMPANY - UAE":
+		frappe.errprint("hiii")
+		new_doc = frappe.new_doc("Stock Entry")
+		new_doc.company = "TSL COMPANY - UAE"
+		new_doc.stock_entry_type = "Material Issue"
+		new_doc.from_warehouse = "Dubai - TSL-UAE"
+		
+		for i in ini.items:
+			if not i.released == 1 and i.parts_availability == "Yes":
+				new_doc.append("items",{
+					's_warehouse':"Dubai - TSL-UAE",
+					'item_code':i.part,
+					'qty':i.qty,
+					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+					'cost_center':"Main - TSL-UAE"
+					# 'conversion_factor':1,
+					# 'allow_zero_valuation_rate':1
+				})
+				new_doc.save(ignore_permissions = True)
+				new_doc.submit()
+
+		# frappe.msgprint("Parts Released and Material Issue is Created")
 
 #	def onload(self):
 #		self.append("technician_details",{

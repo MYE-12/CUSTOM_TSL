@@ -174,7 +174,24 @@ def on_submit(self,method):
 
 #Supplier quotation supply order rate conversion
 
-    if self.supply_order_data:
+    if self.supply_order_data and self.company == "TSL COMPANY - UAE":
+        doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
+        for i in self.get('items'):
+            for j in doc.get("in_stock"):
+                if i.item_code == j.part:
+                    j.price_ea = i.rate
+                    j.total = i.rate * j.qty
+                    j.supplier_quotation = self.name
+            for j in doc.get('material_list'):
+                if j.item_code == i.item_code:
+                    # rate_kw = data['rates']['KWD']
+                    # conv_rate = i.rate * rate_kw
+                    j.price = i.rate     
+                    j.amount = i.rate * float(j.quantity)
+                    j.supplier_quotation = self.name
+        doc.save(ignore_permissions=True)
+    
+    else:
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         for i in self.get('items'):
             for j in doc.get("in_stock"):
@@ -189,11 +206,10 @@ def on_submit(self,method):
                     headers = {}
                     response = requests.request("GET", url, headers=headers, data=payload)
                     data = response.json()
-                    frappe.errprint(data)
+                
                     rate_kw = data['rates']['KWD']
                     conv_rate = i.rate * rate_kw
                     j.price = conv_rate      
                     j.amount = conv_rate * float(j.quantity)
                     j.supplier_quotation = self.name
         doc.save(ignore_permissions=True)
-

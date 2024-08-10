@@ -17,6 +17,9 @@ jinja = {
         "tsl.custom_py.utils.get_wod",
         "tsl.custom_py.utils.salary_register",
         "tsl.custom_py.utils.get_wrk_ord",
+        "tsl.custom_py.utils.get_sales",
+        "tsl.custom_py.utils.get_pi",
+        "tsl.custom_py.utils.get_q"
         # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"
 	]
 }
@@ -46,6 +49,7 @@ doctype_js = {
 	"Quotation" : ["custom/custom.js"],
 	"Employee" : ["custom/employee.js"],
 	"Leave Application" : ["custom/leave_application.js"],
+	"Loan Application" : ["custom/loan_application.js"],
 	"Request for Quotation" : ["custom/request_for_quotation.js"],
 	"Purchase Order":["custom/purchase_order.js"],
 	"Supplier Quotation":["custom/supplier_quotation.js"]
@@ -127,6 +131,10 @@ doc_events = {
             "tsl.custom_py.quotation.show_details"
             
 		],
+
+		"on_submit":[
+			"tsl.custom_py.quotation.on_submit"
+		],
 		# "after_save":[
 			
 		# ]
@@ -163,7 +171,11 @@ doc_events = {
 	"Delivery Note":{
 		"on_submit":[
 			"tsl.custom_py.delivery_note.on_submit"
-		]
+		],
+
+		"on_update_after_submit":[
+			"tsl.custom_py.delivery_note.on_update_after_submit"
+		],
 	},
 	"Contact":{
 		"before_save":[
@@ -207,6 +219,10 @@ doc_events = {
 		"on_submit": [
 			"tsl.custom_py.employee.update_used_tickets_in_employee"
 		]
+	},
+    "Loan Application": {
+		# "on_submit": "tsl.custom_py.loan_application_tsl.update_loan_amount",
+		# "on_cancel": "tsl.custom_py.loan_application_tsl.update_loan_amount"
 	}
 }
 

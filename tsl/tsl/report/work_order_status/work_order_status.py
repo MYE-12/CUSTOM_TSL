@@ -112,7 +112,6 @@ def get_columns(filters):
 		"fieldname":"customer_ref",
 		"label": "Customer Ref",
 		"fieldtype": "Data",
-		
 		"width":150
 	},
 	
@@ -360,6 +359,9 @@ def get_data(filters):
 		pdate = frappe.get_value("Work Order Data",{"name":i["wod_no"]},["payment_date"])
 		i["paid_date"] = pdate
 
+		cr = frappe.get_value("Work Order Data",{"name":i["wod_no"]},["customer_reference_number"])
+		i["customer_ref"] = cr
+
 		dndate = frappe.get_value("Work Order Data",{"name":i["wod_no"]},["dn_date"])
 		i["dn_date"] = dndate
 
@@ -406,7 +408,7 @@ def get_data(filters):
 				po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 				i["po"] = po
 				crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
-				i["customer_ref"] = crn
+				# i["customer_ref"] = crn
 		
 				sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 				if sales_rep:
@@ -429,7 +431,7 @@ def get_data(filters):
 					po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 					i["po"] = po
 					crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
-					i["customer_ref"] = crn
+					# i["customer_ref"] = crn
 					sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 					if sales_rep:
 						i["sales_rep"] = sales_rep
@@ -450,7 +452,7 @@ def get_data(filters):
 						po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 						i["po"] = po
 						crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
-						i["customer_ref"] = crn
+						# i["customer_ref"] = crn
 				
 						sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 						if sales_rep:
@@ -472,7 +474,7 @@ def get_data(filters):
 							po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 							i["po"] = po
 							crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
-							i["customer_ref"] = crn
+							# i["customer_ref"] = crn
 					
 							sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 							if sales_rep:
@@ -496,7 +498,7 @@ def get_data(filters):
 						po= frappe.db.get_value("Quotation",j['parent'],"purchase_order_no")
 						i["po"] = po
 						crn= frappe.db.get_value("Quotation",j['parent'],"customer_reference_number")
-						i["customer_ref"] = crn
+						# i["customer_ref"] = crn
 						sales_rep=  frappe.get_value("Work Order Data",i["wod_no"],"sales_rep")
 						if sales_rep:
 							i["sales_rep"] = sales_rep

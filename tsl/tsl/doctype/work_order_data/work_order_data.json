@@ -17,6 +17,7 @@
   "customer_email",
   "address",
   "incharge",
+  "old_wo_no",
   "old_wo_q_amount",
   "quoted_date",
   "warranty",
@@ -75,7 +76,7 @@
   "online_price_section",
   "initial_evaluation",
   "price_table",
-  "old_wo_no",
+  "tech_id",
   "amended_from"
  ],
  "fields": [
@@ -449,11 +450,11 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "priority_status",
    "fieldtype": "Select",
    "label": "Priority Status",
-   "options": "Normal\nUrgent",
-   "read_only": 1
+   "options": "Normal\nUrgent"
   },
   {
    "allow_on_submit": 1,
@@ -500,8 +501,7 @@
    "allow_on_submit": 1,
    "fieldname": "status_cap",
    "fieldtype": "Data",
-   "label": "Status Cap",
-   "read_only": 1
+   "label": "Status Cap"
   },
   {
    "allow_on_submit": 1,
@@ -526,8 +526,7 @@
    "allow_on_submit": 1,
    "fieldname": "status_cap_date",
    "fieldtype": "Date",
-   "label": "Status Cap Date",
-   "read_only": 1
+   "label": "Status Cap Date"
   },
   {
    "allow_on_submit": 1,
@@ -536,6 +535,13 @@
    "fieldname": "mistaken_ner",
    "fieldtype": "Check",
    "label": "Mistaken NER"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tech_id",
+   "fieldtype": "Link",
+   "label": "Tech ID",
+   "options": "Technician ID"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -546,7 +552,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2024-06-04 15:22:11.213906",
+ "modified": "2024-07-21 12:46:29.434496",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
