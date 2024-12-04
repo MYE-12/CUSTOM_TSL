@@ -409,7 +409,7 @@ frappe.ui.form.on('Testing Part Sheet', {
 				args: {
 					"item": row.part,
 					"qty": row.qty,
-					"warehouse": frappe.user_defaults.company
+					"warehouse": frm.doc.company
 				},
 				callback: function (r) {
 					frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);

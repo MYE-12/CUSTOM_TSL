@@ -70,7 +70,8 @@
   "amended_from",
   "signature",
   "technician_image_multiple",
-  "evaluation_report"
+  "evaluation_report",
+  "technician_id"
  ],
  "fields": [
   {
@@ -78,7 +79,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Naming Series",
-   "options": "TEVAL-KW-.YYYY.-\nTEVAL-JED-.YYYY.-\nTEVAL-RIYADH-.YYYY.-\nTEVAL-DMM-.YYYY.-"
+   "options": "TEVAL-KW-.YYYY.-\nTEVAL-DU-.YYYY.-\nTEVAL-JED-.YYYY.-\nTEVAL-RIYADH-.YYYY.-\nTEVAL-DMM-.YYYY.-"
   },
   {
    "fieldname": "customer",
@@ -119,6 +120,7 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "hidden": 1,
+   "in_standard_filter": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -485,6 +487,13 @@
    "hidden": 1,
    "label": "Evaluation Report",
    "options": "Evaluation Report"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_id",
+   "fieldtype": "Link",
+   "label": "Technician ID",
+   "options": "Technician ID"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -495,7 +504,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2023-10-22 10:20:43.256740",
+ "modified": "2024-11-04 11:16:59.346801",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

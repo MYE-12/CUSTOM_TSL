@@ -1,0 +1,445 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-11-18 12:35:01.257629",
+ "default_view": "List",
+ "description": "Supplier of Goods or Services.",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "supplier_name",
+  "supplier_group",
+  "establishment_year",
+  "country",
+  "city",
+  "trade_license_and_vat",
+  "number_of_branches",
+  "company_website",
+  "number_of_employees",
+  "business_before",
+  "date_of_working",
+  "company_reviews",
+  "column_break0",
+  "export_destinations",
+  "types_of_industry",
+  "best_selling_brands",
+  "authorized_brand",
+  "column_break_gxnc9",
+  "official_documents",
+  "services_provides",
+  "product_condition",
+  "best_brand_price",
+  "e_commerce_platform",
+  "replacement_policy",
+  "company_address",
+  "preferred_shipping_company",
+  "coordinator_name",
+  "coordinator_contact_number",
+  "coordinator_email",
+  "landline",
+  "alternative_email",
+  "communication_method",
+  "non_working_days",
+  "payment_method",
+  "banking_details_section",
+  "bank_name",
+  "official_company_name_as_per_bank_account",
+  "account_number",
+  "iban",
+  "swift_code",
+  "bank_address",
+  "official_letter_bank_details",
+  "column_break_enxa1",
+  "paypal",
+  "company_location",
+  "skype_id",
+  "stock_list_availability",
+  "status",
+  "supplier_evaluation",
+  "notes",
+  "image",
+  "defaults_section",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "oldfieldname": "naming_series",
+   "oldfieldtype": "Select",
+   "options": "SUP-.YYYY.-",
+   "set_only_once": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Official Company Name as per Trade License",
+   "no_copy": 1,
+   "oldfieldname": "supplier_name",
+   "oldfieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "column_break0",
+   "fieldtype": "Select",
+   "label": "Do you have stock? ",
+   "options": "\nYes\nNo",
+   "width": "50%"
+  },
+  {
+   "fieldname": "supplier_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Supplier Group",
+   "oldfieldname": "supplier_type",
+   "oldfieldtype": "Link",
+   "options": "Supplier Group"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Image",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Defaults"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "establishment_year",
+   "fieldtype": "Date",
+   "label": "Establishment Year"
+  },
+  {
+   "fieldname": "trade_license_and_vat",
+   "fieldtype": "Attach",
+   "label": "Please Upload Your Trade License and VAT Certificate "
+  },
+  {
+   "fieldname": "number_of_branches",
+   "fieldtype": "Data",
+   "label": "Number of Branches"
+  },
+  {
+   "fieldname": "company_website",
+   "fieldtype": "Data",
+   "label": "Company Website"
+  },
+  {
+   "fieldname": "number_of_employees",
+   "fieldtype": "Data",
+   "label": "Number of Employees  "
+  },
+  {
+   "fieldname": "business_before",
+   "fieldtype": "Select",
+   "label": "Have you done any business with TSL Group before ?",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "date_of_working",
+   "fieldtype": "Date",
+   "label": "If yes, when did you start working with TSL? "
+  },
+  {
+   "fieldname": "company_reviews",
+   "fieldtype": "Currency",
+   "label": "What is your company's total reviews ? (USD)"
+  },
+  {
+   "fieldname": "export_destinations",
+   "fieldtype": "Data",
+   "label": "What are your top export destinations?  "
+  },
+  {
+   "fieldname": "types_of_industry",
+   "fieldtype": "Data",
+   "label": "What types of industrial Electronics do you supply?"
+  },
+  {
+   "fieldname": "best_selling_brands",
+   "fieldtype": "Data",
+   "label": "Please list the five best-selling brands you provide"
+  },
+  {
+   "fieldname": "authorized_brand",
+   "fieldtype": "Data",
+   "label": "Are you an authorized distributor for any brand?"
+  },
+  {
+   "fieldname": "official_documents",
+   "fieldtype": "Data",
+   "label": "Do you provide any official Documents for your products?"
+  },
+  {
+   "fieldname": "services_provides",
+   "fieldtype": "Data",
+   "label": "Do you offer after-sales services or technical support for the products you provide? "
+  },
+  {
+   "fieldname": "product_condition",
+   "fieldtype": "Data",
+   "label": "What is the condition of the products you sell?"
+  },
+  {
+   "fieldname": "best_brand_price",
+   "fieldtype": "Data",
+   "label": "What are the brands that you can source at the best price?"
+  },
+  {
+   "fieldname": "e_commerce_platform",
+   "fieldtype": "Select",
+   "label": "Do you have an E-Commerce Platform?",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "replacement_policy",
+   "fieldtype": "Data",
+   "label": "What is your Replacement Policy"
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Data",
+   "label": "Full Company Address"
+  },
+  {
+   "fieldname": "preferred_shipping_company",
+   "fieldtype": "Data",
+   "label": "What is your preferred shipping company for deliveries?  "
+  },
+  {
+   "fieldname": "coordinator_name",
+   "fieldtype": "Data",
+   "label": "Coordinator Name (Sales,Admin)"
+  },
+  {
+   "fieldname": "coordinator_contact_number",
+   "fieldtype": "Data",
+   "label": "Coordinator Contact Number"
+  },
+  {
+   "fieldname": "coordinator_email",
+   "fieldtype": "Data",
+   "label": "  Coordinator Email Address"
+  },
+  {
+   "fieldname": "landline",
+   "fieldtype": "Data",
+   "label": "What is your landline phone number?  "
+  },
+  {
+   "fieldname": "alternative_email",
+   "fieldtype": "Data",
+   "label": "What is an alternative email address for communication in case of no response?  "
+  },
+  {
+   "fieldname": "communication_method",
+   "fieldtype": "Data",
+   "label": "What method do you prefer for requesting a quotation and communication? "
+  },
+  {
+   "fieldname": "non_working_days",
+   "fieldtype": "Data",
+   "label": "What are your non-working Days?"
+  },
+  {
+   "fieldname": "payment_method",
+   "fieldtype": "Data",
+   "label": "Payment Methods Accepted"
+  },
+  {
+   "fieldname": "bank_name",
+   "fieldtype": "Data",
+   "label": "Bank Name  "
+  },
+  {
+   "fieldname": "official_company_name_as_per_bank_account",
+   "fieldtype": "Data",
+   "label": "Official Company Name as per Bank Account"
+  },
+  {
+   "fieldname": "account_number",
+   "fieldtype": "Data",
+   "label": "Account Number "
+  },
+  {
+   "fieldname": "iban",
+   "fieldtype": "Data",
+   "label": "IBAN"
+  },
+  {
+   "fieldname": "swift_code",
+   "fieldtype": "Data",
+   "label": "SWIFT Code"
+  },
+  {
+   "fieldname": "bank_address",
+   "fieldtype": "Data",
+   "label": "Bank Address"
+  },
+  {
+   "fieldname": "official_letter_bank_details",
+   "fieldtype": "Attach",
+   "label": "Please provide an official letter from your bank that includes your bank account details  "
+  },
+  {
+   "fieldname": "paypal",
+   "fieldtype": "Data",
+   "label": "Please provide your PayPal account email or ID to facilitate payments through PayPal if Available."
+  },
+  {
+   "fieldname": "company_location",
+   "fieldtype": "Data",
+   "label": "Company location on Google maps"
+  },
+  {
+   "fieldname": "skype_id",
+   "fieldtype": "Data",
+   "label": "If you\u2019re on Skype, kindly share your Skype ID  "
+  },
+  {
+   "fieldname": "stock_list_availability",
+   "fieldtype": "Data",
+   "label": "Could we regularly share your stock list availability?"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nUnder Review\nHold\nApproved"
+  },
+  {
+   "fieldname": "supplier_evaluation",
+   "fieldtype": "Data",
+   "label": "Supplier Evaluation"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "column_break_gxnc9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Supplier Form",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "banking_details_section",
+   "fieldtype": "Section Break",
+   "label": "Banking Details"
+  },
+  {
+   "fieldname": "column_break_enxa1",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "icon": "fa fa-user",
+ "image_field": "image",
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Allowed Items",
+   "link_doctype": "Party Specific Item",
+   "link_fieldname": "party"
+  }
+ ],
+ "modified": "2024-11-22 23:15:43.000457",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Supplier Form",
+ "name_case": "Title Case",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase User"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Master Manager",
+   "set_user_permissions": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Stock User"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager"
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  }
+ ],
+ "search_fields": "supplier_name, supplier_group",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "supplier_name",
+ "track_changes": 1
+}

@@ -14,12 +14,18 @@ app_license = "MIT"
 jinja = {
 	"methods": [
 		"tsl.custom_py.utils.get_receivable",
-        "tsl.custom_py.utils.get_wod",
+        "tsl.custom_py.sales_summary.get_wod",
+        # "tsl.custom_py.wo_approval_html.get_data",
         "tsl.custom_py.utils.salary_register",
         "tsl.custom_py.utils.get_wrk_ord",
         "tsl.custom_py.utils.get_sales",
         "tsl.custom_py.utils.get_pi",
-        "tsl.custom_py.utils.get_q"
+        "tsl.custom_py.utils.get_q",
+		"tsl.custom_py.utils.get_mc",
+        "tsl.custom_py.utils.purchase_report",
+        "tsl.custom_py.utils.daily_lab_report",
+        "tsl.custom_py.utils.weekly_lab_report",
+        "tsl.custom_py.sales_person_html.get_sales",
         # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"
 	]
 }
@@ -120,7 +126,9 @@ doc_events = {
 		],
 
 		"after_insert": [
-			"tsl.custom_py.quotation.update_cq"
+			"tsl.custom_py.quotation.update_cq",
+			"tsl.custom_py.quotation.get_pre_eval"
+            
             
 		],
 		"before_submit":[
@@ -223,7 +231,7 @@ doc_events = {
     "Loan Application": {
 		# "on_submit": "tsl.custom_py.loan_application_tsl.update_loan_amount",
 		# "on_cancel": "tsl.custom_py.loan_application_tsl.update_loan_amount"
-	}
+	},
 }
 
 # Scheduled Tasks
@@ -269,8 +277,14 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"erpnext.stock.doctype.landed_cost_voucher.landed_cost_voucher.get_items_from_purchase_receipts": "tsl.custom_py.after_import.get_items_from_purchase_receipts"
+	"erpnext.stock.doctype.landed_cost_voucher.landed_cost_voucher.get_items_from_purchase_receipts": "tsl.custom_py.after_import.get_items_from_purchase_receipts",
 }
+
+from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry as fed
+from tsl.custom_py import utils as nfed
+
+fed.fill_employee_details = nfed.fill_employee_details
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

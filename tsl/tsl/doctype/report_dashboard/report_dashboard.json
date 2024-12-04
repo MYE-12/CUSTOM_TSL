@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2024-02-27 13:45:22.196415",
  "default_view": "List",
  "doctype": "DocType",
@@ -19,15 +18,15 @@
  ],
  "fields": [
   {
+   "depends_on": "eval:doc.reports != \"Salary Summary\"",
    "fieldname": "from_date",
    "fieldtype": "Date",
-   "hidden": 1,
    "label": "From Date"
   },
   {
+   "depends_on": "eval:doc.reports != \"Salary Summary\"",
    "fieldname": "to_date",
    "fieldtype": "Date",
-   "hidden": 1,
    "label": "To Date"
   },
   {
@@ -56,11 +55,11 @@
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   },
   {
-   "depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "depends_on": "eval:doc.reports == \"Salary Summary\" || doc.reports == \"Sales Person Summary\"",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "mandatory_depends_on": "eval:doc.reports == \"Salary Summary\"",
+   "mandatory_depends_on": "eval:doc.reports == \"Salary Summary\" || doc.reports == \"Salary Person Summary\" ",
    "options": "Company"
   },
   {
@@ -81,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-08 22:31:02.584622",
+ "modified": "2024-10-03 10:26:47.791985",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

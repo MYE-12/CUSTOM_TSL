@@ -109,12 +109,12 @@ frappe.ui.form.on('Quotation', {
 			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		}
 
-		if(frm.doc.is_multiple_quotation == 1){
-			var disc_val = (frm.doc.grand_total/100)*frm.doc.default_discount_percentage
-			var disc = Math.ceil(frm.doc.unit_rate_price- disc_val).toFixed(2)
-			frm.set_value("after_discount_cost",disc)
-			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
-		}
+		// if(frm.doc.is_multiple_quotation == 1){
+		// 	var disc_val = (frm.doc.grand_total/100)*frm.doc.default_discount_percentage
+		// 	var disc = Math.ceil(frm.doc.unit_rate_price- disc_val).toFixed(2)
+		// 	frm.set_value("after_discount_cost",disc)
+		// 	frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
+		// }
 		// if(frm.doc.default_discount_percentage){
 		// var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
 		// var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
@@ -122,11 +122,16 @@ frappe.ui.form.on('Quotation', {
 		// frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
 		
 		// }
+		if(frm.doc.is_multiple_quotation == 1){
+			//Changed as per mohammed request
+			var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
+			console.log(disc_val)
+
+			var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
+			frm.set_value("after_discount_cost",disc)
+			frm.set_value("default_discount_value",Math.floor(disc_val)).toFixed(2)
+		}
 		
-		// else{
-		// 	frm.set_value("after_discount_cost",'')
-		// 	frm.set_value("default_discount_value",'')
-		// }
 		if(frm.doc.default_discount_percentage){
 			frm.set_value("after_discount_cost",frm.doc.final_approved_price)
 
@@ -182,7 +187,9 @@ frappe.ui.form.on('Quotation', {
 		var doc_name = split_name[1]
 		var branch = split_name[3]
 		var no = split_name[4]
+		
 		frm.set_value('qtn_no',doc_name+'-'+ branch +'-'+ no)
+		
 		if(frm.doc.is_multiple_quotation){
 			$.each(frm.doc.items, function(i,v){
 				if(v.margin_amount <= 0){
@@ -278,7 +285,42 @@ frappe.ui.form.on('Quotation', {
 	
 	
 							}, ('Create'))
+
+							
 		}
+
+
+		if(frm.doc.quotation_type == "Quotation - Supply Tender" && frm.doc.workflow_state == "Rejected" || frm.doc.quotation_type == "Revised Quotation - Supply Tender" && frm.doc.workflow_state == "Rejected"){
+			frm.add_custom_button(__('Revise Quotation'), function(){
+					// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
+					// let inc_rate = diff / frm.doc.total_qty
+					// $.each(frm.doc.items,function(i,v){
+					// 	var mar = v.margin_amount
+					// })
+					// frappe.db.get_value('Quotation', frm.doc.items, 'margin_amount', (v) => {
+					// 	var mar = v
+						
+					// });
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quotation_tender",
+						args: {
+							"source": frm.doc.name,
+							"type":"Revised Quotation - Supply Tender"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+	
+	
+							}, ('Create'))
+		}
+
+
 
 		if(frm.doc.quotation_type == "Internal Quotation - Repair"){
 		frm.add_custom_button(__('Customer Quotation'), function(){
@@ -667,7 +709,7 @@ frappe.ui.form.on('Quotation', {
 				});
 			}, __("Get Items From"), "btn-default");
 	}
-		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Internal Quotation - Supply" || frm.doc.quotation_type == "Revised Quotation - Supply") {
+		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Quotation - Supply Tender" || frm.doc.quotation_type == "Internal Quotation - Supply" || frm.doc.quotation_type == "Revised Quotation - Supply") {
 			frm.add_custom_button(__('Supply Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({
@@ -703,13 +745,14 @@ frappe.ui.form.on('Quotation', {
 											childTable.supplier_quotation = r.message[i]['sqtn'],
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
-											childTable.description = r.message[i]["item_name"],
+											childTable.description = r.message[i]["description"],
 											childTable.uom = r.message[i]['uom'],
 											childTable.stock_uom = r.message[i]['stock_uom'],
 											childTable.conversion_factor = r.message[i]['conversion_factor'],
 											childTable.type = r.message[i]['type'],
 											childTable.qty = r.message[i]["qty"],
 											childTable.rate = r.message[i]["rate"]
+											childTable.item_price = r.message[i]["rate"],
 											childTable.amount = r.message[i]['amount'],
 											tot_amt += r.message[i]['amount'];
 											tot_qty += r.message[i]["qty"];
@@ -959,7 +1002,8 @@ frappe.ui.form.on("Quotation Item",{
 
 				}
 				var act = frm.doc.actual_price
-				frm.set_value("final_approved_price",act);
+				console.log(act)
+				frm.set_value("final_approved_price",item.margin_amount);
 				cur_frm.refresh_fields();
 
 				

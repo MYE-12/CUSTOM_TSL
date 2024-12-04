@@ -55,9 +55,32 @@ frappe.ui.form.on('Supply Order Data', {
 			},__('Create'));
 		}
 		if(frm.doc.docstatus === 1) {
+		if(frm.doc.department == "Supply - TSL"){
+		frm.add_custom_button(__("Sales Invoice"), function(){
+			frappe.call({
+				method: "tsl.tsl.doctype.supply_order_data.supply_order_data.create_sal_inv_tender",
+				args: {
+					"sod": frm.doc.name
+				},
+				callback: function(r) {
+					if(r.message) {
+						var doc = frappe.model.sync(r.message);
+						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						
+						
+					}
+				}
+			});
+		},__('Create'));
+		}
+		
+		}
+
+		if(frm.doc.docstatus === 1) {
+			if(frm.doc.department == "Supply Tender - TSL"){
 			frm.add_custom_button(__("Sales Invoice"), function(){
 				frappe.call({
-					method: "tsl.tsl.doctype.supply_order_data.supply_order_data.create_sal_inv",
+					method: "tsl.tsl.doctype.supply_order_data.supply_order_data.create_sal_inv_tender",
 					args: {
 						"sod": frm.doc.name
 					},
@@ -71,7 +94,11 @@ frappe.ui.form.on('Supply Order Data', {
 					}
 				});
 			},__('Create'));
-		}
+			}
+			
+			}
+
+
 		if(frm.doc.docstatus === 1) {
 			frm.add_custom_button(__("Delivery Note"), function(){
 				frappe.call({

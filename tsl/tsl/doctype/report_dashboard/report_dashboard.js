@@ -3,8 +3,24 @@
 
 frappe.ui.form.on('Report Dashboard', {
 	// refresh: function(frm) {
+       
+        
+    //     // Check if the user has a specific role
+    //     if (frappe.user.has_role("HR Manager")) {
+    //         // Set options only for users with the specified role
+    //         frm.set_df_property("reports", "options", ["Salary Summary"]);
+    //     }
+	// 	else if (frappe.user.has_role("Admin")) {
+    //         // Set options only for users with the specified role
+    //         frm.set_df_property("reports", "options", ["Statement of Customer"]);
+    //     }
+		
 
-	// }
+	// 	 else {
+    //         // Set limited options for other users
+    //         frm.set_df_property("reports", "options", ["Salary Summary","Statement of Customer"]);
+    //     }
+    // },
 	download_excel(frm){
 		if(frm.doc.reports == "Salary Summary"){
 				
@@ -25,6 +41,7 @@ frappe.ui.form.on('Report Dashboard', {
 			});
 		}
 	},
+	
 	download:function(frm){
 			if(frm.doc.reports == "Statement of Customer" && frm.doc.customer){
 				var print_format ="Account Receivable";

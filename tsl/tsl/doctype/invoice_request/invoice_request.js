@@ -6,11 +6,36 @@ frappe.ui.form.on('Invoice Request', {
 
 	// }
 	 
-	onload(frm){
-		if(frm.doc.quotation){
-			frm.trigger("get_data");
-		}
-	},
+	// onload(frm){
+	// 	if(frm.doc.quotation){
+	// 		frm.trigger("get_data");
+	// 	}
+	// },
+
+	onload: function(frm) {
+        // Set the query for the child table field
+        frm.fields_dict['invoice_list'].grid.get_field('quotation').get_query = function(doc, cdt, cdn) {
+            // Custom filter logic
+            return {
+                filters: {
+                    'quotation_type': ['in', ['Customer Quotation - Repair','Revised Quotation - Repair','Internal Quotation - Repair']],
+                    
+                }
+            };
+        };
+
+
+		frm.fields_dict['sod_quotation'].grid.get_field('quotation').get_query = function(doc, cdt, cdn) {
+            // Custom filter logic
+            return {
+                filters: {
+                    'quotation_type': ['in', ['Customer Quotation - Supply','Revised Quotation - supply','Internal Quotation - Supply']],
+                    
+                }
+            };
+        };
+    },
+
 
 	get_data:function (frm){
 
@@ -35,3 +60,61 @@ frappe.ui.form.on('Invoice Request', {
 		frm.trigger("get_data");
 	}
 });
+
+
+frappe.ui.form.on('Invoice Creation', {
+	
+	quotation(frm, cdt, cdn) {
+		var child = locals[cdt][cdn]
+		if (child.quotation) {
+		    
+		    frm.call({
+				method: 'tsl.custom_py.utils.invoice_request',
+				args: {
+					qu:child.quotation,
+				}
+			}).then(r => {
+				if (r.message) {
+					// frm.clear_table('invoice_list');
+					$.each(r.message, function(i,d) {
+						console.log(d)
+						let child = frm.add_child('invoice_list');
+						child.wod_sod = d.wod_no;
+					
+
+					});
+					frm.refresh_field('invoice_list');		
+				}
+			});
+		}
+	
+	},
+})
+
+frappe.ui.form.on('SOD IV Creation', {
+	quotation(frm, cdt, cdn) {
+		var child = locals[cdt][cdn]
+		if (child.quotation) {
+		    
+		    frm.call({
+				method: 'tsl.custom_py.utils.invoice_request_2',
+				args: {
+					qu:child.quotation,
+				}
+			}).then(r => {
+				if (r.message) {
+					// frm.clear_table('invoice_list');
+					$.each(r.message, function(i,d) {
+						console.log(d)
+						let child = frm.add_child('sod_quotation');
+						child.supply_order_data = d.supply_order_data;
+					
+
+					});
+					frm.refresh_field('sod_quotation');		
+				}
+			});
+		}
+	
+	},
+})

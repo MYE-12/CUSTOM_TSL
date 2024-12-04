@@ -19,6 +19,9 @@
   "supply_order_form",
   "wod_no",
   "priority_status",
+  "customer_reference_number",
+  "po_number",
+  "supplier_name",
   "remarks",
   "column_break_7",
   "image",
@@ -37,12 +40,16 @@
   "payment_entry_reference",
   "advance_payment_amount",
   "advance_paid_date",
+  "tender_issue_date",
+  "tender_closing",
+  "supplier_closing_date",
   "section_break_14",
   "in_stock",
   "material_list",
   "section_break_23",
   "previously_quoted",
   "section_break_30",
+  "price_list",
   "status_duration_details",
   "attach_image",
   "is_quotation_created",
@@ -138,6 +145,7 @@
    "label": "Date"
   },
   {
+   "allow_on_submit": 1,
    "default": "Supply - TSL",
    "fieldname": "department",
    "fieldtype": "Link",
@@ -151,7 +159,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Inquiry\nParts Priced\nSearching Items\nNot Found\nInternal Quotation\nQuoted\nApproved\nNot Approved\nOrdered\nShipped\nReceived\nDelivered\nInvoiced\nPaid"
+   "options": "Inquiry\nParts Priced\nSearching Items\nNot Found\nInternal Quotation\nQuoted\nApproved\nNot Approved\nOrdered\nShipped\nReceived\nDelivered\nInvoiced\nPaid\nSupplier Selected\nBid Submitted\nClient Clarification\nAwarded\nLost\nMaterial Production\nIn-Transit\nUnder Inspection\nPartially Delivered\nInvoice Submitted\nPaid"
   },
   {
    "fieldname": "remarks",
@@ -165,19 +173,18 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "purchase_order_no",
    "fieldtype": "Link",
    "label": "Purchase Order",
-   "options": "Purchase Order",
-   "read_only": 1
+   "options": "Purchase Order"
   },
   {
    "allow_on_submit": 1,
    "fieldname": "dn_no",
    "fieldtype": "Link",
    "label": "Delivery Note",
-   "options": "Delivery Note",
-   "read_only": 1
+   "options": "Delivery Note"
   },
   {
    "allow_on_submit": 1,
@@ -190,9 +197,8 @@
   {
    "allow_on_submit": 1,
    "fieldname": "invoice_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Sales Invoice",
-   "options": "Sales Invoice",
    "read_only": 1
   },
   {
@@ -268,6 +274,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "Not Urgent",
    "fieldname": "priority_status",
    "fieldtype": "Select",
@@ -290,15 +297,16 @@
    "options": "Address"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "payment_entry_reference",
    "fieldtype": "Link",
    "label": "Payment Entry Reference",
-   "options": "Payment Entry",
-   "read_only": 1
+   "options": "Payment Entry"
   },
   {
    "fieldname": "advance_payment_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Advance Payment Amount",
    "read_only": 1
   },
@@ -313,12 +321,55 @@
    "fieldname": "attach_image",
    "fieldtype": "Attach",
    "label": "Attach Image"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "customer_reference_number",
+   "fieldtype": "Data",
+   "label": "Customer Reference Number"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "po_number",
+   "fieldtype": "Data",
+   "label": "PO Number"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tender_issue_date",
+   "fieldtype": "Date",
+   "label": "Tender Issue Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tender_closing",
+   "fieldtype": "Date",
+   "label": "Tender Closing Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "supplier_closing_date",
+   "fieldtype": "Date",
+   "label": "Supplier Closing Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "price_list",
+   "fieldtype": "Table",
+   "label": "Price List",
+   "options": "Online Price List"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-23 09:59:55.713676",
+ "modified": "2024-11-12 11:24:12.634574",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

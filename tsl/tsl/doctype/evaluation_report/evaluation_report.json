@@ -12,6 +12,7 @@
   "specify_1",
   "hours_spent",
   "technician",
+  "document_active_status",
   "ratehour",
   "column_break_3",
   "ner_field",
@@ -71,7 +72,8 @@
   "attach_image",
   "column_break_55",
   "technician_image",
-  "technician_image_multiple"
+  "technician_image_multiple",
+  "technician_id"
  ],
  "fields": [
   {
@@ -167,6 +169,7 @@
    "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "\nInstalled and Completed/Repaired\nWorking\nSpare Parts\nExtra Parts\nComparison\nParts Missing\nReturn Not Repaired\nReturn No Fault\nRNP-Return No Parts\nSupplier Quoted\nInternal Extra Parts"
   },
@@ -500,12 +503,28 @@
    "fieldtype": "Check",
    "label": "Parts Received",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Yes",
+   "fieldname": "document_active_status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Document Active Status",
+   "options": "\nYes\nNo"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "technician_id",
+   "fieldtype": "Link",
+   "label": "Technician ID",
+   "options": "Technician ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-17 10:16:04.653683",
+ "modified": "2024-11-14 15:13:28.131781",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

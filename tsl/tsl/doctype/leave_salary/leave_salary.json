@@ -13,33 +13,47 @@
   "employee_name",
   "date_of_joining",
   "grade",
+  "company",
+  "currency",
   "column_break_4",
   "leave_application",
   "passport_number",
   "department",
   "designation",
   "no_of_days_worked_section",
-  "from_date",
-  "to_date",
-  "no_of_days_worked",
-  "column_break_12",
   "basic",
   "food",
   "other_allowance",
-  "hra_salary",
   "column_break_20",
+  "hra_salary",
   "mobile_allowance",
   "transport_allowance",
+  "leave_salary_section",
+  "from_date",
+  "to_date",
+  "column_break_kns1j",
+  "no_of_days_worked",
+  "air_fair",
+  "column_break_48",
   "salary_amount_pay",
   "total_amount",
-  "leave_salary_section",
+  "s",
   "leave_start_date",
+  "column_break_12",
   "leave_end_date",
+  "column_break_yr3zr",
   "no_of_days",
-  "leave_balance",
-  "column_break_48",
-  "air_fair",
+  "column_break_zncg4",
   "total_salary",
+  "leave_balance",
+  "others_section",
+  "payment",
+  "deduction",
+  "column_break_8kymf",
+  "payment_reason",
+  "deduction_reason",
+  "net_pay_section",
+  "column_break_nnd7z",
   "total_released_amount"
  ],
  "fields": [
@@ -108,24 +122,27 @@
   {
    "fieldname": "no_of_days_worked_section",
    "fieldtype": "Section Break",
-   "label": "Earned Salary",
+   "label": "Salary Details",
    "read_only": 1
   },
   {
    "fieldname": "from_date",
    "fieldtype": "Date",
-   "label": "From date"
+   "label": "From date",
+   "read_only": 1
   },
   {
    "fieldname": "to_date",
    "fieldtype": "Date",
-   "label": "To date"
+   "label": "To date",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "no_of_days_worked",
    "fieldtype": "Int",
-   "label": "No of days Worked"
+   "label": "No of days Worked",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_12",
@@ -137,6 +154,7 @@
    "fieldname": "basic",
    "fieldtype": "Currency",
    "label": "Basic",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -145,6 +163,7 @@
    "fieldname": "food",
    "fieldtype": "Currency",
    "label": "Food Allowance",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -153,6 +172,7 @@
    "fieldname": "other_allowance",
    "fieldtype": "Currency",
    "label": "Other Allowance",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -162,6 +182,7 @@
    "fieldname": "hra_salary",
    "fieldtype": "Currency",
    "label": "HRA",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -171,6 +192,7 @@
    "fieldname": "mobile_allowance",
    "fieldtype": "Currency",
    "label": "Mobile Allowance",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -180,6 +202,7 @@
    "fieldname": "transport_allowance",
    "fieldtype": "Currency",
    "label": "Transport Allowance",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -191,33 +214,39 @@
    "fieldname": "salary_amount_pay",
    "fieldtype": "Currency",
    "label": "Earned Basic",
+   "options": "currency",
    "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "total_amount",
    "fieldtype": "Currency",
-   "label": "Total Earned Salary"
+   "label": "Total Earned Salary",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "fieldname": "leave_salary_section",
    "fieldtype": "Section Break",
-   "label": "Leave Salary"
+   "label": "Earned Salary"
   },
   {
    "fieldname": "leave_start_date",
    "fieldtype": "Date",
-   "label": "Leave Start Date"
+   "label": "Leave Start Date",
+   "read_only": 1
   },
   {
    "fieldname": "leave_end_date",
    "fieldtype": "Date",
-   "label": "Leave End Date"
+   "label": "Leave End Date",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "leave_balance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Leave Balance"
   },
   {
@@ -227,36 +256,115 @@
   {
    "fieldname": "no_of_days",
    "fieldtype": "Data",
-   "label": "No of Days"
+   "label": "No of Days",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "air_fair",
    "fieldtype": "Currency",
-   "label": "Air Fair Allowance"
+   "label": "Air Fair Allowance",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "total_salary",
    "fieldtype": "Currency",
-   "label": "Total Leave Salary"
+   "label": "Total Leave Salary",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "total_released_amount",
    "fieldtype": "Currency",
-   "label": "Total Released Amount"
+   "label": "Total Released Amount",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "fieldname": "leave_application",
    "fieldtype": "Link",
    "label": "Leave Application",
-   "options": "Leave Application"
+   "options": "Leave Application Form"
+  },
+  {
+   "fieldname": "column_break_kns1j",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "s",
+   "fieldtype": "Section Break",
+   "label": "Leave Salary"
+  },
+  {
+   "fieldname": "column_break_yr3zr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "net_pay_section",
+   "fieldtype": "Section Break",
+   "label": "Net Pay"
+  },
+  {
+   "fetch_from": "leave_application.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "column_break_zncg4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "deduction",
+   "fieldtype": "Currency",
+   "label": "Deduction",
+   "options": "currency"
+  },
+  {
+   "fieldname": "column_break_nnd7z",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "company.default_currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "others_section",
+   "fieldtype": "Section Break",
+   "label": "Others"
+  },
+  {
+   "fieldname": "payment",
+   "fieldtype": "Currency",
+   "label": "Payment",
+   "options": "currency"
+  },
+  {
+   "fieldname": "column_break_8kymf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_reason",
+   "fieldtype": "Data",
+   "label": "Payment Reason"
+  },
+  {
+   "fieldname": "deduction_reason",
+   "fieldtype": "Data",
+   "label": "Deduction Reason"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-24 19:04:24.811851",
+ "modified": "2024-11-13 10:50:57.815170",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Salary",

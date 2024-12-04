@@ -36,7 +36,6 @@ from frappe.utils import flt, fmt_money
 
 @frappe.whitelist()
 def download():
-    frappe.errprint("hiii")
     filename = 'Work Order Data Time Log'
     test = build_xlsx_response(filename)
     
@@ -96,8 +95,8 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
     # 'Pending Internal Approval',
     # 'RSI-Repaired and Shipped Invoiced',
                ])
-    wd = frappe.get_all("Work Order Data",["*"])
-    for i in wd [:100]:
+    wd = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - Kuwait","posting_date": ["between", (args.from_date,args.to_date)]},["*"])
+    for i in wd:
         ml = frappe.get_doc("Material List",{"parent":i.name})
         row = [i.name,i.customer,i.posting_date,i.status,i.technician,ml.item_code,ml.mfg,ml.type,ml.serial_no or '',ml.item_name]
         ws.append(row)

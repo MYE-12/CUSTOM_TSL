@@ -36,7 +36,7 @@ def create_quotation(wod):
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer
-	new_doc.sales_rep = doc.sales_rep
+	# new_doc.sales_rep = doc.sales_rep
 	if doc.company == "TSL COMPANY - UAE":
 		new_doc.selling_price_list = "Standard Selling - UAE"
 	# new_doc.customer_email = doc.customer_email
@@ -82,7 +82,7 @@ def create_quotation(wod):
 			}
 		new_doc.naming_series = d[new_doc.quotation_type][doc.branch]
 	
-	new_doc.sales_rep = doc.sales_rep
+	# new_doc.sales_rep = doc.sales_rep
 	
 	ths = frappe.db.sql('''select status,hours_spent,ratehour,extra_repair_time as ext,evaluation_time as et,estimated_repair_time as ert from `tabEvaluation Report` where docstatus = 1 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
 	thst = frappe.db.sql('''select evaluation_time as et,estimated_repair_time as ert from `tabInitial Evaluation` where docstatus = 0 and work_order_data = %s order by creation desc limit 1''',wod,as_dict =1)
@@ -380,6 +380,7 @@ def create_rn(wod):
 	new_doc.company = doc.company
 	new_doc.customer = doc.customer
 	new_doc.branch = doc.branch
+	new_doc.naming_series = "RE-DU.YY.-"
 	new_doc.department = doc.department
 	new_doc.cost_center = doc.department
 	new_doc.customer_address = doc.address
@@ -389,6 +390,7 @@ def create_rn(wod):
 	new_doc.is_return = 1
 	d = {}
 	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
+	d['Dubai - TSL'] = "Dubai - Repair - TSL-UAE"
 	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
 	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
@@ -475,7 +477,10 @@ def create_dn(wod):
 	new_doc = frappe.new_doc("Delivery Note")
 	new_doc.company = doc.company
 	new_doc.customer = doc.customer
-	new_doc.branch = doc.branch
+	if doc.company == "TSL COMPANY - UAE":
+		new_doc.branch = "Dubai - TSL-UAE"
+	else:
+		new_doc.branch = doc.branch
 	new_doc.department = doc.department
 	new_doc.customer_address = doc.address
 	new_doc.contact_person = doc.incharge
@@ -488,15 +493,15 @@ def create_dn(wod):
 	d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
  
 	for i in doc.get("material_list"):
-		frappe.errprint('qi_details')
+		# frappe.errprint('qi_details')
      
 		qi_details = frappe.db.sql('''select q.name,q.final_approved_price,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
-		frappe.errprint(qi_details)
+		# frappe.errprint(qi_details)
 		r = 0
 		amt = 0
 		if qi_details:
 			r = qi_details[0]['final_approved_price']
-			frappe.errprint(r)
+			# frappe.errprint(r)
    
 			amt = qi_details[0]['final_approved_price']
 			new_doc.append("items",{
@@ -600,6 +605,22 @@ class WorkOrderData(Document):
 		# 		"date":now,
 		# 	})
 	def on_update_after_submit(self):
+		if self.material_list:
+			for i in self.material_list:
+				item = frappe.get_doc("Item",i.item_code)
+				item.set("online_price_table", [])
+				for j in self.price_table:
+					item.append("online_price_table",{
+					"item_code":j.item_code,
+					"price_type":j.price_type,
+					"price":j.price,
+					"website":j.website,
+					"comments":j.comments
+					
+
+					})
+				item.save(ignore_permissions = 1)
+
 		if self.mistaken_ner:
 			ev = frappe.get_value("Evaluation Report",{"work_order_data":self.name},["name"])
 			if ev:

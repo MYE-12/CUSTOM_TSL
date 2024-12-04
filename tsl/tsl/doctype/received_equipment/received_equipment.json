@@ -20,6 +20,7 @@
   "category",
   "uom",
   "qty",
+  "item_group",
   "complaint_section",
   "no_power",
   "no_display",
@@ -293,12 +294,18 @@
    "fieldname": "item_number",
    "fieldtype": "Data",
    "label": "Item Number"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-03-26 11:06:27.485769",
+ "modified": "2024-11-11 12:06:25.341302",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",

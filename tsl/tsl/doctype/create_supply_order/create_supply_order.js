@@ -80,6 +80,7 @@ frappe.ui.form.on('Create Supply Order', {
 								}
 								
 								if(r.message[1]){
+									console.log(r.message)
 									frm.set_query("sales_person", function() {
 										return {
 												"filters": {
@@ -90,9 +91,11 @@ frappe.ui.form.on('Create Supply Order', {
 								}
 								
 								if(r.message[2]){
+									
 									frm.set_value("sales_person",r.message[2])
 								}
 								else{
+									
 									frm.set_value("sales_person","");
 									frm.set_value("sales_person_name","");
 								}
@@ -169,10 +172,10 @@ setup:function(frm){
 		if(child.type){
 			d['type'] = child.type;
 		}
-		d['item_group'] = "Equipments";
-		return{
-			filters: d
-		}
+		// d['item_group'] = "Equipments";
+		// return{
+		// 	filters: d
+		// }
 
 
 

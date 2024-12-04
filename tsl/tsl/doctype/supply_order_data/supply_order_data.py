@@ -54,7 +54,7 @@ def create_sal_inv(sod):
 			"amount":amt, 
 			"type":i.type,
 			"serial_number":i.serial_no,
-			"description":i.item_name,
+			"description":i.description,
 			"qty":qty,
 			"supply_order_data":sod,
 			"uom":"Nos",
@@ -102,11 +102,100 @@ def create_sal_inv(sod):
 	return new_doc
 
 @frappe.whitelist()
+def create_sal_inv_tender(sod):
+	doc = frappe.get_doc("Supply Order Data",sod)
+	new_doc = frappe.new_doc("Sales Invoice")
+	new_doc.company = doc.company
+	new_doc.customer = doc.customer
+	new_doc.branch = doc.branch
+	new_doc.department = doc.department
+	new_doc.supply_order_data = sod
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	new_doc.cost_center = doc.department
+	
+	d = {}
+	d['Kuwait - TSL'] = "Kuwait Repair - TSL"
+	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
+	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
+	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
+	
+	for i in doc.get("material_list"):
+		qi_details = frappe.db.sql('''select q.grand_total,q.valid_till as valid_till,q.discount_amount as discount,q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where qi.item_code = %s and q.workflow_state = "Awarded" and qi.supply_order_data = %s and q.docstatus = 1 order by q.modified desc limit 1''',(i.item_code,sod),as_dict=1)
+		r = 0
+		amt = 0
+		qty = i.quantity
+		if qi_details:
+			
+			r = qi_details[0]['rate']
+			frappe.errprint(r)
+			amt = qi_details[0]['amount']
+			qty = qi_details[0]['qty']
+			new_doc.due_date = qi_details[0]['valid_till']
+			new_doc.discount_amount = qi_details[0]['discount']
+			new_doc.append("items",{
+			"item_name":i.item_name,
+			"item_code":i.item_code,
+			"manufacturer":i.mfg,
+			"model":i.model_no,
+			"rate":r,
+			"amount":amt, 
+			"type":i.type,
+			"serial_number":i.serial_no,
+			"description":i.item_name,
+			"qty":qty,
+			"supply_order_data":sod,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"cost_center":doc.department,
+			"income_account":"",
+			"warehouse":doc.branch,
+			"branch":doc.branch
+
+		})
+
+	for i in doc.get('in_stock'):
+		qi_details = frappe.db.sql('''select q.grand_total,q.valid_till as valid_till,q.discount_amount as discount,q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where qi.item_code = %s and q.workflow_state = "Awarded" and q.docstatus = 1 and qi.supply_order_data = %s order by q.modified desc limit 1''',(i.part,sod),as_dict=1)
+		r = 0
+		amt = 0
+		qty = i.qty
+		if qi_details:
+			r = qi_details[0]['rate']
+			amt = qi_details[0]['amount']
+			qty = qi_details[0]['qty']
+			new_doc.due_date = qi_details[0]['valid_till']
+			new_doc.overall_discount_amount = qi_details[0]['discount']
+			new_doc.append("items",{
+			"item_name":i.part_name,
+			"item_code":i.part,
+			"manufacturer":i.manufacturer,
+			"model":i.model,
+			"rate":r,
+			"amount":amt, 
+			"type":i.type,
+			"serial_number":i.serial_no,
+			"description":i.part_name,
+			"qty":qty,
+			"supply_order_data":sod,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"cost_center":doc.department,
+			"income_account":"",
+			"warehouse":doc.branch,
+			"branch":doc.branch
+
+		})
+
+	return new_doc
+
+@frappe.whitelist()
 def create_dn(sod):
 	doc = frappe.get_doc("Supply Order Data",sod)
 	new_doc = frappe.new_doc("Delivery Note")
 	new_doc.company = doc.company
 	new_doc.customer = doc.customer
+	new_doc.purchase_order_no = doc.po_number
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
 	new_doc.cost_center = doc.department
@@ -134,7 +223,7 @@ def create_dn(sod):
 			"amount":amt, 
 			"type":i.type,
 			"serial_number":i.serial_no,
-			"description":i.item_name,
+			"description":i.description,
 			"qty":qty,
 			"supply_order_data":sod,
 			# "uom":"Nos",
@@ -218,8 +307,9 @@ def create_rfq(sod):
 	for i in doc.get("material_list"):
 		new_doc.append("items",{
 			"item_code":i.item_code,
+			# "model":i.item_name,
 			"item_name":i.item_name,
-			"description":i.item_name,
+			"description":i.description,
 			"type":i.type,
 			"model":i.model_no,
 			"mfg":i.mfg,
@@ -243,8 +333,11 @@ def create_quotation(sod):
 	doc = frappe.get_doc("Supply Order Data",sod)
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
-	new_doc.party_name = doc.customer,
-	new_doc.party_name = new_doc.party_name[0]
+	new_doc.party_name = doc.customer
+	new_doc.purchase_order_no = doc.po_number
+	new_doc.supplier_name = doc.supplier_name
+	new_doc.customer_reference_number = doc.customer_reference_number
+	# new_doc.party_name = new_doc.party_name
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
 	pay_term = ""
 	if frappe.db.get_value("Customer",doc.customer,"advance"):
@@ -259,7 +352,13 @@ def create_quotation(sod):
 	new_doc.branch_name = doc.branch
 	new_doc.department = doc.department
 	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
-	new_doc.quotation_type = "Internal Quotation - Supply"
+	if doc.department == "Supply Tender - TSL":
+		new_doc.quotation_type = "Quotation - Supply Tender"
+		new_doc.custom_department = "Supply Tender - TSL"
+		new_doc.naming_series = "ST-Q-.YY.-"
+	else:
+		new_doc.quotation_type = "Internal Quotation - Supply"
+	
 	new_doc.sales_rep = doc.sales_rep
 	new_doc.ignore_pricing_rule = 1
 	# for i in doc.get("in_stock"):
@@ -321,6 +420,25 @@ def make_payment(sod,invoice):
 
 class SupplyOrderData(Document):
 	def on_update_after_submit(self):
+		if self.material_list:
+			for i in self.material_list:
+				item = frappe.get_doc("Item",i.item_code)
+				item.set("online_price_table", [])
+				for j in self.price_list:
+					item.append("online_price_table",{
+					"item_code":j.item_code,
+					"price_type":j.price_type,
+					"price":j.price,
+					"website":j.website,
+					"comments":j.comments
+					
+
+					})
+				item.save(ignore_permissions = 1)
+				# item.online_price = i.online_price
+
+				# item.save(ignore_permissions = 1)
+
 		if self.status != self.status_duration_details[-1].status:
 			ldate = self.status_duration_details[-1].date
 			now = datetime.now()

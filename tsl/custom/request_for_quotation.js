@@ -1,6 +1,7 @@
 frappe.ui.form.on('Request for Quotation', {
         setup: function (frm) {
         	frappe.db.get_value('Company', {'name':frm.doc.company}, ['country'], (r) => {
+                        console.log(r)
 		   frm.set_query("supplier", "suppliers", function (doc, cdt, cdn) {
 			let d = locals[cdt][cdn];
 		
@@ -29,7 +30,7 @@ frappe.ui.form.on('Request for Quotation', {
                         
                 if(frm.doc.items && frm.doc.work_order_data){
                         $.each(frm.doc.items, function(i,d) {
-                        frappe.db.get_value('Warehouse', {'company':frm.doc.company,"is_repair":1}, ['name'], (r) => {
+                        frappe.db.get_value('Warehouse', {'company':frm.doc.company,"is_branch":1}, ['name'], (r) => {
                         d.warehouse = r.name
                                                         
                             });

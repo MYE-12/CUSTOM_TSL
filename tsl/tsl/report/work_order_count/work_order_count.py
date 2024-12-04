@@ -46,7 +46,7 @@ def get_data(filters):
     wo_status25 = frappe.db.sql("""select status,count(name) from `tabWork Order Data` where status = 'RNPC-Return No Parts Client'and posting_date between '%s' and '%s' """%(filters.from_date,filters.to_date))
     wo_status26 = frappe.db.sql("""select status,count(name) from `tabWork Order Data` where status = 'RNR-Return Not Repaired'and posting_date between '%s' and '%s' """%(filters.from_date,filters.to_date))
     wo_status27 = frappe.db.sql("""select status,count(name) from `tabWork Order Data` where status = 'RNRC-Return Not Repaired Client'and posting_date between '%s' and '%s' """%(filters.from_date,filters.to_date))
-    frappe.errprint(wo_status)
+#     frappe.errprint(wo_status)
     for wo in wo_status:
           data.append(wo)
     for wo1 in wo_status1:

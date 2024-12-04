@@ -35,8 +35,11 @@ def create_supply_order_data(order_no):
 	new_doc.customer_name = doc.customer_name
 	new_doc.received_date = doc.received_date
 	new_doc.sales_rep = doc.sales_person
+	new_doc.tender_issue_date = doc.client_rfq_date
 	new_doc.branch = doc.branch
-	new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_supply":1})
+	new_doc.customer_reference_number = doc.customer_reference_number
+	# new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_supply":1})
+	new_doc.department = doc.department
 	new_doc.repair_warehouse = doc.repair_warehouse
 	new_doc.address = doc.address
 	new_doc.incharge = doc.incharge
@@ -46,7 +49,7 @@ def create_supply_order_data(order_no):
 		new_doc.naming_series ="SOD-DU.YY.-"
 	else:
 		new_doc.naming_series = d[new_doc.branch]
-	if doc.department != "Supply Tender - TSL":
+	if not doc.department == "Supply Tender - TSL":
 		if len(doc.get('received_equipment')):
 			for i in doc.get("received_equipment"):
 				if not 'item_name' in i or not 'manufacturer' in i or not 'model' in i or not 'type' in i:
@@ -93,7 +96,7 @@ def create_supply_order_data(order_no):
 				# 		frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))
 				new_doc.append("material_list",{
 					"item_code": i['item_code'],
-					"item_name":i['item_name'],
+					"description":i['item_name'],
 					"type":i['type'],
 					"model_no":i['model'],
 					"mfg":i['manufacturer'],
@@ -105,15 +108,19 @@ def create_supply_order_data(order_no):
 			
 			if not 'item_code' in i:
 				item = frappe.db.get_value("Item",{"model":i['model']},"name")
-				if item:
-					
+				if not item:
+					frappe.errprint("ji")
 					i_doc = frappe.new_doc('Item')
 					i_doc.naming_series = '.######'
 					i_doc.description = i['description']
 					i_doc.item_number = i['item_number']
-					i_doc.item_group = "Equipments"
+					i_doc.model_no = i['model']
+					if i['item_group']:
+						i_doc.item_group = i['item_group']
+					else:
+						i_doc.item_group = "Equipments"
 					i_doc.model = i['model']
-					i_doc.is_stock_item = 1
+					i_doc.is_stock_item = 0
 					if 'has_serial_no' in i and i['has_serial_no']:
 						i_doc.has_serial_no = 1
 					i_doc.save(ignore_permissions = True)
@@ -127,11 +134,14 @@ def create_supply_order_data(order_no):
 							sn_doc.save(ignore_permissions = True)
 							if sn_doc.name:
 								sn_no = sn_doc.name
-	
+				
 			new_doc.append("material_list",{
 				"item_code": i['item_code'],
-				"item_name":i['description'],
+				"model_no": i['model'],
+				"description":i['description'],
+				"item_name":i['model'],	
 				"unit":i['uom'],
+				"item_group": i['item_group'],
 				"item_number":i['item_number'],
 				"quantity":i['qty'],
 			})

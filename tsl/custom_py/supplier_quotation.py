@@ -78,8 +78,9 @@ def validate(self,method):
         
             for d in doc:
                 ev = frappe.get_doc("Evaluation Report",d.name)
-                ev.status = "Supplier Quoted"
-                ev.save()
+                if d.status != "Comparison":
+                    ev.status = "Supplier Quoted"
+                    ev.save()
     
         
 
@@ -191,7 +192,7 @@ def on_submit(self,method):
                     j.supplier_quotation = self.name
         doc.save(ignore_permissions=True)
     
-    else:
+    if self.supply_order_data and self.company == "TSL COMPANY - Kuwait":
         doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
         for i in self.get('items'):
             for j in doc.get("in_stock"):

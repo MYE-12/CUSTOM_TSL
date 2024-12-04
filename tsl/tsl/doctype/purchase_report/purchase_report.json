@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "column_break_hytar",
+  "download",
   "section_break_ktl4m",
   "html"
  ],
@@ -27,13 +29,22 @@
    "in_list_view": 1,
    "label": "Date",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_hytar",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "download",
+   "fieldtype": "Button",
+   "label": "Download PDF"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-16 10:49:56.037283",
+ "modified": "2024-10-15 10:57:19.351597",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Purchase Report",

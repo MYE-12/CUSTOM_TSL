@@ -6,6 +6,20 @@ frappe.ui.form.on('Purchase Report', {
 
 	// }
 
+	download:function(frm){
+		
+		var print_format ="Purchase Report";
+		var f_name = "Purchase Report"
+		window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
+			+ "doctype=" + encodeURIComponent("Purchase Report")
+			+ "&name=" + encodeURIComponent(f_name)
+			+ "&trigger_print=1"
+			+ "&format=" + print_format
+			+ "&no_letterhead=0"
+		));
+	
+	},
+
 	get_data:function (frm){
 		frm.call('get_data').then(r=>{
 			if(r.message){
@@ -20,13 +34,11 @@ frappe.ui.form.on('Purchase Report', {
 
 	
 
-	from_date(frm){
+	date(frm){
 		frm.trigger("get_data");
 	},
 
-	to_date(frm){
-		frm.trigger("get_data");
-	},
+	
 	
 	onload(frm){
 		frm.trigger("get_data");

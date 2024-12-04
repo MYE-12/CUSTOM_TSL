@@ -36,8 +36,8 @@ class MonthlyPerformanceAnalysis(Document):
 
 				days_between = difference.days
 				t_days = t_days + days_between
-		frappe.errprint(t_days)		
-		frappe.errprint(total)
+		# frappe.errprint(t_days)		
+		# frappe.errprint(total)
 		data += '<tr>'
 		data += '<td style="border-color:#000000;width:50%;padding:1px;font-size:14px;font-size:12px;"><center><b>From Req to Quote Date</b><center></td>'
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>'  %(t_days/total)
@@ -58,15 +58,15 @@ class MonthlyPerformanceAnalysis(Document):
 			
 				total2 = total2 + 1
 				date1 = datetime.strptime(str(pr[0]["posting_date"]),"%Y-%m-%d").date()
-				frappe.errprint(qu[0]["approval_date"])
+				# frappe.errprint(qu[0]["approval_date"])
 
 				date2 = datetime.strptime(str(qu[0]["approval_date"]),"%Y-%m-%d").date()
 				difference = date1 - date2
 
 				days_between = difference.days
 				t2_days = t2_days + days_between
-		frappe.errprint(t2_days)		
-		frappe.errprint(total2)
+		# frappe.errprint(t2_days)		
+		# frappe.errprint(total2)
 
 		data += '<tr>'
 		data += '<td style="border-color:#000000;width:50%;padding:1px;font-size:14px;font-size:12px;"><center><b>From Approval to Receive Date</b><center></td>'

@@ -23,6 +23,8 @@ def on_submit(self,method):
         if f==0:
             doc.parts_availability = "Yes"
         doc.save(ignore_permissions = True)
+
+        
     for i in self.get("items"):
         if i.work_order_data:
             wod = frappe.get_doc("Work Order Data",i.work_order_data)
@@ -33,17 +35,20 @@ def on_submit(self,method):
             wod.received = 1
             wod.save(ignore_permissions = True)
 
-    if self.supply_order_data:
-        wod = frappe.get_doc("Supply Order Data",self.supply_order_data)
-        wod.status = "Received"
-        for i in self.get('items'):
-            for j in wod.get('in_stock'):
-                if i.item_code == j.part:
-                    j.parts_availability = "Yes"
-            for j in wod.get("material_list"):
-                if i.item_code == j.item_code:
-                    j.parts_availability = "Yes"
-        wod.save(ignore_permissions = True)
+    for i in self.get("items"): 
+        if i.supply_order_data:
+            wod = frappe.get_doc("Supply Order Data",i.supply_order_data)
+            wod.status = "Received"
+            wod.save(ignore_permissions = True)
+
+        # for i in self.get('items'):
+        #     for j in wod.get('in_stock'):
+        #         if i.item_code == j.part:
+        #             j.parts_availability = "Yes"
+        #     for j in wod.get("material_list"):
+        #         if i.item_code == j.item_code:
+        #             j.parts_availability = "Yes"
+        # wod.save(ignore_permissions = True)
 
 
 def check_item(self,method):

@@ -22,6 +22,12 @@ frappe.ui.form.on('Work Order Data', {
 			frm.set_df_property("status","read_only",1)
 			frm.set_df_property("advance_payment_amount","hidden",1)
 		}
+		if(!frappe.user.has_role("Lab Coordinator")){
+			frm.set_df_property("mistaken_ner","hidden",1)
+			
+		}
+
+		
 	},
 	refresh: function(frm) {
 		

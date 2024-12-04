@@ -69,6 +69,14 @@ frappe.ui.form.on('Create Work Order', {
 		frm.trigger("branch")
 	},
 	onload: function(frm) {
+		if(frappe.session.user == "info-uae@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - UAE")
+		}
+
+		if(frappe.session.user == "info@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - Kuwait")
+		}
+		
 		if(frm.doc.company == "TSL COMPANY - Kuwait"){
 			frm.set_query('customer', function(doc) {
 				return {

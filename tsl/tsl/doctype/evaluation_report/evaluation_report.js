@@ -390,7 +390,7 @@ frappe.ui.form.on('Part Sheet Item', {
 			args :{
 				"item" :row.part,
 				"qty":row.qty,
-				"warehouse":frappe.user_defaults.company
+				"warehouse":frm.doc.company
 			},
 			callback :function(r){
 				frappe.model.set_value(cdt, cdn, "price_ea", r.message[0]);

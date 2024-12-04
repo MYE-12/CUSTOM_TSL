@@ -17,7 +17,7 @@ class WorkOrderStatusLive(Document):
 def wod():
     country = get_country_by_ip()
     if country:
-        frappe.errprint(country)
+        # frappe.errprint(country)
 
 
     today = date.today()
@@ -28,7 +28,7 @@ def wod():
     obj = datetime.strptime(str(formatted_date), "%d-%m-%Y")
     formatted= obj.strftime("%-d %b %Y")
     now = datetime.now()
-    frappe.errprint(datetime.now())
+    # frappe.errprint(datetime.now())
     current_hour = now.hour
     current_minute = now.minute
     time = str(current_hour) + ":" + str(current_minute)

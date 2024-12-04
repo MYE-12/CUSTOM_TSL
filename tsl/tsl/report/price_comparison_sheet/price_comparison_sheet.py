@@ -121,6 +121,6 @@ def get_data(filters=None):
 		sum += float(doc.freight_charges)+float(doc.custom_clearance)+float(doc.payment_commission)
 		gt[i['supplier'].lower().replace(" ","_")] = frappe.bold(fmt_money(sum,currency = i["currency"]))
 	data.append(gt)
-	frappe.errprint(data)
+	# frappe.errprint(data)
 	return data
 

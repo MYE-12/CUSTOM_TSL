@@ -8,18 +8,22 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "html",
+  "date",
   "quotation",
   "go_to",
-  "html",
   "column_break_rkfva",
-  "date",
   "created_by",
-  "amended_from"
+  "amended_from",
+  "section_break_nc32n",
+  "invoice_list",
+  "sod_quotation"
  ],
  "fields": [
   {
    "fieldname": "quotation",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Quotation",
    "options": "Quotation"
   },
@@ -57,12 +61,28 @@
    "fieldname": "go_to",
    "fieldtype": "Button",
    "label": "Go to Quotation"
+  },
+  {
+   "fieldname": "invoice_list",
+   "fieldtype": "Table",
+   "label": "Work Order Quotation",
+   "options": "Invoice Creation"
+  },
+  {
+   "fieldname": "section_break_nc32n",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sod_quotation",
+   "fieldtype": "Table",
+   "label": "Supply Order Quotation",
+   "options": "SOD IV Creation"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-06-25 12:32:34.182828",
+ "modified": "2024-10-29 11:13:54.989511",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",

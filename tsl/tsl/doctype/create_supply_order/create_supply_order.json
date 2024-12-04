@@ -25,6 +25,7 @@
   "branch",
   "department",
   "repair_warehouse",
+  "client_rfq_date",
   "received_date",
   "sales_person",
   "sales_person_name",
@@ -257,12 +258,17 @@
    "fieldtype": "Link",
    "label": "Department",
    "options": "Cost Center"
+  },
+  {
+   "fieldname": "client_rfq_date",
+   "fieldtype": "Date",
+   "label": "Client RFQ Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-01-23 09:44:13.330226",
+ "modified": "2024-10-30 10:42:47.863055",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",

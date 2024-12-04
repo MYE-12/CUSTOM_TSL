@@ -57,7 +57,7 @@ def create_leave_allocation(name):
 	leave_type = [{'type':"Sick Leave 25%",'days':10},
 				{'type':"Sick Leave 50%",'days':10},
 			   	{'type':"Sick Leave 75%",'days':10},
-			   	{'type':"Sick Leave",'days':15},
+			   	{'type':"Sick Leave 100%",'days':15},
 			   	{'type':"Annual Leave",'days':30}]
 	if doc.religion == "Islam":
 		leave_type.append({'type':"Hajj Leave",'days':21})
@@ -97,7 +97,7 @@ def civil_id_expiry():
 			current_date = now_datetime()
 			expiry_date = getdate(i.civil_id_expiry_date)
 			days = date_diff(expiry_date,current_date)
-			if days and days >=31 and days <= 45:	
+			if days and days >=31 and days <= 45:
 				forty_five += '<tr><td style = "font-size:6px"><a href = "https://erp.tsl-me.com/app/employee/%s">%s</a></td>'%(i.name,i.name)
 				forty_five += '<td style = "font-size:6px">%s</td>'%(i.employee_name)
 				forty_five += '<td style = "font-size:6px">%s</td>'%(i.company)
@@ -129,7 +129,7 @@ def civil_id_expiry():
 			current_date = now_datetime()
 			expiry_date = getdate(i.civil_id_expiry_date)
 			days = date_diff(expiry_date,current_date)
-			if days and days >=16 and days <= 30:	
+			if days and days >=16 and days <= 30:
 				thirty += '<tr><td style = "font-size:6px"><a href = "https://erp.tsl-me.com/app/employee/%s">%s</a></td>'%(i.name,i.name)
 				thirty += '<td style = "font-size:6px">%s</td>'%(i.employee_name)
 				thirty += '<td style = "font-size:6px">%s</td>'%(i.company)
@@ -162,7 +162,7 @@ def civil_id_expiry():
 			current_date = now_datetime()
 			expiry_date = getdate(i.civil_id_expiry_date)
 			days = date_diff(expiry_date,current_date)
-			if days and days >=1 and days <= 15:	
+			if days and days >=1 and days <= 15:
 				fifteen += '<tr><td style = "font-size:6px"><a href = "https://erp.tsl-me.com/app/employee/%s">%s</a></td>'%(i.name,i.name)
 				fifteen += '<td style = "font-size:6px">%s</td>'%(i.employee_name)
 				fifteen += '<td style = "font-size:6px">%s</td>'%(i.company)
@@ -180,3 +180,17 @@ def civil_id_expiry():
 			subject=('Civil ID is Expiring within 15 days !!!'),
 			message=msg+fifteen
 		)
+
+@frappe.whitelist()
+def employee_series(company):
+	emp = frappe.get_all("Employee",{"company":company}, ['name'])
+	emp_sorted = sorted(emp, key=lambda x: int(x['name']), reverse=True)[0]
+	next_in_series = int(emp_sorted['name'])+1
+	next_in_series = check_for_employee(next_in_series)
+	return str(next_in_series)
+
+def check_for_employee(name):
+	# Loop until a unique employee number is found
+	while frappe.db.exists("Employee", str(name)):
+		name += 1
+	return name

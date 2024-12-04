@@ -8,6 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "column_break_i2zic",
+  "download",
+  "view",
   "section_break_90xye",
   "html"
  ],
@@ -25,13 +28,28 @@
   {
    "fieldname": "section_break_90xye",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_i2zic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "view",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "View"
+  },
+  {
+   "fieldname": "download",
+   "fieldtype": "Button",
+   "label": "Download PDF"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-04-29 08:41:41.516315",
+ "modified": "2024-10-15 11:17:09.170871",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Daily Lab Report",

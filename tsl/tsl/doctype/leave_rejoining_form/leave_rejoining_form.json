@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "LRJ.####",
+ "creation": "2024-10-03 22:08:29.619776",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "leave_application",
+  "employee_details",
+  "emp_no",
+  "employee_name",
+  "designation",
+  "column_break_3",
+  "department",
+  "date_of_joining",
+  "company",
+  "leave_balance_section",
+  "leave_balance",
+  "section_break_5",
+  "rejoining_date",
+  "actual_rejoining_date",
+  "column_break_14",
+  "late_days",
+  "leave_type",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Leave Application"
+  },
+  {
+   "fieldname": "employee_details",
+   "fieldtype": "Section Break",
+   "label": "Employee Details",
+   "read_only": 1
+  },
+  {
+   "fieldname": "emp_no",
+   "fieldtype": "Link",
+   "label": "Employee ID",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "emp_no.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.designation",
+   "fieldname": "designation",
+   "fieldtype": "Read Only",
+   "label": "Designation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "emp_no.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "label": "Department",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.date_of_joining",
+   "fieldname": "date_of_joining",
+   "fieldtype": "Read Only",
+   "label": "Date of Joining",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.company",
+   "fieldname": "company",
+   "fieldtype": "Read Only",
+   "label": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break",
+   "label": "Rejoining Details",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "rejoining_date",
+   "fieldtype": "Date",
+   "label": "Rejoining Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_rejoining_date",
+   "fieldtype": "Date",
+   "label": "Actual Rejoining Date"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "late_days",
+   "fieldtype": "Int",
+   "label": "Late in days"
+  },
+  {
+   "depends_on": "eval:doc.late_days>0",
+   "fieldname": "leave_type",
+   "fieldtype": "Link",
+   "label": "Leave Type",
+   "options": "Leave Type"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Leave Rejoining Form",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "leave_balance_section",
+   "fieldtype": "Section Break",
+   "label": "Leave Balance"
+  },
+  {
+   "fieldname": "leave_balance",
+   "fieldtype": "HTML"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Leave Application",
+   "link_fieldname": "rejoining"
+  }
+ ],
+ "modified": "2024-10-06 15:32:06.903023",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Leave Rejoining Form",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

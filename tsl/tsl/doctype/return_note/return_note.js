@@ -24,7 +24,7 @@ frappe.ui.form.on('Return Note', {
 				add_filters_group: 1,
 				get_query() {
 					return {
-						filters: { status:["in",["RNA-Return Not Approved","RNR-Return Not Repaired","RNP-Return No Parts","RNF-Return No Fault"]],branch :frm.doc.branch_name}
+						filters: { status:["in",["RNA-Return Not Approved","RNR-Return Not Repaired","RNP-Return No Parts","RNF-Return No Fault","C-Comparison"]],branch :frm.doc.branch_name}
 					}
 				},
 				action(selections) {

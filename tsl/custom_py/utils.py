@@ -13,6 +13,7 @@ from frappe.utils import (
     rounded,
     today,
 )
+from frappe import _
 from frappe.utils.file_manager import save_file
 from frappe.utils.file_manager import get_file
 from frappe.utils import add_to_date
@@ -20,6 +21,7 @@ import requests
 from datetime import datetime
 from erpnext.setup.utils import get_exchange_rate
 from frappe.utils.csvutils import read_csv_content
+from tsl.tsl.doctype.leave_application_form.leave_application_form import validate_balance_leaves
 #from frappe.permissions import has_role
 # @frappe.whitelist()
 # def currency():
@@ -31,49 +33,49 @@ from frappe.utils.csvutils import read_csv_content
 # 	data = response.json()
 # 	print((data['rates']['KWD']))
 
-@frappe.whitelist()
-def send_sales_reminder(): # Reflects in Sales Track
+# @frappe.whitelist()
+# def send_sales_reminder(): # Reflects in Sales Track
     
-    sales_person = ["maaz@tsl-me.com","vazeem@tsl-me.com"]
-    sales_report = frappe.db.sql("""select date,sales_user from `tabSales Track` where date = CURDATE()""",as_dict=1)
+#     sales_person = ["maaz@tsl-me.com","vazeem@tsl-me.com"]
+#     sales_report = frappe.db.sql("""select date,sales_user from `tabSales Track` where date = CURDATE()""",as_dict=1)
 
-    if sales_report == []:
-        frappe.sendmail(
-                        recipients= sales_person,
-                       cc = ["yousuf@tsl-me.com"],
-                        subject="Daily Sales Report Reminder",
-                        message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
-                        <b>​TSL Company</b><br>
-                        Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
-                        Tel: +965 24741313 | Fax: +965 24741311 | <br>
-                        Email: info@tsl-me.com | Web: www.tsl-me.com"""
-                        )
-    for sr in sales_report:
-        print(sr.sales_person)
-        if sales_person[0] not in sr.sales_user:
-            print(sales_person[0])
-            frappe.sendmail(
-                    recipients= [sales_person[0]],
-                    cc = ["yousuf@tsl-me.com"],
-                    subject="Daily Sales Report Reminder",
-                    message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
-                            <b>​TSL Company</b><br>
-                            Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
-                            Tel: +965 24741313 | Fax: +965 24741311 | <br>
-                            Email: info@tsl-me.com | Web: www.tsl-me.com"""
-                            )
-        if sales_person[1] not in sr.sales_user:
-            print(sales_person[1])
-            frappe.sendmail(
-                recipients= sales_person[1],
-                cc = ["yousuf@tsl-me.com"],
-                            subject="Daily Sales Report Reminder",
-                            message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
-                            <b>​TSL Company</b><br>
-                            Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
-                            Tel: +965 24741313 | Fax: +965 24741311 | <br>
-                            Email: info@tsl-me.com | Web: www.tsl-me.com"""
-                            )
+#     if sales_report == []:
+#         frappe.sendmail(
+#                         recipients= sales_person,
+#                        cc = ["yousuf@tsl-me.com"],
+#                         subject="Daily Sales Report Reminder",
+#                         message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
+#                         <b>​TSL Company</b><br>
+#                         Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
+#                         Tel: +965 24741313 | Fax: +965 24741311 | <br>
+#                         Email: info@tsl-me.com | Web: www.tsl-me.com"""
+#                         )
+#     for sr in sales_report:
+#         print(sr.sales_person)
+#         if sales_person[0] not in sr.sales_user:
+#             print(sales_person[0])
+#             frappe.sendmail(
+#                     recipients= [sales_person[0]],
+#                     cc = ["yousuf@tsl-me.com"],
+#                     subject="Daily Sales Report Reminder",
+#                     message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
+#                             <b>​TSL Company</b><br>
+#                             Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
+#                             Tel: +965 24741313 | Fax: +965 24741311 | <br>
+#                             Email: info@tsl-me.com | Web: www.tsl-me.com"""
+#                             )
+#         if sales_person[1] not in sr.sales_user:
+#             print(sales_person[1])
+#             frappe.sendmail(
+#                 recipients= sales_person[1],
+#                 cc = ["yousuf@tsl-me.com"],
+#                             subject="Daily Sales Report Reminder",
+#                             message = """Dear Team,<br><br>Kindly fill the Daily Report by EOD<br><br>Thanks & Regards,<br><br>
+#                             <b>​TSL Company</b><br>
+#                             Bldg: 1473, Unit: 13, Street: 24, Block: 1, Al Rai Industrial Area, Kuwait.<br>
+#                             Tel: +965 24741313 | Fax: +965 24741311 | <br>
+#                             Email: info@tsl-me.com | Web: www.tsl-me.com"""
+#                             )
 
 @frappe.whitelist()
 def create_rfq_int(ps): # Request For Quotation
@@ -119,76 +121,152 @@ def create_rfq_int(ps): # Request For Quotation
 def getstock_detail(item_details,company):
     item_details = json.loads(item_details)
     data = ''
-    data += '<h4><center><b>STOCK DETAILS</b></center></h4>'
-    data += '<h6><B>Note:</h6>'
-    data += '<table style = font-size:12px width=100% ><tr><td>REPAIR KUWAIT - <b>TSL</b></td><td>RIYADH MAIN -<b>TSL SA</b></td><td>JEDDAH -<b>TSL SA</b></td><td>DAMMAM- <b>TSL SA</b></tr>'
-    data += '</table>'
-    for j in item_details:
-        country = frappe.get_value("Company",{"name":company},["country"])
-        warehouse_stock = frappe.db.sql("""
-        select sum(b.actual_qty) as qty from `tabBin` b join `tabWarehouse` wh on wh.name = b.warehouse join `tabCompany` c on c.name = wh.company where c.country = '%s' and b.item_code = '%s'
-        """ % (country,j["sku"]),as_dict=True)[0]
-        if not warehouse_stock["qty"]:
-            warehouse_stock["qty"] = 0		
-        new_po = frappe.db.sql("""select sum(`tabPurchase Order Item`.qty) as qty,sum(`tabPurchase Order Item`.received_qty) as d_qty from `tabPurchase Order` 
-        left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
-        where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus = 1 """ % (j["sku"]), as_dict=True)[0]
-        if not new_po['qty']:
-            new_po['qty'] = 0
-        if not new_po['d_qty']:
-            new_po['d_qty'] = 0
-        in_transit = new_po['qty'] - new_po['d_qty']
-        total = warehouse_stock["qty"] + in_transit
+    if item_details:
+        data = ''
+        data += '<h4><center><b>STOCK DETAILS</b></center></h4>'
+        data += '<h6><B>Note:</h6>'
+        data += '<table class="table table-bordered" style = font-size:12px width=100% ><tr><td>REPAIR KUWAIT - <b>TSL</b></td><td>REPAIR DUBAI - <b>TSL</b></td><td>RIYADH MAIN -<b>TSL SA</b></td><td>JEDDAH -<b>TSL SA</b></td><td>DAMMAM- <b>TSL SA</b></tr>'
+        data += '</table>'
+
+        data += '<table class="table table-bordered">'
+        data += '<tr>'
+        data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+        data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
+        if company == "TSL COMPANY - Kuwait":
+            data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>AVAILABLE STOCK - ( KW )</b><center></td>'
+        if company == "TSL COMPANY - UAE":
+            data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>AVAILABLE STOCK-( DUBAI )</b><center></td>'
+        if company == "TSL COMPANY - KSA":
+            data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( RIYADH-SA )</b><center></td>'
+            data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( JEDDAH-SA )</b><center></td>'
+            data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( DAMMAM-SA )</b><center></td>'
+        data += '</tr>'
         
-        stocks = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
-        where item_code = '%s' """%(j["sku"]),as_dict=True)
-        frappe.errprint(stocks)
-        
-        pos = frappe.db.sql("""select `tabPurchase Order Item`.item_code as item_code,`tabPurchase Order Item`.item_name as item_name,`tabPurchase Order`.supplier as supplier,sum(`tabPurchase Order Item`.qty) as qty,`tabPurchase Order Item`.rate as rate,`tabPurchase Order`.transaction_date as date,`tabPurchase Order`.name as po from `tabPurchase Order`
-        left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
-        where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus != 2 order by rate asc limit 1""" % (j["sku"]), as_dict=True)
-        
-        new_so = frappe.db.sql("""select sum(`tabSales Order Item`.qty) as qty,sum(`tabSales Order Item`.delivered_qty) as d_qty from `tabSales Order`
-        left join `tabSales Order Item` on `tabSales Order`.name = `tabSales Order Item`.parent
-        where `tabSales Order Item`.item_code = '%s' and `tabSales Order`.docstatus = 1  """ % (j["sku"]), as_dict=True)[0]
-        
-        if not new_so['qty']:
-            new_so['qty'] = 0
-        if not new_so['d_qty']:
-            new_so['d_qty'] = 0
-        del_total = new_so['qty'] - new_so['d_qty']
+        for j in item_details:
+            country = frappe.get_value("Company",{"name":company},["country"])
+            warehouse_stock = frappe.db.sql("""
+            select sum(b.actual_qty) as qty from `tabBin` b join `tabWarehouse` wh on wh.name = b.warehouse join `tabCompany` c on c.name = wh.company where c.country = '%s' and b.item_code = '%s'
+            """ % (country,j["sku"]),as_dict=True)[0]
+            if not warehouse_stock["qty"]:
+                warehouse_stock["qty"] = 0		
+            new_po = frappe.db.sql("""select sum(`tabPurchase Order Item`.qty) as qty,sum(`tabPurchase Order Item`.received_qty) as d_qty from `tabPurchase Order` 
+            left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
+            where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus = 1 """ % (j["sku"]), as_dict=True)[0]
+            if not new_po['qty']:
+                new_po['qty'] = 0
+            if not new_po['d_qty']:
+                new_po['d_qty'] = 0
+            in_transit = new_po['qty'] - new_po['d_qty']
+            total = warehouse_stock["qty"] + in_transit
             
-        i = 0
-        
-        for po in pos:
-            if pos:
-                data += '<table class="table table-bordered">'
-                data += '<tr>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( KW )</b><center></td>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( RIYADH-SA )</b><center></td>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( JEDDAH-SA )</b><center></td>'
-                data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( DAMMAM-SA )</b><center></td>'
-                data += '</tr>'
-                data +='<tr>'
-                data += '<td style="text-align:center" colspan=1>%s</td>'%(j["sku"])
+            stocks = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+            where item_code = '%s' """%(j["sku"]),as_dict=True)
+            
+            pos = frappe.db.sql("""select `tabPurchase Order Item`.item_code as item_code,`tabPurchase Order Item`.item_name as item_name,`tabPurchase Order`.supplier as supplier,sum(`tabPurchase Order Item`.qty) as qty,`tabPurchase Order Item`.rate as rate,`tabPurchase Order`.transaction_date as date,`tabPurchase Order`.name as po from `tabPurchase Order`
+            left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
+            where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus != 2 order by rate asc limit 1""" % (j["sku"]), as_dict=True)
+            
+            new_so = frappe.db.sql("""select sum(`tabSales Order Item`.qty) as qty,sum(`tabSales Order Item`.delivered_qty) as d_qty from `tabSales Order`
+            left join `tabSales Order Item` on `tabSales Order`.name = `tabSales Order Item`.parent
+            where `tabSales Order Item`.item_code = '%s' and `tabSales Order`.docstatus = 1  """ % (j["sku"]), as_dict=True)[0]
+            
+            if not new_so['qty']:
+                new_so['qty'] = 0
+            if not new_so['d_qty']:
+                new_so['d_qty'] = 0
+            del_total = new_so['qty'] - new_so['d_qty']
                 
-                data += '<td style="text-align:center" colspan=1>%s</td>'%(frappe.db.get_value("Item Model",j["model"],['model']))
-                for stock in stocks:
-                    if stock.actual_qty > 0:
-                        data += '<td style="text-align:center;" colspan=1>%s</td>'%(stock.actual_qty)
-                    
-                data += '</tr>'
+            i = 0
+           
+            # for po in pos:
+            #     if pos:
+                
+            data +='<tr>'
+            data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(j["sku"])
+            
+            data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(frappe.db.get_value("Item Model",j["model"],['model']))
+            # for stock in stocks:
+                # if stock.actual_qty > 0:
+            if company == "TSL COMPANY - Kuwait":
+                kw = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+                where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Kuwait - TSL"),as_dict=True)
+                
+                if kw:
+                    data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(kw[0]["actual_qty"])
+                else:
+                    data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+
+            dw = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+            where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Dubai - TSL-UAE"),as_dict=True)
+            
+            if company == "TSL COMPANY - UAE":
+                if dw:
+                    data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(dw[0]["actual_qty"])
+                else:
+                    data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+
+            if company == "TSL COMPANY - KSA":
+                data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+                data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+                data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+                
+            data += '</tr>'
             i += 1
         data += '</table>'
-                
+                    
+        return data
+@frappe.whitelist() # part number details against the Parts requested in initial Evaluation
+def get_model(item_details,company):
+    item_details = json.loads(item_details)
+    data = ''
+    data += '<h4><center><b>STOCK DETAILS</b></center></h4>'
+
+    data = ''
+    data += '<h4><center><b>PART DETAILS</b></center></h4>'
+        
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+    data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
+    data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>CATEGORY</b><center></td>'
+    data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SUB CATEGORY</b><center></td>'
+    data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PACKAGE</b><center></td>'
+    # data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>VALUATION RATE</b><center></td>'
+       
+    
+    for j in item_details:
+        md = frappe.get_value("Item Model",j["model"],'model')
+        
+        m = frappe.get_all("Item",{"model_num":md},["*"])
+        for i in m:
+            frappe.errprint(i.name)
+            data += '<tr>'
+            data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(i.name)
+            data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(i.model_num)
+            data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(i.category_)
+            sc = frappe.get_value("Sub Category",i.sub_category,'sub_category')
+            data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(sc)
+            data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>'%(i.package or '')
+            # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>'%(i.valuation_rate)
+
+            data += '</tr>'
+        data += '<tr>'
+        # data += '<tr>'
+        # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>' 
+        # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>' 
+        # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>' 
+        # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>'
+        # data += '<td style="padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>'
+        # data += '</tr>'
+    data += '</table>'
+                    
     return data
+
 # def create_hooks():
 #     job = frappe.db.exists('Scheduled Job Type', 'stock_reminder')
 #     if not job:
 #         sjt = frappe.new_doc("Scheduled Job Type")  
-#         sjt.update({
+#         sjt.({
 #             "method" : 'tsl.custom_py.utils.enque_qty',
 #             "frequency" : 'Cron',
 #             "cron_format" : '30 16 * * *'
@@ -439,7 +517,7 @@ def get_receivable(customer):
     return data
 
 @frappe.whitelist()
-def get_wod():
+def get_wod(from_date,to_date,company):
     data = ''
     data += '<div class="table-container">'
     data += '<table class="table table-bordered" width: 100%;>'
@@ -463,7 +541,7 @@ def get_wod():
     data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(Quoted)</b></center></td>'
     
     data += '</tr>'
-    wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` """,as_dict =1)
+    wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` where company = '%s' """ %(company) ,as_dict =1)
     data += '<tr>'
     data += '<td style="border-color:#000000;width:10%"><center><b>Salesman</b></center></td>'
     data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
@@ -478,122 +556,425 @@ def get_wod():
     current_date_time = datetime.now()
 
     # Extract and print the current date
-    current_date = current_date_time.date()
+    current_date = to_date
     # Week_start = add_days(current_date,-6)
-    Week_start = "2023-09-23"
+    Week_start = from_date
 
     total_rsi = 0
     total_rsc = 0
     total_rs = 0
     total_quotation = 0
+
+    s_total_rsi = 0
+    s_total_rsc = 0
+    s_total_rs = 0
+    s_total_quotation = 0
+    
     for i in wo:
         if not i["sales_rep"] == None:
-            if not i["sales_rep"] == '':
-                wds = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]})
-                 # RSI
+            if not i["sales_rep"] == 'Sales Team' and not i["sales_rep"] == 'Walkin' and not i["sales_rep"] == 'OMAR' and not i["sales_rep"] == '' and not i["sales_rep"] == 'Mazz':
+                
+                # wds = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name  from `tabWork Order Data` 
+                # left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+                # where  `tabStatus Duration Details`.status = "RSI-Repaired and Shipped Invoiced"
+                # and `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "2015-01-01" and "2024-10-06" """ %(i["sales_rep"]) ,as_dict=1)
+
+                wds = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]},["*"])
+                # RSI
+                
                 squot = 0
                 for j in wds:
-                    rsi_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rsi_q = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
-                    
-                    for k in rsi_q:
-                        squot = squot + k["after_discount_cost"]
-            
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rsi_q:
+                        for k in rsi_q:
+                            squot = squot + k["after_discount_cost"]
+                    else:
+                        rsi_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rsi_q_2:
+                            for k in rsi_q_2:
+                                squot = squot + k["after_discount_cost"]
+                        else:
+                            rsi_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            if rsi_q_3:
+                                for k in rsi_q_3:
+                                    squot = squot + k["after_discount_cost"]
+                            else:
+                                rsi_q_4 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                                if rsi_q_4:
+                                    for k in rsi_q_4:
+                                        squot = squot + k["after_discount_cost"]
+                                else:
+                                    rsi_q_5 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where `tabQuotation`.Workflow_state in ("Approved By Management")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 and `tabQuotation`.quotation_type = "Revised Quotation - Repair" ''',j.name,as_dict=1)
+                                    if rsi_q_5:
+                                        for k in rsi_q_5:
+                                            squot = squot + k["after_discount_cost"]
+
+
 
                 mquot = 0
                 for j in wds:
-                    rsi_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rsi_mq = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    where  `tabQuotation`.Workflow_state in ("Approved By Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rsi_mq:
+                        for k in rsi_mq:
+                            mquot = mquot + k["margin_amount"]
+                    else:
+                        rsi_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where  `tabQuotation`.Workflow_state in ("Quoted to Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rsi_mq_2:
+                            for k in rsi_mq_2:
+                                mquot = mquot + k["margin_amount"]
+                        else:
+                            rsi_mq_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where  `tabQuotation`.Workflow_state in ("Rejected by Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            if rsi_mq_3:
+                                for k in rsi_mq_3:
+                                    mquot = mquot + k["margin_amount"]
+                            else:
+                                rsi_mq_4 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where  `tabQuotation`.Workflow_state in ("Rejected by Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                                if rsi_mq_4:
+                                    for k in rsi_mq_4:
+                                        mquot = mquot + k["margin_amount"]
+                                else:
+                                    rsi_mq_5 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where  `tabQuotation`.Workflow_state in ("Approved By Management") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 and `tabQuotation`.quotation_type = "Revised Quotation - Repair" ''',j.name,as_dict=1)
+                                    if rsi_mq_5:
+                                        for k in rsi_mq_5:
+                                            mquot = mquot + k["margin_amount"]
+
+                # old_wd_rsi = frappe.db.sql(""" select sum(`tabWork Order Data`.old_wo_q_amount) as rsi from `tabWork Order Data` where `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "%s" and "%s" and `tabWork Order Data`.status = "RSI-Repaired and Shipped Invoiced" """ %(i["sales_rep"],Week_start,current_date) ,as_dict=1)
+                # old_wd_rsi = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)],"old_wo_q_amount": [">", 0]},["old_wo_q_amount"])
+                 
+                
+                rsi_total = squot + mquot 
+
+
+                #Invoiced
+                sup_in = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Invoiced","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_i = 0
+                for j in sup_in:
+                    sup_i_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
                     
-                    for k in rsi_mq:
-                        mquot = mquot + k["margin_amount"]
+                    for k in sup_i_q:
+                        sqm_i = sqm_i + k["after_discount_cost"]
             
-                rsi_total = squot + mquot
+
+                sqm_i_2 = 0
+                for j in sup_in:
+                    sup_i_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_i_q_2:
+                        sqm_i_2 = sqm_i_2 + k["margin_amount"]
+            
+                sqm_total = sqm_i + sqm_i_2
+
+                 #Delivered
+                sup_del = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Delivered","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_d = 0
+                for j in sup_del:
+                    sup_d_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_d_q:
+                        sqm_d = sqm_d + k["after_discount_cost"]
+            
+
+                sqm_d_2 = 0
+                for j in sup_del:
+                    sup_d_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_d_q_2:
+                        sqm_d_2 = sqm_d_2 + k["margin_amount"]
+            
+                sqm_del_total = sqm_d + sqm_d_2
+
+                #Quoted
+                sup_quo = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Quoted","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_quo = 0
+                for j in sup_quo:
+                    sup_quo_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_quo_q:
+                        sqm_quo = sqm_quo + k["after_discount_cost"]
+            
+
+                sqm_quo_2 = 0
+                for j in sup_del:
+                    sup_quo_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_quo_q_2:
+                        sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+            
+                sqm_quo_total =sqm_quo + sqm_quo_2
+
+
+                #Received
+                sup_rec = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Received","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_rec = 0
+                for j in sup_rec:
+                    sup_rec_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_rec_q:
+                        sqm_rec = sqm_rec + k["after_discount_cost"]
+            
+
+                sqm_rec_2 = 0
+                for j in sup_rec:
+                    sup_rec_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_rec_q_2:
+                        sqm_rec_2 = sqm_rec_2 + k["margin_amount"]
+            
+                sqm_rec_total =sqm_rec + sqm_rec_2
+
+
 
                 # RSC	
                 
-                wds_rsc = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSC-Repaired and Shipped Client","posting_date": ["between", (Week_start,current_date)]})
+                wds_rsc = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSC-Repaired and Shipped Client","posting_date": ["between", (Week_start,current_date)]},["*"])
                 
                 rsc_squot = 0
                 for j in wds_rsc:
-                    rsc_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rsc_q = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
-                    
-                    for k in rsc_q:
-                        rsc_squot = rsc_squot + k["after_discount_cost"]
-            
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rsc_q:
+                        for k in rsc_q:
+                            rsc_squot = rsc_squot + k["after_discount_cost"]
+                    else:
+                        rsc_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rsc_q_2:
+                            for k in rsc_q_2:
+                                rsc_squot = rsc_squot + k["after_discount_cost"]
+                        # else:
+                        #     rsc_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        #     where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        #     if rsc_q_3:
+                        #         for k in rsc_q_3:
+                        #             rsc_squot = rsc_squot + k["after_discount_cost"]
+                            # else:
+                            #     rsc_q_4 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            #     where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            #     if rsc_q_4:
+                            #         for k in rsc_q_4:
+                            #             rsc_squot = rsc_squot + k["after_discount_cost"]
+                        
+                            #     else:
+                            #         rsc_q_5 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            #         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            #         where `tabQuotation`.Workflow_state in ("Approved By Management")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            #         if rsc_q_5:
+                            #             for k in rsc_q_5:
+                            #                 rsc_squot = rsc_squot + k["after_discount_cost"]
+                        
+
 
                 rsc_mquot = 0
                 for j in wds_rsc:
-                    rsc_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rsc_mq = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
-                    
-                    for k in rsc_mq:
-                        rsc_mquot = rsc_mquot + k["margin_amount"]
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rsc_mq:
+                        for k in rsc_mq:
+                            rsc_mquot = rsc_mquot + k["margin_amount"]
+                    else:
+                        rsc_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rsc_mq_2:
+                            for k in rsc_mq_2:
+                                rsc_mquot = rsc_mquot + k["margin_amount"]
+                        # else:
+                        #     rsc_mq_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        #     where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        #     if rsc_mq_3:
+                        #         for k in rsc_mq_3:
+                        #             rsc_mquot = rsc_mquot + k["margin_amount"]
+                            # else:
+                            #     rsc_mq_4 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            #     where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            #     if rsc_mq_4:
+                            #         for k in rsc_mq_4:
+                            #             rsc_mquot = rsc_mquot + k["margin_amount"]
+                            #     else:
+                            #         rsc_mq_5 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            #         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            #         where `tabQuotation`.Workflow_state in ("Approved By Management")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            #         if rsc_mq_5:
+                            #             for k in rsc_mq_5:
+                            #                 rsc_mquot = rsc_mquot + k["margin_amount"]
+
+
 
                 #RS				
-                wds_rs = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RS-Repaired and Shipped","posting_date": ["between", (Week_start,current_date)]})
+                wds_rs = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RS-Repaired and Shipped","posting_date": ["between", (Week_start,current_date)]},["*"])
                 
                 rs_squot = 0
                 for j in wds_rs:
-                    rs_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rs_q = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
-                    
-                    for k in rs_q:
-                        rs_squot = rs_squot + k["after_discount_cost"]
-            
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rs_q:
+                        for k in rs_q:
+                            rs_squot = rs_squot + k["after_discount_cost"]
+                    else:
+                        rs_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rs_q_2:
+                            for k in rs_q_2:
+                                rs_squot = rs_squot + k["after_discount_cost"]
+                        # else:
+                        #     rs_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        #     where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        #     if rs_q_3:
+                        #         for k in rs_q_3:
+                        #             rs_squot = rs_squot + k["after_discount_cost"]
+
 
                 rs_mquot = 0
                 for j in wds_rs:
-                    rs_mq = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    rs_mq = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state = "Approved By Customer"  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
-                    
-                    for k in rs_mq:
-                        rs_mquot = rs_mquot + k["margin_amount"]
-            
-                rsi_total = squot + mquot
-                rsc_total = rsc_squot + rsc_mquot
-                rs_total = rs_squot + rs_mquot
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rs_mq:
+                        for k in rs_mq:
+                            rs_mquot = rs_mquot + k["margin_amount"]
+                    else:
+                        rs_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rs_mq_2:
+                            for k in rs_mq_2:
+                                rs_mquot = rs_mquot + k["margin_amount"]
+                        
+                        # else:
+                        #     rs_mq_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        #     where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        #     if rs_mq_3:
+                        #         for k in rs_mq_3:
+                        #             rs_mquot = rs_mquot + k["margin_amount"]
+
+
+
+                
+                #rsi
+                rsi_old = 0
+                for i in wds:
+                    rsi_old = rsi_old + i.old_wo_q_amount
+              
+                rsi_total = squot + mquot + rsi_old
+
+                #rsc
+                rsc_old = 0
+                for i in wds_rsc:
+                    rsc_old = rsc_old + i.old_wo_q_amount
+              
+                rsc_total = rsc_squot + rsc_mquot + rsc_old
+
+                #rs
+                rs_old = 0
+                for i in wds_rs:
+                    rs_old = rs_old + i.old_wo_q_amount
+              
+                rs_total = rs_squot + rs_mquot + rs_old
 
                 total_rsi = total_rsi + rsi_total
                 total_rsc = total_rsc + rsc_total
                 total_rs = total_rs + rs_total 
 
+                s_total_rsi = s_total_rsi + sqm_total
+                s_total_rsc = s_total_rsc + sqm_del_total
+                s_total_rs = s_total_rs + sqm_rec_total
+                s_total_quotation =  s_total_quotation + sqm_quo_total
+
                 total_q = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
-                where Workflow_state = "Approved By Customer"  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+                where Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
                 print(total_q[0]["t"])
                 if total_q[0]["t"] == None:
                     total_q[0]["t"] = 0
 
                 total_quotation = total_quotation + total_q[0]["t"] 
 
+                
+                sales = frappe.get_value("Sales Person",i["sales_rep"],["user"])
+                if sales:
+                    gt = 0
+                    gr = frappe.get_all("Sales Invoice",{"department":"Repair - TSL","status": ["in", ["Unpaid","Overdue"]]},["*"])
+                    frappe.errprint(gr)
+                    frappe.errprint("jhiku")
+                    if gr.grand_total:
+                        frappe.errprint("jhiku")
+
+                        for i in gr.grand_total:
+                            frappe.errprint("jhiku")
+
+                        # gt = gt + i.grand_total
+
                 data += '<tr>'
                 data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(i["sales_rep"])
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rsi_total)
-                data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rsc_total)
-                data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(rs_total)
-                data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_q[0]["t"])
-                data += '<td style="border-color:#000000;"><center><b></b></center></td>'	
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(rsi_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(sqm_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(rsc_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(sqm_del_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(rs_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(sqm_rec_total)) 
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(total_q[0]["t"]))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'	 %("{:,.2f}".format(sqm_quo_total))
                 data += '</tr>'
     data += '<tr>'
     data += '<td style="border-color:#000000;"><center><b>Total</b></center></td>'
-    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsi)
-    data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsc)
-    data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_rs)
-    data += '<td style="border-color:#000000;"><center><b></b></center></td>'
-    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_quotation )
-    data += '<td style="border-color:#000000;"><center><b></b></center></td>' 
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(total_rsi)) 
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'  %("{:,.2f}".format(s_total_rsi))
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'  %("{:,.2f}".format(total_rsc))
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'  %("{:,.2f}".format(s_total_rsc))
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'  %("{:,.2f}".format(total_rs))
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(s_total_rs))
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(total_quotation)) 
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(s_total_quotation))
     data += '</tr>'
 
     data += '</table>'
@@ -933,15 +1314,46 @@ def get_wrk_ord(from_date,to_date,customer,work_order_data,sales_person,report):
 
 @frappe.whitelist()
 def change_shipping_cost(currency,sq):
-    ship_cost = frappe.get_value("Supplier Quotation",{"supply_order_data":sq,"workflow_state":"Approved By Management"},["Shipping_cost"])
-    base_total = frappe.get_value("Supplier Quotation",{"supply_order_data":sq,"workflow_state":"Approved By Management"},["base_total"])
-    supplier = frappe.get_value("Supplier Quotation",{"supply_order_data":sq},["supplier"])
-    cur = frappe.get_value("Supplier",{"name":supplier},["default_currency"])
-    if not cur:
-        frappe.throw("Please select default currency for the supplier %s " %(supplier))
-    exr = get_exchange_rate(cur,currency)
-    cost = ship_cost * exr
-    return cost,base_total,supplier
+    items = json.loads(sq)
+    d = []
+    data = []
+    t_amt = 0
+
+    for j in items:
+        d.append(j["supply_order_data"])
+    
+    uv = list(set(d))
+
+    shp_list = 0
+    for k in uv:
+        sq   = frappe.get_all("Supplier Quotation",{"supply_order_data":k},["*"])
+        for s in sq:
+            cur = frappe.get_value("Supplier",{"name":s.supplier},["default_currency"])
+            exr = get_exchange_rate(cur,currency)
+            s_cost = s.shipping_cost * exr
+            shp_list = shp_list + s_cost
+    
+    total_cost = 0
+    for j in items:
+
+        sup = frappe.db.sql(""" select `tabSupplier Quotation`.supplier,`tabSupplier Quotation`.name,
+        `tabSupplier Quotation Item`.base_rate,`tabSupplier Quotation Item`.supply_order_data,
+        `tabSupplier Quotation`.shipping_cost from `tabSupplier Quotation` join 
+        `tabSupplier Quotation Item` on `tabSupplier Quotation Item`.parent = `tabSupplier Quotation`.name where
+        `tabSupplier Quotation Item`.supply_order_data = '%s' and `tabSupplier Quotation Item`.item_code = '%s' """ %(j["supply_order_data"],j["item_code"]),as_dict =1)
+        
+        total_cost = total_cost + (sup[0]["base_rate"]*j["qty"])
+        cur = frappe.get_value("Supplier",{"name":sup[0]["supplier"]},["default_currency"])
+        exr = get_exchange_rate(cur,currency)
+        cost = sup[0]["shipping_cost"] * exr
+        row = [sup[0]["supply_order_data"],sup[0]["name"],sup[0]["supplier"],sup[0]["base_rate"]*j["qty"],cost]
+        data.append(row)
+
+    t_amt = shp_list + total_cost       
+    
+    return data,t_amt
+
+
 
 @frappe.whitelist()
 def crt_wo(import_file):
@@ -1363,10 +1775,19 @@ def send_mail_to_customer(q,type,email):
             sender="Notification from TSL <info@tsl-me.com>",
             subject="Quotation from TSL",
             message=""" 
-            <p>Dear Mr / Mrs</p><br>
-            <p>Please find the attached quotation for the repair.
-            We are waiting for your approval for further processing.</p>
-            """,
+           
+            <p>Dear Sir</p><br><br>,
+                I hope this message ﬁnds you well.<br><br>
+                We are pleased to provide the below Quotation for the reference (Wo #No.)<br><br>
+                Awaitng your approval for the same.<br><br>
+                Thank you for choosing TSL COMPANY.<br><br>
+                Best regards,<br>
+
+                <div><style>.sh-src a{text-decoration:none!important;}</style></div> <br> <table cellpadding="0" cellspacing="0" border="0" class="sh-src" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td align="center" style="padding: 0px 18px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 13px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/file/5r1rjllxn18j0p" alt="" title="Profile Picture" width="100" height="100" class="" style="display: block; border: 0px; max-width: 100px;"></p></td></tr></table> <table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank"><img src="https://signaturehound.com/api/v1/file/3lwizllxn10tyt" alt="" title="Logo" width="150" height="50" style="display: block; border: 0px; max-width: 150px;"></a></p></td></tr></table></td> <td width="5" style="padding: 1px 0px 0px;"></td> <td style="padding: 0px 1px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163); font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap;"><p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; font-weight: 700; color: rgb(0,92,163); white-space: nowrap; margin: 1px;">Mohammed K Daddy</p> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">Customer Support Officer</p> <!----> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">TSL Group | Kuwait</p></td></tr> <tr><td style="padding: 10px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info@tsl-me.com</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/direct/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741313" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741313</span></a></p></td></tr><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/fax/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741311" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741311</span></a></p></td></tr> <tr><td valign="top" style="padding: 1px 5px 1px 0px; vertical-align: top;"><p style="margin: 1px;">
+                <img src="https://signaturehound.com/api/v1/png/map/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://www.google.com/maps/place/TSL+For+Industrial+Electronics+Repairing+%26+Supply+-+Kuwait/@29.3082683,47.9352691,18z/data=!4m6!3m5!1s0x3fcf9a9068440231:0x7321607de759fdc1!8m2!3d29.3082309!4d47.9365244!16s%2Fg%2F11c0rlsd_t?entry=ttu" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">Bldg: 1473, Unit: 13, Street: 24, Block: 1,<br>Al Rai Industrial Area, Kuwait</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,162) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.linkedin.com/company/tsl-me/mycompany/" target="_blank"><img src="https://signaturehound.com/api/v1/png/linkedin/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;">
+                <a href="https://x.com/tsl_mecompany?s=11&amp;t=Zxza0-9Q_18nsDCddfTQPw" target="_blank"><img src="https://signaturehound.com/api/v1/png/x/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.instagram.com/tslcom/?igshid=MzRlODBiNWFlZA%3D%3D" target="_blank"><img src="https://signaturehound.com/api/v1/png/instagram/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.facebook.com/people/TSL-Industrial-Electronics-Services/61550277093129/" target="_blank"><img src="https://signaturehound.com/api/v1/png/facebook/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.youtube.com/@TSLELECTRONICSSERVICES" target="_blank"><img src="https://signaturehound.com/api/v1/png/youtube/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td></tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 15px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 15px 4px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"></p></td> <td style="font-family: Arial, sans-serif; color: rgb(136,136,135) !important; font-weight: 700; font-size: 10px; line-height: 15px; padding: 15px 0px 1px; vertical-align: middle;"><p style="margin: 1px;"</p></td></tr></table></td></tr> <!----></table>
+                """,
+            
             attachments=get_attachments(q,"Quotation")
             )
             frappe.msgprint("Mail Successfully Sent to Customer")
@@ -1377,9 +1798,17 @@ def send_mail_to_customer(q,type,email):
             sender="Notification from TSL <info@tsl-me.com>",
             subject="Quotation from TSL",
             message=""" 
-            <p>Dear Mr / Mrs</p><br>
-            <p>Please find the attached quotation for the supply.
-            We are waiting for your approval for further processing.</p>
+           
+            <p>Dear Sir</p><br><br>,
+                I hope this message ﬁnds you well.<br><br>
+                We are pleased to provide the below Quotation for the reference (Wo #No.)<br><br>
+                Awaitng your approval for the same.<br><br>
+                Thank you for choosing TSL COMPANY.<br><br>
+                Best regards,<br>
+
+                <div><style>.sh-src a{text-decoration:none!important;}</style></div> <br> <table cellpadding="0" cellspacing="0" border="0" class="sh-src" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td align="center" style="padding: 0px 18px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 13px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/file/5r1rjllxn18j0p" alt="" title="Profile Picture" width="100" height="100" class="" style="display: block; border: 0px; max-width: 100px;"></p></td></tr></table> <table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank"><img src="https://signaturehound.com/api/v1/file/3lwizllxn10tyt" alt="" title="Logo" width="150" height="50" style="display: block; border: 0px; max-width: 150px;"></a></p></td></tr></table></td> <td width="5" style="padding: 1px 0px 0px;"></td> <td style="padding: 0px 1px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163); font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap;"><p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; font-weight: 700; color: rgb(0,92,163); white-space: nowrap; margin: 1px;">Mohammed K Daddy</p> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">Customer Support Officer</p> <!----> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">TSL Group | Kuwait</p></td></tr> <tr><td style="padding: 10px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info@tsl-me.com</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/direct/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741313" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741313</span></a></p></td></tr><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/fax/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741311" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741311</span></a></p></td></tr> <tr><td valign="top" style="padding: 1px 5px 1px 0px; vertical-align: top;"><p style="margin: 1px;">
+                <img src="https://signaturehound.com/api/v1/png/map/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://www.google.com/maps/place/TSL+For+Industrial+Electronics+Repairing+%26+Supply+-+Kuwait/@29.3082683,47.9352691,18z/data=!4m6!3m5!1s0x3fcf9a9068440231:0x7321607de759fdc1!8m2!3d29.3082309!4d47.9365244!16s%2Fg%2F11c0rlsd_t?entry=ttu" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">Bldg: 1473, Unit: 13, Street: 24, Block: 1,<br>Al Rai Industrial Area, Kuwait</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,162) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.linkedin.com/company/tsl-me/mycompany/" target="_blank"><img src="https://signaturehound.com/api/v1/png/linkedin/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;">
+                <a href="https://x.com/tsl_mecompany?s=11&amp;t=Zxza0-9Q_18nsDCddfTQPw" target="_blank"><img src="https://signaturehound.com/api/v1/png/x/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.instagram.com/tslcom/?igshid=MzRlODBiNWFlZA%3D%3D" target="_blank"><img src="https://signaturehound.com/api/v1/png/instagram/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.facebook.com/people/TSL-Industrial-Electronics-Services/61550277093129/" target="_blank"><img src="https://signaturehound.com/api/v1/png/facebook/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.youtube.com/@TSLELECTRONICSSERVICES" target="_blank"><img src="https://signaturehound.com/api/v1/png/youtube/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td></tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 15px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 15px 4px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"></p></td> <td style="font-family: Arial, sans-serif; color: rgb(136,136,135) !important; font-weight: 700; font-size: 10px; line-height: 15px; padding: 15px 0px 1px; vertical-align: middle;"><p style="margin: 1px;"</p></td></tr></table></td></tr> <!----></table>
             """,
             attachments=get_attach(q,"Quotation")
             )
@@ -1442,9 +1871,9 @@ def crt_item(import_file):
             c = c +1
             print(c)
     
-@frappe.whitelist()
-def update_ner(wod):
-    frappe.errprint(wod)
+# @frappe.whitelist()
+# def update_ner(wod):
+#     frappe.errprint(wod)
     # frappe.db.set_value("Work Order Data",wod,"status_cap","")
     # ev = frappe.get_doc("Evaluation Report",{"work_order_data":wod})
     # ev.ner_field = ""
@@ -1460,7 +1889,7 @@ def update_item(model,item):
         frappe.msgprint("Model Number Updated")
 
 @frappe.whitelist()
-def salary_register(month_name,company,cyrix_employee):
+def salary_register(month_name,company,cyrix_employee,civil_id_no):
     from datetime import timedelta
     current_year = datetime.now().year
     month_number = datetime.strptime(month_name, '%B').month
@@ -1477,29 +1906,49 @@ def salary_register(month_name,company,cyrix_employee):
         filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': 'Draft'}
     if company == "TSL COMPANY - UAE":
         filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': 'Draft'}
-    from hrms.payroll.report.salary_register.salary_register import execute
+    from tsl.tsl.report.salary_register_report.salary_register_report import execute
     result = execute(filters)
     headers = result[0]
     records = result[1]
-    skip_columns = ['total_loan_repayment','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining']
-    int_columns = ['leave_without_pay', 'payment_days']
+    skip_columns = ['total_loan_repayment','loan','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
+    int_columns = ['leave_without_pay', 'payment_days',"civil_id_no"]
     currency_columns = [header['fieldname'] for header in headers if header.get('fieldtype') == 'Currency']
     filtered_headers = []
     for header in headers:
         if header['fieldname'] in skip_columns:
             continue
-        # if header['fieldname'] == 'total_loan_repayment':
-        #     header['label'] = 'Loan'
         if header['fieldname'] == 'loan':
             header['label'] = 'Loan Deduction'
         filtered_headers.append(header)
+
+
+    # Add Civil ID header after employee_name
+    for index, header in enumerate(filtered_headers):
+        if header['fieldname'] == 'employee_name' and company == "TSL COMPANY - KSA":
+            # Create a new header for Civil ID
+            civil_id_header = {
+                'fieldname': 'civil_id_no',
+                'label': 'Civil ID',
+                'fieldtype': 'Data'  # Assuming it's a string
+            }
+            filtered_headers.insert(index + 1, civil_id_header)  # Insert after employee_name
+            
+        if header['fieldname'] == 'designation':
+            ctc_header = {
+                'fieldname': 'ctc',
+                'label': 'Total Salary',
+                'fieldtype': 'Currency'
+            }
+            filtered_headers.insert(index + 1, ctc_header)  # Insert after designation
+            break
+
     totals = {fieldname: 0.0 for fieldname in currency_columns}
 
     # Generate HTML table headers
     data = '<table border="1" width="100%"><tr><td style="text-align:right;font-size:6px;font-weight:bold">Sl.No.</td>'
     data += ''.join(f'<td style="font-size:7px;font-weight:bold">{header["label"]}</td>' for header in filtered_headers)
     data += '</tr>'
-
+    records = sorted(records, key=lambda x: int(x.get('employee', 0)))
     # Generate HTML table rows
     sl_no = 1
     for record in records:
@@ -1510,8 +1959,17 @@ def salary_register(month_name,company,cyrix_employee):
 
             for header in filtered_headers:
                 fieldname = header['fieldname']
-                fieldtype = header.get('fieldtype', '')
-                cell_value = record.get(fieldname, 0)  # Default to 0 if None
+                if fieldname == "civil_id_no" and company == "TSL COMPANY - KSA":
+                    fieldtype = "Data"
+                    cell_value = frappe.db.get_value("Employee",record.get("employee"),'civil_id_no')  # Default to 0 if None
+                
+                elif fieldname == "ctc":
+                    fieldtype = "Currency"
+                    cell_value = frappe.db.get_value("Employee",record.get("employee"),'ctc')  # Default to 0 if None
+                
+                else:
+                    fieldtype = header.get('fieldtype', '')
+                    cell_value = record.get(fieldname, 0)  # Default to 0 if None
                 
                 # Update totals for currency columns
                 if fieldname in currency_columns:
@@ -1691,23 +2149,28 @@ def get_sales(from_date,to_date,company):
 
 
 from datetime import datetime, timedelta, date
+
 @frappe.whitelist()
 def get_leave_application(leave_application):
     from hrms.hr.doctype.leave_application.leave_application import get_leave_details
-    leave_app = frappe.db.sql(""" select * from `tabLeave Application` where name = '%s' """%(leave_application),as_dict=1)
+    leave_app = frappe.db.sql(""" select * from `tabLeave Application Form` where name = '%s' """%(leave_application),as_dict=1)
     if leave_app:
         for lap in leave_app:
             remaining_leaves = 0
             val = get_leave_details(lap.employee,today())
             if val['leave_allocation'].get("Annual Leave", {}).get("remaining_leaves"):
                 remaining_leaves = (val['leave_allocation'].get("Annual Leave", {}).get("remaining_leaves"))
-            from_date = lap.from_date
+            from_date = lap.leave_start_date
             first_of_month = from_date.replace(day=1)
-            before_day = from_date - timedelta(days=1)
-            to_date = lap.to_date
-            worked_days = date_diff(from_date,first_of_month)
-            leave_days = date_diff(to_date,from_date) +1
-            return first_of_month,before_day,from_date,to_date,worked_days,leave_days,remaining_leaves
+            if first_of_month != from_date:
+                before_day = from_date - timedelta(days=1)
+                to_date = lap.leave_end_date
+                worked_days = validate_balance_leaves(lap.company,first_of_month,before_day,lap.employee,lap.leave_type)
+                leave_days = date_diff(to_date,from_date) +1
+                return first_of_month,before_day,lap.leave_start_date,lap.leave_end_date,worked_days,lap.leave_days,lap.leave_balance
+            else:
+                to_date = lap.leave_end_date
+                return '','',lap.leave_start_date,lap.leave_end_date,0,lap.leave_days,lap.leave_balance
 
 import openpyxl
 from openpyxl import Workbook
@@ -1729,8 +2192,6 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
     company = args.company
     cyrix_employee = args.cyrix_employee
     from datetime import timedelta
-    frappe.log_error(title = 'value',message = args)
-    frappe.log_error(title = 'type',message = type(month_name))
     current_year = datetime.now().year
     month_number = datetime.strptime(month_name, '%B').month    
     first_date = datetime(current_year, month_number, 1)
@@ -1745,11 +2206,11 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
         filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': 'Draft'}
     if company == "TSL COMPANY - UAE":
         filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': 'Draft'}
-    from hrms.payroll.report.salary_register.salary_register import execute
+    from tsl.tsl.report.salary_register_report.salary_register_report import execute
     result = execute(filters)
     headers = result[0]
     records = result[1]
-    skip_columns = ['total_loan_repayment','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining']
+    skip_columns = ['total_loan_repayment','loan','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
     int_columns = ['leave_without_pay', 'payment_days']
     currency_columns = [header['fieldname'] for header in headers if header.get('fieldtype') == 'Currency']
     filtered_headers = []
@@ -1759,10 +2220,31 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
         if header['fieldname'] == 'loan':
             header['label'] = 'Loan Deduction'
         filtered_headers.append(header)
+    for index, header in enumerate(filtered_headers):
+        if company == "TSL COMPANY - KSA" and header['fieldname'] == 'employee_name':
+            # Create a new header for Civil ID
+            civil_id_header = {
+                'fieldname': 'civil_id_no',
+                'label': 'Civil ID',
+                'fieldtype': 'Data'  # Assuming it's a string
+            }
+            filtered_headers.insert(index + 1, civil_id_header)  # Insert after employee_name
+
+        if header['fieldname'] == 'designation':
+            ctc_header = {
+                'fieldname': 'ctc',
+                'label': 'Total Salary',
+                'fieldtype': 'Currency'
+            }
+            filtered_headers.insert(index + 1, ctc_header)
+            break
     totals = {fieldname: 0.0 for fieldname in currency_columns}
     ws.append(["SALARY SUMMARY"])
     ws.append([""])
-    ws.append([company])
+    if int(cyrix_employee) == 1:
+        ws.append([company + " (CYRIX)"])
+    else:
+        ws.append([company])
 
     title = ["Sl.No."]
     for header in filtered_headers:
@@ -1772,6 +2254,7 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
     for header in ws.iter_rows(min_row=1 , max_row=4, min_col=1, max_col=cl_no):
         for cell in header:
             cell.font = Font(bold=True)
+    records = sorted(records, key=lambda x: int(x.get('employee', 0)))
     sl_no = 1
     for record in records:
         columns = [sl_no]
@@ -1779,8 +2262,17 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
         if cyrix == int(cyrix_employee):
             for header in filtered_headers:
                 fieldname = header['fieldname']
-                fieldtype = header.get('fieldtype', '')
-                cell_value = record.get(fieldname, 0)  # Default to 0 if None
+                if fieldname == "civil_id_no" and company == "TSL COMPANY - KSA":
+                    fieldtype = "Data"
+                    cell_value = frappe.db.get_value("Employee",record.get("employee"),'civil_id_no')  # Default to 0 if None
+
+                elif fieldname == "ctc":
+                    fieldtype = "Currency"
+                    cell_value = frappe.db.get_value("Employee",record.get("employee"),'ctc')
+
+                else:
+                    fieldtype = header.get('fieldtype', '')
+                    cell_value = record.get(fieldname, 0)  # Default to 0 if None
                 if fieldname in currency_columns:
                     totals[fieldname] += float(cell_value) if isinstance(cell_value, (float, int)) else 0
                 if fieldtype == 'Currency':
@@ -1879,3 +2371,2636 @@ def get_q(name):
         data+= '<tr><td colspan = 8><center><b style = "color:red";>PAYMENT TRANSFER APPROVAL FORM</b></center></td></tr>'
         data+= "</table>"
         return "Yes"
+
+@frappe.whitelist()
+def get_mc(name):
+    qu = frappe.db.sql(""" select `tabTechnician Hours Spent`.work_order_data,`tabTechnician Hours Spent`.total_price from `tabQuotation` left join 
+    `tabTechnician Hours Spent` on `tabQuotation`.name = `tabTechnician Hours Spent`.parent where `tabQuotation`.name = '%s' ORDER BY 
+    `tabTechnician Hours Spent`.work_order_data """ %(name) ,as_dict=1)
+
+    qi = frappe.db.sql(""" select `tabQuotation Item`.wod_no from `tabQuotation` left join 
+    `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent where `tabQuotation`.name = '%s' """ %(name) ,as_dict=1)
+
+    data = ""
+    # data+= '<table class="table table-bordered" style= "border:1px solid grey;">'
+    data+= '<tr>'
+    data+= '<td style="text-align:center;background-color:#E0E0E0"><b>WO-NO</b></td>'
+    data+= '<td style="text-align:center;background-color:#E0E0E0"><b>Labour Cost</b></td>'
+    data+= '<td style="text-align:center;background-color:#E0E0E0"><b>Material Cost</b></td>'
+    data+= '<td style="text-align:center;background-color:#E0E0E0"><b>Unit Price</b></td>'
+    data+='</tr>'
+
+    dat= []
+    for i in qu:
+        dat.append(i.work_order_data)
+        
+        mc = frappe.db.sql(""" select sum(`tabItem Price Details`.amount) as mcost from `tabQuotation` left join 
+        `tabItem Price Details` on `tabQuotation`.name = `tabItem Price Details`.parent 
+        where `tabItem Price Details`.work_order_data = '%s' and `tabItem Price Details`.parent = '%s' """ %(i.work_order_data,name) ,as_dict=1)
+        up = frappe.db.sql(""" select `tabQuotation Item`.unit_price as up from `tabQuotation` left join 
+        `tabQuotation Item` on `tabQuotation`.name =  `tabQuotation Item`.parent
+        where  `tabQuotation Item`.wod_no= '%s' and  `tabQuotation Item`.parent = '%s' """ %(i.work_order_data,name) ,as_dict=1)
+        
+        import re
+        input_string = i.work_order_data
+        numeric_part = re.search(r'\d+$', input_string).group()
+
+        data+= '<tr>'
+        data+= '<td style="text-align:center;">%s</td>' %(numeric_part)
+        data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>' %(f"{i.total_price:.2f}")
+        mc[0]['mcost'] = round(mc[0]['mcost'])
+        data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>' %(f"{mc[0]['mcost']:.2f}" or "0.0")
+        data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>' %(f"{up[0]['up']:.2f}")
+        data+= '</tr>'
+    
+    for k in qi:
+        if not k.wod_no in dat:
+            up_1 = frappe.db.sql(""" select `tabQuotation Item`.unit_price as up from `tabQuotation` left join 
+            `tabQuotation Item` on `tabQuotation`.name =  `tabQuotation Item`.parent
+            where  `tabQuotation Item`.wod_no= '%s' and  `tabQuotation Item`.parent = '%s' """ %(k.wod_no,name) ,as_dict=1)
+
+            import re
+            input_string = k.wod_no
+            numeric_part = re.search(r'\d+$', input_string).group()
+
+            data+= '<tr>'
+            data+= '<td style="text-align:center;">%s</td>' %(numeric_part)
+            data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>' %("0.00")
+            data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>'%("0.00")
+            data+= '<td style="text-align:center;"><b style = "color:red">%s</b></td>' %(f"{up_1[0]['up']:.2f}")
+            data+= '</tr>'
+    # data+= "</table>"
+     
+    
+    return data
+
+
+@frappe.whitelist()
+def crt_items(import_file):
+    from datetime import datetime
+    filepath = get_file(import_file)
+    data = read_csv_content(filepath[1])
+    for i in data:
+        s = frappe.db.exists("Item",{"model":i[6],"category":i[4],"sub_category":i[5]})
+        if s:
+            # k = frappe.get_value("Item",{"model":i[6]})
+            print(s)
+    # ct = 0
+    # s = frappe.new_doc("Stock Reconciliation")
+    # s.company = "TSL COMPANY - UAE"
+    # s.purpose = "Opening Stock"
+    # s.expense_account = "Test Account - TSL-UAE"
+    # for i in data:
+    #     print(i[0])
+    #     s.append("items", {
+    #     'item_code':i[0],
+    #     'warehouse':"Dubai - TSL - TSL-UAE",
+    #     "qty" :i[2],
+    #     "valuation_rate":i[3]
+                    
+    #     })
+    
+    # s.save(ignore_permissions = 1)
+    # print("yes")
+
+    # for i in data[1:]:
+    #     if i[6]:
+    #         c = frappe.db.exists("Item",{"model":i[6]})
+    #         if not c:
+    #             print(i[6])
+    #             ct = ct+1
+    #             cat = frappe.new_doc("Item")
+    #             cat.naming_series = "P.######"
+    #             md = frappe.get_value("Item Model",{"model":i[6]},["name"])
+    #             # print(md)
+    #             cat.model = md
+    #             cat.model_num = i[6]
+    #             k = frappe.db.exists("Sub Category",{"sub_category":i[5],"category":i[4]})
+    #             if k:
+    #                 sc = frappe.get_value("Sub Category",k)
+    #                 cat.sub_category = sc
+    #             cat.category_ = i[4]
+    #             cat.package = i[7]
+    #             cat.valuation_rate = i[9]
+    #             cat.item_group = "Components"
+    #             cat.opening_qty = i[8]
+    #             cat.save(ignore_permissions = 1)
+    # print(ct)
+
+
+@frappe.whitelist()
+def get_documents(name):
+    dn = frappe.get_value("Work Order Data",{"name":name},["dn_no"])
+    si = frappe.get_value("Work Order Data",{"name":name},["invoice_no"])
+    per = frappe.get_value("Work Order Data",{"name":name},["payment_entry_reference"])
+    # frappe.errprint(dn)
+    data = ""
+    data+= '<table class="table table-bordered">'
+    if dn or si or per: 
+        data+= '<tr><td colspan = 6 align = center ><b style= "color:blue;font-size:14px">Linked Documents</b></td></tr>'
+        if dn:  
+            data+= '<tr><td><b style = "color:blue;font-size:14px">Delivery Note</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/delivery-note/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(dn,dn)
+        if si:
+            data+= '<tr><td ><b style = "color:blue;font-size:14px">Sales Invoice</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/sales-invoice/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(si,si)
+        if per:
+            data+= '<tr><td><b style = "color:blue;font-size:14px">Payment Entry</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/payment-entry/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(per,per)
+        data+= "</table>"
+    
+    return data
+
+
+# @frappe.whitelist()
+# def get_pre_eval():
+#     qu = frappe.db.sql(""" select `tabQuotation Item`.wod_no,`tabQuotation`.name as q  from `tabQuotation` left join 
+#     `tabQuotation Item` on `tabQuotation`.name = `tabQuotation Item`.parent """  ,as_dict=1)
+#     count = 0
+#     for i in qu:
+#         if i['wod_no']:
+#             ev = frappe.db.exists("Evaluation Report",{"work_order_data":i['wod_no']})
+#             if not ev:
+#                 print(i["wod_no"])
+            #     count = count + 1
+    
+@frappe.whitelist()
+def get_active_customer():
+    cus = frappe.get_all("Customer",["*"])
+    c = []
+    count = 0
+    wod = frappe.get_all("Work Order Data",{"posting_date": ["between", ("2024-01-01","2024-09-17")]},["*"])
+    for k in wod:
+    
+        c.append(k.customer)
+    # print(c)
+
+    for i in cus:
+        if i.name not in c:
+            # print(i.name)
+            count = count + 1
+            s = frappe.db.exists("Sales Team",{"parent":i.name})
+            sales = "No Sales Person"
+            if s:
+                sl = frappe.get_doc("Sales Team",s)
+                # print(sl.sales_person)
+                sales = sl.sales_person
+            # else:
+            #     print("No Sales Person")
+
+            print(i.name,",",sales,",",i.customer_primary_contact,",",i.mobile_no)
+            # print("Primary Contact :",i.customer_primary_contact)
+            # print("Mobile:" ,i.mobile_no)
+            print("")
+    print(count)
+
+@frappe.whitelist()
+def update_item_list():
+    # count = 0
+    wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 0 WHERE name = "002304" ; """)
+    # old_wd_rsi = frappe.db.sql(""" select sum(`tabWork Order Data`.old_wo_q_amount) as rsi from `tabWork Order Data` where `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "%s" and "%s" and `tabWork Order Data`.status = "RSI-Repaired and Shipped Invoiced" """ %("Vazeem","2015-01-01","2024-10-06") ,as_dict=1)
+    # old_wd_rsi = frappe.get_all("Work Order Data",{"sales_rep":"Vazeem","status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", ("2015-01-01","2024-10-06")],"old_wo_q_amount": [">", 0]},["old_wo_q_amount"])
+    # rsi_old = 0
+    # for i in old_wd_rsi:
+    #     rsi_old = rsi_old + i.old_wo_q_amount
+    # print(rsi_old)
+    # wds = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name  from `tabWork Order Data` 
+    # left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    # where  `tabStatus Duration Details`.status = "RSI-Repaired and Shipped Invoiced"
+    # and `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "2015-01-01" and "2024-10-06" """ %("Vazeem") ,as_dict=1)
+	
+    # for i in wds:
+    #     print(i.name)
+    #     count = count +1
+    # print(count)
+
+@frappe.whitelist()
+def check_wod():
+
+    from_date = "2015-01-01"
+    to_date = "2024-10-12"
+    company = "TSL COMPANY - Kuwait"
+    data = ''
+    data += '<div class="table-container">'
+    data += '<table class="table table-bordered" width: 100%;>'
+    data += '<tr>'
+    data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b>TSL Company</b></center></h2></td>'
+    data += '<td colspan = 3 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+    
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td colspan = 9 style="border-color:#000000;"><b>RSC & Quoted Summary</b></td>'
+        
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td colspan = 1 style="border-color:#000000;"><center><b></b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RSI)</b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RSC)</b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(RS)</b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><center><b>Total Amount(Quoted)</b></center></td>'
+    
+    data += '</tr>'
+    wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` where company = '%s' """ %(company) ,as_dict =1)
+    data += '<tr>'
+    data += '<td style="border-color:#000000;width:10%"><center><b>Salesman</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;"><center><b>WO(in KD)</b></center></td>'  
+    data += '<td style="border-color:#000000;width:10%;"><center><b>SO(in KD)</b></center></td>'	
+    data += '</tr>'
+    current_date_time = datetime.now()
+
+    # Extract and print the current date
+    current_date = to_date
+    # Week_start = add_days(current_date,-6)
+    Week_start = from_date
+
+    total_rsi = 0
+    total_rsc = 0
+    total_rs = 0
+    total_quotation = 0
+
+    s_total_rsi = 0
+    s_total_rsc = 0
+    s_total_rs = 0
+    s_total_quotation = 0
+    
+    for i in wo:
+        if not i["sales_rep"] == None:
+            # if not i["sales_rep"] == 'Sales Team' and not i["sales_rep"] == 'Walkin' and not i["sales_rep"] == 'Omar' and not i["sales_rep"] == '':
+            if i["sales_rep"] == 'Vazeem':
+     
+                # wds = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name  from `tabWork Order Data` 
+                # left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+                # where  `tabStatus Duration Details`.status = "RSI-Repaired and Shipped Invoiced"
+                # and `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "2015-01-01" and "2024-10-06" """ %(i["sales_rep"]) ,as_dict=1)
+
+                wds = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]},["*"])
+                # RSI
+                
+                squot = 0
+                for j in wds:
+                    rsi_q = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rsi_q:
+                        for k in rsi_q:
+                            squot = squot + k["after_discount_cost"]
+                           
+                    else:
+                        rsi_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rsi_q_2:
+                            for k in rsi_q_2:
+                                squot = squot + k["after_discount_cost"]
+                             
+
+                        # else:
+                        #     rsi_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        #     where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        #     if rsi_q_3:
+                        #         for k in rsi_q_3:
+                        #             squot = squot + k["after_discount_cost"]
+
+                mquot = 0
+                for j in wds:
+                    rsi_mq = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rsi_mq:
+                        for k in rsi_mq:
+                            mquot = mquot + k["margin_amount"]
+                           
+
+                    else:
+                        rsi_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where  `tabQuotation`.Workflow_state in ("Rejected by Customer") and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rsi_mq_2:
+                            for k in rsi_mq_2:
+                                mquot = mquot + k["margin_amount"]
+                               
+
+
+                        
+                
+                # old_wd_rsi = frappe.db.sql(""" select sum(`tabWork Order Data`.old_wo_q_amount) as rsi from `tabWork Order Data` where `tabWork Order Data`.sales_rep = "%s" and `tabWork Order Data`.posting_date between "%s" and "%s" and `tabWork Order Data`.status = "RSI-Repaired and Shipped Invoiced" """ %(i["sales_rep"],Week_start,current_date) ,as_dict=1)
+                # old_wd_rsi = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)],"old_wo_q_amount": [">", 0]},["old_wo_q_amount"])
+                 
+                
+                rsi_total = squot + mquot 
+               
+                #Invoiced
+                sup_in = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Invoiced","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_i = 0
+                for j in sup_in:
+                    sup_i_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_i_q:
+                        sqm_i = sqm_i + k["after_discount_cost"]
+            
+
+                sqm_i_2 = 0
+                for j in sup_in:
+                    sup_i_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_i_q_2:
+                        sqm_i_2 = sqm_i_2 + k["margin_amount"]
+            
+                sqm_total = sqm_i + sqm_i_2
+
+                 #Delivered
+                sup_del = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Delivered","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_d = 0
+                for j in sup_del:
+                    sup_d_q = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_d_q:
+                        sqm_d = sqm_d + k["after_discount_cost"]
+            
+
+                sqm_d_2 = 0
+                for j in sup_del:
+                    sup_d_q_2 = frappe.db.sql(''' select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_d_q_2:
+                        sqm_d_2 = sqm_d_2 + k["margin_amount"]
+            
+                sqm_del_total = sqm_d + sqm_d_2
+
+                #Quoted
+                sup_quo = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Quoted","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_quo = 0
+                for j in sup_quo:
+                    sup_quo_q = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if sup_quo_q:
+                        for k in sup_quo_q:
+                            sqm_quo = sqm_quo + k["after_discount_cost"]
+                    else:
+                        sup_quo_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if sup_quo_q_2:
+                            for k in sup_quo_q_2:
+                                sqm_quo = sqm_quo + k["after_discount_cost"]
+                        else:
+                            sup_quo_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            if sup_quo_q_3:
+                                for k in sup_quo_q_3:
+                                    sqm_quo = sqm_quo + k["after_discount_cost"]
+                            else:
+                                sup_quo_q_4 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.Workflow_state in (Rejected")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                                if sup_quo_q_4:
+                                    for k in sup_quo_q_4:
+                                        sqm_quo = sqm_quo + k["after_discount_cost"]
+                                else:
+                                    sup_quo_q_5 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where `tabQuotation`.Workflow_state in ("Approved By Management")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                                    if sup_quo_q_5:
+                                        for k in sup_quo_q_5:
+                                            sqm_quo = sqm_quo + k["after_discount_cost"]
+
+
+
+
+
+                sqm_quo_2 = 0
+                for j in sup_del:
+                    sup_quo_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if sup_quo_q_2:
+                        for k in sup_quo_q_2:
+                            sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+                    else:
+                        sup_quo_q_2_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if sup_quo_q_2_2:
+                            for k in sup_quo_q_2_2:
+                                sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+                        else:
+                            sup_quo_q_2_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            if sup_quo_q_2_3:
+                                for k in sup_quo_q_2_3:
+                                    sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+                            else:
+                                sup_quo_q_2_4 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                                if sup_quo_q_2_4:
+                                    for k in sup_quo_q_2_4:
+                                        sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+                                else:
+                                    sup_quo_q_2_5 = frappe.db.sql(''' DISTINCT select `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where `tabQuotation`.Workflow_state in ("Approved By Management")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                                    if sup_quo_q_2_5:
+                                        for k in sup_quo_q_2_5:
+                                            sqm_quo_2 = sqm_quo_2 + k["margin_amount"]
+
+
+
+
+
+
+                sqm_quo_total =sqm_quo + sqm_quo_2
+
+
+                #Received
+                sup_rec = frappe.get_all("Supply Order Data",{"sales_rep":i["sales_rep"],"status":"Received","posting_date": ["between", (Week_start,current_date)]})
+               
+                sqm_rec = 0
+                for j in sup_rec:
+                    sup_rec_q = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    
+                    for k in sup_rec_q:
+                        sqm_rec = sqm_rec + k["after_discount_cost"]
+            
+
+                sqm_rec_2 = 0
+                for j in sup_rec:
+                    sup_rec_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer")  and `tabQuotation Item`.supply_order_data = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    
+                    for k in sup_rec_q_2:
+                        sqm_rec_2 = sqm_rec_2 + k["margin_amount"]
+            
+                sqm_rec_total =sqm_rec + sqm_rec_2
+
+
+
+                # RSC	
+                
+                wds_rsc = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RSC-Repaired and Shipped Client","posting_date": ["between", (Week_start,current_date)]},["*"])
+                
+                rsc_squot = 0
+                for j in wds_rsc:
+                    rsc_q = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rsc_q:
+                        for k in rsc_q:
+                            print(j.name)
+                            print( k["after_discount_cost"])
+                            rsc_squot = rsc_squot + k["after_discount_cost"]
+                    else:
+                        rsc_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rsc_q_2:
+                            for k in rsc_q_2:
+                                print(j.name)
+                                print( k["after_discount_cost"])
+                                rsc_squot = rsc_squot + k["after_discount_cost"]
+                        else:
+                            rsc_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            if rsc_q_3:
+                                for k in rsc_q_3:
+                                    print(j.name)
+                                    print( k["after_discount_cost"])
+                                    rsc_squot = rsc_squot + k["after_discount_cost"]
+                        
+
+
+                rsc_mquot = 0
+                for j in wds_rsc:
+                    rsc_mq = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rsc_mq:
+                        for k in rsc_mq:
+                            print(j.name)
+                            print(k["margin_amount"])
+                            rsc_mquot = rsc_mquot + k["margin_amount"]
+                    else:
+                        rsc_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rsc_mq_2:
+                            for k in rsc_mq_2:
+                                print(j.name)
+                                print(k["margin_amount"])
+                                rsc_mquot = rsc_mquot + k["margin_amount"]
+                        else:
+                            rsc_mq_3 = frappe.db.sql(''' select DISTINCT `tabQuotation Item`.wod_no,`tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            for k in rsc_mq_3:
+                                print(j.name)
+                                print(k["margin_amount"])
+                                rsc_mquot = rsc_mquot + k["margin_amount"]
+             
+                #RS				
+                wds_rs = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"RS-Repaired and Shipped","posting_date": ["between", (Week_start,current_date)]},["*"])
+                
+                rs_squot = 0
+                for j in wds_rs:
+                    rs_q = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                    if rs_q:
+                        for k in rs_q:
+                            rs_squot = rs_squot + k["after_discount_cost"]
+                    else:
+                        rs_q_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                        if rs_q_2:
+                            for k in rs_q_2:
+                                rs_squot = rs_squot + k["after_discount_cost"]
+                        else:
+                            rs_q_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                            if rs_q_3:
+                                for k in rs_q_3:
+                                    rs_squot = rs_squot + k["after_discount_cost"]
+                            else:
+                                rs_q_4 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.Workflow_state in ("Rejected)  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                                if rs_q_4:
+                                    for k in rs_q_4:
+                                        rs_squot = rs_squot + k["after_discount_cost"]
+
+                                else:
+                                    rs_q_5 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where `tabQuotation`.Workflow_state in ("Approved By Management)  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 0 ''',j.name,as_dict=1)
+                                    if rs_q_5:
+                                        for k in rs_q_5:
+                                            rs_squot = rs_squot + k["after_discount_cost"]
+
+
+
+                rs_mquot = 0
+                for j in wds_rs:
+                    rs_mq = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    where `tabQuotation`.Workflow_state in ("Approved By Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                    if rs_mq:
+                        for k in rs_mq:
+                            rs_mquot = rs_mquot + k["margin_amount"]
+                
+                    else:
+                        rs_mq_2 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                        left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                        where `tabQuotation`.Workflow_state in ("Quoted to Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                        if rs_mq_2:
+                            for k in rs_mq_2:
+                                rs_mquot = rs_mquot + k["margin_amount"]
+                        else:
+                            rs_mq_3 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                            where `tabQuotation`.Workflow_state in ("Rejected by Customer")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                            if rs_mq_3:
+                                for k in rs_mq_3:
+                                    rs_mquot = rs_mquot + k["margin_amount"]
+                            else:
+                                rs_mq_4 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.Workflow_state in ("Rejected")  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                                if rs_mq_4:
+                                    for k in rs_mq_4:
+                                        rs_mquot = rs_mquot + k["margin_amount"]
+                                else:
+                                    rs_mq_5 = frappe.db.sql(''' select DISTINCT `tabQuotation`.after_discount_cost, `tabQuotation`.Workflow_state,`tabQuotation Item`.margin_amount from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where `tabQuotation`.Workflow_state in ("Approved By Management)  and `tabQuotation Item`.wod_no = %s  and `tabQuotation`.is_multiple_quotation = 1 ''',j.name,as_dict=1)
+                                    if rs_mq_5:
+                                        for k in rs_mq_5:
+                                            rs_mquot = rs_mquot + k["margin_amount"]
+ 
+
+                #q-quoted
+                wd_quot = 0
+                wds_quot = frappe.get_all("Work Order Data",{"sales_rep":i["sales_rep"],"status":"Q-Quoted","posting_date": ["between", (Week_start,current_date)]},["*"])
+                for j in wds_quot:
+                    total_q = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
+                    where Workflow_state in ("Approved By Customer")  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+                    if total_q:
+                        for k in total_q:
+                            wd_quot = wd_quot + k["after_discount_cost"]
+                    else:
+                        total_q_2 = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
+                        where Workflow_state in ("Quoted to Customer")  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+                        if total_q_2:
+                            for k in total_q_2:
+                                wd_quot = wd_quot + k["after_discount_cost"]
+                       
+                wd_mquot = 0
+                for j in wds_quot:
+                    total_q_2 = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
+                    where Workflow_state in ("Approved By Customer")  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+                    if total_q_2:
+                        for k in total_q_2:
+                            wd_mquot = wd_mquot + k["after_discount_cost"]
+                    else:
+                        total_q_2_2 = frappe.db.sql(''' select sum(after_discount_cost) as t from `tabQuotation` 
+                        where Workflow_state in ("Quoted to Customer")  and sales_rep = %s ''',i["sales_rep"],as_dict=1)
+                        if total_q_2_2:
+                            for k in total_q_2_2:
+                                wd_mquot = wd_mquot + k["after_discount_cost"]
+
+                wd_total_quot =   wd_quot + wd_mquot
+
+
+
+                # if total_q[0]["t"] == None:
+                #     total_q[0]["t"] = 0
+
+                total_quotation = total_quotation + total_q[0]["t"] 
+
+                #rsi
+                rsi_old = 0
+                # for i in wds:
+                #     rsi_old = rsi_old + i.old_wo_q_amount
+              
+                rsi_total = squot + mquot + rsi_old
+
+                #rsc
+                rsc_old = 0
+                # for i in wds_rsc:
+                #     rsc_old = rsc_old + i.old_wo_q_amount
+              
+                rsc_total = rsc_squot + rsc_mquot + rsc_old
+                print(rsc_total)
+                #rs
+                rs_old = 0
+                # for i in wds_rs:
+                #     rs_old = rs_old + i.old_wo_q_amount
+              
+                rs_total = rs_squot + rs_mquot + rs_old
+
+                total_rsi = total_rsi + rsi_total
+                total_rsc = total_rsc + rsc_total
+                total_rs = total_rs + rs_total 
+
+                s_total_rsi = s_total_rsi + sqm_total
+                s_total_rsc = s_total_rsc + sqm_del_total
+                s_total_rs = s_total_rs + sqm_rec_total
+                s_total_quotation =  s_total_quotation + sqm_quo_total
+
+                
+               
+                data += '<tr>'
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(i["sales_rep"])
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rsi_total)
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(sqm_total)
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(round(rsc_total,2))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(sqm_del_total)
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(rs_total)
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(sqm_rec_total)
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_q[0]["t"])
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'	%(sqm_quo_total)
+                data += '</tr>'
+    data += '<tr>'
+    data += '<td style="border-color:#000000;"><center><b>Total</b></center></td>'
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsi)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(s_total_rsi)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rsc)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(s_total_rsi)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(total_rs)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(s_total_rs)
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'%(total_quotation )
+    data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(s_total_quotation)
+    data += '</tr>'
+
+    data += '</table>'
+    data += '</div>'
+    
+    # return data
+
+
+@frappe.whitelist()
+def check_wd():
+    wd= frappe.db.sql(""" select  payment_entry_reference as payment_entry,payment_date as paid_date,name as wod_no,sales_rep,posting_date,remarks,expiry_date,customer,technician,status,department,returned_date,branch as branch_name,dn_no,dn_date,invoice_no,invoice_date,purchase_order_no as po_no  from `tabWork Order Data` where posting_date>= "%s" and posting_date <= "%s" """ %("2015-01-01","2024-10-12"),as_dict=1)
+    for i in wd:
+        if i.wod_no == "WOD-K24-13220":
+            print(i.wod_no)
+
+@frappe.whitelist()
+def get_w():
+    p = frappe.db.sql(""" select `tabPayment Entry Reference`.reference_name as pr from `tabPayment Entry` 
+		left join `tabPayment Entry Reference` on `tabPayment Entry`.name = `tabPayment Entry Reference`.parent
+		where  `tabPayment Entry Reference`.reference_doctype = "Sales Invoice" """ ,as_dict=1)
+    
+    for i in p:
+        
+        si = frappe.db.sql(""" select `tabSales Invoice Item`.wod_no as wd from `tabSales Invoice` 
+		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent
+		where  `tabSales Invoice`.name = '%s' """ %(i.pr),as_dict=1)
+        if si[0]["wd"]:
+            status = frappe.get_value("Work Order Data",{"name":si[0]["wd"]},["status"])
+            if not status == "P-Paid":
+                print(si[0]["wd"])
+
+
+@frappe.whitelist()
+def purchase_report(date):
+    ogdate = datetime.strptime(str(date),"%Y-%m-%d")
+
+    # Format the date as a string in the desired format
+    formatted_date = ogdate.strftime("%d-%m-%Y")
+    # date = d.strftime("%Y-%m-%d")
+    # original_date = datetime.strptime(str(d), "%Y-%m-%d")
+    # original_date = date
+    data= ""
+    data += '<div class="table-container">'
+    # data += '<h3><b><center>WORK ORDER<center><b><h3>'
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td colspan = 1 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b>TSL Company<br>Date : %s</b></center></h2></td>'%(formatted_date)
+    data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+    
+    # data += '<tr>'
+    # data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#00BFFF;color:white;"><b style="color:white;">Date : %s</b></td>' %(formatted_date)
+    # data += '</tr>'
+
+    data += '<tr>'
+    data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#00BFFF;color:white;"><center><b style="color:white;">WORK ORDER</b><center></td>'
+    data += '</tr>'
+
+    day = add_days(date,-1)
+    
+    # rnp = frappe.db.count("Work Order Data",{"status":"RNP-Return No Parts","posting_date": ["between", ["2015-07-23", date]]})
+
+    rnp = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+    left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "RNP-Return No Parts" 
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+    
+    # ordered =  frappe.db.count("Work Order Data",{"status":"WP-Waiting Parts","posting_date": ["between", [date,date]]})
+    ordered = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as wp from `tabWork Order Data` 
+    left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "WP-Waiting Parts"
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+    
+    # ordered = frappe.db.count("Work Order Data",{"status":"Q-Quoted","posting_date": ["between", [date, date]]})
+    quot = frappe.db.count("Work Order Data",{"status":"Parts Priced","posting_date": ["between", [date, date]]})
+    rec =  frappe.db.count("Work Order Data",{"status":"TR-Technician Repair","posting_date": ["between", [date, date]]})
+    # app =  frappe.db.count("Work Order Data",{"status":"A-Approved","posting_date": ["between", ["2015-07-23", date]]})
+
+    not_qt =  frappe.db.count("Work Order Data",{"company":"TSL COMPANY - Kuwait","old_wo_no":["is","not set"],"status":"SP-Searching Parts","posting_date": ["between", ["2015-07-23", date]]})
+
+    wp =  frappe.db.count("Work Order Data",{"status":"WP-Waiting Parts","posting_date": ["between", ["2015-07-23", date]]})
+    np =  frappe.db.count("Work Order Data",{"status":"RNP-Return No Parts","posting_date": ["between", [date, date]]})
+
+
+    s_quoted = frappe.db.count("Supply Order Data",{"status":"Quoted","posting_date": ["between", [date, date]]})
+    s_ordered = frappe.db.count("Supply Order Data",{"status":"Ordered","posting_date": ["between", [date, date]]})
+    # s_received = frappe.db.count("Supply Order Data",{"status":"Received","posting_date": ["between", [date, date]]})
+    s_approved = frappe.db.count("Supply Order Data",{"status":"Approved","posting_date": ["between", [date, date]]})
+    s_not_quoted = frappe.db.count("Supply Order Data",{"department":"Supply - TSL","docstatus":1,"company":"TSL COMPANY - Kuwait","status":"Inquiry","posting_date": ["between", ["2015-07-23", date]]})
+
+    s_not_found = frappe.db.count("Supply Order Data",{"status":"Not Found","posting_date": ["between", ["2015-07-23", date]]})
+
+    waiting_so = frappe.db.count("Supply Order Data",{"status":"ordered","posting_date": ["between", ["2015-07-23", day]]})
+
+
+    po = frappe.db.sql(""" select count(`tabPurchase Order Item`.work_order_data) as p from `tabPurchase Order`
+        left join `tabPurchase Order Item` on `tabPurchase Order Item`.parent = `tabPurchase Order`.name
+        where `tabPurchase Order`.transaction_date = '%s' and `tabPurchase Order`.docstatus != 2 and `tabPurchase Order`.per_received = %s and  `tabPurchase Order`.company = "TSL COMPANY - Kuwait" """ %("2024-09-14",0),as_dict =1)
+
+    prw = frappe.db.sql(""" select count(`tabPurchase Receipt Item`.work_order_data) as pr from `tabPurchase Receipt`
+        left join `tabPurchase Receipt Item` on `tabPurchase Receipt Item`.parent = `tabPurchase Receipt`.name
+        where `tabPurchase Receipt`.posting_date = '%s' and `tabPurchase Receipt`.docstatus != 2  and `tabPurchase Receipt`.company = "TSL COMPANY - Kuwait" """ %(date),as_dict =1)
+
+    # qc = frappe.db.sql(""" select count(`tabQuotation Item`.wod_no) as q from `tabQuotation`
+    # 	left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+    # 	where `tabQuotation`.transaction_date = '%s' and `tabQuotation`.workflow_state = "Approved By Customer" and  `tabQuotation`.company = "TSL COMPANY - Kuwait" """ %(date),as_dict =1)
+
+    qc = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as q from `tabWork Order Data` 
+    left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabWork Order Data`.status = "A-Approved"
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+        
+    pre_eval =  frappe.get_all("Work Order Data",{"status":"A-Approved","company":"TSL COMPANY - Kuwait","old_wo_no":["is","not set"],"posting_date": ["between", ["2015-07-23", date]]})
+
+    pre_wod_count = 0
+    for i in pre_eval:
+        
+        eval_rep = frappe.db.exists("Evaluation Report",{"work_order_data":i.name})
+        if not eval_rep:
+            pre_q = frappe.db.sql(""" select `tabQuotation`.name from `tabQuotation`
+            left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+            where `tabQuotation`.workflow_state = "Approved By Customer" and `tabQuotation Item`.wod_no = "%s" """ %(i.name),as_dict =1)
+            if pre_q:
+                pre_wod_count = pre_wod_count + 1
+    # frappe.errprint(pre_wod_count)
+
+
+
+    pwod = 0
+    if po:	
+        pwod = po[0]["p"]
+
+    prwod = 0
+    if prw:	
+        prwod = prw[0]["pr"]
+    
+
+    qcw = 0
+    if qc:	
+        qcw = qc[0]["q"]
+    
+    sq = frappe.db.count("Supplier Quotation",{"transaction_date":date,"work_order_data": ["is", "set"],"company":"TSL COMPANY - Kuwait"})
+    
+    
+
+    data += '<tr>'
+    data += '<td colspan = 2 style="border-color:#000000;padding:1px;font-size:16px;background-color:#00BFFF;color:white;"><center><b style="color:white;" >Achievments</b><center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;padding:1px;font-size:16px;background-color:#00BFFF;color:white;"><center><b style="color:white;">Status</b><center></td>'
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;" >Current Status</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;" >Count</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Status</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Count</b><center></td>'
+
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Not Found</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(rnp[0]["ct"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Approved</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(qcw)
+
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Ordered</b><center></td>' 
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>'%(ordered[0]["wp"] or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Pre-Approved</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(pre_wod_count)
+
+    
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Quoted</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(sq)
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Not Quoted</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(not_qt)
+
+    
+    data += '</tr>'
+
+    prwod = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+    left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "TR-Technician Repair"
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+        
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Received</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(prwod[0]["ct"] or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Waiting PS</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(wp)
+
+    data += '</tr>'
+    data += '</table>'
+
+
+
+
+    # data += '<h3><b><center>SUPPLY ORDER<center><b><h3>'
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#00BFFF;color:white;"><center><b style="color:white;" >SUPPLY ORDER</b><center></td>'
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td colspan = 2 style="border-color:#000000;padding:1px;font-size:16px;background-color:#00BFFF;color:white;"><center><b style="color:white;">Achievments</b><center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;padding:1px;font-size:16px;background-color:#00BFFF;color:white;"><center><b style="color:white;" >Status</b><center></td>'
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Current Status</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Count</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Status</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#004792;color:white;width:25%;"><center><b style="color:white;">Count</b><center></td>'
+
+    data += '</tr>'
+
+
+    spo = frappe.db.sql(""" select count(`tabPurchase Order Item`.supply_order_data) as p from `tabPurchase Order`
+        left join `tabPurchase Order Item` on `tabPurchase Order Item`.parent = `tabPurchase Order`.name
+        where `tabPurchase Order`.transaction_date = '%s' and `tabPurchase Order`.docstatus != 2 and `tabPurchase Order`.per_received = %s and `tabPurchase Order`.company = "TSL COMPANY - Kuwait" """ %(date,0),as_dict =1)
+
+    spwod = 0
+    if spo:	
+        spwod = spo[0]["p"]
+    
+    # sqs = frappe.db.count("Supplier Quotation",{"transaction_date":date,"supply_order_data": ["is", "set"],"company":"TSL COMPANY - Kuwait"})
+
+    sqs = frappe.db.sql(""" select count(DISTINCT `tabSupply Order Data`.name) as ct from `tabSupply Order Data` 
+    left join `tabStatus Duration Details` on `tabSupply Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "Parts Priced" 
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+    
+
+    # sqc = frappe.db.sql(""" select count(`tabQuotation Item`.supply_order_data) as qs from `tabQuotation`
+    # 	left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+    # 	where `tabQuotation`.transaction_date = '%s' and `tabQuotation`.workflow_state = "Approved By Customer" and  `tabQuotation`.company = "TSL COMPANY - Kuwait" """ %(date),as_dict =1)
+
+    # sqcount = 0
+    # if sqc:	
+    # 	sqcount = sqc[0]["qs"]
+
+    sqc = frappe.db.sql(""" select count(DISTINCT `tabSupply Order Data`.name) as ct from `tabSupply Order Data` 
+    left join `tabStatus Duration Details` on `tabSupply Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabSupply Order Data`.status = "Approved" 
+        """ ,as_dict=1)
+    
+
+    s_not_found = frappe.db.sql(""" select count(DISTINCT `tabSupply Order Data`.name) as ct from `tabSupply Order Data` 
+    left join `tabStatus Duration Details` on `tabSupply Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "Not Found" 
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+    
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Not Found</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(s_not_found[0]["ct"] or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Approved</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(sqc[0]["ct"])
+
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#A7C7E7;"><center><b>Ordered</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(spwod)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#A7C7E7;"><center><b>Not Quoted</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>'  %(s_not_quoted)
+
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#A7C7E7;"><center><b>Quoted</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(sqs[0]["ct"] or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#A7C7E7;"><center><b>Waiting SO</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(waiting_so)
+
+    data += '</tr>'
+
+    s_received = frappe.db.sql(""" select count(DISTINCT `tabSupply Order Data`.name) as ct from `tabSupply Order Data` 
+    left join `tabStatus Duration Details` on `tabSupply Order Data`.name = `tabStatus Duration Details`.parent
+    where  `tabStatus Duration Details`.status = "Received" 
+    and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(date) ,as_dict=1)
+    
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b>Received</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b>%s</b><center></td>' %(s_received[0]["ct"] or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:16px;"><center><b></b><center></td>'
+
+    data += '</tr>'
+    
+    data += '</table>'
+
+
+
+    data += '</div>'
+    return data
+
+
+@frappe.whitelist()
+def daily_lab_report(date):
+    d = datetime.now().date()
+    # ogdate = datetime.strptime(str(d),"%Y-%m-%d")
+    ogdate_2 = datetime.strptime(str(date),"%Y-%m-%d")
+
+  
+    # Format the date as a string in the desired format
+    # formatted_date = ogdate.strftime("%d-%m-%Y")
+    formatted_date_2 = ogdate_2.strftime("%d-%m-%Y")
+    # date = d.strftime("%Y-%m-%d")
+    # original_date = datetime.strptime(str(d), "%Y-%m-%d")
+    original_date = date
+
+
+    # Format datetime object to new date string format
+    # date = datetime.strptime(str(original_date), "%Y-%m-%d")
+    data = ""
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td colspan = "7" align = "center" style="border-color:#000000;padding:1px;font-size:16px;background-color:#808080;color:white;"><b>Date :%s</b></td>' %(formatted_date_2)
+    data += '</tr>'
+    data += '<tr>'
+    data += '<td colspan = 2 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b>TSL Company</b></center></h2></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="80"></center></td>'
+    
+    data += '</tr>'
+    data += '<tr>'
+    # data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;"><center><b></b><center></td>'
+    data += '<td colspan = "2" style="border-color:#000000;padding:1px;font-size:13px;background-color:#3333ff;color:white;line-height:0.8;"><center><b>Status</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:18px;font-size:11px;line-height:0.8;background-color:#FFA500;color:white;line-height:0.8;"><center><b>Sampat</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:18px;font-size:11px;line-height:0.8;background-color:#FFC000;color:white;line-height:0.8;"><center><b>Mari</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:18px;font-size:11px;line-height:0.8;background-color:#008000;color:white;line-height:0.8;"><center><b>ED</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:18px;font-size:11px;line-height:0.8;background-color:#0047AB;color:white;line-height:0.8;"><center><b>Aakib</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:18px;font-size:11px;line-height:0.8;background-color:#4682B4;color:white;line-height:0.8;"><center><b>Total</b><center></td>'
+    data += '</tr>'
+
+    tech = ["sampath@tsl-me.com","maari@tsl-me.com","eduardo@tsl-me.com","aakib@tsl-me.com"]
+    total_ne_s = 0
+    total_ne_m = 0
+    total_ne_e = 0
+    total_ne_a = 0
+
+    lp_total_ne_s = 0
+    lp_total_ne_m = 0
+    lp_total_ne_e = 0
+    lp_total_ne_a = 0
+
+    total_ner_s = 0
+    total_ner_m = 0
+    total_ner_e = 0
+    total_ner_a = 0
+
+    ue_s = 0
+    ue_m = 0
+    ue_e = 0
+    ue_a = 0
+
+    utr_s = 0
+    utr_m = 0
+    utr_e = 0
+    utr_a = 0
+
+    rs_s = 0
+    rs_m = 0
+    rs_e = 0
+    rs_a = 0
+
+    w_s = 0
+    w_m = 0
+    w_e = 0
+    w_a = 0
+
+    rnr_s = 0
+    rnr_m = 0
+    rnr_e = 0
+    rnr_a = 0
+
+    rnf_s = 0
+    rnf_m = 0
+    rnf_e = 0
+    rnf_a = 0
+
+    com_s = 0
+    com_m = 0
+    com_e = 0
+    com_a = 0
+
+    # for t in tech:
+    # 	ne = frappe.get_all("Work Order Data",{"technician":t},["*"])
+    # 	for i in ne:
+    # 		ev = frappe.db.exists("Evaluation Report",{"work_order_data":i.name,"date":original_date,"technician":t})
+    # 		if ev:
+    # 			# techni = frappe.get_value("Evaluation Report",{"name":ev},["technician"])
+    # 			if t == "sampath@tsl-me.com":
+    # 				total_ne_s = total_ne_s + 1
+    # 			if t == "maari@tsl-me.com":
+    # 				total_ne_m = total_ne_m + 1
+    # 			if t == "eduardo@tsl-me.com":
+    # 				total_ne_e = total_ne_e + 1
+    # 			if t == "aakib@tsl-me.com":
+    # 				total_ne_a = total_ne_a + 1
+                
+    
+        # ne = frappe.get_all("Work Order Data",{"posting_date":original_date,"technician":t},["*"])
+        # for i in ne:
+        # 	sd = frappe.get_doc("Work Order Data",i.name)
+        # 	for j in sd.status_duration_details:
+        # 		timestamp = str(j.date) 
+        # 		date_portion = timestamp[:10]
+        # 		j.date= date_portion
+        # 		if "NE-Need Evaluation"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) :
+        # 			total_ne_s = total_ne_s + 1
+        # 		if "NE-Need Evaluation"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date):
+        # 			total_ne_m = total_ne_m + 1
+        # 		if "NE-Need Evaluation"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ne_e = total_ne_e + 1
+        # 		if "NE-Need Evaluation"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ne_a = total_ne_a + 1
+                
+        # 		if "NER-Need Evaluation Return"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ner_s = total_ner_s + 1
+        # 		if "NER-Need Evaluation Return"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ner_m = total_ner_m + 1
+        # 		if "NER-Need Evaluation Return"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ner_e = total_ner_e + 1
+        # 		if "NER-Need Evaluation Return"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			total_ner_a = total_ner_a + 1
+                
+                
+    
+    # total_ne_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    # total_ne_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    # total_ne_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    # total_ne_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    for t in tech:
+        emp = frappe.get_value("Employee",{"user_id":t})
+        if emp:
+            lp = frappe.db.sql(
+                """
+                SELECT employee
+                FROM `tabLeave Application` 
+                WHERE employee = %s
+                AND %s BETWEEN from_date AND to_date and docstatus = 1
+                """,
+                (emp,date),
+                as_dict=True
+            )
+            if lp:
+                if t == "sampath@tsl-me.com":
+                    lp_total_ne_s = "L"
+                if t == "maari@tsl-me.com":
+                    lp_total_ne_m = "L"
+                if t == "eduardo@tsl-me.com":
+                    lp_total_ne_e = "L"
+                if t == "aakib@tsl-me.com":
+                    lp_total_ne_a = "L"
+        
+        ne = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+                left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+                where  `tabStatus Duration Details`.status = "UE-Under Evaluation"
+                and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date),as_dict=1)
+            
+        if t == "sampath@tsl-me.com":
+            total_ne_s = ne[0]["ct"]
+        if t == "maari@tsl-me.com":
+            total_ne_m = ne[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            total_ne_e = ne[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            total_ne_a = ne[0]["ct"]
+
+    total_ner_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ner_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ner_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ner_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    
+    
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;line-height:0.8;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;line-height:0.8;"><center><b>UE</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        total_ne_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ne_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        total_ne_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ne_m or 0)
+    
+    if lp_total_ne_e == "L":
+        total_ne_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ne_e or 0)
+    
+    if lp_total_ne_a == "L":
+        total_ne_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>'%(total_ne_a or 0)
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ne_s + total_ne_m + total_ne_e + total_ne_a)
+    
+    data += '</tr>'
+
+    
+    
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;line-height:0.8;"><center><b>Started Work</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;line-height:0.8;"><center><b>NER</b><center></td>'
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        total_ner_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ner_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        total_ner_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ner_m or 0)
+    
+    if lp_total_ne_e == "L":
+        total_ner_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ner_e or 0)
+    
+    if lp_total_ne_a == "L":
+        total_ner_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(total_ner_a or 0)
+
+
+
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ner_s + total_ner_m + total_ner_e + total_ner_a)
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Total</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ne_s + total_ner_s)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ne_m + total_ner_m)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ne_e + total_ner_e)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ne_a + total_ner_a)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %((total_ne_s + total_ne_m + total_ne_e + total_ne_a)+(total_ner_s + total_ner_m + total_ner_e + total_ner_a))
+    data += '</tr>'
+
+
+    data += '</table>'
+
+    data += '<table class="table table-bordered">'
+
+    # data += '<tr>'
+    # data += '<td colspan = "2" style="border-left:hidden;border-top:hidden;border-color:#000000;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '</tr>'
+
+    total_ue_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"UE-Under Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ue_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"UE-Under Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ue_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"UE-Under Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_ue_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"UE-Under Evaluation","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    
+    total_utr_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"UTR-Under Technician Repair","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_utr_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"UTR-Under Technician Repair","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_utr_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"UTR-Under Technician Repair","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+    total_utr_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"UTR-Under Technician Repair","posting_date": ["BETWEEN", ["2016-01-01",date]]})
+
+    for t in tech:
+        ue = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "UE-Under Evaluation"
+            and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            ue_s = ue[0]["ct"]
+        if t == "maari@tsl-me.com":
+            ue_m = ue[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            ue_e = ue[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            ue_a = ue[0]["ct"]
+
+        utr = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "UTR-Under Technician Repair"
+            and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date),as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            utr_s = utr[0]["ct"]
+        if t == "maari@tsl-me.com":
+            utr_m = utr[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            utr_e = utr[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            utr_a = utr[0]["ct"]
+        # ne = frappe.get_all("Work Order Data",{"technician":t},["*"])
+        # for i in ne:
+        # 	sd = frappe.get_doc("Work Order Data",i.name)
+        # 	for j in sd.status_duration_details:
+            
+        # 		timestamp = str(j.date) 
+        # 		date_portion = timestamp[:10]
+                
+        # 		j.date= date_portion
+                
+        # 		if "UE-Under Evaluation" == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			ue_s = ue_s + 1
+        # 		if "UE-Under Evaluation" == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			ue_m = ue_m + 1
+                
+        # 		if "UE-Under Evaluation" == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			ue_e = ue_e + 1
+        # 		if "UE-Under Evaluation" == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			ue_a = ue_a + 1
+                    
+        # 		if "UTR-Under Technician Repair" == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			utr_s = utr_s + 1
+        # 		if "UTR-Under Technician Repair" == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			utr_m = utr_m + 1
+                
+        # 		if "UTR-Under Technician Repair" == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			utr_e = utr_e + 1
+        # 		if "UTR-Under Technician Repair" == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			utr_a = utr_a + 1
+                    
+    
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>UE</b><center></td>' 
+    
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        total_ue_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ue_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        total_ue_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ue_m or 0)
+    
+    if lp_total_ne_e == "L":
+        total_ue_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ue_e or 0)
+    
+    if lp_total_ne_a == "L":
+        total_ue_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(total_ue_a or 0)
+
+    
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_ue_s + total_ue_m + total_ue_e + total_ue_a)
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>End of Work</b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>UTR</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        total_utr_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_utr_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        total_utr_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_utr_m or 0)
+    
+    if lp_total_ne_e == "L":
+        total_utr_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_utr_e or 0)
+    
+    if lp_total_ne_a == "L":
+        total_utr_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(total_utr_a or 0)
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(total_utr_s +total_utr_m + total_utr_e + total_utr_a)
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Site Visit</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        total_utr_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(0 or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        total_utr_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(0 or 0)
+    
+    if lp_total_ne_e == "L":
+        total_utr_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(0 or 0)
+    
+    if lp_total_ne_a == "L":
+        total_utr_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(0 or 0)
+
+        
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;"><center><b>0	</b><center></td>'
+    
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Total</b><center></td>'
+    
+
+    data += '<td style="border-color:#000000;;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ue_s + total_utr_s)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ue_m + total_utr_m)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ue_e + total_utr_e)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_ue_a + total_utr_a)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %((total_ue_s + total_ue_m + total_ue_e + total_ue_a)+(total_utr_s +  total_utr_m + total_utr_e + total_utr_a))
+    data += '</tr>'
+
+    data += '</table>'
+
+    
+    # data += '<tr>'
+    # data += '<td colspan = "2" style="border-left:hidden;border-top:hidden;border-color:#000000;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '<td style="border-right:hidden;border-top:hidden;border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;color:white;"><center><b></b><center></td>'
+    # data += '</tr>'
+
+    for t in tech:
+        s = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
+            and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            rs_s = s[0]["ct"]
+        if t == "maari@tsl-me.com":
+            rs_m = s[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            rs_e = s[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            rs_a = s[0]["ct"]
+
+        w = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data`.name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "W-Working" 
+            and `tabWork Order Data`.technician = "%s" 
+            and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        r = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
+            and `tabWork Order Data`.technician = "%s" 
+            and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        # if t == "sampath@tsl-me.com":
+        # 	if not r:
+        # 		w_s = w[0]["ct"]
+        # if t == "maari@tsl-me.com":
+        # 	if not r:
+        # 		w_m = w[0]["ct"]
+        # if t == "eduardo@tsl-me.com":
+        # 	if not r:
+        # 		w_e = w[0]["ct"]
+        # if t == "aakib@tsl-me.com":
+        # 	if not r:
+        # 		w_a = w[0]["ct"]
+
+        rnr = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "RNR-Return Not Repaired"
+                    and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            rnr_s = rnr[0]["ct"]
+        if t == "maari@tsl-me.com":
+            rnr_m = rnr[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            rnr_e = rnr[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            rnr_a = rnr[0]["ct"]
+
+        rnf = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "RNF-Return No Fault"
+            and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            rnf_s = rnf[0]["ct"]
+        if t == "maari@tsl-me.com":
+            rnf_m = rnf[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            rnf_e = rnf[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            rnf_a = rnf[0]["ct"]
+
+        com = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+            left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+            where  `tabStatus Duration Details`.status = "C-Comparison"
+                    and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date  LIKE "%s%%" """ %(t,original_date) ,as_dict=1)
+        
+        if t == "sampath@tsl-me.com":
+            com_s = com[0]["ct"]
+        if t == "maari@tsl-me.com":
+            com_m = com[0]["ct"]
+        if t == "eduardo@tsl-me.com":
+            com_e = com[0]["ct"]
+        if t == "aakib@tsl-me.com":
+            com_a = com[0]["ct"]
+
+
+        # ne = frappe.get_all("Work Order Data",{"technician":t},["*"])
+        # for i in ne:
+        # 	sd = frappe.get_doc("Work Order Data",i.name)
+        # 	for j in sd.status_duration_details:
+            
+        # 		timestamp = str(j.date) 
+        # 		date_portion = timestamp[:10]
+                
+        # 		j.date= date_portion
+                
+        # 		if "RS-Repaired and Shipped"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			rs_s = rs_s + 1
+        # 		if "RS-Repaired and Shipped"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			rs_m = rs_m + 1
+        # 		if "RS-Repaired and Shipped"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			rs_e = rs_e + 1
+        # 		if "RS-Repaired and Shipped"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			rs_a = rs_a + 1
+
+        # 		s = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
+        # 			left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+        # 			where  `tabStatus Duration Details`.status = "W-Working" 
+        # 			and `tabWork Order Data`.technician = "%s" and `tabStatus Duration Details`.date LIKE "%s" """ %("sampath@tsl-me.com",original_date) ,as_dict=1)
+        # 		
+        # 		if "W-Working"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			w_s = w_s + 1
+                    
+        # 		if "W-Working"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			w_m = w_m + 1
+                    
+        # 		if "W-Working"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			w_e = w_e + 1
+        # 		if "W-Working"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			w_a = w_a + 1
+
+        # 		if "RNR-Return Not Repaired"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			rnr_s = rnr_s + 1
+        # 		if "RNR-Return Not Repaired"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			rnr_m = rnr_m + 1
+        # 		if "RNR-Return Not Repaired"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			rnr_e = rnr_e + 1
+        # 		if "RNR-Return Not Repaired"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			rnr_a = rnr_a + 1
+                
+        # 		if "RNF-Return No Fault"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			rnf_s = rnf_s + 1
+        # 		if "RNF-Return No Fault"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			rnf_m = rnf_m + 1
+        # 		if "RNF-Return No Fault"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			rnf_e = rnf_e + 1
+        # 		if "RNF-Return No Fault"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			rnf_a = rnf_a + 1
+
+        # 		if "C-Comparison"  == j.status and i.technician == "sampath@tsl-me.com" and str(j.date) == original_date:
+        # 			com_s = com_s + 1
+        # 		if "C-Comparison"  == j.status and i.technician == "maari@tsl-me.com" and str(j.date) == original_date:
+        # 			com_m = com_m + 1
+        # 		if "C-Comparison"  == j.status and i.technician == "eduardo@tsl-me.com" and str(j.date) == original_date:
+        # 			com_e = com_e + 1
+        # 		if "C-Comparison"  == j.status and i.technician == "aakib@tsl-me.com" and str(j.date) == original_date:
+        # 			com_a = com_a + 1
+                
+                
+    data += '<table class="table table-bordered">'
+    
+    data += '<tr>'
+    data += '<td colspan="2" style="border-left:none; border-top:none; border-right:none; border-color:#000000; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8;"><center><b></b></center></td>'
+    data += '</tr>'
+
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>RS</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        rs_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rs_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        rs_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rs_m or 0)
+    
+    if lp_total_ne_e == "L":
+        rs_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rs_e or 0)
+    
+    if lp_total_ne_a == "L":
+        rs_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(rs_a or 0)
+
+        
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rs_s + rs_m + rs_e + rs_a)
+    data += '</tr>'
+
+    ev_s = 0
+    ev_m = 0
+    ev_e = 0
+    ev_a = 0
+
+    # for t in tech:
+    # 	ne = frappe.get_all("Work Order Data",{"date":original_date,"technician":t},["*"])
+    # 	for i in ne:
+    # 		ev = frappe.db.exists("Evaluation Report",{"work_order_data":i.name})
+    # 		if ev:
+    # 			techni = frappe.get_value("Evaluation Report",{"name":ev},["technician"])
+    # 			if techni == "sampath@tsl-me.com":
+    # 				ev_s = ev_s + 1
+    # 			if techni == "maari@tsl-me.com":
+    # 				ev_m = ev_m + 1
+    # 			if techni == "eduardo@tsl-me.com":
+    # 				ev_e = ev_e + 1
+    # 			if techni == "aakib@tsl-me.com":
+    # 				ev_a = ev_a + 1
+    ev_s = frappe.db.count("Evaluation Report",{"date":original_date,"technician":"sampath@tsl-me.com"})
+    ev_m = frappe.db.count("Evaluation Report",{"date":original_date,"technician":"maari@tsl-me.com"})
+    ev_e = frappe.db.count("Evaluation Report",{"date":original_date,"technician":"eduardo@tsl-me.com"})
+    ev_a = frappe.db.count("Evaluation Report",{"date":original_date,"technician":"aakib@tsl-me.com"})
+                
+    
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>PS</b><center></td>'
+    
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        ev_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(ev_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        ev_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(ev_m or 0)
+    
+    if lp_total_ne_e == "L":
+        ev_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(ev_e or 0)
+    
+    if lp_total_ne_a == "L":
+        ev_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(ev_a or 0)
+
+    
+    
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(ev_s + ev_m + ev_e + ev_a)
+    data += '</tr>'
+
+    
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>W</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        w_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(w_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        w_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(w_m or 0)
+    
+    if lp_total_ne_e == "L":
+        w_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(w_e or 0)
+    
+    if lp_total_ne_a == "L":
+        w_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(w_a or 0)
+
+
+    
+    
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(w_s + w_m + w_e + w_a)
+    data += '</tr>'
+
+    
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Out - Flow</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>RNR</b><center></td>'
+
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        rnr_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnr_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        rnr_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnr_m or 0)
+
+    if lp_total_ne_e == "L":
+        rnr_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnr_e or 0)
+    
+    if lp_total_ne_a == "L":
+        rnr_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(rnr_a or 0)
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnr_s + rnr_m + rnr_e + rnr_a)
+    data += '</tr>'
+
+    # rnf_s = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"sampath@tsl-me.com","status":"RNF-Return No Fault"})
+    # rnf_m = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"maari@tsl-me.com","status":"RNF-Return No Fault"})
+    # rnf_e = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"eduardo@tsl-me.com","status":"RNF-Return No Fault"})
+    # rnf_a = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"aakib@tsl-me.com","status":"RNF-Return No Fault"})
+
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>RNF</b><center></td>'
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        rnf_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnf_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        rnf_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnf_m or 0)
+
+    if lp_total_ne_e == "L":
+        rnf_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnf_e or 0)
+    
+    if lp_total_ne_a == "L":
+        rnf_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(rnf_a or 0)
+
+
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(rnf_a + rnf_s + rnf_e + rnf_m) 
+    data += '</tr>'
+
+    com_s = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"sampath@tsl-me.com","status":"C-Comparison"})
+    com_m = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"maari@tsl-me.com","status":"C-Comparison"})
+    com_e = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"eduardo@tsl-me.com","status":"C-Comparison"})
+    com_a = frappe.db.count("Work Order Data",{"posting_date":original_date,"technician":"aakib@tsl-me.com","status":"C-Comparison"})
+
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>COMP</b><center></td>'
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        com_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(com_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        com_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(1 or 0)
+
+    if lp_total_ne_e == "L":
+        com_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(com_e or 0)
+    
+    if lp_total_ne_a == "L":
+        com_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(com_a or 0)
+
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(com_s + com_m + com_e + com_a + 1)
+    data += '</tr>'
+
+    total_out_s = (rs_s or 0) + (ev_s or 0) + (w_s or 0) + (rnr_s or 0) + (rnf_s or 0) + (com_s or 0)
+    total_out_m = (rs_m or 0) + (ev_m or 0) + (w_m or 0) + (rnr_m or 0) + (rnf_m or 0) + (com_m or 0)
+    total_out_e = (rs_e or 0) + (ev_e or 0) + (w_e or 0) + (rnr_e or 0) + (rnf_e or 0) + (com_e or 0)
+    total_out_a = (rs_a or 0) + (ev_a or 0) + (w_a or 0) + (rnr_a or 0) + (rnf_a or 0) + (com_a or 0)
+
+    sum_total_out = (rs_s + rs_m + rs_e + rs_a) + (ev_s + ev_m + ev_e + ev_a) + (w_s + w_m + w_e + w_a) + (rnr_s + rnr_m + rnr_e + rnr_a) + (rnf_a + rnf_s + rnf_e + rnf_m)
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Total</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_out_s or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_out_m + 1 or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_out_e or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(total_out_a or 0)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>' %(sum_total_out + 1 or 0)
+    data += '</tr>'
+
+    data += '</table>'
+
+
+    
+   
+
+    p_total_ne_s = 0
+    p_total_ne_m = 0
+    p_total_ne_e = 0
+    p_total_ne_a = 0
+
+    p_total_ner_s = 0
+    p_total_ner_m = 0
+    p_total_ner_e = 0
+    p_total_ner_a = 0
+    dat = add_days(today(), -1)
+    
+
+    p_total_ne_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01", dat]]})
+    p_total_ne_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01", dat]]})
+    p_total_ne_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",dat]]})
+    p_total_ne_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"NE-Need Evaluation","posting_date": ["BETWEEN", ["2016-01-01",dat]]})
+
+
+    p_total_ner_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01", dat]]})
+    p_total_ner_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01", dat]]})
+    p_total_ner_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",dat]]})
+    p_total_ner_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"NER-Need Evaluation Return","posting_date": ["BETWEEN", ["2016-01-01",dat]]})
+    
+    
+    nes = total_ne_s- p_total_ne_s
+    
+    nem = total_ne_m - p_total_ne_m
+    nee = total_ne_e - p_total_ne_e
+
+    nea = total_ne_a - p_total_ne_a		
+                
+    ners = total_ner_s- p_total_ner_s
+    
+    nerm = total_ner_m - p_total_ner_m
+    nere = total_ner_e - p_total_ner_e
+
+    nera = total_ner_a - p_total_ner_a		
+                
+
+    data += '<table class="table table-bordered">'
+
+    data += '<tr>'
+    data += '<td colspan="2" style="border-left:none; border-top:none; border-right:none; border-color:#000000; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '<td style="border-left:none; border-top:none; border-right:none; border-color:#000000; width:15%; padding:1px; font-size:11px; line-height:0.8; color:white;"><center><b></b></center></td>'
+    data += '</tr>'
+
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>NE</b><center></td>'
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        p_total_ne_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ne_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        p_total_ne_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ne_m or 0)
+    
+    if lp_total_ne_e == "L":
+        p_total_ne_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ne_e or 0)
+    
+    if lp_total_ne_a == "L":
+        p_total_ne_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(p_total_ne_a or 0)
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(p_total_ne_s + p_total_ne_m + p_total_ne_e + p_total_ne_a)
+    data += '</tr>'
+
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Pending</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>NER</b><center></td>'
+
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        p_total_ner_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ner_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        p_total_ner_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ner_m or 0)
+    
+    if lp_total_ne_e == "L":
+        p_total_ner_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ner_e or 0)
+    
+    if lp_total_ne_a == "L":
+        p_total_ner_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(p_total_ner_a or 0)
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(p_total_ner_s + p_total_ner_m + p_total_ner_e + p_total_ner_a)
+    data += '</tr>'
+
+            
+    tr_s = frappe.db.count("Work Order Data",{"technician":"sampath@tsl-me.com","status":"TR-Technician Repair"})
+    tr_m = frappe.db.count("Work Order Data",{"technician":"maari@tsl-me.com","status":"TR-Technician Repair"})
+    tr_e = frappe.db.count("Work Order Data",{"technician":"eduardo@tsl-me.com","status":"TR-Technician Repair"})
+    tr_a = frappe.db.count("Work Order Data",{"technician":"aakib@tsl-me.com","status":"TR-Technician Repair"})
+
+    data += '<tr>'
+    data += '<td style="border-bottom:hidden;border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>TR</b><center></td>'
+    
+    if lp_total_ne_s == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_s or 0)
+        tr_s = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(tr_s or 0)
+
+    if lp_total_ne_m == "L":
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_m or 0)
+        tr_m = 0
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(tr_m or 0)
+    
+    if lp_total_ne_e == "L":
+        tr_e = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(lp_total_ne_e or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(tr_e or 0)
+    
+    if lp_total_ne_a == "L":
+        tr_a = 0
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(lp_total_ne_a or 0)
+    else:
+        data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>'%(tr_a or 0)
+
+
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;"><center><b>%s</b><center></td>' %(tr_s + tr_m + tr_e + tr_a)
+    data += '</tr>'
+
+    # t_p_s = nes + ners + tr_s
+    # t_p_m = nem + nerm + tr_m
+    # t_p_e = nee + nere + tr_e
+    # t_p_a = nea + nera + tr_a
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b></b><center></td>'
+    data += '<td style="border-color:#000000;width:15%;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>Total</b><center></td>'
+ 
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>'  %(p_total_ne_s + p_total_ner_s + tr_s)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>'  %(p_total_ne_m + p_total_ner_m + tr_m)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>'  %(p_total_ne_e + p_total_ner_e + tr_e)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>'  %(p_total_ne_a + p_total_ner_a + tr_a)
+    data += '<td style="border-color:#000000;padding:1px;font-size:11px;line-height:0.8;background-color:#A7C7E7;"><center><b>%s</b><center></td>'  %((p_total_ne_s + p_total_ne_m + p_total_ne_e + p_total_ne_a)+(p_total_ner_s + p_total_ner_m + p_total_ner_e + p_total_ner_a)+(tr_s + tr_m + tr_e + tr_a))
+    data += '</tr>'
+
+    data += '</table>'
+    
+    return data
+   
+	
+	
+
+
+@frappe.whitelist()
+def weekly_lab_report(company):
+    # d = datetime.now().date()
+    # ogdate = datetime.strptime(str(d),"%Y-%m-%d")
+
+    # # Format the date as a string in the desired format
+    # formatted_date = ogdate.strftime("%d-%m-%Y")
+    
+    # from_date = add_days(d,-7)
+    # br = ""
+    # if company == "TSL COMPANY - Kuwait":
+    #     br = "Kuwait"
+    # if company == "TSL COMPANY - UAE":
+    #     br = "UAE"
+        
+
+    # data= ""
+    # data += '<div class="table-container">'
+    # data += '<table class="table table-bordered">'
+    # data += '<tr>'
+    # data += '<td colspan = 1 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+    # data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b>TSL Company <br> Branch - %s</b></center></h2></td>' %(br)
+    # data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+    
+    # data += '<tr>'
+    # data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#808080;color:white;"><b>%s</b></td>' %(formatted_date)
+    # data += '</tr>'
+
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>Status</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>WOD Count</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>More than a Week</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>Remarks</b><center></td>'
+
+    # data += '</tr>'
+
+    # ne_1 =  frappe.db.count("Work Order Data",{"status":"NE-Need Evaluation","company":company,"old_wo_no":["is","not set"]})
+    # ner_1 =  frappe.db.count("Work Order Data",{"status":"NER-Need Evaluation Return","company":company,"old_wo_no":["is","not set"]})
+    # ue_1 =  frappe.db.count("Work Order Data",{"status":"UE-Under Evaluation","company":company,"old_wo_no":["is","not set"]})
+    # utr_1 =  frappe.db.count("Work Order Data",{"status":"UTR-Under Technician Repair","company":company,"old_wo_no":["is","not set"]})
+    # tr_1 =  frappe.db.count("Work Order Data",{"status":"TR-Technician Repair","company":company,"old_wo_no":["is","not set"]})
+    # sp_1 =  frappe.db.count("Work Order Data",{"status":"SP-Searching Parts","company":company,"old_wo_no":["is","not set"]})
+    # wp_1 =  frappe.db.count("Work Order Data",{"status":"WP-Waiting Parts","company":company,"old_wo_no":["is","not set"]})
+
+    # ne = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "NE-Need Evaluation" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+
+    # ner = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "NER-Need Evaluation Return" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+    
+    # ue = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "UE-Under Evaluation" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+    
+    # utr = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "UTR-Under Technician Repair" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+    
+    # tr = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "TR-Technician Repair" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+    
+    # sp = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "SP-Searching Parts"and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL  """ %(from_date,company) ,as_dict=1)
+    
+    # wp = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "WP-Waiting Parts" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,company) ,as_dict=1)
+    
+    # # frappe.errprint(ner[0]["wd"])
+
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>NE</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ne_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ne[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+    # data += '</tr>'
+
+    
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>NER</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ner_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ner[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+    # data += '</tr>'
+    
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>UE</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ue_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ue[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+        
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>UTR</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(utr_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(utr[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>TR</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(tr_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(tr[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+        
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>SP</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(sp_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(sp[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+    
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>WP</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(wp_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(wp[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+    
+    # data += '<tr>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;background-color:#3333ff;color:white;"><center><b>Total</b><center></td>'
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b>%s</b><center></td>' %(ne_1 + ner_1 + ue_1 + utr_1 + sp_1 + tr_1 + wp_1)
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b>%s</b><center></td>' %(ne[0]["wd"] + ner[0]["wd"] + ue[0]["wd"] + utr[0]["wd"] + tr[0]["wd"] + sp[0]["wd"] + wp[0]["wd"])
+    # data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b></b><center></td>'
+
+    # data += '</tr>'
+    # data += '</table>'
+
+
+
+    # data += '</div>'
+    d = datetime.now().date()
+    ogdate = datetime.strptime(str(d),"%Y-%m-%d")
+
+    # Format the date as a string in the desired format
+    formatted_date = ogdate.strftime("%d-%m-%Y")
+    
+    from_date = add_days(d,-7)
+    br = ""
+    if company == "TSL COMPANY - Kuwait":
+        br = "Kuwait"
+    if company == "TSL COMPANY - UAE":
+        br = "UAE"
+        
+
+    data= ""
+    data += '<div class="table-container">'
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td colspan = 1 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
+    data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b>TSL Company <br> Branch - %s</b></center></h2></td>' %(br)
+    data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+    
+    data += '<tr>'
+    data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#808080;color:white;"><b style = "color:white;" >%s</b></td>' %(formatted_date)
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b style = "color:white;" >Status</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b style = "color:white;" >WOD Count</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b style = "color:white;" >More than a Week</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b style = "color:white;" >Remarks</b><center></td>'
+
+    data += '</tr>'
+
+    ne_1 =  frappe.db.count("Work Order Data",{"status":"NE-Need Evaluation","company":company,"old_wo_no":["is","not set"]})
+    ner_1 =  frappe.db.count("Work Order Data",{"status":"NER-Need Evaluation Return","company":company,"old_wo_no":["is","not set"]})
+    ue_1 =  frappe.db.count("Work Order Data",{"status":"UE-Under Evaluation","company":company,"old_wo_no":["is","not set"]})
+    utr_1 =  frappe.db.count("Work Order Data",{"status":"UTR-Under Technician Repair","company":company,"old_wo_no":["is","not set"]})
+    tr_1 =  frappe.db.count("Work Order Data",{"status":"TR-Technician Repair","company":company,"old_wo_no":["is","not set"]})
+    sp_1 =  frappe.db.count("Work Order Data",{"status":"SP-Searching Parts","company":company,"old_wo_no":["is","not set"]})
+    wp_1 =  frappe.db.count("Work Order Data",{"status":"WP-Waiting Parts","company":company,"old_wo_no":["is","not set"]})
+
+    # ne = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "NE-Need Evaluation" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+
+    ne = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "NE-Need Evaluation"
+    AND `tabWork Order Data`.status = "NE-Need Evaluation"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+
+    # ner = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.status_cap_date < '%s' and `tabWork Order Data`.status = "NER-Need Evaluation Return" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+    
+    ner = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "NER-Need Evaluation Return"
+    AND `tabWork Order Data`.status = "NER-Need Evaluation Return"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+
+    # ue = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "UE-Under Evaluation" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+    
+    ue = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = 'UE-Under Evaluation'
+    AND `tabWork Order Data`.status = 'UE-Under Evaluation'
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+
+    utr = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "UTR-Under Technician Repair"
+    AND `tabWork Order Data`.status = "UTR-Under Technician Repair"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s' AND DATE(`tabStatus Duration Details`.date) > '%s'
+    """ % (company,from_date,from_date), as_dict=1)
+
+    # utr = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "UTR-Under Technician Repair" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+    
+    tr = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "TR-Technician Repair"
+    AND `tabWork Order Data`.status = "TR-Technician Repair"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+    # tr = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "TR-Technician Repair" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+    
+    sp = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "SP-Searching Parts"
+    AND `tabWork Order Data`.status = "SP-Searching Parts"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+    # sp = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "SP-Searching Parts" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL  """ %(from_date,self.company) ,as_dict=1)
+    
+    # wp = frappe.db.sql(""" select count(`tabWork Order Data` .name) as wd from `tabWork Order Data` 
+    # where  `tabWork Order Data`.posting_date < '%s' and `tabWork Order Data`.status = "WP-Waiting Parts" and `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL """ %(from_date,self.company) ,as_dict=1)
+    
+    wp = frappe.db.sql("""
+    SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS wd
+    FROM `tabWork Order Data`
+    LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    WHERE `tabStatus Duration Details`.status = "WP-Waiting Parts"
+    AND `tabWork Order Data`.status = "WP-Waiting Parts"
+    AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    AND DATE(`tabStatus Duration Details`.date) < '%s'
+    """ % (company,from_date), as_dict=1)
+
+    frappe.errprint(ner[0]["wd"])
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>NE</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ne_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ne[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+    data += '</tr>'
+
+    
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>NER</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ner_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ner[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+    data += '</tr>'
+    
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>UE</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ue_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(ue[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    data += '</tr>'
+        
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>UTR</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(utr_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(utr[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    data += '</tr>'
+
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>TR</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(tr_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(tr[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b></b><center></td>'
+
+    data += '</tr>'
+        
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>SP</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(sp_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(sp[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    data += '</tr>'
+    
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b>WP</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(wp_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;"><center><b>%s</b><center></td>' %(wp[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;"><center><b></b><center></td>'
+
+    data += '</tr>'
+    
+    data += '<tr>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;background-color:#3333ff;color:white;"><center><b style = "color:white;">Total</b><center></td>'
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b style = "color:white;">%s</b><center></td>' %(ne_1 + ner_1 + ue_1 + utr_1 + sp_1 + tr_1 + wp_1)
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b style = "color:white;">%s</b><center></td>' %(ne[0]["wd"] + ner[0]["wd"] + ue[0]["wd"] + utr[0]["wd"] + tr[0]["wd"] + sp[0]["wd"] + wp[0]["wd"])
+    data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b></b><center></td>'
+
+    data += '</tr>'
+    data += '</table>'
+
+
+
+    data += '</div>'
+    return data
+
+
+@frappe.whitelist()
+def invoice_request(qu):
+
+    wd = frappe.db.sql(""" select  `tabQuotation Item`.wod_no from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+			where `tabQuotation`.name = '%s' """ %(qu),as_dict = 1)
+
+
+    sd = frappe.db.sql(""" select  `tabQuotation Item`.supply_order_data from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+			where `tabQuotation`.name = '%s' """ %(qu),as_dict = 1)
+            
+    
+    return wd
+
+@frappe.whitelist()
+def invoice_request_2(qu):
+    sd = frappe.db.sql(""" select  `tabQuotation Item`.supply_order_data from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+			where `tabQuotation`.name = '%s' """ %(qu),as_dict = 1)
+            
+    
+    return sd
+
+@frappe.whitelist()
+def get_item_details(md):
+    it = frappe.db.exists("Item",{"model":md})
+    if it:
+        item = frappe.get_value("Item",it,["name","item_number","description","stock_uom"])
+        # frappe.errprint(it)
+        return item
+
+
+# @frappe.whitelist()
+# def update_eval():
+#     wo = frappe.db.sql(""" UPDATE `tabEvaluation Report` SET technician_id = 1 WHERE  technician = "aakib@tsl-me.com" ; """)
+
+
+@frappe.whitelist()
+def fill_employee_details(self):
+    self.set("employees", [])
+    employees = self.get_emp_list()
+    if not employees:
+        error_msg = _(
+            "No employees found for the mentioned criteria:<br>Company: {0}<br> Currency: {1}<br>Payroll Payable Account: {2}"
+        ).format(
+            frappe.bold(self.company),
+            frappe.bold(self.currency),
+            frappe.bold(self.payroll_payable_account),
+        )
+        if self.branch:
+            error_msg += "<br>" + _("Branch: {0}").format(frappe.bold(self.branch))
+        if self.department:
+            error_msg += "<br>" + _("Department: {0}").format(frappe.bold(self.department))
+        if self.designation:
+            error_msg += "<br>" + _("Designation: {0}").format(frappe.bold(self.designation))
+        if self.start_date:
+            error_msg += "<br>" + _("Start date: {0}").format(frappe.bold(self.start_date))
+        if self.end_date:
+            error_msg += "<br>" + _("End date: {0}").format(frappe.bold(self.end_date))
+        frappe.throw(error_msg, title=_("No employees found"))
+
+    for d in employees:
+        leave_salary = frappe.get_all(
+            'Leave Salary',
+            filters={
+                'employee': d['employee'],
+                'from_date': ['<=', self.end_date],
+                'leave_end_date': ['>=', self.start_date]
+            },
+            order_by="creation desc",
+            limit=1
+        )        
+        if leave_salary:
+            continue
+
+        self.append("employees", d)
+
+    self.number_of_employees = len(self.employees)
+    return self.get_employees_with_unmarked_attendance()
+
+@frappe.whitelist()
+def check_ss():
+    sup_quoted= frappe.get_all("Supply Order Data",{"sales_rep":"Maaz","status":"Quoted","posting_date": ["between", ("2015-01-01","2024-11-24")]})
+    sp_qted =0
+    sp_qted_2 =0
+    for j in sup_quoted:
+        sup_qamt_qted = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+            `tabQuotation`.default_discount_percentage as dis,
+            `tabQuotation`.approval_date as a_date,
+            `tabQuotation`.is_multiple_quotation as is_m,
+            `tabQuotation`.after_discount_cost as adc,
+            `tabQuotation Item`.unit_price as up,
+            `tabQuotation Item`.qty as qty,
+            `tabQuotation Item`.margin_amount as ma 
+            from `tabQuotation` 
+            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+            where  `tabQuotation`.Workflow_state in ("Approved By Customer") and 
+            `tabQuotation Item`.supply_order_data = '%s' and 
+            `tabQuotation`.quotation_type in ("Customer Quotation - Supply","Revised Quotation - Supply") 
+            and transaction_date between '%s' and '%s' ''' %(j.name,"2015-01-01","2024-11-24"),as_dict=1)
+
+        if sup_qamt_qted:
+            if sup_qamt_qted[0]["is_m"] == 1:
+                for k in sup_qamt_qted:
+                    per = (k.up * k.dis)/100
+                    q_amt = (k.up - per) * k.qty
+                
+                    # print(j.name)
+                    print(q_amt)
+                    sp_qted = sp_qted + q_amt
+
+            else:
+                q_amt = sup_qamt_qted[0]["adc"]
+                # print(round(q_amt))
+                # print(j.name)
+                print(q_amt)
+                sp_qted = sp_qted + q_amt
+            # print(sp_qted)
+        else:
+            sup_qamt_qted_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+            `tabQuotation`.default_discount_percentage as dis,
+            `tabQuotation`.approval_date as a_date,
+            `tabQuotation`.is_multiple_quotation as is_m,
+            `tabQuotation`.after_discount_cost as adc,
+            `tabQuotation`.Workflow_state,
+            `tabQuotation Item`.qty as qty,
+            `tabQuotation Item`.unit_price as up,
+            `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+            left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+            where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
+            `tabQuotation`.quotation_type in ("Customer Quotation - Supply","Revised Quotation - Supply")
+            and `tabQuotation Item`.supply_order_data = '%s' 
+            and transaction_date between '%s' and '%s' ''' %(j.name,"2015-01-01","2024-11-24") ,as_dict=1)
+
+            if sup_qamt_qted_2:
+                if sup_qamt_qted_2[0]["is_m"] == 1:
+                    for k in sup_qamt_qted_2:
+                        per = (k.up * k.dis)/100
+                        q_amt_2 = (k.up - per)  * k.qty
+                    
+                        # print(j.name)
+                        print(q_amt_2)
+                        sp_qted_2 = sp_qted_2 + q_amt_2
+
+                else:
+                    q_amt_2 = sup_qamt_qted_2[0]["adc"]
+                    
+                    # print(j.name)
+                    print(q_amt_2)
+                    sp_qted_2 = sp_qted_2 + q_amt_2
+                
+    print(sp_qted_2)
+
+
+# @frappe.whitelist()
+# def check_si():
+    # d = datetime.now().date()
+    # ogdate = datetime.strptime(str(d),"%Y-%m-%d")
+
+    # # Format the date as a string in the desired format
+    # formatted_date = ogdate.strftime("%d-%m-%Y")
+    
+    # from_date = add_days(d,-7)
+
+    # ue = frappe.db.sql("""
+    # SELECT DISTINCT `tabWork Order Data`.name AS wd
+    # FROM `tabWork Order Data`
+    # LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    # WHERE `tabStatus Duration Details`.status = 'UTR-Under Technician Repair'
+    # AND `tabWork Order Data`.status = 'UTR-Under Technician Repair'
+    # AND `tabWork Order Data`.company = '%s' and`tabWork Order Data`.old_wo_no IS NULL
+    # AND DATE(`tabStatus Duration Details`.date) < '%s'
+    # """ % ("TSL COMPANY - Kuwait",from_date), as_dict=1)
+    # # print(ue)
+    # count = 0
+    # for i in ue:
+    #     s = frappe.db.sql("""
+    #     SELECT `tabStatus Duration Details`.date as date
+    #     FROM `tabWork Order Data`
+    #     LEFT JOIN `tabStatus Duration Details` ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+    #     WHERE `tabWork Order Data`.name = '%s' and `tabStatus Duration Details`.status = 'UTR-Under Technician Repair' """ % (i.wd), as_dict=1)
+    #     # print(d)
+    #     # print(i.wd)
+    #     for k in s:
+    #         if k.date.date() < from_date and not k.date.date() < from_date:
+    #             print(k.date.date())
+    #         # else:
+    #         #     count = count + 
+    # print(count)
+
+    # si = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.supply_order_data as so,
+    # `tabSales Invoice`.name as n
+    # from `tabSales Invoice` 
+    # left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+    # where `tabSales Invoice`.status = 'Paid' and `tabSales Invoice`.department = "Supply - TSL" """ ,as_dict =1)
+    # for i in si:
+    #     if i.so:
+    #         print(i.so)
+    #     c = frappe.get_value("Supply Order Data",i.so,["status"])
+        
+    #     if c in ["Invoiced","Delivered and Invoiced"]:
+    #         print(i.so)
+    #         frappe.db.set_value("Supply Order Data",i.so,"Status","Paid")
+            # frappe.db.set_value("Supply Order Data",i.so,"Workflow_state","Paid")
+   

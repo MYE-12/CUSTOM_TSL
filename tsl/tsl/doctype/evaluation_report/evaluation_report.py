@@ -78,10 +78,10 @@ class EvaluationReport(Document):
 			# 	doc.status = "AP-Available Parts"
 				doc.save(ignore_permissions=True)
 	def on_submit(self):
-		if self.status == "Extra Parts" and self.parts_availability != "Yes":
-			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-			doc.status = "EP-Extra Parts"
-			doc.save(ignore_permissions = True)
+		# if self.status == "Extra Parts" and self.parts_availability != "Yes":
+		# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		# 	doc.status = "EP-Extra Parts"
+		# 	doc.save(ignore_permissions = True)
 
 		if self.status == "Spare Parts" and self.parts_availability == "Yes":
 			doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -273,7 +273,7 @@ class EvaluationReport(Document):
 			pass
 		else:
 			if not self.evaluation_time or not self.estimated_repair_time:
-				frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
+				frappe.throw("Note: Evaluation Time and Estimated Repair Time is not given.")
 		for pm in self.get("items"):
 			model = pm.model
 			part_no = pm.part
@@ -294,6 +294,9 @@ class EvaluationReport(Document):
 					item_doc.save(ignore_permissions = True)
 
 	def on_update_after_submit(self):
+		if not self.evaluation_time or not self.estimated_repair_time:
+			if self.status != "Comparison":
+				frappe.throw("Note: Evaluation Time and Estimated Repair Time is not given.")
 		add = total = 0
 		self.total_amount = 0
 		for i in self.items:
@@ -307,8 +310,8 @@ class EvaluationReport(Document):
 		#self.total_amount = add
 		# frappe.db.sql('''update `tabEvaluation Report` set total_amount = %s where name = %s ''',(add,self.name))
 		if self.status == "Working":
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
-				doc.status = "W-Working"
+			doc = frappe.get_doc("Work Order Data",self.work_order_data)
+			doc.status = "W-Working"
 		if self.status:
 			sq = frappe.db.sql("""select (`tabSupplier Quotation Item`.work_order_data) as wod ,`tabSupplier Quotation`.name as sq 
 					  from `tabSupplier Quotation` left join `tabSupplier Quotation Item` on `tabSupplier Quotation`.name = `tabSupplier Quotation Item`.parent  
@@ -358,8 +361,7 @@ class EvaluationReport(Document):
 				elif self.status == "Spare Parts":
 					doc.status = "SP-Searching Parts"
 			
-			if self.status == "Extra Parts" and not self.parts_availability == "Yes":
-
+			if self.status == "Extra Parts" and not self.parts_availability == "Yes" and self.document_active_status == "Yes":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "EP-Extra Parts"
 			
@@ -392,6 +394,7 @@ class EvaluationReport(Document):
 				doc.status = "W-Working"
 			doc.save(ignore_permissions = True)
 		if self.if_parts_required:
+			
 			self.part_no = 0
 			f=0
 			for i in self.get("items"):
@@ -403,21 +406,42 @@ class EvaluationReport(Document):
 				if i.parts_availability == "No" and not i.from_scrap:
 					f=1
 			if len(self.items)>0 and self.items[-1].part_sheet_no and self.docstatus ==1:
+									
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison","Internal Extra Parts"] and self.ner_field == "NER-Need Evaluation Return":
 					
-					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Extra Parts","Comparison","Internal Extra Parts"] and self.ner_field == "NER-Need Evaluation Return":
-						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
-						wd = frappe.get_doc("Work Order Data",self.work_order_data)
-						wd.status = "EP-Extra Parts"
-						wd.save(ignore_permissions = 1)
-					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  not self.ner_field == "NER-Need Evaluation Return":
-						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Internal Extra Parts",self.name))
-						wd = frappe.get_doc("Work Order Data",self.work_order_data)
-						wd.status = "EP-Extra Parts"
-						wd.save(ignore_permissions = 1)
-						
-					if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  not self.ner_field == "NER-Need Evaluation Return" and self.parts_availability == "Yes":
+					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+					wd = frappe.get_doc("Work Order Data",self.work_order_data)
+					wd.status = "EP-Extra Parts"
+					wd.save(ignore_permissions = 1)
+
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Extra Parts","Internal Extra Parts"] and  not self.ner_field == "NER-Need Evaluation Return" :
 					
-						frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Working",self.name))
+
+					if self.status == "Internal Extra Parts":
+						self.status = "Internal Extra Parts"
+						# frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Internal Extra Parts",self.name))
+						if self.document_active_status == "Yes":
+							wd = frappe.get_doc("Work Order Data",self.work_order_data)
+							wd.status = "EP-Extra Parts"
+							wd.save(ignore_permissions = 1)
+
+					if self.status == "Extra Parts":
+						self.status = "Extra Parts"
+						# frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
+						if self.document_active_status == "Yes":
+							wd = frappe.get_doc("Work Order Data",self.work_order_data)
+							wd.status = "EP-Extra Parts"
+							wd.save(ignore_permissions = 1)
+
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Working"] and  not self.ner_field == "NER-Need Evaluation Return":
+					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Working",self.name))
+					wd = frappe.get_doc("Work Order Data",self.work_order_data)
+					wd.status = "W-Working"
+					wd.save(ignore_permissions = 1)
+					
+				if str(self.items[-1].part_sheet_no) > str(1) and self.status in ["Spare Parts","Comparison","Internal Extra Parts","Working"] and  not self.ner_field == "NER-Need Evaluation Return" and self.parts_availability == "Yes":
+				
+					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Working",self.name))
 
 			if f:
 				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
@@ -543,7 +567,7 @@ def create_material_issue_from_ini_eval(name):
 		frappe.msgprint("Parts Released and Material Issue is Created")
 		
 	if ini.company == "TSL COMPANY - UAE":
-		frappe.errprint("hiii")
+	
 		new_doc = frappe.new_doc("Stock Entry")
 		new_doc.company = "TSL COMPANY - UAE"
 		new_doc.stock_entry_type = "Material Issue"
@@ -570,3 +594,4 @@ def create_material_issue_from_ini_eval(name):
 #			'user':frappe.session.user
 #		})
 #		self.save(ignore_permissions = True)
+

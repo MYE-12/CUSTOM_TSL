@@ -41,3 +41,5 @@ def on_submit(self,method):
         sod.save(ignore_permissions = True)
 
         
+# def validate(self,method):
+#     frappe.errpron
