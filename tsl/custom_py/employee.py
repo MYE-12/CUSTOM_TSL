@@ -52,30 +52,30 @@ def create_leave_allocation(name):
 	from datetime import datetime
 	current_year = datetime.now().year
 	last_date_of_year = datetime(current_year, 12, 31)
-	frappe.errprint(last_date_of_year)
 	doc = frappe.get_doc("Employee",name)
-	leave_type = [{'type':"Sick Leave 25%",'days':10},
-				{'type':"Sick Leave 50%",'days':10},
-			   	{'type':"Sick Leave 75%",'days':10},
-			   	{'type':"Sick Leave 100%",'days':15},
-			   	{'type':"Annual Leave",'days':30}]
+	leave_type = [{'type':"Sick Leave 25%",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"sick_leave_25") or 0},
+				{'type':"Sick Leave 50%",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"sick_leave_50") or 0},
+			   	{'type':"Sick Leave 75%",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"sick_leave_75") or 0},
+			   	{'type':"Sick Leave 100%",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"sick_leave_100") or 0}]
+	
 	if doc.religion == "Islam":
-		leave_type.append({'type':"Hajj Leave",'days':21})
+		leave_type.append({'type':"Hajj Leave",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"hajj_leave") or 0})
 	if doc.gender == "Female":
-		leave_type.append({'type':"Maternity Leave",'days':70})
+		leave_type.append({'type':"Maternity Leave",'days':frappe.db.get_value("Leave Allocation Table",{"company": doc.company},"maternity_leave") or 0})
 	for i in leave_type:
 		alc = frappe.db.exists("Leave Allocation",{"employee":doc.employee,"leave_type":i['type'],"to_date":last_date_of_year})
 		if not alc:
-			al = frappe.new_doc("Leave Allocation")
-			al.employee = doc.employee
-			al.leave_type = i['type']
-			al.from_date = doc.date_of_joining
-			al.to_date = last_date_of_year
-			al.new_leaves_allocated = i['days']
-			al.total_leaves_allocated = i['days']
-			al.save(ignore_permissions =True)
-			al.submit()
-			frappe.msgprint("Leave Allocation <b>"+al.name+"</b> created for Employee - <b>"+doc.employee+"</b> for type - <b>"+i['type']+"</b>" )
+			if i['days'] >0:
+				al = frappe.new_doc("Leave Allocation")
+				al.employee = doc.employee
+				al.leave_type = i['type']
+				al.from_date = doc.date_of_joining
+				al.to_date = last_date_of_year
+				al.new_leaves_allocated = i['days']
+				al.total_leaves_allocated = i['days']
+				al.save(ignore_permissions =True)
+				al.submit()
+				frappe.msgprint("Leave Allocation <b>"+al.name+"</b> created for Employee - <b>"+doc.employee+"</b> for type - <b>"+i['type']+"</b>" )
 		else:
 			frappe.msgprint("Leave Allocation <b>"+alc+"</b> already there for Employee - <b>"+doc.employee+"</b> for type - <b>"+i['type']+"</b>")
 
@@ -182,10 +182,9 @@ def civil_id_expiry():
 		)
 
 @frappe.whitelist()
-def employee_series(company):
-	emp = frappe.get_all("Employee",{"company":company}, ['name'])
-	emp_sorted = sorted(emp, key=lambda x: int(x['name']), reverse=True)[0]
-	next_in_series = int(emp_sorted['name'])+1
+def employee_series():
+	last_number = frappe.db.get_single_value("HR Settings","last_number_in_series")
+	next_in_series = int(last_number)+1
 	next_in_series = check_for_employee(next_in_series)
 	return str(next_in_series)
 
@@ -194,3 +193,6 @@ def check_for_employee(name):
 	while frappe.db.exists("Employee", str(name)):
 		name += 1
 	return name
+
+def update_last_employee_number(doc,method):
+	frappe.db.set_value("HR Settings","HR Settings","last_number_in_series",doc.name)

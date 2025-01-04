@@ -39,19 +39,19 @@ class WeeklyLabReport(Document):
 		data += '<div class="table-container">'
 		data += '<table class="table table-bordered">'
 		data += '<tr>'
-		data += '<td colspan = 1 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="150"></td>'
-		data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b>TSL Company <br> Branch - %s</b></center></h2></td>' %(br)
-		data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+		data += '<td colspan = 1 align = center style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="250"></td>'
+		data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b style="color:#055c9d;">TSL Company <br> Branch - %s</b></center></h2></td>' %(br)
+		data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="150"></center></td>'
 		
 		data += '<tr>'
-		data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#808080;color:white;"><b>%s</b></td>' %(formatted_date)
+		data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#0e86d4;color:white;"><b>%s</b></td>' %(formatted_date)
 		data += '</tr>'
 
 		data += '<tr>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>Status</b><center></td>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>WOD Count</b><center></td>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>More than a Week</b><center></td>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b>Remarks</b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;width:25%;"><center><b>Status</b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;width:25%;"><center><b>WOD Count</b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;width:25%;"><center><b>More than a Week</b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;width:25%;"><center><b>Remarks</b><center></td>'
 
 		data += '</tr>'
 
@@ -227,10 +227,10 @@ class WeeklyLabReport(Document):
 		data += '</tr>'
 		
 		data += '<tr>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;background-color:#3333ff;color:white;"><center><b>Total</b><center></td>'
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b>%s</b><center></td>' %(ne_1 + ner_1 + ue_1 + utr_1 + sp_1 + tr_1 + wp_1)
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;"><center><b>%s</b><center></td>' %(ne[0]["wd"] + ner_3 + ue[0]["wd"] + utr[0]["wd"] + tr[0]["wd"] + sp[0]["wd"] + wp[0]["wd"])
-		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#3333ff;color:white;width:25%;"><center><b></b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;width:25%;background-color:#0e86d4;color:white;"><center><b>Total</b><center></td>'
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;"><center><b>%s</b><center></td>' %(ne_1 + ner_1 + ue_1 + utr_1 + sp_1 + tr_1 + wp_1)
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;"><center><b>%s</b><center></td>' %(ne[0]["wd"] + ner_3 + ue[0]["wd"] + utr[0]["wd"] + tr[0]["wd"] + sp[0]["wd"] + wp[0]["wd"])
+		data += '<td style="border-color:#000000;padding:1px;font-size:16px;background-color:#0e86d4;color:white;width:25%;"><center><b></b><center></td>'
 
 		data += '</tr>'
 		data += '</table>'

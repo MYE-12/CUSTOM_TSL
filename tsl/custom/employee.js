@@ -14,12 +14,9 @@ frappe.ui.form.on('Employee', {
         },
        
         company(frm){
-                if(frm.doc.__islocal && frm.doc.company){
+                if(frm.doc.__islocal){
                         frappe.call({
                                 method:"tsl.custom_py.employee.employee_series",
-                                args:{
-                                        company:frm.doc.company
-                                },
                                 callback(r){
                                         if(r.message){
                                                 frm.set_value("employee_number",r.message)
@@ -27,5 +24,21 @@ frappe.ui.form.on('Employee', {
                                 }
                         })
                 }
+        },
+        create_fnf(frm){
+                frappe.db.get_value('Full and Final Settlement',{'employee': frm.doc.name },'name')
+                        .then(r => {
+                        if(r.message && Object.entries(r.message).length === 0){
+                                frappe.route_options = { 
+                                        'employee':frm.doc.employee,
+                                        'employee_name': frm.doc.employee_name,
+                                        'type': "Termination",
+                                }
+                                frappe.set_route('Form','Full and Final Settlement','new-full-and-final-settlement-1')
+                        }
+                        else{
+                                frappe.set_route('Form','Full and Final Settlement',r.message.name)
+                        }
+                })
         }
 })

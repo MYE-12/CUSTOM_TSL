@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"Eka9QZU0gM\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Q</b> - Quotation / <b>W</b> - Work Order Data / <b>I</b> - Invoice\",\"col\":12}},{\"id\":\"AonM2MC_ts\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"-Yle2-FEVZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">FORMS</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"50mBgN3h_N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data Lookup\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"YOPlL5ufV1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"nuzb-DcYAF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Report\",\"col\":3}},{\"id\":\"Zhc23dMhWZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"Cs3oe7n-yc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":3}},{\"id\":\"Meyv3IRadu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"8TntjXqDmA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"XmtfcdPgvO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Ready To Ship\",\"col\":3}},{\"id\":\"51sprxX_uO\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7bBVsa6p1j\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Quotation</b>\",\"col\":12}},{\"id\":\"psk4XAUxzj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Not Approved\",\"col\":3}},{\"id\":\"Rr_QQ4hinW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved\",\"col\":3}},{\"id\":\"kG5GFRRutd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Invoice</b>\",\"col\":12}},{\"id\":\"TJAwcrtXQ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Unpaid\",\"col\":3}},{\"id\":\"BlH9RvKxMa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Paid\",\"col\":3}},{\"id\":\"dkcF8BlkNU\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Work Order Data</b>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -NER\",\"col\":3}},{\"id\":\"8Be6aN1Zdq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RS\",\"col\":3}},{\"id\":\"oDSXlYKJAh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -  RSC\",\"col\":3}},{\"id\":\"91PitxKuom\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNF\",\"col\":3}},{\"id\":\"p5uORckn6f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNFC\",\"col\":3}},{\"id\":\"7Z3QygGSdj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNR\",\"col\":3}},{\"id\":\"dsbrQgKv9e\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -RNRC\",\"col\":3}},{\"id\":\"IXBpHsAA0D\",\"type\":\"paragraph\",\"data\":{\"text\":\"Report Master\",\"col\":12}},{\"id\":\"olUiQKFHA9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}},{\"id\":\"OzrOeEUKQG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Report\",\"col\":3}}]",
+ "content": "[{\"id\":\"Eka9QZU0gM\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Q</b> - Quotation / <b>W</b> - Work Order Data / <b>I</b> - Invoice\",\"col\":12}},{\"id\":\"AonM2MC_ts\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"-Yle2-FEVZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">FORMS</span>\",\"col\":12}},{\"id\":\"50mBgN3h_N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data Lookup\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"YOPlL5ufV1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"nuzb-DcYAF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Report\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"XmtfcdPgvO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Ready To Ship\",\"col\":3}},{\"id\":\"51sprxX_uO\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7bBVsa6p1j\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Quotation</b>\",\"col\":12}},{\"id\":\"psk4XAUxzj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Not Approved\",\"col\":3}},{\"id\":\"Rr_QQ4hinW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved\",\"col\":3}},{\"id\":\"kG5GFRRutd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Invoice</b>\",\"col\":12}},{\"id\":\"TJAwcrtXQ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Unpaid\",\"col\":3}},{\"id\":\"BlH9RvKxMa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"I - Paid\",\"col\":3}},{\"id\":\"dkcF8BlkNU\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Work Order Data</b>\",\"col\":12}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - UTR/NE\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -NER\",\"col\":3}},{\"id\":\"8Be6aN1Zdq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RS\",\"col\":3}},{\"id\":\"oDSXlYKJAh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -  RSC\",\"col\":3}},{\"id\":\"91PitxKuom\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNF\",\"col\":3}},{\"id\":\"p5uORckn6f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNFC\",\"col\":3}},{\"id\":\"7Z3QygGSdj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RNR\",\"col\":3}},{\"id\":\"dsbrQgKv9e\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -RNRC\",\"col\":3}},{\"id\":\"IXBpHsAA0D\",\"type\":\"paragraph\",\"data\":{\"text\":\"Report Master\",\"col\":12}},{\"id\":\"olUiQKFHA9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}}]",
  "creation": "2023-09-04 09:32:52.265788",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL SU",
  "links": [],
- "modified": "2024-09-17 13:16:37.052171",
+ "modified": "2024-12-23 10:58:05.046761",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL SU",
@@ -57,13 +57,6 @@
    "label": "W -NER",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"NER-Need Evaluation Return\"]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Sales Summary Report",
-   "link_to": "Sales Summary Report",
    "type": "DocType"
   },
   {
@@ -161,13 +154,6 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Create Work Order",
-   "link_to": "Create Work Order",
-   "type": "DocType"
-  },
-  {
    "color": "Green",
    "doc_view": "List",
    "label": "Work Order Data",
@@ -180,20 +166,6 @@
    "label": "W - UTR/NE",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"in\",[\"NE-Need Evaluation\",\"UTR-Under Technician Repair\",null]]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Red",
-   "doc_view": "List",
-   "label": "Initial Evaluation",
-   "link_to": "Initial Evaluation",
-   "type": "DocType"
-  },
-  {
-   "color": "Pink",
-   "doc_view": "List",
-   "label": "Evaluation Report",
-   "link_to": "Evaluation Report",
    "type": "DocType"
   },
   {
@@ -222,34 +194,6 @@
    "doc_view": "List",
    "label": "Sales Report",
    "link_to": "Sales Track",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Purchase Order",
-   "link_to": "Purchase Order",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Purchase Receipt",
-   "link_to": "Purchase Receipt",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Purchase Invoice",
-   "link_to": "Purchase Invoice",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Payment",
-   "link_to": "Payment Entry",
    "type": "DocType"
   }
  ],

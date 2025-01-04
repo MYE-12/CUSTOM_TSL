@@ -81,6 +81,7 @@ def create_supply_order_data(order_no):
 						if 'has_serial_no' in i and i['has_serial_no']:
 							i_doc.has_serial_no = 1
 						i_doc.save(ignore_permissions = True)
+						
 						if i_doc.name:
 							i['item_code'] = i_doc.name
 							if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
@@ -138,6 +139,7 @@ def create_supply_order_data(order_no):
 			new_doc.append("material_list",{
 				"item_code": i['item_code'],
 				"model_no": i['model'],
+				"mfg": i['manufracturer'],
 				"description":i['description'],
 				"item_name":i['model'],	
 				"unit":i['uom'],

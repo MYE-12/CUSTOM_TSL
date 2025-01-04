@@ -27,17 +27,15 @@ frappe.ui.form.on('Incentive Report', {
 
 	
 	download:function(frm){
-		
 		var print_format ="Incentive Report";
-			var f_name = "Incentive Report"
-			window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
-				+ "doctype=" + encodeURIComponent("Incentive Report")
-				+ "&name=" + encodeURIComponent(f_name)
-				+ "&trigger_print=1"
-				+ "&format=" + print_format
-				+ "&no_letterhead=0"
-			));
+		var f_name = "Incentive Report"
+		window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
+			+ "doctype=" + encodeURIComponent("Incentive Report")
+			+ "&name=" + encodeURIComponent(f_name)
+			+ "&trigger_print=1"
+			+ "&format=" + print_format
+			+ "&no_letterhead=0"
+		));
 	
-	
-},
+	},
 });

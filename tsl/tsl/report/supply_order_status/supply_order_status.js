@@ -30,6 +30,27 @@ frappe.query_reports["Supply Order Status"] = {
 		}
 
 	],
+
+	onload: function(report) {
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Employee",
+                filters: {
+                    user_id: frappe.session.user
+                },
+				
+                fieldname: "company"
+            },
+            callback: function(r) {
+                if (r.message) {
+					console.log(r.message.company)
+                    report.set_filter_value('company', r.message.company);
+                }
+            }
+        });
+    },
+	
 	after_datatable_render: table_instance => {
 		let data = table_instance.datamanager.data;
 		let col = 21;

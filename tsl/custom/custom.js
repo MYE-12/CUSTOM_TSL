@@ -257,6 +257,7 @@ frappe.ui.form.on('Quotation', {
 
 
 		// 			}, ('Create'))
+
 		if(frm.doc.quotation_type == "Site Visit Quotation - Internal"){
 			frm.add_custom_button(__('Customer Quotation'), function(){
 					// let diff = frm.doc.final_approved_price - frm.doc.rounded_total
@@ -268,6 +269,7 @@ frappe.ui.form.on('Quotation', {
 					// 	var mar = v
 						
 					// });
+					
 					frappe.call({
 						method: "tsl.custom_py.quotation.get_quotation",
 						args: {
@@ -376,6 +378,35 @@ frappe.ui.form.on('Quotation', {
 
                         }, ('Create'))
 	}
+
+	if(frm.doc.quotation_type == "Internal Quotation - Project"){
+		frm.add_custom_button(__('Customer Quotation'), function(){
+				
+				
+
+				if(frm.doc.company == "TSL COMPANY - UAE"){
+
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quote_pro",
+						args: {
+							"source": frm.doc.name,
+						
+							"type":"Customer Quotation - Project"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+				}
+
+                        }, ('Create'))
+	}
+
+
 	if((frm.doc.quotation_type === "Internal Quotation - Repair" || frm.doc.quotation_type === "Internal Quotation - Supply") && !frm.doc.__islocal){
 
             frm.add_custom_button(__('Similar Unit Quoted Before'), function () {
@@ -437,7 +468,7 @@ frappe.ui.form.on('Quotation', {
 	}
 
 		
-	if(frm.doc.quotation_type === "Internal Quotation - Supply" || frm.doc.quotation_type === "Revised Quotation - Supply" && frm.doc.docstatus===1){
+	if(frm.doc.quotation_type === "Internal Quotation - Supply" || frm.doc.quotation_type === "Revised Quotation - Supply" && frm.doc.docstatus == 1){
 		frm.add_custom_button(__('Customer Quotation'), function(){
 				
                 frappe.call({
@@ -855,13 +886,13 @@ frappe.ui.form.on('Quotation', {
 						
 						
 					},
-					{
-						label: "Approval Date",
-						fieldname: "approval_date",
-						fieldtype: "Date",
+					// {
+					// 	label: "Approval Date",
+					// 	fieldname: "approval_date",
+					// 	fieldtype: "Date",
 						
 						
-					},
+					// },
 				],
 				primary_action: function() {
 					var data = d.get_values();
@@ -1019,7 +1050,9 @@ frappe.ui.form.on("Quotation Item",{
 		frappe.model.set_value(cdt, cdn, "margin_amount_value",disc_val);
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
-		frappe.model.set_value(cdt, cdn, "rate",dic_val);
+		console.log(margin_amount)
+		console.log('margin_amount')
+		// frappe.model.set_value(cdt, cdn, "rate",margin_amount);
 		// item.margin_amount_value = disc_val
 		
 	   },

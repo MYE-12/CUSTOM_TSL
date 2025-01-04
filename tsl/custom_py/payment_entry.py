@@ -18,8 +18,8 @@ def on_submit(self,method):
     
 
 
-    if self.work_order_data:
+    if self.work_order_data and self.payment_type == 'Receive':
         frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s where name = %s''',(self.name,self.paid_amount,self.posting_date,self.work_order_data))
-    if self.supply_order_data:
+    if self.supply_order_data and self.payment_type == 'Receive':
         frappe.db.sql('''update `tabSupply Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s where name = %s''',(self.name,self.paid_amount,self.posting_date,self.supply_order_data))
 

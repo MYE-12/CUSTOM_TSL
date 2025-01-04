@@ -162,6 +162,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -524,7 +525,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-14 15:13:28.131781",
+ "modified": "2024-12-31 11:25:06.805243",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

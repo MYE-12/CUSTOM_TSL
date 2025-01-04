@@ -505,7 +505,7 @@ def create_dn(wod):
    
 			amt = qi_details[0]['final_approved_price']
 			new_doc.append("items",{
-				"item_name":i.item_name0,
+				"item_name":i.item_name,
 				"item_code":i.item_code,
 				"manufacturer":i.mfg,
 				"model":i.model_no,

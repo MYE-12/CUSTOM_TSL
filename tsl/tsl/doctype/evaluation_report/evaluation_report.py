@@ -77,6 +77,7 @@ class EvaluationReport(Document):
 			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			# 	doc.status = "AP-Available Parts"
 				doc.save(ignore_permissions=True)
+				
 	def on_submit(self):
 		# if self.status == "Extra Parts" and self.parts_availability != "Yes":
 		# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
@@ -580,14 +581,15 @@ def create_material_issue_from_ini_eval(name):
 					'item_code':i.part,
 					'qty':i.qty,
 					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
-					'cost_center':"Main - TSL-UAE"
+					'cost_center':"Main - TSL-UAE",
+					'work_order_data':ini.work_order_data
 					# 'conversion_factor':1,
 					# 'allow_zero_valuation_rate':1
 				})
 				new_doc.save(ignore_permissions = True)
 				new_doc.submit()
 
-		# frappe.msgprint("Parts Released and Material Issue is Created")
+		frappe.msgprint("Parts Released and Material Issue is Created")
 
 #	def onload(self):
 #		self.append("technician_details",{

@@ -110,6 +110,9 @@ frappe.listview_settings['Work Order Data'] = {
             else if (doc.status === "CT-Customer Testing") {
                   return[__("CT-Customer Testing"),"red","status,=,CT-Customer Testing"];
                   }
+            else if (doc.status === "NEA-Need Evaluation Approved") {
+                  return[__("NEA-Need Evaluation Approved"),"red","status,=,NEA-Need Evaluation Approved"];
+                        }
           
       },
 };

@@ -23,9 +23,11 @@ def get_columns(filters):
 		_("Sub category") + ":Data:100",
 		_("Package") + ":Data:100",
 		_("Avail Qty") + ":Data:100",
-		_("Bin") + ":Data:100",
-		
-	]	
+		_("Bin") + ":Data:100",		
+	]
+	if filters.warehouse:
+		columns.append(_("Warehouse") + ":Data:100")
+		columns.append(_("Company") + ":Data:100")
 	return columns
 
 def get_data(filters):
@@ -38,19 +40,36 @@ def get_data(filters):
 
 		elif filters.item_group and filters.item:
 			items = frappe.get_all("Item",{"item_group":filters.item_group,"name":filters.item},["*"])
-			
+		
+		# elif filters.company:
+		# 	items = frappe.get_all("Item",{"company":filters.company},["*"])
+		
+		# elif filters.company and filters.warehouse:
+		# 	items = frappe.get_all("Item",{"company":filters.company},["*"])
+	
 		else:
 			items = frappe.get_all("Item",["*"])
 
 		for i in items:
-			
-			stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s' and warehouse = "Dubai - TSL-UAE"
-			""" % (i.name),as_dict=True)[0]
-			if not stock["qty"]:
-				stock["qty"] = 0
-			sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
-			row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin]
-			data.append(row)
+			if filters.warehouse:
+				com = frappe.get_value("Warehouse",filters.warehouse,["company"])
+				stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s' and warehouse = '%s'
+				""" % (i.name,filters.warehouse),as_dict=True)[0]
+				if not stock["qty"]:
+					stock["qty"] = 0
+				sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
+				row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin,filters.warehouse,com]
+				data.append(row)
+			else:
+				# if filters.warehouse:
+				# com = frappe.get_value("Warehouse",filters.warehouse,["company"])
+				stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s' and warehouse = "Dubai - TSL-UAE"
+				""" % (i.name),as_dict=True)[0]
+				if not stock["qty"]:
+					stock["qty"] = 0
+				sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
+				row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin]
+				data.append(row)
 		return data
 
 	else:
@@ -67,14 +86,26 @@ def get_data(filters):
 			items = frappe.get_all("Item",["*"])
 
 		for i in items:
-			
-			stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s'
-			""" % (i.name),as_dict=True)[0]
-			if not stock["qty"]:
-				stock["qty"] = 0
-			sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
-			row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin]
-			data.append(row)
+			if filters.warehouse:
+				com = frappe.get_value("Warehouse",filters.warehouse,["company"])
+				stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s' and warehouse = '%s'
+				""" % (i.name,filters.warehouse),as_dict=True)[0]
+				if not stock["qty"]:
+					stock["qty"] = 0
+				sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
+				row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin,filters.warehouse,com]
+				data.append(row)
+			else:
+				# if filters.warehouse:
+				# com = frappe.get_value("Warehouse",filters.warehouse,["company"])
+				stock = frappe.db.sql(""" select sum(actual_qty) as qty from `tabBin` where item_code = '%s'
+				""" % (i.name),as_dict=True)[0]
+				if not stock["qty"]:
+					stock["qty"] = 0
+				sc = frappe.get_value("Sub Category",{"name":i.sub_category},["sub_category"])
+				row = [i.name,i.model_num,i.description,i.item_group,i.category_,sc,i.package,stock["qty"],i.bin]
+				data.append(row)
+
 		return data
 
 		

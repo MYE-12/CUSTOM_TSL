@@ -61,7 +61,7 @@ class IncentiveReport(Document):
 
 			rs = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
 				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
-				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
+				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"  and `tabWork Order Data`.status_cap IS NULL
 				and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
 
 			ner = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
@@ -72,7 +72,12 @@ class IncentiveReport(Document):
 		
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs[0]["ct"])
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
+			frappe.errprint((i.employee_name))
+			frappe.errprint(rs[0]["ct"])
+			if rs[0]["ct"] == 0:
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(rs[0]["ct"],"%")
+			else:
+				data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
 			# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 
 		
@@ -80,10 +85,12 @@ class IncentiveReport(Document):
 			count_b = 0
 			count_c = 0
 			count_d = 0
+
 			wd = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct from `tabWork Order Data` 
-				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
-				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
-				and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
+			left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+			where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" and `tabWork Order Data`.status_cap IS NULL
+			and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
+			
 			q_m = 0
 			s_total = 0
 			for j in wd:
@@ -132,17 +139,20 @@ class IncentiveReport(Document):
 						
 							q_m = q_m + amt
 
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(round(q_m,2))
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(round(s_total,2))
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(round((q_m - s_total),2))
-			nar = round((ner[0]["ct"]/rs[0]["ct"])*100)
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total):,}")
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m - s_total):,}") 
+			if rs[0]["ct"] == 0:
+				nar = 0
+			else:
+				nar = round((ner[0]["ct"]/rs[0]["ct"])*100)
 			to_rs = round(q_m,2)
 			ner_deduct = (nar * to_rs)/100
 			net_amount =  round((q_m - s_total),2)
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(round(ner_deduct,2))
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct):,}")
 			aad = round(net_amount - ner_deduct,2)
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(aad)
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(round(aad*2/100,2))
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad):,}")
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad*2/100):,}") 
 
 			# frappe.errprint(s_total)
 			# 	sales = frappe.db.sql(""" select `tabSales Invoice`.posting_date,`tabSales Invoice Item`.amount  from `tabSales Invoice`

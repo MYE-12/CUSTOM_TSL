@@ -16,6 +16,7 @@
   "received_date",
   "warranty",
   "delivery",
+  "quotation_approved_date",
   "supply_order_form",
   "wod_no",
   "priority_status",
@@ -40,7 +41,6 @@
   "payment_entry_reference",
   "advance_payment_amount",
   "advance_paid_date",
-  "tender_issue_date",
   "tender_closing",
   "supplier_closing_date",
   "section_break_14",
@@ -60,7 +60,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "SOD-.YY.-\nST-K.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-\nSOD-DU.YY.-"
+   "options": "SOD-.YY.-\nST-K.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-\nSOD-DU.YY.-\nSOD-DU-P-.YY.-"
   },
   {
    "allow_on_submit": 1,
@@ -123,7 +123,7 @@
   {
    "fieldname": "received_date",
    "fieldtype": "Date",
-   "label": "Received Date",
+   "label": "Received Date/Tender Issue Date",
    "read_only": 1
   },
   {
@@ -336,12 +336,6 @@
   },
   {
    "allow_on_submit": 1,
-   "fieldname": "tender_issue_date",
-   "fieldtype": "Date",
-   "label": "Tender Issue Date"
-  },
-  {
-   "allow_on_submit": 1,
    "fieldname": "tender_closing",
    "fieldtype": "Date",
    "label": "Tender Closing Date"
@@ -364,12 +358,18 @@
    "fieldtype": "Table",
    "label": "Price List",
    "options": "Online Price List"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "quotation_approved_date",
+   "fieldtype": "Date",
+   "label": "Quotation Approved Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-12 11:24:12.634574",
+ "modified": "2025-01-03 07:35:08.284733",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

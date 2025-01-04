@@ -11,9 +11,13 @@
   "naming_series",
   "employee",
   "employee_name",
-  "user_id",
+  "designation",
+  "branch",
+  "location",
   "column_break_4",
+  "user_id",
   "leave_type",
+  "medical_certificate",
   "approver",
   "no_of_tickets",
   "company",
@@ -29,9 +33,10 @@
   "leave_balance",
   "leave_projection",
   "column_break1",
+  "no_of_days",
   "description",
-  "ticket_used",
   "leave_salary",
+  "ticket_used",
   "leave_details_section",
   "leave_start_date",
   "leave_end_date",
@@ -43,8 +48,6 @@
   "lop_days",
   "column_break_swb7f",
   "leave_days",
-  "column_break_41ial",
-  "no_of_days",
   "column_break_jnm9l",
   "travel_days",
   "travel_destination",
@@ -72,7 +75,9 @@
   "column_break_17",
   "rejoining",
   "letter_head",
-  "amended_from"
+  "amended_from",
+  "leave_salary_reference",
+  "employee_clearance"
  ],
  "fields": [
   {
@@ -154,6 +159,7 @@
    "label": "Dates & Reason"
   },
   {
+   "bold": 1,
    "fieldname": "from_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -161,6 +167,7 @@
    "reqd": 1
   },
   {
+   "bold": 1,
    "fieldname": "to_date",
    "fieldtype": "Date",
    "label": "To Date",
@@ -445,10 +452,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_41ial",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "fieldname": "leave_projection",
    "fieldtype": "Check",
@@ -475,17 +478,76 @@
    "read_only": 1
   },
   {
+   "default": "No",
+   "depends_on": "eval:doc.leave_type == \"Annual Leave\"",
    "fieldname": "leave_salary",
    "fieldtype": "Select",
    "label": "Leave Salary",
-   "options": "\nYes\nNo",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.leave_type == \"Annual Leave\"",
+   "options": "\nYes\nNo"
+  },
+  {
+   "depends_on": "eval:doc.leave_type == \"Sick Leave 75%\" || doc.leave_type == \"Sick Leave 100%\" || doc.leave_type == \"Sick Leave 50%\" || doc.leave_type == \"Sick Leave 25%\"",
+   "fieldname": "medical_certificate",
+   "fieldtype": "Attach",
+   "label": "Medical Certificate",
+   "mandatory_depends_on": "eval:doc.leave_type == \"Sick Leave 75%\" || doc.leave_type == \"Sick Leave 100%\" || doc.leave_type == \"Sick Leave 50%\" || doc.leave_type == \"Sick Leave 25%\""
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fetch_if_empty": 1,
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.branch",
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.location",
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location",
+   "read_only": 1
+  },
+  {
+   "fieldname": "leave_salary_reference",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Leave Salary Reference"
+  },
+  {
+   "fieldname": "employee_clearance",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Employee Clearance"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-11-13 10:53:43.465999",
+ "links": [
+  {
+   "link_doctype": "Leave Salary",
+   "link_fieldname": "leave_application"
+  },
+  {
+   "link_doctype": "Leave Rejoining Form",
+   "link_fieldname": "leave_application"
+  },
+  {
+   "link_doctype": "Employee Clearance",
+   "link_fieldname": "leave_application"
+  }
+ ],
+ "modified": "2024-12-21 12:56:50.147544",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Application Form",

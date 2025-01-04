@@ -9,7 +9,11 @@ from frappe.model.mapper import get_mapped_doc
 def create_qtn(source):
 	doc = frappe.get_doc("Service Call Form",source)
 	new_doc = frappe.new_doc("Quotation")
-	new_doc.naming_series = "SV-QTN-INT-K.YY.-"
+	if doc.company == "TSL COMPANY - Kuwait":
+		new_doc.naming_series = "SV-QTN-INT-K.YY.-"
+	if doc.company == "TSL COMPANY - UAE":
+		new_doc.naming_series = "SV-QTN-INT-DU.YY.-"
+	
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer,
 	new_doc.party_name = new_doc.party_name[0]
@@ -18,6 +22,7 @@ def create_qtn(source):
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.quotation_type = "Site Visit Quotation - Internal"
 	new_doc.sales_rep = doc.salesman_name
+	new_doc.currency = "AED"
 	new_doc.scheduled_date = doc.sch_date
 	new_doc.scheduled_time = doc.sch_time
 	new_doc.scheduled_day = doc.day 

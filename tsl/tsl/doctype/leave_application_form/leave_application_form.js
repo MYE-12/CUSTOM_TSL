@@ -322,7 +322,7 @@ frappe.ui.form.on('Leave Application Form', {
 		if(!frm.doc.__islocal){
 			frm.add_custom_button(__("Print"), function () {
 				var f_name = frm.doc.name;
-				var print_format = "Leave Application Form";
+				var print_format = "Leave Application";
 				window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
 					+ "doctype=" + encodeURIComponent("Leave Application Form")
 					+ "&name=" + encodeURIComponent(f_name)
@@ -335,22 +335,22 @@ frappe.ui.form.on('Leave Application Form', {
 		
 		if (frm.doc.leave_type == 'Annual Leave') {
 			frm.add_custom_button(__('Leave Salary'), function () {
-				frappe.db.get_value('Leave Salary', { 'employee': frm.doc.employee }, 'employee')
-					.then(r => {
-						if (r.message && Object.entries(r.message).length === 0) {
-							frappe.route_options = { 'employee': frm.doc.employee, 'employee_name': frm.doc.employee_name ,'leave_application':frm.doc.name};
-							frappe.set_route('Form', 'Leave Salary', 'new-leave-salary-1');
-						}
-						else {
-							frappe.set_route('Form', 'Leave Salary', r.message.name);
-						}
-					});
+				frappe.db.get_value('Leave Salary', { 'employee': frm.doc.employee }, 'name')
+				.then(r => {
+					if (r.message && Object.entries(r.message).length === 0) {
+						frappe.route_options = { 'employee': frm.doc.employee, 'employee_name': frm.doc.employee_name ,'leave_application':frm.doc.name};
+						frappe.set_route('Form', 'Leave Salary', 'new-leave-salary-1');
+					}
+					else {
+						frappe.set_route('Form', 'Leave Salary', r.message.name);
+					}
+				});
 			});
 			frm.add_custom_button(__('Employee Clearance'), function () {
 				frappe.db.get_value('Employee Clearance', { 'emp_no': frm.doc.employee }, 'emp_no')
 					.then(r => {
 						if (r.message && Object.entries(r.message).length === 0) {
-							frappe.route_options = { 'emp_no': frm.doc.employee, 'employee_name': frm.doc.employee_name};
+							frappe.route_options = { 'emp_no': frm.doc.employee, 'employee_name': frm.doc.employee_name,'leave_application':frm.doc.name};
 							frappe.set_route('Form', 'Employee Clearance', 'new-employee-clearance-1');
 						}
 						else {
@@ -456,18 +456,19 @@ function renderLeaveDetailsTable(data,frm) {
     }
 
 
-    let tableHTML = `<table class="table table-bordered"><thead><tr><th style="width: 16%">${__("Leave Type")}</th><th style="width: 16%" class="text-right">${__("Available Leaves")}</th><th style="width: 16%" class="text-right">${__("Used Leaves")}</th>`;
+    let tableHTML = `<table class="table table-bordered" style = "border: 1px solid black"><thead><tr><th style="width: 16%;border: 1px solid black">${__("Leave Type")}</th><th style="width: 16%;border: 1px solid black" class="text-right">${__("Available Leaves")}</th><th style="width: 16%;border: 1px solid black" class="text-right">${__("Used Leaves")}</th>`;
 	if(["Annual Leave"].includes(frm.doc.leave_type) && frm.doc.from_date){
-		tableHTML += `<th style="width: 16%" class="text-right">${__("Future Projected Leaves")}</th><th style="width: 16%" class="text-right">${__("Total Available Leaves")}</th>`;
+		tableHTML += `<th style="width: 16%;border: 1px solid black" class="text-right">${__("Future Projected Leaves")}</th>`;
 	}
+	tableHTML += `<th style="border: 1px solid black;width: 16%" class="text-right">${__("Total Available Leaves")}</th>`
 	tableHTML += `</tr></thead><tbody>`;
 
     for (const [key, value] of Object.entries(data)) {
         let color = parseInt(value["remaining_leaves"]) > 0 ? "green" : "red";
         tableHTML += `
             <tr>
-                <td>${key}</td>
-                <td class="text-right" ${color}">${value["total_leaves"]}</td>`;
+                <td style = "border: 1px solid black">${key}</td>
+                <td style = "border: 1px solid black" class="text-right" ${color}">${value["total_leaves"]}</td>`
 		if(["Annual Leave"].includes(frm.doc.leave_type) && frm.doc.from_date){
 			let today = new Date().toISOString().split('T')[0];
 			frappe.call({
@@ -488,20 +489,30 @@ function renderLeaveDetailsTable(data,frm) {
 						}
 						if(key == frm.doc.leave_type){
 							tableHTML +=`
-								<td class="text-right">${value["leaves_taken"]}</td>
-								<td class="text-right">${k.message}</td>
-								<td class="text-right" style="color: ${color}">${k.message + value["remaining_leaves"]}</td>`;	
-								frm.set_value("leave_balance",parseInt((k.message + value["remaining_leaves"]),10))		
+								<td style = "border: 1px solid black" class="text-right">${value["leaves_taken"]}</td>
+								<td style = "border: 1px solid black" class="text-right">${k.message}</td>
+								<td style = "border: 1px solid black" class="text-right" style="color: ${color}">${parseInt((k.message + value["remaining_leaves"]),10)}</td>`;
+								if(parseInt((k.message + value["remaining_leaves"]),10) != frm.doc.leave_balance){
+									frm.set_value("leave_balance",parseInt((k.message + value["remaining_leaves"]),10))		
+								}	
 						}
 						else{
 							tableHTML +=`
-							<td class="text-right">${value["leaves_taken"]}</td>
-							<td class="text-right">0</td>
-							<td class="text-right" style="color: ${color}">${value["remaining_leaves"]}</td>`;
+							<td style = "border: 1px solid black" class="text-right">${value["leaves_taken"]}</td>
+							<td style = "border: 1px solid black" class="text-right">0</td>
+							<td style = "border: 1px solid black" class="text-right" style="color: ${color}">${parseInt((value["remaining_leaves"]),10)}</td>`;
 						}
 					}
 				}
 			})
+		}
+		else{
+			if((key == frm.doc.leave_type) && (parseInt((value["remaining_leaves"]),10) != frm.doc.leave_balance)){
+				frm.set_value("leave_balance",parseInt((value["remaining_leaves"]),10))		
+			}
+			let color = parseInt(value["remaining_leaves"]) > 0 ? "green" : "red";
+			tableHTML += `
+                <td style = "border: 1px solid black" class="text-right" >${value["leaves_taken"]}</td><td class="text-right" style="border: 1px solid black;color:${color}">${parseInt((value["remaining_leaves"]),10)}</td>`
 		}
         tableHTML += `</tr>`;
 

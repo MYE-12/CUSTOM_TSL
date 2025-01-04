@@ -112,42 +112,62 @@ class LeaveApplicationForm(Document):
 
 
 		else:
-			if self.lop_start_date:
-				lop = frappe.new_doc("Leave Application")
-				lop.employee = self.employee
-				lop.no_of_tickets = self.no_of_tickets
-				lop.from_date = self.lop_start_date
-				lop.to_date = self.lop_end_date
-				lop.description = self.description
-				lop.leave_type = "Leave Without Pay"
-				lop.posting_date = self.posting_date
+			if self.leave_type != "Leave Without Pay":
+				if self.lop_start_date:
+					lop = frappe.new_doc("Leave Application")
+					lop.employee = self.employee
+					lop.no_of_tickets = self.no_of_tickets
+					lop.from_date = self.lop_start_date
+					lop.to_date = self.lop_end_date
+					lop.description = self.description
+					lop.leave_type = "Leave Without Pay"
+					lop.posting_date = self.posting_date
+					if self.workflow_state == "Approved":
+						lop.status = "Approved"
+					else:
+						lop.status = "Rejected"
+
+					lop.follow_via_email = 0
+					lop.save(ignore_permissions=1)
+					lop.submit()
+
+				l_ap = frappe.new_doc("Leave Application")
+				l_ap.employee = self.employee
+				l_ap.no_of_tickets = self.no_of_tickets
+				l_ap.from_date = self.leave_start_date
+				l_ap.to_date = self.leave_end_date
+				l_ap.description = self.description
+				l_ap.no_of_tickets = self.no_of_tickets
+				l_ap.ticket_used = self.ticket_used
+				l_ap.leave_type = self.leave_type
+				l_ap.posting_date = self.posting_date
 				if self.workflow_state == "Approved":
-					lop.status = "Approved"
+					l_ap.status = "Approved"
 				else:
-					lop.status = "Rejected"
+					l_ap.status = "Rejected"
 
-				lop.follow_via_email = 0
-				lop.save(ignore_permissions=1)
-				lop.submit()
-
-			l_ap = frappe.new_doc("Leave Application")
-			l_ap.employee = self.employee
-			l_ap.no_of_tickets = self.no_of_tickets
-			l_ap.from_date = self.leave_start_date
-			l_ap.to_date = self.leave_end_date
-			l_ap.description = self.description
-			l_ap.no_of_tickets = self.no_of_tickets
-			l_ap.ticket_used = self.ticket_used
-			l_ap.leave_type = self.leave_type
-			l_ap.posting_date = self.posting_date
-			if self.workflow_state == "Approved":
-				l_ap.status = "Approved"
+				l_ap.follow_via_email = 0
+				l_ap.save(ignore_permissions =1)
+				l_ap.submit()
 			else:
-				l_ap.status = "Rejected"
+				l_ap = frappe.new_doc("Leave Application")
+				l_ap.employee = self.employee
+				l_ap.no_of_tickets = self.no_of_tickets
+				l_ap.from_date = self.from_date
+				l_ap.to_date = self.to_date
+				l_ap.description = self.description
+				l_ap.no_of_tickets = self.no_of_tickets
+				l_ap.ticket_used = self.ticket_used
+				l_ap.leave_type = self.leave_type
+				l_ap.posting_date = self.posting_date
+				if self.workflow_state == "Approved":
+					l_ap.status = "Approved"
+				else:
+					l_ap.status = "Rejected"
 
-			l_ap.follow_via_email = 0
-			l_ap.save(ignore_permissions =1)
-			l_ap.submit()
+				l_ap.follow_via_email = 0
+				l_ap.save(ignore_permissions =1)
+				l_ap.submit()
 
 
 

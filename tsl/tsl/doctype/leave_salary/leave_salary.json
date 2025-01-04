@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:employee",
+ "autoname": "LSA-.YY.-.#####",
  "creation": "2024-06-24 19:22:02.978381",
  "default_view": "List",
  "doctype": "DocType",
@@ -21,6 +21,7 @@
   "department",
   "designation",
   "no_of_days_worked_section",
+  "total_gross_pay",
   "basic",
   "food",
   "other_allowance",
@@ -54,7 +55,8 @@
   "deduction_reason",
   "net_pay_section",
   "column_break_nnd7z",
-  "total_released_amount"
+  "total_released_amount",
+  "amended_from"
  ],
  "fields": [
   {
@@ -66,8 +68,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "label": "Employee",
-   "options": "Employee",
-   "unique": 1
+   "options": "Employee"
   },
   {
    "fetch_from": "employee.employee_name",
@@ -360,15 +361,38 @@
    "fieldname": "deduction_reason",
    "fieldtype": "Data",
    "label": "Deduction Reason"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Leave Salary",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_gross_pay",
+   "fieldtype": "Currency",
+   "label": "Total Gross Pay",
+   "options": "currency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2024-11-13 10:50:57.815170",
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Leave Application Form",
+   "link_fieldname": "leave_salary_reference"
+  }
+ ],
+ "modified": "2024-12-29 16:31:41.653167",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Salary",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

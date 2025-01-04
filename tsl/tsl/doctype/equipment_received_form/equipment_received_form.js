@@ -100,7 +100,7 @@ frappe.ui.form.on('Equipment Received Form', {
 				"customer": frm.doc.customer,
 			},
 			callback(r) {
-				console.log(r)
+				// console.log(r)
 				if (r.message) {
 					frm.set_query("incharge", function () {
 						return {
@@ -116,7 +116,6 @@ frappe.ui.form.on('Equipment Received Form', {
 							}
 						};
 					});
-					frm.set_value("sales_person", r.message[2]);
 
 				}
 			}

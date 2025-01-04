@@ -398,6 +398,7 @@ def create_workorder_data(order_no, f):
         new_doc.repair_warehouse = doc.repair_warehouse
         new_doc.address = doc.address
         new_doc.incharge = doc.incharge
+        new_doc.letter_head = "TSL New"
         new_doc.company = doc.company
         new_doc.customer_reference_number = doc.customer_reference_number
         new_doc.priority_status = doc.sts
@@ -459,6 +460,7 @@ def create_workorder_data(order_no, f):
                 pass
             
         l.append(new_doc.name)
+        
     if l:
         frappe.delete_doc("Create Work Order", "Create Work Order")
         link = []

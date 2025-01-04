@@ -1,0 +1,276 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "EC.####",
+ "creation": "2024-10-05 15:20:06.014252",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "leave_application",
+  "employee_details",
+  "emp_no",
+  "employee_name",
+  "designation",
+  "department",
+  "attach",
+  "column_break_3",
+  "company",
+  "branch",
+  "reason",
+  "date",
+  "line_manager_remarks_section",
+  "line_manager_pending",
+  "column_break_ndnhk",
+  "line_manager",
+  "it_remarks_section",
+  "it_pending",
+  "laptop",
+  "mobile",
+  "sim_card",
+  "column_break_bcsnl",
+  "it",
+  "finance_remarks_section",
+  "finance_pending",
+  "column_break_khanu",
+  "finance",
+  "hr_remarks_section",
+  "hr_pending",
+  "approval_status",
+  "column_break_zoi9c",
+  "hr",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "leave_application",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Leave Application"
+  },
+  {
+   "fieldname": "employee_details",
+   "fieldtype": "Section Break",
+   "label": "Employee Details",
+   "read_only": 1
+  },
+  {
+   "fieldname": "emp_no",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee ID",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "emp_no.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.designation",
+   "fieldname": "designation",
+   "fieldtype": "Read Only",
+   "label": "Designation",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "label": "Department",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attach",
+   "fieldtype": "Attach",
+   "label": "Attach"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "emp_no.company",
+   "fieldname": "company",
+   "fieldtype": "Read Only",
+   "label": "Company",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "emp_no.branch",
+   "fieldname": "branch",
+   "fieldtype": "Read Only",
+   "label": "Branch"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reason of Clearance",
+   "options": "\nVacation\nTransfer\nResignation\nTermination",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "depends_on": "eval:doc.workflow_state == \"Under Line Manager\"",
+   "fieldname": "line_manager_remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Line Manager Remarks"
+  },
+  {
+   "default": "No Pending item with the employee",
+   "fieldname": "line_manager_pending",
+   "fieldtype": "Select",
+   "options": "No Pending item with the employee\nThere is a pending item as follows:"
+  },
+  {
+   "fieldname": "column_break_ndnhk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "line_manager",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "depends_on": "eval:doc.workflow_state == \"Under IT\"",
+   "fieldname": "it_remarks_section",
+   "fieldtype": "Section Break",
+   "label": "IT remarks"
+  },
+  {
+   "default": "No Pending item with the employee",
+   "fieldname": "it_pending",
+   "fieldtype": "Select",
+   "options": "No Pending item with the employee\nThere is a pending item as follows:"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.it_pending == \"There is a pending item as follows:\"",
+   "fieldname": "laptop",
+   "fieldtype": "Check",
+   "label": "Laptop"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.it_pending == \"There is a pending item as follows:\"",
+   "fieldname": "mobile",
+   "fieldtype": "Check",
+   "label": "Mobile"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.it_pending == \"There is a pending item as follows:\"",
+   "fieldname": "sim_card",
+   "fieldtype": "Check",
+   "label": "Sim Card"
+  },
+  {
+   "fieldname": "column_break_bcsnl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "it",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "depends_on": "eval:doc.workflow_state == \"Under Finance\"",
+   "fieldname": "finance_remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Finance Remarks"
+  },
+  {
+   "default": "No Pending item with the employee",
+   "fieldname": "finance_pending",
+   "fieldtype": "Select",
+   "options": "No Pending item with the employee\nThere is a pending item as follows:"
+  },
+  {
+   "fieldname": "column_break_khanu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "finance",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "depends_on": "eval:doc.workflow_state == \"Under HR\"",
+   "fieldname": "hr_remarks_section",
+   "fieldtype": "Section Break",
+   "label": "HR Remarks"
+  },
+  {
+   "default": "No Pending item with the employee",
+   "fieldname": "hr_pending",
+   "fieldtype": "Select",
+   "options": "No Pending item with the employee\nThere is a pending item as follows:"
+  },
+  {
+   "fieldname": "approval_status",
+   "fieldtype": "Select",
+   "label": "Approved to Exit",
+   "mandatory_depends_on": "eval:doc.workflow_state == \"Under HR\"",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "column_break_zoi9c",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hr",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Employee Clearance",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Leave Application Form",
+   "link_fieldname": "employee_clearance"
+  }
+ ],
+ "modified": "2024-12-21 12:52:31.884583",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Employee Clearance",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

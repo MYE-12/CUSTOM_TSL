@@ -184,7 +184,7 @@
   {
    "fieldname": "customer_reference_number",
    "fieldtype": "Data",
-   "label": "Customer Reference Number"
+   "label": "Customer Reference Number/RFQ"
   },
   {
    "default": "0",
@@ -268,7 +268,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-30 10:42:47.863055",
+ "modified": "2024-12-30 10:59:32.665775",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",

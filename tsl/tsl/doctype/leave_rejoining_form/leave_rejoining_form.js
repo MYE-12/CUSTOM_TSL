@@ -8,8 +8,8 @@ frappe.ui.form.on('Leave Rejoining Form', {
 		    args:{
 		        employee:frm.doc.emp_no,
 		        
-		        to_date:frm.doc.actual_rejoining_date,
-		        from_date:frm.doc.rejoining_date
+		        to_date:frm.doc.actual_rejoining_date || '',
+		        from_date:frm.doc.rejoining_date ||''
 		    },
 		    callback(r){
 		        if(r.message>0){

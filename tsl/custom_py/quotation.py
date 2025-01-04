@@ -1,4 +1,3 @@
-	
 from pydoc import doc
 from re import L
 import frappe
@@ -6,13 +5,46 @@ import json
 from frappe.model.mapper import get_mapped_doc
 # import pandas as pd
 from frappe import get_print
-import datetime
+from datetime import datetime
 import requests
 from erpnext.setup.utils import get_exchange_rate
+from frappe.utils import (
+	add_days,
+	add_months,
+	cint,
+	date_diff,
+	flt,
+	get_first_day,
+	get_last_day,
+	get_link_to_form,
+	getdate,
+	rounded,
+	today,
+)
 
 
 @frappe.whitelist()
 def on_submit(doc,method):
+	if doc.project:
+		if doc.quotation_type == "Internal Quotation - Project":
+			p = frappe.get_doc("Project Data",doc.project)
+			p.status = "IQ-Internally Quoted"
+			p.save()
+		if doc.quotation_type == "Customer Quotation - Project":
+			p = frappe.get_doc("Project Data",doc.project)
+			p.status = "A-Approved"
+			p.save()
+	# d = datetime.now().date()
+	# if doc.quotation_type in ["Customer Quotation - Repair","Customer Quotation - Supply","Revised Quotation - Repair","Revised Quotation - Supply"]:
+	# 	doc.approval_date = d
+	# 	frappe.db.set_value("Quotation",doc.name,"approval_date",d)
+		# for i in doc.items:
+		# 	if i.wod_no:
+		# 		frappe.db.set_value("Work Order Data",i.wod_no,"quotation_approved_date",d)
+		# 	if i.supply_order_data:
+		# 		frappe.db.set_value("Supply Order Data",i.supply_order_data,"quotation_approved_date",d)
+		
+
 	if doc.service_call_form:
 		if doc. quotation_type == "Site Visit Quotation - Internal":
 			sc = frappe.get_doc("Service Call Form",doc.service_call_form)
@@ -30,9 +62,19 @@ def on_submit(doc,method):
 				wd.quoted = 1
 				wd.save(ignore_permissions =1)
 			
-
-
-	
+@frappe.whitelist()
+def on_update_after_submit(doc,method):
+	d = datetime.now().date()
+	if doc.quotation_type in ["Customer Quotation - Repair","Customer Quotation - Supply","Revised Quotation - Repair","Revised Quotation - Supply"]:
+		doc.approval_date = d
+		frappe.db.set_value("Quotation",doc.name,"approval_date",d)
+		
+		for i in doc.items:
+			if i.wod_no:
+				frappe.db.set_value("Work Order Data",i.wod_no,"quotation_approved_date",d)
+			if i.supply_order_data:
+				frappe.db.set_value("Supply Order Data",i.supply_order_data,"quotation_approved_date",d)
+		
 		
 
 @frappe.whitelist()
@@ -105,7 +147,6 @@ def get_qtn_items(qtn):
 def get_sqtn_items(sod):
 	sod = json.loads(sod)
 	l=[]
-	
 	for k in list(sod):
 		l += frappe.db.sql('''select si.item_code as item_code,si.mfg as manufacturer,si.supplier_quotation as sqtn,si.model_no as model_no,si.type as type,si.serial_no as serial_no,si.model_no as item_name,si.description as description,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.quantity as qty,si.price as rate,si.amount as amount,s.name as sod from `tabSupply Order Table` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
 		l += frappe.db.sql('''select si.part as item_code,si.manufacturer as manufacturer,si.supplier_quotation as sqtn,si.model as model_no,si.type as type,si.serial_no as serial_no,si.part_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.qty as qty,si.price_ea as rate,si.total as amount,s.name as sod from `tabPart Sheet Item Supply` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
@@ -204,18 +245,23 @@ def show_details(self,method):
 		for i in self.get("items"):
 			tot += i.unit_price * i.qty
 			if self.quotation_type == "Revised Quotation - Repair":
-				up += i.margin_amount
+				up += i.margin_amount *i.qty
 			else:
-
-				up += i.margin_amount
+				up += i.margin_amount * i.qty
 			actual_percentage = (tot/100)*5
 			price = up - actual_percentage
-		self.final_approved_price = up
 		
-		self.unit_rate_price = round(tot)
+
+		self.final_approved_price = up
+		if self.company == "TSL COMPANY - UAE":
+			self.unit_rate_price = round(tot,2)
+		else:
+			self.unit_rate_price = round(tot)
 		if not self.default_discount_value:
-			self.default_discount_value = round(actual_percentage)
-	
+			if self.company == "TSL COMPANY - UAE":
+				self.default_discount_value = round(actual_percentage,2)
+			else:
+				self.default_discount_value = round(actual_percentage)
 	if self.is_multiple_quotation == 0 and self.quotation_type == "Internal Quotation - Supply":
 		up=0
 		for i in self.get("items"):
@@ -223,7 +269,7 @@ def show_details(self,method):
 			up = up + i.margin_amount
 			
 	
-		self.final_approved_price = up
+		# self.final_approved_price = up
 
 	if self.quotation_type == "Internal Quotation - Repair":
 		self.item_price_details=[]
@@ -464,7 +510,12 @@ def get_quotation(source,type = None):
 
 	def postprocess(source, target_doc):
 		target_doc.quotation_type = type
-		target_doc.naming_series = "SV-QTN-CUS-K.YY.-"
+		if doc.company == "TSL COMPANY - Kuwait":
+			target_doc.naming_series = "SV-QTN-CUS-K.YY.-"
+
+		if doc.company == "TSL COMPANY - UAE":
+			target_doc.naming_series = "SV-QTN-CUS-DU.YY.-"
+		
 		target_doc.workflow_state = "Quoted to Customer"
 		if type == "Customer Quotation - Repair":
 			target_doc.overall_discount_amount = 0
@@ -528,15 +579,19 @@ def get_quote(source,type = None):
 				ic.rate = doc.after_discount_cost+disc
 				
 			if not doc.is_multiple_quotation and ic.item_code:
-				ic.rate = round(doc.after_discount_cost)
+				if doc.company == "TSL COMPANY - UAE":
+					ic.rate = round(doc.after_discount_cost)
+				else:
+					ic.rate = round(doc.after_discount_cost,2)
 			
 			if doc.is_multiple_quotation and ic.item_code:
 				ic.rate = ic.margin_amount
+				ic.item_price = ic.margin_amount
 			
 				
 	else:
 		for ic in doclist.get('items'):
-		
+			
 			if not ic.margin_amount:
 				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
 				unit_disc = disc
@@ -544,7 +599,7 @@ def get_quote(source,type = None):
 				ic.rate = ic.rate
 			
 			if ic.item_code:
-				ic.rate = ic.rate
+				ic.rate = ic.margin_amount
 			
 					
 				
@@ -623,7 +678,40 @@ def get_quote(source,type = None):
 	# # 			ic.rate = ic.rate
 			
 
+
+@frappe.whitelist()
+def get_quote_pro(source,type = None):
+	target_doc = frappe.new_doc("Quotation")
+	doc = frappe.get_doc("Quotation",source)
 	
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		if type == "Customer Quotation - Project":
+			target_doc.naming_series = "PRO-QTN-CUS-DU-.YY.-"
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
+			# target_doc.taxes_and_charges = "UAE VAT 5% - TSL-UAE"
+		target_doc.append("quotation_history",{
+			"quotation_type":doc.quotation_type,
+			"status":doc.workflow_state,
+			"quotation_name":doc.name,
+		})
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+	}, target_doc, postprocess)
+	
+	
+	return doclist
+
 
 @frappe.whitelist()
 def get_quotation_history(source,type = None):
@@ -655,31 +743,55 @@ def get_quotation_history(source,type = None):
 			
 		},
 	}, target_doc, postprocess)
-	
-	if not doc.quotation_type == "Internal Quotation - Supply":
-		for ic in doclist.get('items'):
-			
-			if not ic.margin_amount:
-				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-				unit_disc = disc
 
-				ic.rate = doc.after_discount_cost+disc
+
+	if doc.company == "TSL COMPANY - Kuwait":
+		if not doc.quotation_type == "Internal Quotation - Supply":
+			for ic in doclist.get('items'):
+				if not ic.margin_amount:
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
+
+					ic.rate = doc.after_discount_cost+disc
+				
+				if not doc.is_multiple_quotation and ic.item_code:
+					ic.rate = round(doc.unit_rate_price)
 			
-			if not doc.is_multiple_quotation and ic.item_code:
-				ic.rate = round(doc.unit_rate_price)
-		
+		else:
+			for ic in doclist.get('items'):
+				if not ic.margin_amount:
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
+					ic.rate = doc.after_discount_cost
+					# ic.rate = ic.rate
+				
+				if ic.item_code:
+					ic.rate = ic.rate
+
 	else:
-		for ic in doclist.get('items'):
-			if not ic.margin_amount:
-				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-				unit_disc = disc
+		if not doc.quotation_type == "Internal Quotation - Supply":
+			for ic in doclist.get('items'):
+				if not ic.margin_amount:
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
 
-				ic.rate = ic.rate
+					ic.rate = doc.after_discount_cost+disc
+					
+				if not doc.is_multiple_quotation and ic.item_code:
+					ic.rate = round(doc.unit_rate_price,2)
 			
-			if ic.item_code:
-				ic.rate = ic.rate
-			
-
+		else:
+			for ic in doclist.get('items'):
+				if not ic.margin_amount:
+					frappe.errprint("yesss")
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
+					ic.rate = doc.after_discount_cost
+					# ic.rate = ic.rate
+				
+				else:
+					ic.rate = ic.margin_amount
+					ic.item_price = ic.margin_amount
 
 		
 	# for i in doc.items:
@@ -774,11 +886,21 @@ def final_price_validate_si(wod):
 	return qi_details
 
 def update_cq(self, method):
-	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair" or self.quotation_type == "Revised Quotation - Supply"  or self.quotation_type == "Site Visit Quotation - Customer":
+	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair" or self.quotation_type == "Revised Quotation - Supply"  or self.quotation_type == "Site Visit Quotation - Customer" or self.quotation_type == "Customer Quotation - Project":
 		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
-	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply" or self.quotation_type == "Site Visit Quotation - Internal":
+	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply" or self.quotation_type == "Site Visit Quotation - Internal" or self.quotation_type == "Internal Quotation - Project":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
 	
+	if self.quotation_type == "Internal Quotation - Project" and self.project:
+		p = frappe.get_doc("Project Data",self.project)
+		p.status = "Pending Internal Approval"
+		p.save()
+
+	# if self.quotation_type == "Customer Quotation - Project" and self.project:
+	# 	p = frappe.get_doc("Project Data",self.project)
+	# 	p.status = "Q-Quoted"
+	# 	p.save()
+		
 	# if self.items:
 	# 	for i in self.items:
 	# 		item = frappe.get_doc("Item",i.item_code)
@@ -805,16 +927,16 @@ def update_cq(self, method):
 	# 	frappe.db.set_value(self.doctype, self.name, "qtn_no",s)
 
 
-def get_pre_eval(self, method):
-	if self.quotation_type == "Internal Quotation - Repair":
-		if self.items:
-			for i in self.items:
-				if i.wod_no:
-					ev = frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
-					if not ev:
-						pr  = frappe.get_doc("Quotation",self.name)
-						pr.pre_evaluation = 1
-						pr.save(ignore_permissions =1)
+# def get_pre_eval(self, method):
+# 	if self.quotation_type == "Internal Quotation - Repair":
+# 		if self.items:
+# 			for i in self.items:
+# 				if i.wod_no:
+# 					ev = frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
+# 					if not ev:
+# 						pr  = frappe.get_doc("Quotation",self.name)
+# 						pr.pre_evaluation = 1
+# 						pr.save(ignore_permissions =1)
 
 
 def on_update(self, method):
@@ -824,12 +946,12 @@ def on_update(self, method):
 
 		# else:
 		# 	frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
-	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Revised Quotation - Repair":
-		if self.items:
-			for i in self.items:
-				wd = frappe.get_doc("Work Order Data",i.wod_no)
-				wd.quoted = 1
-				wd.save(ignore_permissions =1)
+	# if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Revised Quotation - Repair":
+	# 	if self.items:
+	# 		for i in self.items:
+	# 			wd = frappe.get_doc("Work Order Data",i.wod_no)
+	# 			wd.quoted = 1
+	# 			wd.save(ignore_permissions =1)
 			
 
 
@@ -858,9 +980,18 @@ def on_update(self, method):
 					doc.status = "Q-Quoted"
 					doc.is_quotation_created = 1
 					doc.save(ignore_permissions=True)
-				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer":
+
+
+				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer" and self.pre_evaluation == 0:
 					doc.status = "A-Approved"
 					doc.save(ignore_permissions=True)
+
+				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Customer" and self.pre_evaluation == 1:
+					doc.status = "NEA-Need Evaluation Approved"
+					doc.save(ignore_permissions=True)
+
+
+					# doc.save(ignore_permissions=True)
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Rejected by Customer":
 					# frappe.db.set_value("Work Order Data",i.wod_no,"is_quotation_created",0)
 					doc.status =  "RNA-Return Not Approved"
@@ -1018,7 +1149,7 @@ def send_qtn_reminder_mail():
 				)
 
 	for s in data_2:
-		print("klkhjhfj")
+		
 		cus = frappe.get_value("Quotation",{"name":s},["party_name"])
 		original_string = s
 		mod = original_string.replace("SUP-", "").replace("CUS-", "")

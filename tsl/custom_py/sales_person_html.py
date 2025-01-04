@@ -7,6 +7,12 @@ import calendar
 
 @frappe.whitelist()
 def get_sales(company):
+    d = datetime.now().date()
+    ogdate = datetime.strptime(str(d),"%Y-%m-%d")
+
+    # Format the date as a string in the desired format
+    formatted_date = ogdate.strftime("%d-%m-%Y")
+
     current_month = datetime.now().month
 
     # Get the list of month names (January to December)
@@ -40,6 +46,18 @@ def get_sales(company):
     data += '<table class="table table-bordered">'
 
     data += '<tr>'
+    data += '<td style="width:30%;border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="200"></td>'
+    data += '<td style="width:30%;border-color:#000000;color:#055c9d;"><h1><center><b style="color:#055c9d;">TSL Company</b></center></h1></td>'
+    data += '<td style="width:30%;border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="120"></center></td>'
+    
+    data += '</tr>'
+    data += '</table>'
+    # data += '<p align = right>%s</p>' %(formatted_date)
+    data += '<table class="table table-bordered">'
+    data += '<tr>'
+    data += '<td colspan = 5 align = right style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><b style="color:white;">Generation Date:%s</b></td>' %(formatted_date)
+    data += '</tr>'
+    data += '<tr>'
     data += '<td colspan = 5 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO Approval Percentage by Amount</b><center></td>'
     data += '</tr>'
 
@@ -52,14 +70,17 @@ def get_sales(company):
             data += '<tr>'
             data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Sales</b><center></td>'
             data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Month</b><center></td>'
-            data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Quoted Amount</b><center></td>'
-            data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Approved Amount</b><center></td>'
+            data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Quoted Amt(in KD)</b><center></td>'
+            data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Approved Amt(in KD)</b><center></td>'
             data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;"> % of Approved Amount</b><center></td>'
             data += '</tr>'
             tmt = 0
             tmt_2 = 0
+            total_q1 = 0
+            total_q2 = 0
             
-            for m in last_six_months:
+            # for m in last_six_months:
+            for index, m in enumerate(last_six_months):
                 month_name = m
                 year = 2024
 
@@ -73,7 +94,12 @@ def get_sales(company):
                 last_day = datetime(year, month_number, calendar.monthrange(year, month_number)[1])
                 
                 data += '<tr>'
-                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(i.name)
+                if index == 3:
+                    data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(i.name)
+                else:
+                    data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("")
+
+                # data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(i.name)
                 data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(m)
 
                 from_date = first_day.date()
@@ -158,16 +184,26 @@ def get_sales(company):
 
                 
                     
-                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(round(q_m )or 0)
-                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(round(q_m_2) or 0)
+                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'% (f"{round(q_m):,}" or 0)
+                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' % (f"{round(q_m_2):,}" or 0)
                 if not q_m or not q_m_2:
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("0")
                 else:
-                    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %(round((q_m_2/q_m)*100))
+                    data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
                     
-
+                total_q1 = total_q1 + round(q_m)
+                total_q2 = total_q2 + round(q_m_2)
 
             data += '</tr>'
+            
+            data += '<tr>'
+            data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'% ("")
+            data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>' % ("Total")
+            data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>'% (f"{round(total_q1):,}" or 0)
+            data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>' % (f"{round(total_q2):,}" or 0)
+            data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(round((total_q2/total_q1)*100),"%")
+            data += '</tr>'
+
         
             data += '<tr>'
             data += '<td colspan = 5 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>'

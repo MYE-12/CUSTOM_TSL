@@ -33,6 +33,8 @@ def get_columns(filters):
 		_("Technician") + ":Data:150",
 		_("Quoted Price") + ":Currency:150",
 		_("Old Quoted Amount") + ":Data:150",
+		_("Old VAT") + ":Data:100",
+		_("Old Total Amount") + ":Data:100",
 		_("Quoted Date") + ":Date:150",
 		_("Po No") + ":Data:150",
 		_("Payment Ref") + ":Link/Payment Entry:140",
@@ -44,6 +46,9 @@ def get_columns(filters):
 		_("Return Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
 		_("Quoted Amount") + ":currency:120",
+		_("VAT%") + ":float:120",
+		_("VAT Amount%") + ":float:130",
+		_("Total Amount") + ":float:130",
 		_("Quotation") + ":Link/Quotation:140",
 		_("NER") + ":Data:120",
 		_("NER Date") + ":Date:120",
@@ -66,6 +71,9 @@ def get_data(filters):
 	if filters.from_date and filters.to_date:
 		w = frappe.get_all("Work Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 
+	if filters.from_date and filters.to_date and filters.company:
+		w = frappe.get_all("Work Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+
 	for i in w:
 		# pay_ref= frappe.get_value("Work Order Data",{"name":i.name},["payment_entry_reference"])
 		# pdate = frappe.get_value("Work Order Data",{"name":i.name},["payment_date"])
@@ -79,7 +87,15 @@ def get_data(filters):
 		
 		mod = frappe.db.get_value("Item Model",it[0]["model_no"],"model")
 
-		q_amt = frappe.db.sql(''' select `tabQuotation`.purchase_order_no as po_no,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+		q_amt = frappe.db.sql(''' select `tabQuotation`.company as com,`tabQuotation`.taxes_and_charges as tax,
+		`tabQuotation`.purchase_order_no as po_no,
+		`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,
+		`tabQuotation`.approval_date as a_date,
+		`tabQuotation`.is_multiple_quotation as is_m,
+		`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
+		`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma,
+		`tabQuotation Item`.amount as amount_t
+		 from `tabQuotation` 
 		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 		where  `tabQuotation`.Workflow_state in ("Approved By Customer") and `tabQuotation Item`.wod_no = %s ''',i.name,as_dict=1)
 		# frappe.errprint(q_amt)
@@ -87,37 +103,89 @@ def get_data(filters):
 		ap_date = ''
 		qu_name = ''
 		po = ''
+		vat = 0
+		vat_amt = 0
 		if q_amt:
-			ap_date = q_amt[0]["a_date"]
-			qu_name =  q_amt[0]["q_name"]
-			po =  q_amt[0]["po_no"]
-			if q_amt[0]["is_m"] == 1:
-				per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
-				q_m = q_amt[0]["up"] - per
+			if q_amt[0]["com"] == "TSL COMPANY - Kuwait":
+				
+				ap_date = q_amt[0]["a_date"]
+				qu_name =  q_amt[0]["q_name"]
+				po =  q_amt[0]["po_no"]
+				if q_amt[0]["is_m"] == 1:
+					per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
+					q_m = q_amt[0]["up"] - per
+					
+				if q_amt[0]["is_m"] == 0:
+					q_m = q_amt[0]["adc"]
+					
+			if q_amt[0]["com"] == "TSL COMPANY - UAE":
+				if q_amt[0]["tax"]:
+					vat = 5
+				ap_date = q_amt[0]["a_date"]
+				qu_name =  q_amt[0]["q_name"]
+				po =  q_amt[0]["po_no"]
+				if q_amt[0]["is_m"] == 1:
+					# per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
+					# q_m = q_amt[0]["up"] - per
+					q_m = q_amt[0]["ma"]
+					if q_amt[0]["tax"]:
+						va = (q_amt[0]["ma"] * 5)/100
+						vat_amt = va
 
-			if q_amt[0]["is_m"] == 0:
-				q_m = q_amt[0]["adc"]
+				if q_amt[0]["is_m"] == 0:
+					# q_m = q_amt[0]["adc"]
+					q_m = q_amt[0]["amount_t"]
+					if q_amt[0]["tax"]:
+						va = (q_amt[0]["amount_t"] * 5)/100
+						vat_amt = va
+
 
 		else:
-			q_amt_2 = frappe.db.sql(''' select `tabQuotation`.purchase_order_no as po_no,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+			q_amt_2 = frappe.db.sql(''' select `tabQuotation`.company as com,`tabQuotation Item`.amount as amount_t,`tabQuotation`.taxes_and_charges as tax,`tabQuotation`.purchase_order_no as po_no,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
 			left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 			where  `tabQuotation`.Workflow_state in ("Quoted to Customer") and `tabQuotation Item`.wod_no = %s ''',i.name,as_dict=1)
 
 			if q_amt_2:
-				ap_date = q_amt_2[0]["a_date"]
-				qu_name =  q_amt_2[0]["q_name"]
-				po =  q_amt_2[0]["po_no"]
-				if q_amt_2[0]["is_m"] == 1:
-					per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
-					q_m = q_amt_2[0]["up"] - per
+				if q_amt_2[0]["com"] == "TSL COMPANY - Kuwait":
+					ap_date = q_amt_2[0]["a_date"]
+					qu_name =  q_amt_2[0]["q_name"]
+					po =  q_amt_2[0]["po_no"]
+					if q_amt_2[0]["is_m"] == 1:
+						per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
+						q_m = q_amt_2[0]["up"] - per
+						
+					if q_amt_2[0]["is_m"] == 0:
+						q_m = q_amt_2[0]["adc"]
+						
+				
+				if q_amt_2[0]["com"] == "TSL COMPANY - UAE":
+					if q_amt_2[0]["tax"]:
+						vat = 5
+					ap_date = q_amt_2[0]["a_date"]
+					qu_name =  q_amt_2[0]["q_name"]
+					po =  q_amt_2[0]["po_no"]
 
-				if q_amt_2[0]["is_m"] == 0:
-					q_m = q_amt_2[0]["adc"]
+					if q_amt_2[0]["is_m"] == 1:
+						# per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
+						# q_m = q_amt_2[0]["up"] - per
+						q_m = q_amt_2[0]["ma"]
+						if q_amt_2[0]["tax"]:
+							va = (q_amt_2[0]["ma"] * 5)/100
+							vat_amt = va
+					
+
+					if q_amt_2[0]["is_m"] == 0:
+						# q_m = q_amt_2[0]["adc"]
+						q_m = q_amt_2[0]["amount_t"]
+						if q_amt_2[0]["tax"]:
+							va = (q_amt_2[0]["amount_t"] * 5)/100
+							vat_amt = va
+				
 
 
 
 		contact = frappe.db.sql('''select name1,email_id,phone_number from `tabContact Details` where parent = %s and parenttype="Customer" ''',i.customer,as_dict=1)
-		frappe.errprint(contact)
+		
 		cont = ''
 		email = ''
 		mobile = ''
@@ -146,17 +214,22 @@ def get_data(filters):
 		i.technician,
 		i.quoted_price,
 		i.old_wo_q_amount,
+		i.old_wo_vat,
+		i.old_wo_total_amt,
 		i.quoted_date,
 		po,
 		i.payment_reference_number,
 		i.payment_date,
 		i.dn_no,
-		i.dn_date,
+		i.dn_date or i.delivery,
 		i.invoice_no,
 		i.invoice_date,
 		i.returned_date,
 		ap_date,
 		q_m,
+		vat,
+		vat_amt,
+		q_m + vat_amt,
 		qu_name,
 		i.status_cap,
 		i.status_cap_date,

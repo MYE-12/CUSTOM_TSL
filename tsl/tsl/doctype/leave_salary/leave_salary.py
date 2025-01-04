@@ -5,7 +5,10 @@ import frappe
 from frappe.model.document import Document
 
 class LeaveSalary(Document):
-	pass
+	def after_insert(self):
+		if self.leave_application:
+			frappe.db.set_value("Leave Application Form",self.leave_application,"leave_salary_reference",self.name,update_modified = False)
+
 
 @frappe.whitelist()
 def check_for_active_loans(name):

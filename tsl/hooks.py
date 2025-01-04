@@ -18,14 +18,16 @@ jinja = {
         # "tsl.custom_py.wo_approval_html.get_data",
         "tsl.custom_py.utils.salary_register",
         "tsl.custom_py.utils.get_wrk_ord",
-        "tsl.custom_py.utils.get_sales",
+        "tsl.custom_py.utils.get_incentive",
         "tsl.custom_py.utils.get_pi",
         "tsl.custom_py.utils.get_q",
 		"tsl.custom_py.utils.get_mc",
+        "tsl.custom_py.utils.get_mc_2",
         "tsl.custom_py.utils.purchase_report",
         "tsl.custom_py.utils.daily_lab_report",
         "tsl.custom_py.utils.weekly_lab_report",
         "tsl.custom_py.sales_person_html.get_sales",
+        # "tsl.custom_py.incentive_report_pdf.get_incentive",
         # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"
 	]
 }
@@ -127,7 +129,7 @@ doc_events = {
 
 		"after_insert": [
 			"tsl.custom_py.quotation.update_cq",
-			"tsl.custom_py.quotation.get_pre_eval"
+			# "tsl.custom_py.quotation.get_pre_eval"
             
             
 		],
@@ -142,6 +144,9 @@ doc_events = {
 
 		"on_submit":[
 			"tsl.custom_py.quotation.on_submit"
+		],
+		"on_update_after_submit":[
+			"tsl.custom_py.quotation.on_update_after_submit"
 		],
 		# "after_save":[
 			
@@ -160,6 +165,10 @@ doc_events = {
 	"Purchase Order":{
 		"on_submit":[
 			"tsl.custom_py.purchase_order.on_submit"
+		],
+
+		"on_update":[
+			"tsl.custom_py.purchase_order.on_update"
 		]
 	},
 	"Purchase Receipt":{
@@ -232,6 +241,9 @@ doc_events = {
 		# "on_submit": "tsl.custom_py.loan_application_tsl.update_loan_amount",
 		# "on_cancel": "tsl.custom_py.loan_application_tsl.update_loan_amount"
 	},
+	"Employee":{
+		"after_insert": "tsl.custom_py.employee.update_last_employee_number"
+	}
 }
 
 # Scheduled Tasks
@@ -280,10 +292,25 @@ override_whitelisted_methods = {
 	"erpnext.stock.doctype.landed_cost_voucher.landed_cost_voucher.get_items_from_purchase_receipts": "tsl.custom_py.after_import.get_items_from_purchase_receipts",
 }
 
+
+# to Skip the employees in Payroll Entry
 from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry as fed
 from tsl.custom_py import utils as nfed
-
 fed.fill_employee_details = nfed.fill_employee_details
+
+# to override the working_days
+from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip as core
+from tsl.custom_py import utils as override
+core.get_working_days_details = override.get_working_days_details
+
+# to override the salary slip email template
+from tsl.custom_py import utils as cus_ss_mail
+core.email_salary_slip = cus_ss_mail.email_salary_slip
+
+
+
+
+
 
 #
 # each overriding function accepts a `data` argument;
@@ -329,4 +356,4 @@ user_data_fields = [
 # 	"tsl.auth.validate"
 # ]
 
-fixtures = ["Property Setter"]
+# fixtures = ["Property Setter"]

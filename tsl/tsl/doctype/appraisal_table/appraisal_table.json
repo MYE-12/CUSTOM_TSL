@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-24 22:31:23.189841",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "department",
+  "column_break_iy16j",
+  "teamwork",
+  "attendance",
+  "column_break_vg2bm",
+  "quality",
+  "skils",
+  "column_break_qez5h",
+  "communication"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Department"
+  },
+  {
+   "columns": 1,
+   "fieldname": "teamwork",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Teamwork",
+   "options": "\n0\n1\n2"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attendance",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Attendance",
+   "options": "\n0\n1\n2"
+  },
+  {
+   "columns": 2,
+   "fieldname": "quality",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Work Quality / Volume",
+   "options": "\n0\n1\n2\n3\n4"
+  },
+  {
+   "columns": 2,
+   "fieldname": "skils",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Knowledge / Skills",
+   "options": "\n0\n1\n2"
+  },
+  {
+   "columns": 2,
+   "fieldname": "communication",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Effective Communication",
+   "options": "\n0\n1\n2"
+  },
+  {
+   "columns": 1,
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_iy16j",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_vg2bm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qez5h",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-03 23:32:26.988022",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Appraisal Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

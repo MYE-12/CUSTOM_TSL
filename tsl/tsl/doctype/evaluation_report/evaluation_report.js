@@ -269,9 +269,10 @@ frappe.ui.form.on('Evaluation Report', {
 	},
 	if_parts_required:function(frm){
 		if(frm.doc.if_parts_required){
+			
 			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 			set_field_options("status", ["Installed and Completed/Repaired","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
-                        // frm.set_value("status","Spare Parts")
+            frm.set_value("status","Spare Parts")
 			frm.refresh_fields()
                 	if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
                         // set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])	

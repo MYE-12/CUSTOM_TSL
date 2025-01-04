@@ -1,20 +1,20 @@
 frappe.ui.form.on('Request for Quotation', {
-        setup: function (frm) {
-        	frappe.db.get_value('Company', {'name':frm.doc.company}, ['country'], (r) => {
-                        console.log(r)
-		   frm.set_query("supplier", "suppliers", function (doc, cdt, cdn) {
-			let d = locals[cdt][cdn];
+        // setup: function (frm) {
+        // 	frappe.db.get_value('Company', {'name':frm.doc.company}, ['country'], (r) => {
+        //                 console.log(r)
+	// 	   frm.set_query("supplier", "suppliers", function (doc, cdt, cdn) {
+	// 		let d = locals[cdt][cdn];
 		
-			return {
-				filters: [
-					['Supplier', 'country', '=', r.country]
-				]
-			};
-		});
-    	});
+	// 		return {
+	// 			filters: [
+	// 				['Supplier', 'country', '=', r.country]
+	// 			]
+	// 		};
+	// 	});
+    	// });
 		
 
-	},
+	// },
 
     onload_post_render:function(frm){
 

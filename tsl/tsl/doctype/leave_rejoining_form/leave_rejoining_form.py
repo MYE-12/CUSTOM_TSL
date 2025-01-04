@@ -22,6 +22,10 @@ from frappe.utils import (
 
 
 class LeaveRejoiningForm(Document):
+	def after_insert(self):
+		if self.leave_application:
+			frappe.db.set_value("Leave Application Form",self.leave_application,"rejoining",self.name,update_modified = False)
+
 	def on_submit(self):
 		if self.leave_type:
 			l_ap = frappe.new_doc("Leave Application")
@@ -31,6 +35,7 @@ class LeaveRejoiningForm(Document):
 			l_ap.from_date = self.rejoining_date
 			l_ap.to_date = self.actual_rejoining_date
 			l_ap.save()
+			l_ap.submit()
 
 
 from hrms.hr.doctype.leave_application.leave_application import get_holidays

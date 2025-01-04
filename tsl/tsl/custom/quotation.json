@@ -236,7 +236,7 @@
    "name": "Quotation-quotation_type",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nInternal Quotation - Repair\nRevised Quotation - Repair\nCustomer Quotation - Repair\nSite Visit Quotation\nSite Visit Quotation - Internal\nSite Visit Quotation - Customer\nInternal Quotation - Supply\nRevised Quotation - Supply\nCustomer Quotation - Supply",
+   "options": "\nInternal Quotation - Repair\nRevised Quotation - Repair\nCustomer Quotation - Repair\nSite Visit Quotation\nSite Visit Quotation - Internal\nSite Visit Quotation - Customer\nInternal Quotation - Supply\nRevised Quotation - Supply\nCustomer Quotation - Supply\nInternal Quotation - Project\nCustomer Quotation - Project\nRevised Quotation - Project",
    "owner": "Administrator",
    "parent": null,
    "parentfield": null,

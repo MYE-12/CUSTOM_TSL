@@ -41,5 +41,24 @@ def on_submit(self,method):
         sod.save(ignore_permissions = True)
 
         
-# def validate(self,method):
-#     frappe.errpron
+def on_update(self,method):
+    if self.work_order_data:
+        if self.status == "Completed":
+            p = frappe.get_all("Purchase Order",{"work_order_data":self.work_order_data},["*"])
+            if p:
+                count = 0
+                c = 0
+                for k in p:
+                    count = count + 1
+                    if k.status == "Completed":
+                        c = c + 1
+
+                if count == c:
+                    
+                    wod = frappe.get_doc("Work Order Data",self.work_order_data)
+                    wod.status = "TR-Technician Repair"
+                    wod.save(ignore_permissions = True)
+
+                
+                    frappe.errprint("yess")
+            

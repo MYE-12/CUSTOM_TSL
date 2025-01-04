@@ -38,7 +38,10 @@ def get_columns(filters):
 		_("Invoice Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
 		_("SKU") + ":Data:120",
+		_("Qty") + ":Data:90",
 		_("Quoted Amount") + ":currency:120",
+		_("VAT Amount") + ":currency:120",
+		_("Total Amount") + ":currency:120",
 		_("Quotation") + ":Link/Quotation:180",
 		_("Status") + ":Data:150",
 		
@@ -48,36 +51,62 @@ def get_columns(filters):
 def get_data(filters):
 	data = []
 	if filters.from_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
+		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
 
 	if filters.to_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
+		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
 
 	if filters.company:
 		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
 	
 	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
+		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
+
+	if filters.from_date and filters.to_date and filters.company:
+		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)],"docstatus":1},["*"])
+
 
 	for i in w:
 		it = frappe.db.sql(''' select type,mfg,model_no,serial_no,quantity,description from `tabSupply Order Table` where parent = %s ''' ,i.name,as_dict=1)
+		
 		mod = frappe.db.get_value("Item Model",it[0]["model_no"],"model")
-		q_amt = frappe.db.sql(''' select `tabQuotation Item`.margin_amount as m_am,`tabQuotation`.purchase_order_no as po_no,`tabQuotation Item`.supply_order_data as sod,`tabQuotation Item`.qty as qty,`tabQuotation Item`.item_code as ic,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+		
+		q_amt = frappe.db.sql(''' select `tabQuotation`.taxes_and_charges as tax,`tabQuotation`.company as com,`tabQuotation Item`.amount as amt,`tabQuotation Item`.margin_amount as m_am,`tabQuotation`.purchase_order_no as po_no,`tabQuotation Item`.supply_order_data as sod,`tabQuotation Item`.qty as qty,`tabQuotation Item`.item_code as ic,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
 		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 		where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer") and `tabQuotation Item`.supply_order_data = %s ''',i.name,as_dict=1)
 		
 		
 		ap_date = ''
 		qu_name = ''
+		vat_amt = ''
 		q_m = 0
 		if q_amt:
 			for k in q_amt:
 				if k.m_am:
-					per = (k.up * k.dis)/100
-					q_m = k.up - per
-					q_m = q_m * k.qty
+					if q_amt[0]["com"] == "TSL COMPANY - Kuwait":
+						per = (k.up * k.dis)/100
+						q_m = k.up - per
+						q_m = q_m * k.qty
+					
+					if q_amt[0]["com"] == "TSL COMPANY - UAE":
+						# per = (k.up * k.dis)/100
+						# q_m = k.up - per
+						frappe.errprint(i.name)
+						frappe.errprint(q_amt)
+						frappe.errprint(q_amt[0]["amt"])
+						q_m = k.amt
+						if q_amt[0]["tax"]:
+							vat_amt = (k.amt * 5)/100
+					
+
 				if not k.m_am:
-					q_m = k.adc
+					if q_amt[0]["com"] == "TSL COMPANY - Kuwait":
+						q_m = k.adc
+					if q_amt[0]["com"] == "TSL COMPANY - UAE":
+						q_m = k.adc
+						if q_amt[0]["tax"]:
+							vat_amt = (k.adc * 5)/100
+					
 
 				row = [k.sod,
 		   		i.posting_date,
@@ -105,7 +134,10 @@ def get_data(filters):
 				i.invoice_date,
 				k.a_date,
 				k.ic,
-				round(q_m),
+				k.qty,
+				round(q_m,2),
+				vat_amt,
+				round(q_m,2)+vat_amt,
 				k.q_name,
 				i.status
 				]
@@ -113,7 +145,6 @@ def get_data(filters):
 		else:
 			row = [i.name,
 			i.posting_date,
-		
 			i.sales_rep,
 			i.company,
 			i.branch,
@@ -135,6 +166,9 @@ def get_data(filters):
 			i.dn_date,
 			i.invoice_no,
 			i.invoice_date,
+			"",
+			"",
+			"",
 			"",
 			"",
 			"",

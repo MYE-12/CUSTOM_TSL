@@ -34,8 +34,9 @@ def get_wod(from_date,to_date,company):
     data += '<div class="table-container">'
     data += '<table class="table table-bordered" width: 100%;>'
     data += '<tr>'
+    
     data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="300"></td>'
-    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b>TSL Company<br>Branch - Kuwait</b></center></h2></td>'
+    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b style="color:#055c9d;">TSL Company<br>Branch - Kuwait</b></center></h2></td>'
     data += '<td colspan = 3 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
     
     data += '</tr>'
@@ -48,21 +49,21 @@ def get_wod(from_date,to_date,company):
 
     data += '<tr>'
     data += '<td colspan = 1 style="border-color:#000000;background-color:#0e86d4;"><center><b></b></center></td>'
-    data += '<td colspan = 2 style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Amount(RSI)</b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">Total Amount(RSI)</b></center></td>'
     data += '<td colspan = 2 style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Amount(RSC)</b></center></td>'
-    data += '<td colspan = 2 style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Amount(RS)</b></center></td>'
+    data += '<td colspan = 2 style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">Total Amount(RS)</b></center></td>'
     data += '<td colspan = 2 style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Amount(Quoted)</b></center></td>'
     
     data += '</tr>'
     wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` where company = '%s' """ %(company) ,as_dict =1)
     data += '<tr>'
     data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">Salesman</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
     data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
     data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
+    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
     data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'  
     data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'	
     data += '</tr>'
@@ -491,22 +492,22 @@ def get_wod(from_date,to_date,company):
                 data += '<tr>'
                 data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(sales[1])
                 gt = round(gt)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(gt))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(gt):,}" or 0) 
                 st =round(st)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(st))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(st):,}" or 0) 
                 # total_rsc = total_rsc + rsc_total
                 rsc_total = round(rsc_total)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(rsc_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(rsc_total):,}" or 0) 
                 s_del_total = round(s_del_total)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(s_del_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(s_del_total):,}" or 0) 
                 rs_total = round(rs_total)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(rs_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(rs_total):,}" or 0) 
                 s_rec_total = round(s_rec_total)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(s_rec_total)) 
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(s_rec_total):,}" or 0) 
                 wd_total_quot = round(wd_total_quot)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %("{:,.2f}".format(wd_total_quot))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(wd_total_quot):,}" or 0) 
                 sup_quoted_total = round(sup_quoted_total)
-                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'	 %("{:,.2f}".format(sup_quoted_total))
+                data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>'	%(f"{round(sup_quoted_total):,}" or 0) 
                 # data += '</tr>'
 
 
@@ -530,14 +531,14 @@ def get_wod(from_date,to_date,company):
     sup_quoted_sod = round(sup_quoted_sod)
     data += '<tr>'
     data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total</b></center></td>'
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %("{:,.2f}".format(total_rsi)) 
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>'  %("{:,.2f}".format(s_invoiced))
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>'  %("{:,.2f}".format(total_rsc))
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>'  %("{:,.2f}".format(s_delivered))
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>'  %("{:,.2f}".format(total_rs))
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %("{:,.2f}".format(s_received))
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %("{:,.2f}".format(total_quot)) 
-    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %("{:,.2f}".format(sup_quoted_sod))
+    data += '<td style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(total_rsi):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(s_invoiced):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(total_rsc):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(s_delivered):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(total_rs):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#145da0;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(s_received):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(total_quot):,}" or 0) 
+    data += '<td style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">%s</b></center></td>' %(f"{round(sup_quoted_sod):,}" or 0) 
     data += '</tr>'
 
     data += '</table>'

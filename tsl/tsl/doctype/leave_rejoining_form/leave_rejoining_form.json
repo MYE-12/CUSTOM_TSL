@@ -95,8 +95,7 @@
    "bold": 1,
    "fieldname": "rejoining_date",
    "fieldtype": "Date",
-   "label": "Rejoining Date",
-   "read_only": 1
+   "label": "Rejoining Date"
   },
   {
    "fieldname": "actual_rejoining_date",
@@ -142,11 +141,11 @@
  "is_submittable": 1,
  "links": [
   {
-   "link_doctype": "Leave Application",
+   "link_doctype": "Leave Application Form",
    "link_fieldname": "rejoining"
   }
  ],
- "modified": "2024-10-06 15:32:06.903023",
+ "modified": "2024-12-21 12:38:50.476253",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Rejoining Form",

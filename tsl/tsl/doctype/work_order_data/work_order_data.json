@@ -19,9 +19,12 @@
   "incharge",
   "old_wo_no",
   "old_wo_q_amount",
+  "old_wo_vat",
+  "old_wo_total_amt",
   "quoted_date",
   "warranty",
   "delivery",
+  "quotation_approved_date",
   "returned_date",
   "expiry_date",
   "equipment_recieved_form",
@@ -197,7 +200,7 @@
    "hidden": 1,
    "in_preview": 1,
    "label": "Naming Series",
-   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-\nWOD-DU-O-.YY.-"
+   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-\nWOD-DU-O-.YY.-\nWOD-DU-P-.YY.-"
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -284,8 +287,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Company",
-   "options": "Company",
-   "read_only": 1
+   "options": "Company"
   },
   {
    "fieldname": "branch",
@@ -554,6 +556,22 @@
    "fieldname": "quoted",
    "fieldtype": "Check",
    "label": "Quoted"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "quotation_approved_date",
+   "fieldtype": "Date",
+   "label": "Quotation Approved Date"
+  },
+  {
+   "fieldname": "old_wo_vat",
+   "fieldtype": "Float",
+   "label": "Old W0 VAT"
+  },
+  {
+   "fieldname": "old_wo_total_amt",
+   "fieldtype": "Data",
+   "label": "Old WO Total Amt"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -564,7 +582,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2024-12-04 12:00:25.321791",
+ "modified": "2025-01-02 09:49:59.416675",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
