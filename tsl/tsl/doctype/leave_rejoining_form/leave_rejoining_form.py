@@ -34,6 +34,7 @@ class LeaveRejoiningForm(Document):
 			l_ap.leave_type = self.leave_type
 			l_ap.from_date = self.rejoining_date
 			l_ap.to_date = self.actual_rejoining_date
+			l_ap.status = "Approved"
 			l_ap.save()
 			l_ap.submit()
 

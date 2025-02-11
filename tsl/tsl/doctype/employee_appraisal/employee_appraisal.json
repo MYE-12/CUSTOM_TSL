@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "EMP-APP-.YY.-.#####",
+ "autoname": "naming_series:naming_series",
  "creation": "2024-12-24 22:21:53.053533",
  "default_view": "List",
  "doctype": "DocType",
@@ -9,8 +9,13 @@
  "engine": "InnoDB",
  "field_order": [
   "employee_details_section",
+  "naming_series",
   "company",
   "get_employees",
+  "column_break_wfnho",
+  "posting_date",
+  "section_break_2qlmr",
+  "appraisal_history",
   "appraisal_section",
   "appraisal",
   "overall",
@@ -26,7 +31,8 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "reqd": 1
   },
   {
    "fieldname": "appraisal_section",
@@ -42,10 +48,12 @@
   {
    "fieldname": "overall",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Overall Performance rating",
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "get_employees",
    "fieldtype": "Button",
    "label": "Get Employees"
@@ -58,16 +66,46 @@
    "options": "Employee Appraisal",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "EMP-APP-.YY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "column_break_wfnho",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_2qlmr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "appraisal_history",
+   "fieldtype": "Table",
+   "label": "Appraisal History",
+   "options": "Appraisal History",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-03 23:28:01.961995",
+ "modified": "2025-01-07 23:19:39.130647",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Employee Appraisal",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

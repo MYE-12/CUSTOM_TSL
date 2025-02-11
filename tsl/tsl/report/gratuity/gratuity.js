@@ -15,7 +15,12 @@ frappe.query_reports["Gratuity"] = {
 			"label": __("Employee"),
 			"fieldtype": "Link",
 			"options": "Employee",
-		}
-		
+		},
+		{
+			"fieldname": "date",
+			"label": __("Date"),
+			"fieldtype": "Date",
+			"options": "Today",
+		}	
 	]
 };

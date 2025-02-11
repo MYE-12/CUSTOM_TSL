@@ -20,6 +20,7 @@ frappe.query_reports["Work Order Status"] = {
 			"reqd": 1,
 			"default": frappe.datetime.get_today(),
 		},
+		
 		{
 			"fieldname":"company",
 			"label": __("Company"),

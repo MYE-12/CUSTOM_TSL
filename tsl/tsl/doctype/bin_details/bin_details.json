@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-28 10:18:33.934711",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "branch",
+  "bin"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE\nTSL COMPANY - KSA"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Branch",
+   "options": "\nKuwait - TSL\nDubai - TSL\nDammam - TSL-SA\nRiyadh - TSL-SA\nJeddah - TSL-SA"
+  },
+  {
+   "fieldname": "bin",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bin"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-28 14:05:21.254879",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Bin Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

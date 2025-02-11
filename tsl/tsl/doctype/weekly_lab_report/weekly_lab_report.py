@@ -28,6 +28,7 @@ class WeeklyLabReport(Document):
 		formatted_date = ogdate.strftime("%d-%m-%Y")
 		
 		from_date = add_days(d,-7)
+		frappe.errprint(from_date)
 		br = ""
 		if self.company == "TSL COMPANY - Kuwait":
 			br = "Kuwait"
@@ -41,8 +42,10 @@ class WeeklyLabReport(Document):
 		data += '<tr>'
 		data += '<td colspan = 1 align = center style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="250"></td>'
 		data += '<td colspan = 2 style="border-color:#000000;"><h2><center><b style="color:#055c9d;">TSL Company <br> Branch - %s</b></center></h2></td>' %(br)
-		data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="150"></center></td>'
-		
+		if self.company == "TSL COMPANY - Kuwait":
+			data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="150"></center></td>'
+		if self.company == "TSL COMPANY - UAE":
+			data += '<td colspan = 1 style="border-color:#000000;"><center><img src = "/files/Flag_of_the_United_Arab_Emirates.svg.jpg" width ="150"></center></td>'
 		data += '<tr>'
 		data += '<td colspan = 4 style="border-color:#000000;padding:1px;font-size:20px;background-color:#0e86d4;color:white;"><b>%s</b></td>' %(formatted_date)
 		data += '</tr>'

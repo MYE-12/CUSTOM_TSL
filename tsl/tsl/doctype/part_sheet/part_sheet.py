@@ -81,6 +81,37 @@ def create_rfq(ps):
 			})
 	return new_doc
 
+
+@frappe.whitelist()
+def create_mr(ps):
+	doc = frappe.get_doc("Evaluation Report",ps)
+	new_doc = frappe.new_doc("Material Request")
+	new_doc.company = doc.company
+	# new_doc.branch = frappe.db.get_value("Work Order Data",doc.work_order_data,"branch")
+	new_doc.work_order_data = doc.work_order_data
+	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
+	new_doc.items=[]
+	new_doc.material_request_type = "Material Transfer"
+	
+	for i in doc.get("items"):
+		if i.parts_availability == "No" :
+			new_doc.append("items",{
+				"item_code":i.part,
+				"item_name":i.part_name,
+				"description":i.part_name,
+				'serial_no':i.serial_no,
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"stock_qty":1,
+				"qty":i.qty,
+			
+			
+
+			})
+	return new_doc
+
+
 class PartSheet(Document):
 	def on_submit(self):
 		doc = frappe.get_doc("Work Order Data",self.work_order_data)

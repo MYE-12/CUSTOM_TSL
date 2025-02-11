@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL SM",
  "links": [],
- "modified": "2024-12-23 11:00:39.471468",
+ "modified": "2025-02-05 15:49:00.983928",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL SM",
@@ -26,7 +26,7 @@
    "role": "Sales Manager"
   }
  ],
- "sequence_id": 5.0,
+ "sequence_id": 7.0,
  "shortcuts": [
   {
    "color": "Grey",

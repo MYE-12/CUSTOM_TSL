@@ -275,6 +275,7 @@ def create_initial_eval(doc_no):
 			"parts_availability":j.parts_availability,
 			"price_ea":j.price_ea,
 			"total":j.total,
+			"released":j.released or 0,
 
 		})
 	return new_doc
@@ -658,8 +659,44 @@ class WorkOrderData(Document):
 					"date":now,
 				})
 				doc.save(ignore_permissions=True)
-				
-#		
+
+		else:
+			if not self.status_duration_details:
+				now = datetime.now()
+				formatted_date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+				self.append("status_duration_details",{
+					"status":self.status,
+					"date":formatted_date_time,
+				})
+			else:
+				if self.status != self.status_duration_details[-1].status:
+					ldate = self.status_duration_details[-1].date
+					
+					now = datetime.now()
+					
+					time_date = str(ldate).split(".")[0]
+					format_data = "%Y-%m-%d %H:%M:%S"
+					date = datetime.strptime(time_date, format_data)
+					duration = now - date
+					duration_in_s = duration.total_seconds()
+					minutes = divmod(duration_in_s, 60)[0]/60
+					data = str(minutes).split(".")[0]+"hrs "+str(minutes).split(".")[1][:2]+"min"
+
+					frappe.db.set_value("Status Duration Details",self.status_duration_details[-1].name,"duration",data)
+					self.append("status_duration_details",{
+						"status":self.status,
+						"date":now,
+					})
+
+					doc = frappe.get_doc("Work Order Data",self.name)
+
+					doc.append("status_duration_details",{
+						"status":self.status,
+						"date":now,
+					})
+					doc.save(ignore_permissions=True)
+
+			
 	def before_submit(self):
 
 		self.status = "NE-Need Evaluation"

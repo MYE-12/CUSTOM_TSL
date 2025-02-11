@@ -328,6 +328,42 @@ def create_rfq(sod):
 		})
 	return new_doc
 
+
+@frappe.whitelist()
+def create_sq(sod):
+	doc = frappe.get_doc("Supply Order Data",sod)
+	new_doc= frappe.new_doc("Supplier Quotation")
+	new_doc.company = doc.company
+	new_doc.branch = doc.branch
+	new_doc.supply_order_data = sod
+	new_doc.department = doc.department
+	new_doc.st = doc.st or 0
+	new_doc.items=[]
+	for i in doc.get("material_list"):
+		new_doc.append("items",{
+			"item_code":i.item_code,
+			# "model":i.item_name,
+			"item_name":i.item_name,
+			"description":i.description,
+			"type":i.type,
+			"model":i.model_no,
+			"mfg":i.mfg,
+			"serial_no":i.serial_no,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			# "schedule_date":sched_date,
+			"stock_qty":1,
+			"warehouse":doc.branch,
+			"qty":i.quantity,
+			"supply_order_data":doc.name,
+			"branch":doc.branch,
+			"department":doc.department,
+			"item_group":"Equipments"
+		})	
+
+	return new_doc
+
 @frappe.whitelist()
 def create_quotation(sod):
 	doc = frappe.get_doc("Supply Order Data",sod)
@@ -336,6 +372,7 @@ def create_quotation(sod):
 	new_doc.party_name = doc.customer
 	new_doc.purchase_order_no = doc.po_number
 	new_doc.supplier_name = doc.supplier_name
+	new_doc.supply_tender_no = doc.name
 	new_doc.customer_reference_number = doc.customer_reference_number
 	# new_doc.party_name = new_doc.party_name
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
@@ -356,6 +393,10 @@ def create_quotation(sod):
 		new_doc.quotation_type = "Quotation - Supply Tender"
 		new_doc.custom_department = "Supply Tender - TSL"
 		new_doc.naming_series = "ST-Q-.YY.-"
+	# else:
+	# 	if doc.st == 1:
+	# 		new_doc.quotation_type = "Customer Quotation - Supply"
+	# 		new_doc.st = doc.st
 	else:
 		new_doc.quotation_type = "Internal Quotation - Supply"
 	
@@ -469,6 +510,7 @@ class SupplyOrderData(Document):
 			})
 	
 	def before_save(self):
+		
 		self.previously_quoted =[]
 		for i in self.get('in_stock'):
 			if i.part:
@@ -484,10 +526,11 @@ class SupplyOrderData(Document):
 					self.previously_quoted = []
 					for j in suqb:
 						self.append("previously_quoted",j)
-		for i in self.get("material_list"):
-			if i.item_code:
-				suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 ''',i.item_code,as_dict =1 )
-				if suqb:
-					for j in suqb:
-						self.append("previously_quoted",j)
+		if not self.project:
+			for i in self.get("material_list"):
+				if i.item_code:
+					suqb = frappe.db.sql('''select q.party_name as customer,qi.parent as quotation_no,qi.wod_no as work_order_data,qi.supply_order_data as supply_order_data ,qi.rate as quoted_price,qi.item_code as sku,qi.model_no as model,qi.type as type,qi.manufacturer as mfg from `tabQuotation` as q inner join `tabQuotation Item` as qi on qi.parent=q.name where qi.item_code = %s and q.workflow_state = "Approved By Customer" and q.docstatus = 1 ''',i.item_code,as_dict =1 )
+					if suqb:
+						for j in suqb:
+							self.append("previously_quoted",j)
 		

@@ -57,7 +57,7 @@ frappe.ui.form.on('Create Work Order', {
 		if (frm.doc.company && frm.doc.branch) {
 			var d = {
 				"Kuwait - TSL": "Repair - Kuwait - TSL",
-				"Dammam - TSL-SA": "Repair - Dammam - TSL-SA",
+				// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
 				"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
 				"Riyadh - TSL-SA": "Riyadh - TSL-SA",
 				"Dubai - TSL": "Dubai - Repair - TSL-UAE"
@@ -76,6 +76,22 @@ frappe.ui.form.on('Create Work Order', {
 		if(frappe.session.user == "info@tsl-me.com"){
 			frm.set_value("company","TSL COMPANY - Kuwait")
 		}
+
+		// if(frappe.session.user == "info-dmm@tsl-me.com" || frappe.session.user == "info-jed@tsl-me.com" ){
+		// 	frm.set_value("company","TSL COMPANY - KSA")
+		// }
+
+		if(frappe.session.user == "info-dmm@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Dammam - TSL-SA")
+			// frm.set_value("repair_warehouse","Dammam - Repair - TSL - KSA")
+		}
+
+		if(frappe.session.user == "info-jed@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Jeddah - TSL-SA")
+			// frm.set_value("repair_warehouse","Jeddah - Repair - TSL - KSA")
+		}
 		
 		if(frm.doc.company == "TSL COMPANY - Kuwait"){
 			frm.set_query('customer', function(doc) {
@@ -86,11 +102,33 @@ frappe.ui.form.on('Create Work Order', {
 				};
 			});
 		}
+
 		if(frm.doc.company == "TSL COMPANY - UAE"){
 			frm.set_query('customer', function(doc) {
 				return {
 					filters: {
 						"territory": "DUBAI"
+					}
+				};
+			});
+		}
+
+			
+		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Dammam - TSL-SA"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Dammam"
+					}
+				};
+			});
+		}
+
+		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Jeddah - TSL-SA"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Jeddah"
 					}
 				};
 			});
@@ -289,8 +327,8 @@ frappe.ui.form.on('Create Work Order', {
 		});
 		var d = {
 			"Kuwait - TSL": "Repair - Kuwait - TSL",
-			"Dammam - TSL-SA": "Repair - Dammam - TSL-SA",
-			"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
+			// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
+			"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
 			"Riyadh - TSL-SA": "Riyadh - TSL-SA",
 			"Dubai - TSL": "Dubai - Repair - TSL-UAE"
 		}

@@ -22,10 +22,10 @@ def trigger_mail_notification():
 				message = i.document_name_in_english + " is expiring in 15 days"		
 			if expiry_days == 3:
 				message = i.document_name_in_english + " is expiring in 3 days"
-			if message:
-				frappe.sendmail(
-					recipients="j.sha.14601@gmail.com",
-					# recipients="hr@tsl-me.com",
-					subject=('Document is Expiring !!!'),
-					message=message
-				)
+	if message:
+		frappe.sendmail(
+			recipients="yousuf@tsl-me.com",
+			# recipients="hr@tsl-me.com",
+			subject=('Document is Expiring !!!'),
+			message=message
+		)

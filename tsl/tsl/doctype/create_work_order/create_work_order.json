@@ -135,9 +135,9 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
+   "fieldtype": "Select",
    "label": "Company",
-   "options": "Company"
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE\nTSL COMPANY - KSA"
   },
   {
    "fieldname": "repair_warehouse",
@@ -174,7 +174,7 @@
   {
    "fieldname": "customer_reference_number",
    "fieldtype": "Data",
-   "label": "Customer Reference Number"
+   "label": "Customer REF No"
   },
   {
    "depends_on": "eval:(doc.is_returned_unit == 1);",
@@ -244,7 +244,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-08-15 15:51:41.627983",
+ "modified": "2025-01-28 15:19:22.270702",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

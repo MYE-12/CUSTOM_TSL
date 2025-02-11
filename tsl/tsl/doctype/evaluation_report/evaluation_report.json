@@ -385,7 +385,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status != \"Return No Fault\" && doc.status!= \"Comparison\"",
+   "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status!= \"Comparison\"",
    "fieldname": "evaluation_time",
    "fieldtype": "Duration",
    "hide_days": 1,
@@ -394,7 +394,7 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status != \"Return No Fault\" && doc.status!= \"Comparison\"",
+   "depends_on": "eval:doc.status != \"Return Not Repaired\" && doc.status!= \"Comparison\"",
    "fieldname": "estimated_repair_time",
    "fieldtype": "Duration",
    "hide_days": 1,
@@ -525,7 +525,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-31 11:25:06.805243",
+ "modified": "2025-02-02 12:44:01.939185",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

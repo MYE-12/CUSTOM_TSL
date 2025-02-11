@@ -238,6 +238,25 @@ frappe.ui.form.on('Evaluation Report', {
 		}
 
 
+		if(frm.doc.docstatus == 1 && frm.doc.parts_availability == "No" && frm.doc.company == "TSL COMPANY - KSA"){
+			frm.add_custom_button(__("Material Request"), function(){
+				frappe.call({
+					method: "tsl.tsl.doctype.part_sheet.part_sheet.create_mr",
+					args: {
+						"ps": frm.doc.name,
+						"user":frappe.session.user
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+						}
+					}
+				});
+			},__('Create'));
+		}
+
+
 		var s = 0 
 			$.each(frm.doc.items, function(i,d) {
 				if(d.parts_availability == "Yes"){
@@ -257,7 +276,7 @@ frappe.ui.form.on('Evaluation Report', {
 							},
 							callback: function (r) {
 								if (r.message) {
-									console.log(r.message)
+								
 									frappe.msgprint("Material Released")
 									// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
 								}

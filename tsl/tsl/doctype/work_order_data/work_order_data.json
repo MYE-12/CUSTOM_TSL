@@ -14,6 +14,7 @@
   "sales_rep_name",
   "customer",
   "customer_name",
+  "customer_rep",
   "customer_email",
   "address",
   "incharge",
@@ -49,6 +50,7 @@
   "dn_date",
   "invoice_no",
   "invoice_date",
+  "automation",
   "section_break_14",
   "image",
   "attach_image",
@@ -200,7 +202,7 @@
    "hidden": 1,
    "in_preview": 1,
    "label": "Naming Series",
-   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-\nWOD-DU-O-.YY.-\nWOD-DU-P-.YY.-"
+   "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-\nWOD-DU-O-.YY.-\nWOD-DU.YY.-P.\nWOD-DU.YY.-PA."
   },
   {
    "fieldname": "equipment_recieved_form",
@@ -324,7 +326,6 @@
   {
    "fieldname": "incharge",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Incharge",
    "options": "Contact"
   },
@@ -564,14 +565,29 @@
    "label": "Quotation Approved Date"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "old_wo_vat",
    "fieldtype": "Float",
    "label": "Old W0 VAT"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "old_wo_total_amt",
    "fieldtype": "Data",
    "label": "Old WO Total Amt"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "automation",
+   "fieldtype": "Check",
+   "label": "Automation"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "customer_rep",
+   "fieldtype": "Data",
+   "label": "Customer Representative"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -582,7 +598,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-01-02 09:49:59.416675",
+ "modified": "2025-01-20 11:55:58.065724",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

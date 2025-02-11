@@ -13,7 +13,8 @@
   "description",
   "qty",
   "rate",
-  "order_type"
+  "order_type",
+  "automation"
  ],
  "fields": [
   {
@@ -78,12 +79,20 @@
    "in_list_view": 1,
    "label": "Order Type",
    "options": "\nRepair\nSupply"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "automation",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Automation"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-02 12:02:53.236012",
+ "modified": "2025-01-07 14:23:52.762139",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Project Items",

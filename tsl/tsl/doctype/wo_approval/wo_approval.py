@@ -21,7 +21,7 @@ class WOApproval(Document):
 
 
         last_six_months = []
-        for i in range(5, -1, -1):  # 5 months before and including the current month
+        for i in range(11, -1, -1):  # 5 months before and including the current month
             month_index = (current_month - i - 1) % 12  # Handle wrap-around
             last_six_months.append(months[month_index])
 
@@ -45,7 +45,11 @@ class WOApproval(Document):
         data += '<tr>'
         data += '<td style="width:30%;border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="200"></td>'
         data += '<td style="width:30%;border-color:#000000;font-size:35px;color:#055c9d;"><center><b>TSL Company</b></center></td>'
-        data += '<td style="width:30%;border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="120"></center></td>'
+        if self.company == "TSL COMPANY - Kuwait":  
+            data += '<td style="width:30%;border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="120"></center></td>'
+        if self.company == "TSL COMPANY - UAE":  
+            data += '<td style="width:30%;border-color:#000000;"><center><img src = "/files/Flag_of_the_United_Arab_Emirates.svg.jpg" width ="120"></center></td>'
+
         data += '</tr>'
         data += '</table>'
 
@@ -58,8 +62,8 @@ class WOApproval(Document):
     
         sp = frappe.get_all("Sales Person",{"company":self.company},["*"])
         for i in sp:
-            if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Abdullah" or i.name == "Maaz":              
-            # if i.name == "Vazeem":         
+            if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Yousef" or i.name == "Mohannad" or i.name == "Karoline":              
+            # if i.name == "Maaz":         
                 sl = frappe.get_value("Sales Person",{"name":i.name},["user"])
                 data += '<tr>'
                 data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Sales</b><center></td>'
@@ -74,13 +78,16 @@ class WOApproval(Document):
                 total_q2 = 0
                 # for m in last_six_months:
                 for index, m in enumerate(last_six_months):
-                    frappe.errprint(index)
+                    # frappe.errprint(index)
                     month_name = m
-                    year = 2024
-
+                    
                     # Get the month number from the month name
                     month_number = datetime.strptime(month_name, "%B").month
-
+                    # current_date = datetime.now()
+                    year = 2024
+                    if month_number == 1 or month_number == 2:
+                        year = 2025
+                   
                     # First date of the month
                     first_day = datetime(year, month_number, 1)
 
@@ -118,6 +125,8 @@ class WOApproval(Document):
                     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
 
                     if q_amt:
+                        frappe.errprint(q_amt[0]["q_name"])
+                        frappe.errprint(q_amt)
                         for k in q_amt:
                             if k.is_m == 1:
                                 
@@ -128,7 +137,7 @@ class WOApproval(Document):
 
                             else:
                                 q_amt = k.adc
-                        
+        
                                 q_m = q_m + q_amt
                              
                         
@@ -179,10 +188,15 @@ class WOApproval(Document):
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'% (f"{round(q_m):,}" or 0)
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' % (f"{round(q_m_2):,}" or 0)
                     if not q_m or not q_m_2:
-                        data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("0")
+                        data += '<td style="font-weight:bold;background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("0")
                     else:
-                        data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
-                        
+                        if round((q_m_2/q_m)*100) < 60:
+                            data += '<td style="font-weight:bold;background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
+                        if round((q_m_2/q_m)*100) > 60 and round((q_m_2/q_m)*100) < 80:
+                            data += '<td style="font-weight:bold;background-color:yellow;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
+                        if round((q_m_2/q_m)*100) >=80:
+                            data += '<td style="font-weight:bold;background-color:green;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
+
                     total_q1 = total_q1 + round(q_m)
                     total_q2 = total_q2 + round(q_m_2)
 
@@ -193,7 +207,17 @@ class WOApproval(Document):
                 data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>' % ("Total")
                 data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>'% (f"{round(total_q1):,}" or 0)
                 data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s<center></td>' % (f"{round(total_q2):,}" or 0)
-                data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(round((total_q2/total_q1)*100),"%")
+                if total_q1 == 0:
+                    data += '<td style="background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(0,"%")
+                else:
+                    if round((total_q2/total_q1)*100) < 60:
+                        data += '<td style="background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(round((total_q2/total_q1)*100),"%")
+                    if round((total_q2/total_q1)*100) > 60 and round((total_q2/total_q1)*100) < 80:
+                        data += '<td style="background-color:yellow;border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(round((total_q2/total_q1)*100),"%")
+                    if round((total_q2/total_q1)*100) >=80:
+                         data += '<td style="background-color:green;border-color:#000000;padding:1px;font-size:14px;font-size:13px;font-weight:bold;"><center>%s%s<center></td>' %(round((total_q2/total_q1)*100),"%") 
+
+                   
                 data += '</tr>'
 
             

@@ -16,8 +16,9 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Quotation Type",
-   "options": "\nInternal Quotation - Repair\nRevised Quotation - Repair\nCustomer Quotation - Repair\nSite Visit Quotation\nSite Visit Quotation - Internal\nSite Visit Quotation - Customer\nInternal Quotation - Supply\nRevised Quotation - Supply\nCustomer Quotation - Supply"
-  },
+   "options": "\nInternal Quotation - Repair\nRevised Quotation - Repair\nCustomer Quotation - Repair\nSite Visit Quotation\nSite Visit Quotation - Internal\nSite Visit Quotation - Customer\nInternal Quotation - Supply\nRevised Quotation - Supply\nCustomer Quotation - Supply\nInternal Quotation - Project\nCustomer Quotation - Project\nRevised Quotation - Project\n"
+  
+},
   {
    "fieldname": "status",
    "fieldtype": "Data",

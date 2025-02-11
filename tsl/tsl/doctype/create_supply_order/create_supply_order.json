@@ -19,6 +19,7 @@
   "incharge_email",
   "incharge_phone_no",
   "is_quotation_created",
+  "sales_person",
   "sts",
   "column_break_3",
   "company",
@@ -26,8 +27,9 @@
   "department",
   "repair_warehouse",
   "client_rfq_date",
+  "tender_closing",
+  "supplier_closing_date",
   "received_date",
-  "sales_person",
   "sales_person_name",
   "suggested_price",
   "customer_reference_number",
@@ -184,7 +186,7 @@
   {
    "fieldname": "customer_reference_number",
    "fieldtype": "Data",
-   "label": "Customer Reference Number/RFQ"
+   "label": "Customer REF.NO/RFQ"
   },
   {
    "default": "0",
@@ -262,13 +264,23 @@
   {
    "fieldname": "client_rfq_date",
    "fieldtype": "Date",
-   "label": "Client RFQ Date"
+   "label": "Tender Issue Date"
+  },
+  {
+   "fieldname": "tender_closing",
+   "fieldtype": "Date",
+   "label": "Tender Closing"
+  },
+  {
+   "fieldname": "supplier_closing_date",
+   "fieldtype": "Date",
+   "label": "Supplier Closing Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-30 10:59:32.665775",
+ "modified": "2025-01-06 11:13:09.311921",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",

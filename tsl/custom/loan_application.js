@@ -11,14 +11,14 @@ frappe.ui.form.on('Loan Application', {
     //         }
     //     });
     // },
-    create_loan: function(frm) {
-		if (frm.doc.status != "Approved") {
-			frappe.throw(__("Cannot create loan until application is approved"));
-		}
+  //   create_loan: function(frm) {
+	// 	if (frm.doc.status != "Approved") {
+	// 		frappe.throw(__("Cannot create loan until application is approved"));
+	// 	}
 
-		frappe.model.open_mapped_doc({
-			method: 'tsl.custom_py.loan_application.create_loan',
-			frm: frm
-		});
-	},
+	// 	frappe.model.open_mapped_doc({
+	// 		method: 'tsl.custom_py.loan_application.create_loan',
+	// 		frm: frm
+	// 	});
+	// },
 })

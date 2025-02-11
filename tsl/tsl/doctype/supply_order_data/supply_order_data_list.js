@@ -21,6 +21,9 @@ frappe.listview_settings['Supply Order Data'] = {
         else if (doc.status === "Approved") {
 			return [__("Approved"), "green", "status,=,Approved"];
         }
+        else if (doc.status === "Invoiced") {
+              return [__("Invoiced"), "green", "status,=,Invoiced"];
+ }
         else if (doc.status === "Not Approved") {
 			return [__("Not Approved"), "red", "status,=,Not Approved"];
         }

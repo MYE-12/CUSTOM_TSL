@@ -33,12 +33,10 @@ def get_columns(filters):
 
 def get_data(filters):
 	data = []
-	sc = frappe.get_all("Service Call Form",["*"])
+	sc = frappe.get_all("Service Call Form",{"company":filters.company},["*"])
 	for i in sc:
-		# frappe.errprint(i.name)
 		q = frappe.db.exists("Quotation",{"service_call_form":i.name,"workflow_state":"Approved By Customer"})
-		if q:
-			# frappe.errprint(q)
+		if q:		
 			qu = frappe.get_value("Quotation",{"name":q},["after_discount_cost"])
 			qdate= frappe.get_value("Quotation",{"name":q},["transaction_date"])
 			s = frappe.get_value("User",{"name":i.salesman_name},["username"])

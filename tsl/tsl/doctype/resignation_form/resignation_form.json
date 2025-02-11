@@ -19,6 +19,7 @@
   "passport_number",
   "resignation_type",
   "column_break_7",
+  "company",
   "session_user",
   "relieving_date",
   "reason",
@@ -28,7 +29,6 @@
   "column_break_18",
   "approved_relieving_date",
   "actual_relieving_date",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
@@ -165,16 +165,22 @@
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
-   "no_copy": 1,
-   "options": "Resignation Form",
-   "print_hide": 1,
+   "options": "Resignation Form"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fetch_if_empty": 1,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-21 20:36:15.059058",
+ "modified": "2025-02-03 21:48:08.192420",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Resignation Form",

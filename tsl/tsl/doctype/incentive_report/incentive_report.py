@@ -52,7 +52,7 @@ class IncentiveReport(Document):
 		data += '</tr>'	
 
 		
-		sp = frappe.get_all("Employee",{"designation": ["in", ["Technician",'Senior Technician']],"company":self.company},["*"])
+		sp = frappe.get_all("Employee",{"designation": ["in", ["Technician",'Senior Technician']],"company":self.company,"status":"Active"},["*"])
 		# wd = frappe.get_all("Work Order Data",{"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (self.from_date,self.to_date)]},["*"])
 		for i in sp:
 			data += '<tr>'

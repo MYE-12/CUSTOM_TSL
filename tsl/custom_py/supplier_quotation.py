@@ -71,6 +71,8 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
             link.append(""" <a href='/app/supplier-quotation/{0}'>{0}</a> """.format(i))
         frappe.msgprint("Supplier Quotation created for each Supplier: "+', '.join(link))
         return True
+
+
 def validate(self,method):
     for i in self.items:
         if i.work_order_data:
@@ -82,17 +84,98 @@ def validate(self,method):
                     ev.status = "Supplier Quoted"
                     ev.save()
     
+    # if self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
+    #     if self.work_order_data:
+    #         ev = frappe.db.sql(""" select `tabPart Sheet Item`.part as p, `tabPart Sheet Item`.parts_availability as pa from `tabEvaluation Report` left join
+    #         `tabPart Sheet Item` on  `tabEvaluation Report`.name =  `tabPart Sheet Item`.parent 
+    #         where `tabEvaluation Report`.work_order_data = '%s' """%(self.work_order_data),as_dict=1)
+    #         ev_list = []
+    #         for e in ev:
+    #             if e['pa'] == "No":
+    #                 ev_list.append(e['p'])
+
+    #         count = 0
+
+    #         sq = frappe.get_all("Supplier Quotation",{"work_order_data":self.work_order_data,"workflow_state":"Approved by Management"})
+    #         if sq:
+                
+    #             for d in sq:
+    #                 sup = frappe.db.sql(""" select `tabSupplier Quotation Item`.item_code as ic from `tabSupplier Quotation` left join
+    #                 `tabSupplier Quotation Item` on  `tabSupplier Quotation`.name =  `tabSupplier Quotation Item`.parent 
+    #                 where `tabSupplier Quotation`.name = '%s' """%(d["name"]),as_dict=1)
+    #                 for k in sup:
+    #                     if k["ic"] in ev_list:
+    #                         count = count + 1
+
+    #         for j in self.items:
+    #             if j.item_code in ev_list:
+    #                 count = count + 1
+                        
+    #         # if count == len(ev_list):
+    #         #     frappe.errprint("yessss")
+    #         #     ev = frappe.get_doc("Work Order Data",self.work_order_data)
+    #         #     ev.status = "Parts Priced"
+    #         #     ev.save(ignore_permissions =1)
+
+    #             # doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(self.work_order_data),as_dict=1)
+    #             # for d in doc:
+               
+    
         
 
 def on_submit(self,method):
+    if self.project_data:
+        pd = frappe.get_doc("Project Data",self.project_data)
+        pd.status = "Parts Priced"
+        pd.save()
+
+    # if self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
+    #     if self.work_order_data:
+    #         ev = frappe.db.sql(""" select `tabPart Sheet Item`.part as p, `tabPart Sheet Item`.parts_availability as pa from `tabEvaluation Report` left join
+    #         `tabPart Sheet Item` on  `tabEvaluation Report`.name =  `tabPart Sheet Item`.parent 
+    #         where `tabEvaluation Report`.work_order_data = '%s' """%(self.work_order_data),as_dict=1)
+    #         ev_list = []
+    #         for e in ev:
+    #             if e['pa'] == "No":
+    #                 ev_list.append(e['p'])
+
+    #         count = 0
+
+    #         sq = frappe.get_all("Supplier Quotation",{"work_order_data":self.work_order_data,"workflow_state":"Approved by Management"})
+    #         if sq:
+                
+    #             for d in sq:
+    #                 sup = frappe.db.sql(""" select `tabSupplier Quotation Item`.item_code as ic from `tabSupplier Quotation` left join
+    #                 `tabSupplier Quotation Item` on  `tabSupplier Quotation`.name =  `tabSupplier Quotation Item`.parent 
+    #                 where `tabSupplier Quotation`.name = '%s' """%(d["name"]),as_dict=1)
+    #                 for k in sup:
+    #                     if k["ic"] in ev_list:
+    #                         count = count + 1
+
+    #         for j in self.items:
+    #             if j.item_code in ev_list:
+    #                 count = count + 1
+                        
+    #         if count == len(ev_list):
+    #             # doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(self.work_order_data),as_dict=1)
+    #             # for d in doc:
+    #             frappe.errprint("yesss")
+    #             ev = frappe.get_doc("Work Order Data",self.work_order_data)
+    #             ev.status = "Parts Priced"
+    #             ev.save(ignore_permissions =1)
+    #             frappe.errprint("No")
+
+    
     
     for i in self.items:
-        if i.work_order_data or self.work_order_data:
-            doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data or self.work_order_data),as_dict=1)
-            for d in doc:
-                ev = frappe.get_doc("Work Order Data",d.name)
-                ev.status = "Parts Priced"
+        if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait":
+            if i.work_order_data or self.work_order_data:
+                doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data or self.work_order_data),as_dict=1)
+                for d in doc:
+                    ev = frappe.get_doc("Work Order Data",d.name)
+                    ev.status = "Parts Priced"
                 ev.save(ignore_permissions =1)
+        
         
         if i.supply_order_data or self.supply_order_data:
             doc = frappe.db.sql("""select name from `tabSupply Order Data` where name = '%s' """%(i.supply_order_data or self.supply_order_data),as_dict=1)
@@ -214,3 +297,5 @@ def on_submit(self,method):
                     j.amount = conv_rate * float(j.quantity)
                     j.supplier_quotation = self.name
         doc.save(ignore_permissions=True)
+
+

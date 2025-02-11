@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
+  "employee_name",
   "department",
   "column_break_iy16j",
   "teamwork",
@@ -15,7 +16,7 @@
   "quality",
   "skils",
   "column_break_qez5h",
-  "communication"
+  "score"
  ],
  "fields": [
   {
@@ -28,43 +29,39 @@
   },
   {
    "columns": 1,
+   "default": "0",
    "fieldname": "teamwork",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Teamwork",
-   "options": "\n0\n1\n2"
+   "options": "0\n1\n2\n3\n4\n5"
   },
   {
    "columns": 1,
+   "default": "0",
    "fieldname": "attendance",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Attendance",
-   "options": "\n0\n1\n2"
+   "options": "0\n1\n2\n3\n4\n5"
   },
   {
-   "columns": 2,
+   "columns": 1,
+   "default": "0",
    "fieldname": "quality",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Work Quality / Volume",
-   "options": "\n0\n1\n2\n3\n4"
+   "options": "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
   },
   {
    "columns": 2,
+   "default": "0",
    "fieldname": "skils",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Knowledge / Skills",
-   "options": "\n0\n1\n2"
-  },
-  {
-   "columns": 2,
-   "fieldname": "communication",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Effective Communication",
-   "options": "\n0\n1\n2"
+   "options": "0\n1\n2\n3\n4\n5"
   },
   {
    "columns": 1,
@@ -85,12 +82,28 @@
   {
    "fieldname": "column_break_qez5h",
    "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Employee Name"
+  },
+  {
+   "columns": 1,
+   "fieldname": "score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Score",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-03 23:32:26.988022",
+ "modified": "2025-01-11 16:44:21.577448",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Appraisal Table",

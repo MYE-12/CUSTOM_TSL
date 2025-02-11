@@ -430,16 +430,17 @@ frappe.ui.form.on('Leave Application Form', {
 			resolve();
 		});
 		await promise.catch(() => frappe.throw());
-
+		
+		
 		let w_flow = new Promise((resolve, reject) => {
 			if (frm.selected_workflow_action == "Send to HR") {
 				// HR Approval
 				frm.call({
-					method: 'trigger_mail',
+					method: 'trigger_mail_to_hr',
 					args: {
 						"name": frm.doc.name,
 						"workflow_state": "Under HR",
-						"email": "hr@tsl-me.com"
+						"company": frm.doc.company
 					},
 				})
 			}

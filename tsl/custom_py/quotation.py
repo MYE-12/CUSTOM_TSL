@@ -221,7 +221,7 @@ def get_similar_unit_details(name):
 # 	return l
 @frappe.whitelist()
 def sum_amount(doc,method):
-	if not doc.company == "TSL COMPANY - UAE":
+	if not doc.company == "TSL COMPANY - UAE" and not doc.company == "TSL COMPANY - KSA" :
 		for sm in doc.items:
 			pi = frappe.db.sql("""select sum(amount)as amount,work_order_data from `tabItem Price Details` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)
 			ths = frappe.db.sql("""select sum(total_price) as price,work_order_data from `tabTechnician Hours Spent` where parent = '%s' and docstatus = 0 group by work_order_data = '%s'"""%(doc.name,sm.wod_no),as_dict=1)	
@@ -303,81 +303,128 @@ def show_details(self,method):
 							"total_price":total*20,
 							"work_order_data":doc.work_order_data
 						})
-				for k in doc.get("items"):
-					total_qtn_rate += k.total
-					if k.parts_availability == "No":
-						source = "Supplier"
-						price = k.price_ea
-						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
-													where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
-								order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
-						# if sq_no:
-						# 	frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
-						for sq in sq_no:
-							if sq.spc:	
-								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
 
-								payload = {}
-								headers = {}
 
-								response = requests.request("GET", url, headers=headers, data=payload)
-								data = response.json()
-								rates_kw = data['rates']['KWD']
-								conv_rate = sq.spc * rates_kw
-								self.shipping_cost = conv_rate
-
+		for i in self.get("items"):
+			frappe.errprint(i.wod_no)
+			eval =frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
+			if eval:
+				doc = frappe.get_doc("Evaluation Report",{"name":eval}) 
+				if doc:
+					for k in doc.get("items"):
+						frappe.errprint(doc.work_order_data)
+						total_qtn_rate += k.total
+						if self.company == "TSL COMPANY - Kuwait" and k.parts_availability == "No":
+							source = "Supplier"
+							price = k.price_ea
+							sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+														where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+									order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 							
-						if len(sq_no):
-							sq_no = sq_no[0]["sq"]
+							for sq in sq_no:
+							
+								if sq.spc:	
+									price = k.price_ea
+									self.append("item_price_details",{
+									"item":k.part,
+									"item_source":source,
+									"model":k.model,
+									"price":price,
+									"amount":k.total,
+									"supplier_quotation":sq["sq"],
+									"work_order_data":doc.work_order_data
+
+							})
+									url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+
+									payload = {}
+									headers = {}
+
+									response = requests.request("GET", url, headers=headers, data=payload)
+									data = response.json()
+									rates_kw = data['rates']['KWD']
+									conv_rate = sq.spc * rates_kw
+									self.shipping_cost = conv_rate
+
+								
+							if len(sq_no):
+								sq_no = sq_no[0]["sq"]
+							else:
+								sq_no =  ""
+							
+						elif self.company == "TSL COMPANY - UAE" and k.parts_availability == "No":
+							sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+														where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+									order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
+							# if sq_no:
+							# 	frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+							
+							for sq in sq_no:
+								if sq.spc:	
+									url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+
+									payload = {}
+									headers = {}
+
+									response = requests.request("GET", url, headers=headers, data=payload)
+									data = response.json()
+									rates_kw = data['rates']['AED']
+									conv_rate = sq.spc * rates_kw
+									self.shipping_cost = conv_rate
+							if len(sq_no):
+								sq_no = sq_no[0]["sq"]
+							else:
+								sq_no =  ""
+							
+
+							exr = get_exchange_rate("KWD","AED")
+							source = "Supplier"
+							
+							price = k.price_ea
+							self.append("item_price_details",{
+							"item":k.part,
+							"item_source":source,
+							"model":k.model,
+							"price":price * exr,
+							"amount":k.total * exr,
+							"supplier_quotation":sq_no,
+							"work_order_data":doc.work_order_data
+
+							})
+						
 						else:
-							sq_no =  ""
-					else:
-						price = k.price_ea
-						source = "TSL Inventory"
-						sq_no = ""
-					exr = get_exchange_rate("KWD","AED")
+							price = k.price_ea
+							source = "TSL Inventory"
+							sq_no = ""
+							self.append("item_price_details",{
+							"item":k.part,
+							"item_source":source,
+							"model":k.model,
+							"price":price,
+							"amount":k.total,
+							# "supplier_quotation":sq_no,
+							"work_order_data":doc.work_order_data
 
-					if self.company == "TSL COMPANY - UAE":
-						self.append("item_price_details",{
-						"item":k.part,
-						"item_source":source,
-						"model":k.model,
-						"price":price * exr,
-						"amount":k.total * exr,
-						"supplier_quotation":sq_no,
-						"work_order_data":doc.work_order_data
-
-						})
-					else:
-						self.append("item_price_details",{
-						"item":k.part,
-						"item_source":source,
-						"model":k.model,
-						"price":price,
-						"amount":k.total,
-						"supplier_quotation":sq_no,
-						"work_order_data":doc.work_order_data
-
-						})
-					
-				labour_value = 0
-				for t in tc:
-					labour_value += t.total_price
-				if parts_priced:
-					for pp in parts_priced:
-						cost = float(pp.total_material_cost)
+							})
+						
+			labour_value = 0
+			for t in tc:
+				labour_value += t.total_price
+			if parts_priced:
+				for pp in parts_priced:
+					cost = float(pp.total_material_cost)
+		
 			
-				
-					if not self.is_multiple_quotation and self.technician_hours_spent:
-							self.actual_cost = round(labour_value + cost)
-					else:
-						
-
+				if not self.is_multiple_quotation and self.technician_hours_spent:
 						self.actual_cost = round(labour_value + cost)
-						
-					if self.after_discount_cost:
-						self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
-	
+				else:
+					
+
+					self.actual_cost = round(labour_value + cost)
+					
+				if self.after_discount_cost:
+					self.in_words1 = frappe.utils.money_in_words(self.after_discount_cost) or "Zero"
+
 	if self.quotation_type == "Internal Quotation - Supply":
 		l = []
 		fc = cc = pc = additional =0
@@ -587,7 +634,6 @@ def get_quote(source,type = None):
 			if doc.is_multiple_quotation and ic.item_code:
 				ic.rate = ic.margin_amount
 				ic.item_price = ic.margin_amount
-			
 				
 	else:
 		for ic in doclist.get('items'):
@@ -601,6 +647,46 @@ def get_quote(source,type = None):
 			if ic.item_code:
 				ic.rate = ic.margin_amount
 			
+					
+				
+	return doclist
+
+@frappe.whitelist()
+def get_quote_ksa(source,type = None):
+	target_doc = frappe.new_doc("Quotation")
+	doc = frappe.get_doc("Quotation",source)
+	if not doc.is_multiple_quotation:
+		for i in doc.items:
+			rate = i.margin_amount
+
+	def postprocess(source, target_doc):
+		target_doc.quotation_type = type
+		if type == "Customer Quotation - Repair":
+			target_doc.overall_discount_amount = 0
+			target_doc.margin_rate = 0
+			target_doc.discount_amount = 0
+			# target_doc.taxes_and_charges = "UAE VAT 5% - TSL-UAE"
+		target_doc.append("quotation_history",{
+			"quotation_type":doc.quotation_type,
+			"status":doc.workflow_state,
+			"quotation_name":doc.name,
+		})
+
+
+	doclist = get_mapped_doc("Quotation",source , {
+		"Quotation": {
+			"doctype": "Quotation",
+			
+		},
+		"Quotation Item": {
+			"doctype": "Quotation Item",
+			
+		},
+	}, target_doc, postprocess)
+	
+	# for i in doc.items:
+		
+		
 					
 				
 	return doclist
@@ -687,7 +773,7 @@ def get_quote_pro(source,type = None):
 	def postprocess(source, target_doc):
 		target_doc.quotation_type = type
 		if type == "Customer Quotation - Project":
-			target_doc.naming_series = "PRO-QTN-CUS-DU-.YY.-"
+			target_doc.naming_series = "PCQ-DU.YY.-"
 			target_doc.overall_discount_amount = 0
 			target_doc.margin_rate = 0
 			target_doc.discount_amount = 0
@@ -776,17 +862,19 @@ def get_quotation_history(source,type = None):
 					unit_disc = disc
 
 					ic.rate = doc.after_discount_cost+disc
-					
+					ic.item_price = doc.after_discount_cost
+					# frappe.errprin("Yessss")
 				if not doc.is_multiple_quotation and ic.item_code:
-					ic.rate = round(doc.unit_rate_price,2)
+					ic.rate = doc.after_discount_cost
 			
 		else:
 			for ic in doclist.get('items'):
 				if not ic.margin_amount:
-					frappe.errprint("yesss")
+				
 					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
 					unit_disc = disc
 					ic.rate = doc.after_discount_cost
+					ic.item_price = doc.after_discount_cost
 					# ic.rate = ic.rate
 				
 				else:
@@ -807,9 +895,11 @@ def get_quotation_history(source,type = None):
 
 @frappe.whitelist()
 def create_sal_inv(source):
+	frappe.errprint("yesss")
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
 	target_doc.purchase_order_no = doc.purchase_order_no 
+	target_doc.project_data = doc.project
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Sales Invoice",
@@ -850,10 +940,42 @@ def create_sal_inv(source):
 					i.rate= mg.margin_amount
 					i.model= mg.model_no
 					i.manufacturer= mg.manufacturer
+					i.project_data = mg.project
 				# else:
 				# 	i.rate= doc.after_discount_cost
 
 	return doclist
+
+@frappe.whitelist()
+def create_sal_inv_pro(source):
+	doc = frappe.get_doc("Quotation",source)
+	new_doc= frappe.new_doc("Quotation")
+	new_doc.company = doc.company
+	new_doc.party_name = doc.customer
+	new_doc.project = ""
+	# new_doc.sales_rep = doc.sales_rep
+	if doc.company == "TSL COMPANY - UAE":
+		new_doc.selling_price_list = "Standard Selling - UAE"
+	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
+	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
+	new_doc.branch = doc.branch
+	new_doc.project_data = doc.project
+	frappe.errprint(doc.items)
+	# for i in doc.items:
+		# new_doc.append("items",{
+		# 	"item_code":i.sku,
+		# 	"model":i.model_no,
+		# 	"item_name":i.description,
+		# 	"description":i.description,
+		# 	"uom":'Nos',
+		# 	"qty":i.qty,
+		# 	"model_no":i.model,
+		# 	"mfg":i.mfg,
+		# 	"project_data":i.project,
+		# })
+		
+	return new_doc
+
 
 @frappe.whitelist()
 def advance_pay(source):
@@ -896,10 +1018,10 @@ def update_cq(self, method):
 		p.status = "Pending Internal Approval"
 		p.save()
 
-	# if self.quotation_type == "Customer Quotation - Project" and self.project:
-	# 	p = frappe.get_doc("Project Data",self.project)
-	# 	p.status = "Q-Quoted"
-	# 	p.save()
+	if self.quotation_type == "Customer Quotation - Project" and self.project:
+		p = frappe.get_doc("Project Data",self.project)
+		p.status = "Q-Quoted"
+		p.save()
 		
 	# if self.items:
 	# 	for i in self.items:

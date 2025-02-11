@@ -405,18 +405,18 @@
    "fieldtype": "Section Break"
   },
   {
-   "depends_on": "eval: doc.total_leave_days > doc.leave_balance",
+   "depends_on": "eval: doc.total_leave_days > doc.leave_balance && doc.leave_type != \"Leave Without Pay\"",
    "fieldname": "lop_start_date",
    "fieldtype": "Date",
    "label": "Unpaid Start Date",
-   "mandatory_depends_on": "eval: doc.total_leave_days > doc.leave_balance"
+   "mandatory_depends_on": "eval: doc.total_leave_days > doc.leave_balance && doc.leave_type != \"Leave Without Pay\""
   },
   {
-   "depends_on": "eval: doc.total_leave_days> doc.leave_balance",
+   "depends_on": "eval: doc.total_leave_days> doc.leave_balance && doc.leave_type != \"Leave Without Pay\"",
    "fieldname": "lop_end_date",
    "fieldtype": "Date",
    "label": "Unpaid End Date",
-   "mandatory_depends_on": "eval: doc.total_leave_days > doc.leave_balance"
+   "mandatory_depends_on": "eval: doc.total_leave_days> doc.leave_balance && doc.leave_type != \"Leave Without Pay\""
   },
   {
    "fetch_from": "employee.user_id",
@@ -547,7 +547,7 @@
    "link_fieldname": "leave_application"
   }
  ],
- "modified": "2024-12-21 12:56:50.147544",
+ "modified": "2025-02-03 22:47:38.730069",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Application Form",

@@ -43,8 +43,8 @@ def create_leave_rejoining():
 	
 
 @frappe.whitelist()
-def cron_job_allocation():
-	job = frappe.db.exists('Scheduled Job Type', 'tsl.custom_py.leave_application.create_leave_rejoining')
+def schedule_create_leave_rejoining():
+	job = frappe.db.exists('Scheduled Job Type', 'leave_application.create_leave_rejoining')
 	if not job:
 		sjt = frappe.new_doc("Scheduled Job Type")  
 		sjt.update({

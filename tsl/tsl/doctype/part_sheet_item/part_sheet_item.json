@@ -70,8 +70,7 @@
    "allow_on_submit": 1,
    "fieldname": "total",
    "fieldtype": "Currency",
-   "label": "Total",
-   "read_only": 1
+   "label": "Total"
   },
   {
    "allow_on_submit": 1,
@@ -236,7 +235,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-09 15:29:25.557994",
+ "modified": "2025-01-27 13:14:40.976669",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",

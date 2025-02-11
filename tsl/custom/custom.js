@@ -372,6 +372,24 @@ frappe.ui.form.on('Quotation', {
 						}
 					});
 				}
+
+				if(frm.doc.company == "TSL COMPANY - KSA"){
+
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quote_ksa",
+						args: {
+							"source": frm.doc.name,
+							"type":"Customer Quotation - Repair"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+				}
                
                
 
@@ -443,6 +461,30 @@ frappe.ui.form.on('Quotation', {
 
 					}, ('Create'))
 		}
+
+		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer" && frm.doc.project){
+			frm.add_custom_button(__('Sales Invoice'), function(){
+	
+				frappe.call({
+					method: "tsl.custom_py.quotation.create_sal_inv_pro",
+					args: {
+						"source": frm.doc.name,
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+						}
+					}
+				});
+	
+	
+	
+						}, ('Create'))
+			}
+
+
 	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer" && frm.doc.is_advance_pay == 1){
 			frm.add_custom_button(__('Advance Payment'), function(){
 
@@ -740,7 +782,7 @@ frappe.ui.form.on('Quotation', {
 				});
 			}, __("Get Items From"), "btn-default");
 	}
-		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Quotation - Supply Tender" || frm.doc.quotation_type == "Internal Quotation - Supply" || frm.doc.quotation_type == "Revised Quotation - Supply") {
+		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Quotation - Supply Tender" || frm.doc.quotation_type == "Internal Quotation - Supply" ||  frm.doc.quotation_type == "Revised Quotation - Supply") {
 			frm.add_custom_button(__('Supply Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({
@@ -768,10 +810,20 @@ frappe.ui.form.on('Quotation', {
 										var tot_amt = 0;
 										var tot_qty=0;
 										for(var i=0;i<r.message.length;i++){
-							
 											var childTable = cur_frm.add_child("items");
+											console.log(r.message[i]["item_code"])
+											// frappe.db.get_value('Accounting Dimension', {'document_type': frm.doc.document_type}, 'document_type', (r) => {
+
+											
+											
 											childTable.item_code = r.message[i]["item_code"],
-											childTable.item_name = r.message[i]["item_name"],
+											frappe.db.get_value('Item', r.message[i]["item_code"], ['item_name','item_number']) .then(r	=>{
+												let a = r.message;
+												console.log(a)
+												childTable.item_number = a.item_number || ''
+												childTable.item_name = a.item_name
+											})
+											
 											childTable.supply_order_data = r.message[i]["sod"],
 											childTable.supplier_quotation = r.message[i]['sqtn'],
 											childTable.model_no = r.message[i]["model_no"],
@@ -1051,7 +1103,21 @@ frappe.ui.form.on("Quotation Item",{
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
 		console.log(margin_amount)
-		console.log('margin_amount')
+		console.log(item.item_code)
+
+		frappe.db.get_value('Item', {'name':item.item_code}, ['is_stock_item'], (r) => {
+			console.log(r.is_stock_item)
+			if(r.is_stock_item == 1){
+				console.log("Yess")
+				frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
+			}
+
+			else{
+				console.log("No")
+				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
+			}
+		
+			});
 		// frappe.model.set_value(cdt, cdn, "rate",margin_amount);
 		// item.margin_amount_value = disc_val
 		

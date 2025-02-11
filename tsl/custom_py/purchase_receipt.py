@@ -47,7 +47,7 @@ def on_submit(self,method):
         if i.work_order_data:
             count = 0
             ct = 0
-            frappe.errprint(i.work_order_data)
+            # frappe.errprint(i.work_order_data)
             e = frappe.db.exists("Evaluation Report",{"work_order_data":i.work_order_data})
             if e:
                 ev= frappe.get_doc("Evaluation Report",e)
@@ -96,7 +96,7 @@ def on_submit(self,method):
 def check_item(self,method):
     for i in self.items:
         if i.serial_no:
-            frappe.errprint(i.item_code)
+            # frappe.errprint(i.item_code)
             item = frappe.get_value("Item",{"name":i.item_code},["has_serial_no"])
             if item == 0:   
                 frappe.db.set_value("Item",i.item_code,"has_serial_no",1)

@@ -13,16 +13,18 @@
   "employee_name",
   "company",
   "designation",
+  "civil_id_no",
   "department",
   "currency",
   "column_break_7",
   "date_of_joining",
   "total_working_days",
   "type",
+  "last_day_of_work",
   "reason",
   "resignation_form",
-  "last_day_of_work",
   "column_break_xuj8a",
+  "date",
   "basic_salary",
   "food_allowance",
   "mobile_allowance",
@@ -32,6 +34,7 @@
   "other_allowances",
   "transportation_pay",
   "gosi_deduction",
+  "ctc",
   "pay_roll_details_section",
   "pay_start_date",
   "pay_end_date",
@@ -122,8 +125,7 @@
   {
    "fieldname": "last_day_of_work",
    "fieldtype": "Date",
-   "hidden": 1,
-   "label": "Last Day of Work"
+   "label": "Date"
   },
   {
    "default": "0",
@@ -358,7 +360,7 @@
    "fieldtype": "Select",
    "label": "Reason",
    "mandatory_depends_on": "eval:doc.type == \"Termination\"",
-   "options": "\nBad Performance\nNot Returned from Leave\nMisbehaviour\nFraud"
+   "options": "\nBad Performance\nNot Returned from Leave\nMisbehaviour\nFraud\nTermination of Contract"
   },
   {
    "fieldname": "leave_balance",
@@ -491,12 +493,32 @@
    "label": "GOSI Deduction",
    "options": "currency",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "employee.ctc",
+   "fieldname": "ctc",
+   "fieldtype": "Currency",
+   "label": "CTC",
+   "options": "currency"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "options": "today()"
+  },
+  {
+   "fetch_from": "employee.civil_id_no",
+   "fieldname": "civil_id_no",
+   "fieldtype": "Data",
+   "label": "Civil ID No"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-28 20:51:47.238686",
+ "modified": "2025-01-28 11:10:23.441315",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Full and Final Settlement",

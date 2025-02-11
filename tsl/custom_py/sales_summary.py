@@ -35,10 +35,18 @@ def get_wod(from_date,to_date,company):
     data += '<table class="table table-bordered" width: 100%;>'
     data += '<tr>'
     
+    branch = ""
+    if company == "TSL COMPANY - Kuwait":
+        branch = "Kuwait" 
+    if company == "TSL COMPANY - UAE":
+        branch = "UAE" 
     data += '<td colspan = 3 style="border-color:#000000;"><img src = "/files/TSL Logo.png" align="left" width ="300"></td>'
-    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b style="color:#055c9d;">TSL Company<br>Branch - Kuwait</b></center></h2></td>'
-    data += '<td colspan = 3 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
-    
+    data += '<td colspan = 3 style="border-color:#000000;"><h2><center><b style="color:#055c9d;">TSL Company<br>Branch - %s</b></center></h2></td>' %(branch)    
+    if company == "TSL COMPANY - Kuwait":   
+        data += '<td colspan = 3 style="border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="100"></center></td>'
+    if company == "TSL COMPANY - UAE":
+        data += '<td colspan = 3 style="border-color:#000000;"><center><br><img src = "/files/Flag_of_the_United_Arab_Emirates.svg.jpg" width ="140"></center></td>'
+
     data += '</tr>'
 
     data += '<tr>'
@@ -55,18 +63,35 @@ def get_wod(from_date,to_date,company):
     data += '<td colspan = 2 style="border-color:#000000;background-color:#0e86d4;color:white;"><center><b style="color:white;">Total Amount(Quoted)</b></center></td>'
     
     data += '</tr>'
-    wo = frappe.db.sql(""" select DISTINCT sales_rep from `tabWork Order Data` where company = '%s' """ %(company) ,as_dict =1)
-    data += '<tr>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">Salesman</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'  
-    data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'	
-    data += '</tr>'
+    wo = frappe.db.sql(""" select DISTINCT name from `tabSales Person` where company = '%s' """ %(company) ,as_dict =1)
+    if company == "TSL COMPANY - Kuwait":
+        data += '<tr>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">Salesman</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in KD)</b></center></td>'  
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in KD)</b></center></td>'	
+        data += '</tr>'
+
+    if company == "TSL COMPANY - UAE":
+        data += '<tr>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">Salesman</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">WO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#145da0;color:white;"><center><b style="color:white;">SO(in AED)</b></center></td>'
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">WO(in AED)</b></center></td>'  
+        data += '<td style="border-color:#000000;width:10%;background-color:#0e86d4;color:white;"><center><b style="color:white;">SO(in AED)</b></center></td>'	
+        data += '</tr>'
+
+    
+    
     current_date_time = datetime.now()
 
     # Extract and print the current date
@@ -84,30 +109,55 @@ def get_wod(from_date,to_date,company):
     s_received = 0
     sup_quoted_sod = 0
     
+    
     for i in wo:
-        if not i["sales_rep"] == None:
-            if not i["sales_rep"] == 'Sales Team' and not i["sales_rep"] == 'Walkin' and not i["sales_rep"] == 'OMAR' and not i["sales_rep"] == '' and not i["sales_rep"] == 'Mazz':   
+        if not i["name"] == None:
+            if not i["name"] == 'Sales Team' and not i["name"] == 'Walkin' and not i["name"] == 'OMAR' and not i["name"] == '' and not i["name"] == 'Mazz' and not i["name"] == 'Abdullah' and not i["name"] == "karoline" and not i["name"] == "Dilshad" and not i["name"] == "Dhinesh" and not i["name"] == "Karoline" and not i["name"] == "Nour" and not i["name"] == "Mohannad" and not i["name"] == "Samar Moussa" and not i["name"] == "Rana Ali":  
+            
+            # if i["name"] == 'Vazeem':   
+            
                 gt = 0
-                sales = frappe.get_value("Sales Person",i["sales_rep"],["user","name"])
+                sales = frappe.get_value("Sales Person",i["name"],["user","name"])
                 
                 #RSI - wd
                 gr = frappe.get_all("Sales Invoice",{"department":"Repair - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0]},["*"])
-                for i in gr:
-                    gt = gt + i.outstanding_amount
+                if gr:
+                    for i in gr:
+                        gt = gt + i.outstanding_amount
                 
                 #Invcd - sod
 
                 st = 0
                 sr = frappe.get_all("Sales Invoice",{"department":"Supply - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0]},["*"])
-                for i in sr:
-                    st = st + i.outstanding_amount
+                if sr:
+                    for i in sr:
+                        st = st + i.outstanding_amount
+                
+                total_rsi_old = 0
+                #RSI - wd - old
+                wds_rsi_old = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]},["*"])
+                for i in wds_rsi_old:
+                    total_rsi_old  = total_rsi_old + i.old_wo_q_amount + i.old_wo_vat
+
+                #invoiced-so-old
+                soinv_old = 0
+                sup_invoiced = frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Invoiced","posting_date": ["between", (Week_start,current_date)]},["*"])
+                for i in sup_invoiced:
+                    if i.so_currency_old and i.so_currency_old == "USD":
+                        exr = get_exchange_rate("USD","AED")
+                        i.so_old_total_amt = i.so_old_total_amt * exr
+                        soinv_old = soinv_old + i.so_old_total_amt
+                    else:
+                        soinv_old = soinv_old + i.so_old_total_amt
+                    # rsc_old = rsc_old + i.old_wo_vat
+
 
                 #RSC - wd
                 wds_rsc = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"status":"RSC-Repaired and Shipped Client","posting_date": ["between", (Week_start,current_date)]},["*"])
                 q_m = 0
                 q_m_2 = 0
                 for j in wds_rsc:
-                    frappe.errprint(j.name)
+                    
                     q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                         `tabQuotation`.default_discount_percentage as dis,
                         `tabQuotation`.approval_date as a_date,
@@ -123,7 +173,7 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if q_amt:
-                        # frappe.errprint(i.name)
+                        
                         if q_amt[0]["is_m"] == 1:
                             per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
                             q_amt = q_amt[0]["up"] - per
@@ -162,13 +212,13 @@ def get_wod(from_date,to_date,company):
                 #RSC-old
                 rsc_old = 0
                 for i in wds_rsc:
-                    rsc_old = rsc_old + i.old_wo_q_amount
-            
+                    rsc_old = rsc_old + i.old_wo_q_amount + i.old_wo_vat
+                    # rsc_old = rsc_old + i.old_wo_vat
                 rsc_total = q_m + q_m_2 + rsc_old
 
                    
                 #Delivered
-                sup_in = frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Delivered","posting_date": ["between", (Week_start,current_date)]})
+                sup_in = frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Delivered","posting_date": ["between", (Week_start,current_date)]},["*"])
                 sp_del =0
                 sp_del_2 =0
                 for j in sup_in:
@@ -222,10 +272,27 @@ def get_wod(from_date,to_date,company):
                             else:
                                 q_amt_2 = sup_qamt_del_2[0]["adc"]
                                 sp_del_2 = sp_del_2 + q_amt_2
-     
                 
+                #delivered-so-old
+                sodel_old = 0
+                for i in sup_in:
+                    if i.so_currency_old and i.so_currency_old == "USD":
+                        exr = get_exchange_rate("USD","AED")
+                        i.so_old_total_amt = i.so_old_total_amt * exr
+                        sodel_old  = sodel_old  + i.so_old_total_amt
+                    else:
+                        sodel_old  = sodel_old  + i.so_old_total_amt
+                    # rsc_old = rsc_old + i.old_wo_vat
+
+     
+                #RSC-old
+                rsc_old = 0
+                for i in wds_rsc:
+                    rsc_old = rsc_old + i.old_wo_q_amount + i.old_wo_vat
+                    # rsc_old = rsc_old + i.old_wo_vat
+                rsc_total = q_m + q_m_2 + rsc_old
             
-                s_del_total = sp_del + sp_del_2
+                s_del_total = sp_del + sp_del_2 + sodel_old
 
                 #RS				
                 wds_rs = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"status":"RS-Repaired and Shipped","posting_date": ["between", (Week_start,current_date)]},["*"])
@@ -288,17 +355,18 @@ def get_wod(from_date,to_date,company):
                 #rs-old
                 rs_old = 0
                 for i in wds_rs:
-                    rs_old = rs_old + i.old_wo_q_amount
+                    rs_old = rs_old + i.old_wo_q_amount + i.old_wo_vat
               
                 rs_total = rs_am + rs_am_2 + rs_old
 
 
 
                 #Received
-                sup_rec = frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Received","posting_date": ["between", (Week_start,current_date)]})
+                sup_rec = frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Received","posting_date": ["between", (Week_start,current_date)]},["*"])
 
                 sp_rec =0
                 sp_rec_2 =0
+
                 for j in sup_rec:
                     sup_qamt_rec = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                         `tabQuotation`.default_discount_percentage as dis,
@@ -316,7 +384,7 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if sup_qamt_rec:
-                        # frappe.errprint(i.name)
+                #         
                         if sup_qamt_rec[0]["is_m"] == 1:
                             per = (sup_qamt_rec[0]["up"] * sup_qamt_rec[0]["dis"])/100
                             q_amt = (sup_qamt_rec[0]["up"] - per) * sup_qamt_rec[0]["qty"]
@@ -334,6 +402,7 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation Item`.qty as qty,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -342,6 +411,7 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if sup_qamt_rec_2:
+                        # if sup_qamt_rec_2:
                             if sup_qamt_rec_2[0]["is_m"] == 1:
                                 per = (sup_qamt_rec_2[0]["up"] * sup_qamt_rec_2[0]["dis"])/100
                                 q_amt_2 = (sup_qamt_rec_2[0]["up"] - per) * sup_qamt_rec_2[0]["qty"]
@@ -352,9 +422,19 @@ def get_wod(from_date,to_date,company):
                                 sp_rec_2 = sp_rec_2 + q_amt_2
      
                 
-            
+                #rec-so-old
+                sorec_old = 0
+                for i in sup_rec:
+                    if i.so_currency_old and i.so_currency_old == "USD":
+                        exr = get_exchange_rate("USD","AED")
+                        i.so_old_total_amt = i.so_old_total_amt * exr
+                        sorec_old = sorec_old + i.so_old_total_amt
+                    else:
+                        sorec_old = sorec_old + i.so_old_total_amt
+                    # rsc_old = rsc_old + i.old_wo_vat
+
                 
-                s_rec_total =sp_rec + sp_rec_2
+                s_rec_total =sp_rec + sp_rec_2 + sorec_old
 
                 #q-quoted-wd
                 
@@ -418,16 +498,17 @@ def get_wod(from_date,to_date,company):
                 #quoted-old
                 q_old = 0
                 for i in wds_quot:
-                    q_old = q_old + i.old_wo_q_amount
+                    q_old = q_old + i.old_wo_q_amount + i.old_wo_vat
              
                 wd_total_quot =   quot_am + quot_am_2 + q_old
 
 
                 #Quoted-sod
-                sup_quoted= frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Quoted","posting_date": ["between", (Week_start,current_date)]})
+                sup_quoted= frappe.get_all("Supply Order Data",{"sales_rep":sales[1],"status":"Quoted","posting_date": ["between", (Week_start,current_date)]},["*"])
 
                 sp_qted =0
                 sp_qted_2 =0
+
                 for j in sup_quoted:
                     sup_qamt_qted = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                         `tabQuotation`.default_discount_percentage as dis,
@@ -485,15 +566,25 @@ def get_wod(from_date,to_date,company):
      
                 
             
-                
-                sup_quoted_total = sp_qted + sp_qted_2
+                #quoted-so-old
+                soq_old = 0
+                for i in sup_quoted:
+                    if i.so_currency_old and i.so_currency_old == "USD":
+                        exr = get_exchange_rate("USD","AED")
+                        i.so_old_total_amt = i.so_old_total_amt * exr
+                        soq_old = soq_old + i.so_old_total_amt
+                    else:
+                        soq_old = soq_old + i.so_old_total_amt
+                    # rsc_old = rsc_old + i.old_wo_vat
+
+                sup_quoted_total = sp_qted + sp_qted_2 + soq_old
 
 
                 data += '<tr>'
                 data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(sales[1])
-                gt = round(gt)
+                gt = round(gt) + total_rsi_old
                 data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(gt):,}" or 0) 
-                st =round(st)
+                st =round(st) + soinv_old
                 data += '<td style="border-color:#000000;"><center><b>%s</b></center></td>' %(f"{round(st):,}" or 0) 
                 # total_rsc = total_rsc + rsc_total
                 rsc_total = round(rsc_total)

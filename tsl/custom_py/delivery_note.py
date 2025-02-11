@@ -19,7 +19,7 @@ def on_update_after_submit(self,method):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
-                  frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
+                  frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                  
             
                #if there is invoice and NER status will be RSI
@@ -38,6 +38,11 @@ def on_update_after_submit(self,method):
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                   
+               # elif dn.invoice_no and not  (dn.status_cap or dn.mistaken_ner ==1):
+               #    frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
+               #    frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+               #    frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
+               #    frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
 
                elif (dn.status_cap or dn.mistaken_ner ==1) and dn.payment_entry_reference and dn.invoice_no:
                   wd = frappe.get_doc("Work Order Data",wod)

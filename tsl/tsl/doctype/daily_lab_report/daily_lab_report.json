@@ -47,16 +47,16 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
+   "fieldtype": "Select",
    "label": "Company",
-   "options": "Company"
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-04 07:22:23.596282",
+ "modified": "2025-02-08 09:17:18.975934",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Daily Lab Report",

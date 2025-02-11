@@ -206,7 +206,6 @@ def get_roles(user_id):
 	else:
 		return False
 
-
 @frappe.whitelist()
 def trigger_mail(name,workflow_state = None,email = None,leave_approver = None):
 	if leave_approver:
@@ -244,6 +243,29 @@ def trigger_mail(name,workflow_state = None,email = None,leave_approver = None):
 			frappe.msgprint(_("Email sent to {0}").format(email))
 		except frappe.OutgoingEmailError:
 			pass
+			
+@frappe.whitelist()
+def trigger_mail_to_hr(name,workflow_state = None,company = None,leave_approver = None):
+	if company == "TSL COMPANY - KSA":
+		email= ['admin@tsl-me.com','hr@tsl-me.com','yousuf@tsl-me.com']
+	else:
+		email= ['hr@tsl-me.com','yousuf@tsl-me.com']
+	parent_doc = frappe.get_doc("Leave Application Form", name)
+	args = parent_doc.as_dict()
+
+	email_template = frappe.get_doc("Email Template", "Leave Approval Notification")
+	subject = frappe.render_template(email_template.subject, args)
+	message = frappe.render_template(email_template.response, args)
+	try:
+		frappe.sendmail(
+			recipients=email,
+			sender= "yousuf@tsl-me.com",
+			subject = subject,
+			message = message,
+		)
+		frappe.msgprint(_("Email sent to {0}").format(email))
+	except frappe.OutgoingEmailError:
+		pass
 
 @frappe.whitelist()
 def validate_balance_leaves(company,from_date,to_date,employee,leave_type,half_day = None,half_day_date = None):
@@ -300,10 +322,9 @@ def get_number_of_leave_days(
 			number_of_days = date_diff(to_date, from_date) + 1
 	else:
 		number_of_days = date_diff(to_date, from_date) + 1
-	if company == "TSL COMPANY - Kuwait":
-		number_of_days = flt(number_of_days) - flt(
-			get_holidays_no(employee, from_date, to_date, holiday_list=holiday_list)
-		)
+	number_of_days = flt(number_of_days) - flt(
+		get_holidays_no(employee, from_date, to_date, holiday_list=holiday_list, company=company)
+	)
 	return number_of_days
 
 @frappe.whitelist()
@@ -331,17 +352,24 @@ def get_number_of_leave_days_lop(
 		number_of_days = date_diff(to_date, from_date) + 1
 	return number_of_days
 
-def get_holidays_no(employee, from_date, to_date, holiday_list=None):
+def get_holidays_no(employee, from_date, to_date, holiday_list=None, company = None):
 	"""get holidays between two dates for the given employee"""
 	if not holiday_list:
 		holiday_list = get_holiday_list_for_employee(employee)
-
-	holidays = frappe.db.sql(
-		"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
-		where h1.parent = h2.name and h1.holiday_date between %s and %s
-		and h2.name = %s""",
-		(from_date, to_date, holiday_list),
-	)[0][0]
+	if company == "TSL COMPANY - Kuwait":
+		holidays = frappe.db.sql(
+			"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+			where h1.parent = h2.name and h1.holiday_date between %s and %s
+			and h2.name = %s""",
+			(from_date, to_date, holiday_list),
+		)[0][0]
+	else:
+		holidays = frappe.db.sql(
+			"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+			where h1.parent = h2.name and h1.holiday_date between %s and %s
+			and h2.name = %s and h1.weekly_off = 0 """,
+			(from_date, to_date, holiday_list),
+		)[0][0]
 
 	return holidays
 
@@ -379,7 +407,16 @@ def trigger_mail_on_lap_form():
 			)
 		except frappe.OutgoingEmailError:
 			pass
-		
+
+def schedule_trigger_mail_on_lap_form():
+	job = frappe.db.exists('Scheduled Job Type', 'leave_application_form.trigger_mail_on_lap_form')
+	if not job:
+		sjt = frappe.new_doc("Scheduled Job Type")  
+		sjt.update({
+			"method" : 'tsl.tsl.doctype.leave_application_form.leave_application_form.trigger_mail_on_lap_form',
+			"frequency" : 'Daily'
+		})
+		sjt.save(ignore_permissions=True)
 
 def get_approved_leaves_for_period(employee, leave_type, from_date, to_date):
 	LeaveApplication = frappe.qb.DocType("Leave Application Form")

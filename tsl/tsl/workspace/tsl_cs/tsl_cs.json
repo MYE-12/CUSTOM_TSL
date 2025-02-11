@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"eHgRXYVvPj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Supply Order\",\"col\":3}},{\"id\":\"347acSyDb1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Project\",\"col\":3}},{\"id\":\"xNP1fZvUlM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Project\",\"col\":3}},{\"id\":\"64teJCNQ-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"0LuhnL2Rxa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Project Data\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"TrOGgNNNd7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Form\",\"col\":3}},{\"id\":\"nprEzKiAli\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"s3rAaHfJ_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Ready To Quote\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - SP\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - NER\",\"col\":3}},{\"id\":\"2y6Hi1XYG9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RS\",\"col\":3}},{\"id\":\"JV6zeGGRb5\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Supply Order Data</span>\",\"col\":12}},{\"id\":\"cXE8-y7G7M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"S - Parts Priced\",\"col\":3}},{\"id\":\"gPncg4k92s\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"S - Received\",\"col\":3}},{\"id\":\"KIMtZcRr-U\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Projects <br></b></span>\",\"col\":12}},{\"id\":\"nM-tlbpwLq\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b></b></span>\",\"col\":12}},{\"id\":\"aPYgJNAvSL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Project\",\"col\":3}},{\"id\":\"IF6LbpIb69\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects\",\"col\":3}},{\"id\":\"ydwE2_9rLX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Project Data\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Quotation</span>\",\"col\":12}},{\"id\":\"JeWgCQic1I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Pending\",\"col\":3}},{\"id\":\"f7vfK0s_X5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q-Customer Quoted\",\"col\":3}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}},{\"id\":\"6TRDAag1jw\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Report &amp; Master</span>\",\"col\":12}},{\"id\":\"vMJgYLaxxB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Report\",\"col\":3}},{\"id\":\"QZclxZbfW_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}},{\"id\":\"CUMLCdbvbw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Status\",\"col\":3}},{\"id\":\"TaEzam1pOv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WO Approval\",\"col\":3}},{\"id\":\"s9Zd3sCtZ0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Report Dashboard\",\"col\":3}}]",
+ "content": "[{\"id\":\"OFjx8M6q1k\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Forms</span>\",\"col\":12}},{\"id\":\"dmxFzM0gvp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"eHgRXYVvPj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Supply Order\",\"col\":3}},{\"id\":\"64teJCNQ-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Data\",\"col\":3}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"0KNVvTT3we\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"6neX5LDCbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Return Note\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"c-6_6qIV0P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rCUOwPgKLg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"TrOGgNNNd7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Form\",\"col\":3}},{\"id\":\"nprEzKiAli\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"IypbRojJuj\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"s3rAaHfJ_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Ready To Quote\",\"col\":3}},{\"id\":\"NRM6AWWRya\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - SP\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - NER\",\"col\":3}},{\"id\":\"2y6Hi1XYG9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - RS\",\"col\":3}},{\"id\":\"JV6zeGGRb5\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Supply Order Data</span>\",\"col\":12}},{\"id\":\"cXE8-y7G7M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"S - Parts Priced\",\"col\":3}},{\"id\":\"gPncg4k92s\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"S - Received\",\"col\":3}},{\"id\":\"KIMtZcRr-U\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Projects <br></b></span>\",\"col\":12}},{\"id\":\"nM-tlbpwLq\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b></b></span>\",\"col\":12}},{\"id\":\"aPYgJNAvSL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Project\",\"col\":3}},{\"id\":\"IF6LbpIb69\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects\",\"col\":3}},{\"id\":\"aY4kxCeVty\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Ready to Quote\",\"col\":3}},{\"id\":\"brQIl6Mqkb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"PQ-Internal Pending\",\"col\":3}},{\"id\":\"pe_kkgySnR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"PQ-Internal Approved\",\"col\":3}},{\"id\":\"fZrltLo8dW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"PQ-Quoted to Customer\",\"col\":3}},{\"id\":\"McxzxPr4Uc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"PQ- Approved by Customer\",\"col\":3}},{\"id\":\"ecqMgV33m0\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Quotation</span>\",\"col\":12}},{\"id\":\"JeWgCQic1I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Pending\",\"col\":3}},{\"id\":\"f7vfK0s_X5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q-Customer Quoted\",\"col\":3}},{\"id\":\"ADviIk-ZMr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Internal Approved\",\"col\":3}},{\"id\":\"eRtWjX6sLY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Q - Customer Approved \",\"col\":3}},{\"id\":\"6TRDAag1jw\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Report &amp; Master</span>\",\"col\":12}},{\"id\":\"vMJgYLaxxB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Service Call Report\",\"col\":3}},{\"id\":\"QZclxZbfW_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Status\",\"col\":3}},{\"id\":\"CUMLCdbvbw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Order Status\",\"col\":3}},{\"id\":\"TaEzam1pOv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WO Approval\",\"col\":3}},{\"id\":\"s9Zd3sCtZ0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Report Dashboard\",\"col\":3}}]",
  "creation": "2023-08-31 08:47:37.856270",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL CS",
  "links": [],
- "modified": "2025-01-02 10:37:41.198680",
+ "modified": "2025-02-05 15:49:00.777029",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL CS",
@@ -26,7 +26,7 @@
    "role": "Admin"
   }
  ],
- "sequence_id": 8.0,
+ "sequence_id": 6.0,
  "shortcuts": [
   {
    "color": "Grey",
@@ -68,10 +68,19 @@
    "type": "DocType"
   },
   {
-   "color": "Pink",
+   "color": "Grey",
    "doc_view": "List",
-   "label": "Project",
+   "label": "Ready to Quote",
    "link_to": "Project Data",
+   "stats_filter": "{\"status\":[\"=\",\"Parts Priced\"],\"docstatus\":[\"=\",\"1\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "PQ- Approved by Customer",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Approved By Customer\"],\"quotation_type\":[\"=\",\"Customer Quotation - Project\"]}",
    "type": "DocType"
   },
   {
@@ -82,11 +91,11 @@
    "type": "DocType"
   },
   {
-   "color": "Pink",
+   "color": "Grey",
    "doc_view": "List",
-   "label": "Projects",
-   "link_to": "Project Data",
-   "stats_filter": "{\"project\":[\"is\",\"set\"]}",
+   "label": "PQ-Quoted to Customer",
+   "link_to": "Quotation",
+   "stats_filter": "{\"workflow_state\":[\"=\",\"Quoted to Customer\"],\"quotation_type\":[\"=\",\"Customer Quotation - Project\"]}",
    "type": "DocType"
   },
   {
@@ -102,6 +111,14 @@
    "label": "Q-Customer Quoted",
    "link_to": "Quotation",
    "stats_filter": "{\"workflow_state\":[\"=\",\"Quoted to Customer\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "PQ-Internal Pending",
+   "link_to": "Quotation",
+   "stats_filter": "{\"project\":[\"is\",\"set\"],\"quotation_type\":[\"=\",\"Internal Quotation - Project\"],\"workflow_state\":[\"=\",\"Waiting For Approval\"]}",
    "type": "DocType"
   },
   {
@@ -123,6 +140,22 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "PQ-Internal Approved",
+   "link_to": "Quotation",
+   "stats_filter": "{\"project\":[\"is\",\"set\"],\"workflow_state\":[\"=\",\"Approved By Management\"],\"quotation_type\":[\"=\",\"Internal Quotation - Project\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "Projects",
+   "link_to": "Project Data",
+   "stats_filter": "{\"project\":[\"is\",\"set\"],\"docstatus\":[\"=\",\"1\"],\"status\":[\"=\",\"Initiated\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Service Call Report",
    "link_to": "Service Call Report",
    "type": "Report"
@@ -133,14 +166,6 @@
    "label": "W - Ready To Quote",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"in\",[\"Parts Priced\",\"AP-Available Parts\",\"W-Working\",null]],\"quoted\":[\"=\",0]}",
-   "type": "DocType"
-  },
-  {
-   "color": "Cyan",
-   "doc_view": "List",
-   "label": "Project Data",
-   "link_to": "Work Order Data",
-   "stats_filter": "{\"project\":[\"is\",\"set\"]}",
    "type": "DocType"
   },
   {

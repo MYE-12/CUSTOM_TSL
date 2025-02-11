@@ -25,6 +25,7 @@ jinja = {
         "tsl.custom_py.utils.get_mc_2",
         "tsl.custom_py.utils.purchase_report",
         "tsl.custom_py.utils.daily_lab_report",
+		"tsl.custom_py.utils.daily_lab_report_uae",
         "tsl.custom_py.utils.weekly_lab_report",
         "tsl.custom_py.sales_person_html.get_sales",
         # "tsl.custom_py.incentive_report_pdf.get_incentive",
@@ -60,7 +61,8 @@ doctype_js = {
 	"Loan Application" : ["custom/loan_application.js"],
 	"Request for Quotation" : ["custom/request_for_quotation.js"],
 	"Purchase Order":["custom/purchase_order.js"],
-	"Supplier Quotation":["custom/supplier_quotation.js"]
+	"Supplier Quotation":["custom/supplier_quotation.js"],
+	"Loan" : ["custom/loan.js"],
 	
 
 }
@@ -90,7 +92,14 @@ doctype_js = {
 
 # before_install = "tsl.install.before_install"
 # after_install = "tsl.install.after_install"
-
+after_migrate = [
+	"tsl.tsl.doctype.resignation_form.resignation_form.schedule_update_employee_status",
+	"tsl.tsl.doctype.planned_leaves.planned_leaves.schedule_create_planned_leaves",
+	"tsl.tsl.doctype.leave_application_form.leave_application_form.schedule_trigger_mail_on_lap_form",
+	"tsl.custom_py.leave_application.schedule_create_leave_rejoining",
+	"tsl.custom_py.leave_allocation.schedule_update_leave_allocation",
+	"tsl.custom_py.utils.schedule_allocate_leave_on_anniversary",
+]
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
@@ -113,9 +122,9 @@ doctype_js = {
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Salary Slip": "tsl.custom_py.salary_slip.CustomSalarySlip"
+}
 
 # Document Events
 # ---------------
@@ -160,6 +169,10 @@ doc_events = {
 			"tsl.custom_py.supplier_quotation.validate"
 
 		],
+
+		# "on_update_after_submit":[
+		# 	"tsl.custom_py.supplier_quotation.after_submit"
+		# ],
 
 	},
 	"Purchase Order":{
@@ -232,10 +245,35 @@ doc_events = {
 			"tsl.custom_py.payment_entry.on_submit"
 		]
 	},
+	"Leave Rejoining Form": {
+		"after_insert": [
+			"tsl.custom_py.utils.send_mail_to_hr_on_rejoining"
+		]
+	},
+	"Employee Appraisal": {
+		"after_insert": [
+			"tsl.custom_py.utils.send_mail_to_hr_on_rejoining"
+		]
+	},
+	"Resignation Form": {
+		"after_insert": [
+			"tsl.custom_py.utils.send_mail_to_hr_on_rejoining"
+		]
+	},
+	"Employee Clearance": {
+		"after_insert": [
+			"tsl.custom_py.utils.send_mail_to_hr_on_rejoining"
+		]
+	},
+	"Leave Salary": {
+		"after_insert": [
+			"tsl.custom_py.utils.send_mail_to_hr_on_rejoining"
+		]
+	},
 	"Leave Application": {
 		"on_submit": [
 			"tsl.custom_py.employee.update_used_tickets_in_employee"
-		]
+		],
 	},
     "Loan Application": {
 		# "on_submit": "tsl.custom_py.loan_application_tsl.update_loan_amount",
@@ -257,11 +295,11 @@ scheduler_events = {
 	"weekly": [
 		"tsl.custom_py.quotation.send_qtn_reminder_mail"
 	],
-    "cron": {
-		"30 19 * * *": [
-			"tsl.custom_py.utils.send_sales_reminder",
-		]
-	},
+    # "cron": {
+	# 	"30 19 * * *": [
+	# 		"tsl.custom_py.utils.send_sales_reminder",
+	# 	]
+	# },
 }
 # 	"all": [
 # 		"tsl.tasks.all"
@@ -298,16 +336,10 @@ from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry as fed
 from tsl.custom_py import utils as nfed
 fed.fill_employee_details = nfed.fill_employee_details
 
-# to override the working_days
-from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip as core
-from tsl.custom_py import utils as override
-core.get_working_days_details = override.get_working_days_details
-
-# to override the salary slip email template
-from tsl.custom_py import utils as cus_ss_mail
-core.email_salary_slip = cus_ss_mail.email_salary_slip
-
-
+#to override the include_holidays in total_working days
+from hrms.payroll.doctype.payroll_period import payroll_period as pp
+from tsl.custom_py import utils as cpp
+pp.get_payroll_period_days = cpp.get_payroll_period_days
 
 
 
@@ -356,4 +388,41 @@ user_data_fields = [
 # 	"tsl.auth.validate"
 # ]
 
-# fixtures = ["Property Setter"]
+# fixtures = [
+# 	"Quotation", # if you want to take complete list of documents in Quotation it can be done like this
+# 	"Property Setter", # same as above
+# 	"DocType Layout", # same as above
+# 	{
+# 		"dt": 'Custom Field',
+# 		"filters": [
+# 			[
+# 				"name", "in",
+# 					[
+# 						"Quotation-shipping_cost_uae", # to take fixture of a custom field. We can list any doc in this format
+# 					]
+# 			]
+# 		]
+# 	},
+# 	{
+# 		"dt": "Notification",
+# 		"filters" : [
+# 			[
+# 				"name" ,"in",
+# 				[
+# 					"Leave Re-Joining", # to take fixture of Notification (Leave Re-Joining)
+# 				]
+# 			]
+# 		]
+# 	},
+#     {
+# 		"dt": "Workflow",
+# 		"filters" : [
+# 			[
+# 				"name" ,"in",
+# 				[
+# 					"Quotation",
+# 				]
+# 			]
+# 		]
+# 	},
+# ]

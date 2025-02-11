@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "company",
   "column_break_hytar",
   "download",
   "section_break_ktl4m",
@@ -38,13 +39,19 @@
    "fieldname": "download",
    "fieldtype": "Button",
    "label": "Download PDF"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Select",
+   "label": "Company",
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-15 10:57:19.351597",
+ "modified": "2025-01-07 07:24:50.763351",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Purchase Report",

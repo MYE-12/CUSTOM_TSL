@@ -49,27 +49,34 @@ class EvaluationReport(Document):
 			if self.status == "Working":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
+				doc.save(ignore_permissions=True)
 			elif self.status == "Comparison":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "C-Comparison"
+				doc.save(ignore_permissions=True)
 			# elif self.status == "Spare Parts":
 			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			# 	doc.status = "Parts Priced"
 			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
+				frappe.errprint('hi')
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "AP-Available Parts"
+				doc.save(ignore_permissions=True)
 			# elif self.status == "Spare Parts" and self.parts_availability == "No":
 			# 	doc.status = "SP-Searching Parts"
 			
 			elif self.status == "Return Not Repaired":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNR-Return Not Repaired"
+				doc.save(ignore_permissions=True)
 			elif self.status == "Return No Fault":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RNF-Return No Fault"
+				doc.save(ignore_permissions=True)
 			elif self.status in ["Installed and Completed/Repaired","Customer Testing"]:
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "RS-Repaired and Shipped"
+				doc.save(ignore_permissions=True)
 			elif  self.status == "Customer Testing":
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "CT-Customer Testing"
@@ -568,26 +575,26 @@ def create_material_issue_from_ini_eval(name):
 		frappe.msgprint("Parts Released and Material Issue is Created")
 		
 	if ini.company == "TSL COMPANY - UAE":
-	
 		new_doc = frappe.new_doc("Stock Entry")
 		new_doc.company = "TSL COMPANY - UAE"
 		new_doc.stock_entry_type = "Material Issue"
 		new_doc.from_warehouse = "Dubai - TSL-UAE"
 		
 		for i in ini.items:
-			if not i.released == 1 and i.parts_availability == "Yes":
+			if i.released == 0 and i.parts_availability == "Yes":
+				frappe.errprint(i.part)
 				new_doc.append("items",{
 					's_warehouse':"Dubai - TSL-UAE",
 					'item_code':i.part,
 					'qty':i.qty,
 					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
 					'cost_center':"Main - TSL-UAE",
-					'work_order_data':ini.work_order_data
-					# 'conversion_factor':1,
+					'work_order_data':ini.work_order_data,
+					'conversion_factor':1,
 					# 'allow_zero_valuation_rate':1
 				})
 				new_doc.save(ignore_permissions = True)
-				new_doc.submit()
+				# new_doc.submit()
 
 		frappe.msgprint("Parts Released and Material Issue is Created")
 

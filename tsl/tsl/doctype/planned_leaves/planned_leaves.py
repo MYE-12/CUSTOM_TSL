@@ -80,12 +80,12 @@ def create_planned_leaves():
 			pl = frappe.get_doc("Planned Leaves", k.name)
 			pl.submit()
 
-
-# @frappe.whitelist()
-# def cron_job_allocation():
-# 	sjt = frappe.new_doc("Scheduled Job Type")  
-# 	sjt.update({
-# 		"method" : 'tsl.tsl.doctype.planned_leaves.planned_leaves.create_planned_leaves',
-# 		"frequency" : 'Daily',
-# 	})
-# 	sjt.save(ignore_permissions=True)
+def schedule_create_planned_leaves():
+	job = frappe.db.exists('Scheduled Job Type', 'planned_leaves.create_planned_leaves')
+	if not job:
+		sjt = frappe.new_doc("Scheduled Job Type")  
+		sjt.update({
+			"method" : 'tsl.tsl.doctype.planned_leaves.planned_leaves.create_planned_leaves',
+			"frequency" : 'Daily',
+		})
+		sjt.save(ignore_permissions=True)

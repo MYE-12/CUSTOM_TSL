@@ -20,32 +20,71 @@ from datetime import datetime
 
 @frappe.whitelist()
 def update_leave_allocation():
-    employees = frappe.get_all("Employee",{"status":"Active"},["*"])
+    employees = frappe.get_all("Employee", {"status": "Active"}, ["*"])
     current_date = datetime.now().date()
     first = get_first_day(current_date)
     last = get_last_day(current_date)
-    total_days = date_diff(last,first) + 1
-    per_day = 2.5/total_days
+    total_days = date_diff(last, first) + 1
     current_year = getdate().year
     first_date_of_year = f"{current_year}-01-01"
-    for emp in employees:
-        if frappe.db.exists("Leave Allocation",{'employee':emp.employee,'leave_type':"Annual Leave"}):
-            la = frappe.get_doc("Leave Allocation",{'employee':emp.employee,'leave_type':"Annual Leave"},["*"])
-            la.new_leaves_allocated = la.new_leaves_allocated + per_day
-            la.save(ignore_permissions=True)
-            la.submit()   
-        else:
-            la = frappe.new_doc("Leave Allocation")
-            la.employee = emp.name
-            la.leave_type = "Annual Leave"
-            la.new_leaves_allocated = per_day
-            la.from_date = first_date_of_year
-            la.to_date = "2100-12-31"
-            la.save(ignore_permissions=True)
-            la.submit()
 
-def cron_job_allocation():
-	job = frappe.db.exists('Scheduled Job Type', 'tsl.custom_py.leave_allocation.update_leave_allocation')
+    for emp in employees:
+        joining_date = emp.get('date_of_joining')
+        nationality = emp.get('nationality')
+        if joining_date:
+            years_of_service = (current_date - joining_date).days // 365
+            
+            if emp.get("company") == "COMPANY - KSA":
+                if years_of_service < 5 and nationality != "SAUDI":
+                    per_day = 2.5 / 21
+                else:
+                    per_day = 2.5 / total_days
+            else:
+                per_day = 2.5 / total_days
+            
+            if frappe.db.exists("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave"}):
+                la = frappe.get_doc("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave"}, ["*"])
+                la.new_leaves_allocated = la.new_leaves_allocated + per_day
+                la.save(ignore_permissions=True)
+                la.submit()
+            else:
+                la = frappe.new_doc("Leave Allocation")
+                la.employee = emp.name
+                la.leave_type = "Annual Leave"
+                la.new_leaves_allocated = per_day
+                la.from_date = first_date_of_year
+                la.to_date = "2100-12-31"
+                la.save(ignore_permissions=True)
+                la.submit()
+
+# @frappe.whitelist()
+# def update_leave_allocation():
+#     employees = frappe.get_all("Employee",{"status":"Active"},["*"])
+#     current_date = datetime.now().date()
+#     first = get_first_day(current_date)
+#     last = get_last_day(current_date)
+#     total_days = date_diff(last,first) + 1
+#     per_day = 2.5/total_days
+#     current_year = getdate().year
+#     first_date_of_year = f"{current_year}-01-01"
+#     for emp in employees:
+#         if frappe.db.exists("Leave Allocation",{'employee':emp.employee,'leave_type':"Annual Leave"}):
+#             la = frappe.get_doc("Leave Allocation",{'employee':emp.employee,'leave_type':"Annual Leave"},["*"])
+#             la.new_leaves_allocated = la.new_leaves_allocated + per_day
+#             la.save(ignore_permissions=True)
+#             la.submit()   
+#         else:
+#             la = frappe.new_doc("Leave Allocation")
+#             la.employee = emp.name
+#             la.leave_type = "Annual Leave"
+#             la.new_leaves_allocated = per_day
+#             la.from_date = first_date_of_year
+#             la.to_date = "2100-12-31"
+#             la.save(ignore_permissions=True)
+#             la.submit()
+
+def schedule_update_leave_allocation():
+	job = frappe.db.exists('Scheduled Job Type', 'leave_allocation.update_leave_allocation')
 	if not job:
 		sjt = frappe.new_doc("Scheduled Job Type")  
 		sjt.update({

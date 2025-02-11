@@ -23,13 +23,21 @@
   "customer_reference_number",
   "po_number",
   "supplier_name",
+  "tender_issue_date",
   "remarks",
+  "st",
+  "old_sod_no",
+  "so_old_quoted_amt",
+  "so_old_vat",
+  "so_old_total_amt",
+  "so_currency_old",
   "column_break_7",
   "image",
   "company",
   "branch",
   "posting_date",
   "department",
+  "project",
   "status",
   "reason",
   "payment_terms",
@@ -39,6 +47,8 @@
   "invoice_no",
   "invoice_date",
   "payment_entry_reference",
+  "payment_date",
+  "return_date",
   "advance_payment_amount",
   "advance_paid_date",
   "tender_closing",
@@ -60,12 +70,13 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "SOD-.YY.-\nST-K.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-\nSOD-DU.YY.-\nSOD-DU-P-.YY.-"
+   "options": "SOD-.YY.-\nST-K.YY.-\nSOD-R.YY.-\nSOD-D.YY.-\nSOD-J.YY.-\nSOD-K.YY.-\nSOD-DU.YY.-\nSOD-DU-O-.YY.-\nSOD-DU.YY.-P."
   },
   {
    "allow_on_submit": 1,
    "fieldname": "sales_rep",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Sales Rep",
    "options": "Sales Person"
   },
@@ -100,7 +111,6 @@
    "allow_on_submit": 1,
    "fieldname": "delivery",
    "fieldtype": "Date",
-   "hidden": 1,
    "label": "Delivery"
   },
   {
@@ -263,11 +273,11 @@
    "label": "Is Quotation Created"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "previously_quoted",
    "fieldtype": "Table",
    "label": "Previously Quoted",
-   "options": "Similar Item Repair",
-   "read_only": 1
+   "options": "Similar Item Repair"
   },
   {
    "fieldname": "section_break_30",
@@ -364,12 +374,70 @@
    "fieldname": "quotation_approved_date",
    "fieldtype": "Date",
    "label": "Quotation Approved Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tender_issue_date",
+   "fieldtype": "Date",
+   "label": "Tender Issue Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project Data",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "st",
+   "fieldtype": "Check",
+   "label": "ST"
+  },
+  {
+   "fieldname": "old_sod_no",
+   "fieldtype": "Int",
+   "in_standard_filter": 1,
+   "label": "Old Sod No"
+  },
+  {
+   "fieldname": "so_old_quoted_amt",
+   "fieldtype": "Float",
+   "label": "SO Old Quoted Amt"
+  },
+  {
+   "fieldname": "so_old_vat",
+   "fieldtype": "Data",
+   "label": "SO Old Vat"
+  },
+  {
+   "fieldname": "so_old_total_amt",
+   "fieldtype": "Float",
+   "label": "SO Old Total Amt"
+  },
+  {
+   "fieldname": "payment_date",
+   "fieldtype": "Date",
+   "label": "Payment Date"
+  },
+  {
+   "fieldname": "return_date",
+   "fieldtype": "Date",
+   "label": "Return Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "so_currency_old",
+   "fieldtype": "Data",
+   "label": "SO Currency Old"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-03 07:35:08.284733",
+ "modified": "2025-01-16 11:07:41.646588",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
