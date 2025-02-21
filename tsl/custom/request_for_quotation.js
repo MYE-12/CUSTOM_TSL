@@ -162,7 +162,7 @@ frappe.ui.form.on('Request for Quotation', {
                                                         item_child.description = v.part_name,
                                                         item_child.qty = v.qty,
                                                         item_child.uom = "Nos",
-                                                        item_child.warehouse = frm.doc.branch,
+                                                        // item_child.warehouse = frm.doc.branch,
                                                         item_child.branch =  frm.doc.branch,
                                                         item_child.work_order_data =  v.wod,
                                                         item_child.conversion_factor =1,

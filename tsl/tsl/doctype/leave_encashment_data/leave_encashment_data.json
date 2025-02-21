@@ -17,13 +17,14 @@
   "leave_type",
   "leave_balance",
   "encashable_days",
-  "amended_from",
+  "encashing_days",
   "payroll",
   "encashment_date",
   "additional_salary",
   "column_break_14",
   "currency",
-  "encashment_amount"
+  "encashment_amount",
+  "amended_from"
  ],
  "fields": [
   {
@@ -117,12 +118,12 @@
   },
   {
    "depends_on": "eval:(doc.docstatus==1 || doc.employee)",
+   "fetch_from": "employee.salary_currency",
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency",
    "print_hide": 1,
-   "read_only": 1,
    "reqd": 1
   },
   {
@@ -142,6 +143,11 @@
    "options": "Leave Encashment Data",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "encashing_days",
+   "fieldtype": "Float",
+   "label": "Encashing Days"
   }
  ],
  "is_submittable": 1,
@@ -151,7 +157,7 @@
    "link_fieldname": "ref_docname"
   }
  ],
- "modified": "2025-01-12 07:57:59.181790",
+ "modified": "2025-02-20 09:49:05.979956",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Encashment Data",

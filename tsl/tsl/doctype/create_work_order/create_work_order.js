@@ -59,7 +59,7 @@ frappe.ui.form.on('Create Work Order', {
 				"Kuwait - TSL": "Repair - Kuwait - TSL",
 				// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
 				"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
-				"Riyadh - TSL-SA": "Riyadh - TSL-SA",
+				"Riyadh - TSL- KSA": "Riyadh - Repair - TSL - KSA",
 				"Dubai - TSL": "Dubai - Repair - TSL-UAE"
 			}
 			frm.set_value("repair_warehouse", d[frm.doc.branch]);
@@ -329,7 +329,7 @@ frappe.ui.form.on('Create Work Order', {
 			"Kuwait - TSL": "Repair - Kuwait - TSL",
 			// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
 			"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
-			"Riyadh - TSL-SA": "Riyadh - TSL-SA",
+			"Riyadh - TSL- KSA": "Riyadh - TSL - KSA",
 			"Dubai - TSL": "Dubai - Repair - TSL-UAE"
 		}
 		frm.set_value("repair_warehouse", d[frm.doc.branch]);

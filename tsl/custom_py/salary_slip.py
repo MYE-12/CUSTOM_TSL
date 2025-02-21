@@ -384,7 +384,7 @@ class CustomSalarySlip(TransactionBase):
 		payroll_based_on = frappe.db.get_value("Payroll Settings", None, "payroll_based_on")
 		
 		working_days = frappe.db.get_value("Company Wise Payroll Days",{"company": self.company},"total_working_days")
-
+		frappe.errprint(working_days)
 		if not (joining_date and relieving_date):
 			joining_date, relieving_date = self.get_joining_and_relieving_dates()
 
@@ -433,6 +433,9 @@ class CustomSalarySlip(TransactionBase):
 		if payment_days > working_days:
 			payment_days = working_days
 
+		frappe.errprint("payment_days"+str(payment_days))
+		frappe.errprint("lwp"+str(lwp))
+		frappe.errprint("count_"+str(count_))
 		if flt(payment_days) > flt(lwp):
 			if frappe.db.exists("Leave Salary",{'employee':self.employee}):
 				self.payment_days = flt(payment_days) - flt(lwp) - flt(count_) - flt(annual_count)
@@ -576,6 +579,7 @@ class CustomSalarySlip(TransactionBase):
 		return payment_days
 
 	def get_holidays_for_employee(self, start_date, end_date):
+		frappe.errprint(get_holiday_dates_for_employee(self.employee, start_date, end_date))
 		return get_holiday_dates_for_employee(self.employee, start_date, end_date)
 
 	def calculate_lwp_or_ppl_based_on_leave_application(self, holidays, working_days_list, relieving_date):
@@ -681,6 +685,7 @@ class CustomSalarySlip(TransactionBase):
 				]
 
 			if d.status == "Half Day":
+				frappe.errprint("half")
 				equivalent_lwp = 1 - daily_wages_fraction_for_half_day
 
 				if d.leave_type in leave_type_map.keys() and leave_type_map[d.leave_type]["is_ppl"]:
@@ -697,6 +702,7 @@ class CustomSalarySlip(TransactionBase):
 				lwp += equivalent_lwp
 			elif d.status == "Absent":
 				absent += 1
+		frappe.errprint("lwppp"+str(lwp))
 		return lwp, absent
 
 	def add_earning_for_hourly_wages(self, doc, salary_component, amount):

@@ -416,6 +416,12 @@ frappe.ui.form.on('Leave Application Form', {
 			await promise.catch(() => frappe.throw());
 		}
 		let promise = new Promise((resolve, reject) => {
+			if(frm.doc.company == "TSL COMPANY - KSA"){
+				var hr_mail = "admin@tsl-me.com" 
+			}
+			else{
+				var hr_mail = "hr@tsl-me.com"
+			}
 			if (frm.selected_workflow_action == "Send to CEO") {
 				// CEO Approval
 				frm.call({
@@ -423,7 +429,8 @@ frappe.ui.form.on('Leave Application Form', {
 					args: {
 						"name": frm.doc.name,
 						"workflow_state": "Under CEO",
-						"email": "alkouh@tsl-me.com"
+						"email": "alkouh@tsl-me.com",
+						"hr_mail": hr_mail
 					},
 				})
 			}

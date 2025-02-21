@@ -5330,6 +5330,7 @@ def fill_employee_details(self):
 
 	for d in employees:
 		start_date = datetime.strptime(str(self.start_date), '%Y-%m-%d')
+		end_date = datetime.strptime(str(self.end_date), '%Y-%m-%d')
 		leave_salary = frappe.db.sql(""" select name from `tabLeave Salary` 
 							WHERE docstatus = 1 
 							AND employee = '%s' 
@@ -5338,7 +5339,12 @@ def fill_employee_details(self):
 							ORDER BY creation DESC
 							LIMIT 1
 						"""%(d['employee'],start_date.month,start_date.year))
-		if leave_salary:
+		fnf = frappe.db.get_value("Full and Final Settlement",{
+			"employee":d["employee"],
+			"last_day_of_work": ["between", (self.start_date, self.end_date)],
+			"docstatus":1
+		},['name'])
+		if leave_salary or fnf:
 			continue
 
 		self.append("employees", d)
@@ -6768,3 +6774,160 @@ def send_mail_to_hr(doc,method):
 			subject = message,
 			message = message
 		)
+
+
+# @frappe.whitelist()
+# def update_wod(import_file):
+# 	from datetime import datetime
+# 	filepath = get_file(import_file)
+# 	data = read_csv_content(filepath[1])
+# 	count = 0
+# 	for i in data[1:]:
+# 		count = count + 1
+# 		print(count)
+# 		# print(i[0])
+# 		if i[14] == "P" or i[6] == "p":
+# 			i[14] = 'P-Paid'
+# 		if i[14] == "RNRC":
+# 			i[14] = 'RNRC-Return Not Repaired Client'
+# 		if i[14] == "A":
+# 			i[14] = 'A-Approved'
+# 		if i[14] == "C":
+# 			i[14] = 'C-Comparison'
+# 		if i[14] == "CC":
+# 			i[14] = 'CC-Comparison Client'
+# 		if i[14] == "EP" or i[6] == "ED":
+# 			i[14] = 'EP-Extra Parts'
+# 		if i[14] == "NE":
+# 			i[14] = 'NE-Need Evaluation'
+# 		if i[14] == "NER":
+# 			i[14] = 'NER-Need Evaluation Return'
+# 		if i[14] == "Q":
+# 			i[14] = 'Q-Quoted'
+# 		if i[14] == "RNA":
+# 			i[14] = 'RNA-Return Not Approved'
+# 		if i[14] == "RNAC":
+# 			i[14] = 'RNAC-Return Not Approved Client'
+# 		if i[14] == "RNF":
+# 			i[14] = 'RNF-Return No Fault'
+# 		if i[14] == "RNFC":
+# 			i[14] = 'RNFC-Return No Fault Client'
+# 		if i[14] == "RNP":
+# 			i[14] = 'RNP-Return No Parts'
+# 		if i[14] == "RNPC":
+# 			i[14] = 'RNPC-Return No Parts Client'
+# 		if i[14] == "RNR":
+# 			i[14] = 'RNR-Return Not Repaired'
+# 		if i[14] == "RNRC":
+# 			i[14] = 'RNRC-Return Not Repaired Client'
+# 		if i[14] == "RS":
+# 			i[14] = 'RS-Repaired and Shipped'
+# 		if i[14] == "RSC":
+# 			i[14] = 'RSC-Repaired and Shipped Client'
+# 		if i[14] == "RSI":
+# 			i[14] = 'RSI-Repaired and Shipped Invoiced'
+# 		if i[14] == "SP":
+# 			i[14] = 'SP-Searching Parts'
+# 		if i[14] == "TR":
+# 			i[14] ='TR-Technician Repair'
+# 		if i[14] == "UE":
+# 			i[14] = 'UE-Under Evaluation'
+# 		if i[14] == "UTR":
+# 			i[14] = 'UTR-Under Technician Repair'
+# 		if i[14] == "W":
+# 			i[14] = "W-Working"
+# 		if i[14] == "WP":
+# 			i[14] = 'WP-Waiting Parts'
+# 		if i[14] == "CT":
+# 			i[14] = 'CT-Customer Testing'
+# 		w = frappe.db.exists("Work Order Data",{"old_wo_no":i[0],"company":"TSL COMPANY - UAE"})\
+		
+		
+
+# 		if w:
+# 			# if i[12]:
+# 			# 	i[12] = i[12].replace(",","")
+# 			# if i[13]:
+# 			# 	i[13] = i[13].replace(",","")
+# 			# if i[11]:
+# 			# 	i[11] = i[11].replace(",","")
+# 			wo = frappe.db.sql("""
+# 			UPDATE `tabWork Order Data` 
+# 			SET 
+# 				old_wo_q_amount = %s, 
+# 				old_wo_vat = %s, 
+# 				old_wo_total_amt = %s,
+# 				status = %s 
+# 			WHERE name = %s;
+# 			""", (i[12] or 0, i[11] or 0, i[13] or 0,i[14],w))
+
+# @frappe.whitelist()
+# def update_sod(import_file):
+# 	from datetime import datetime
+# 	filepath = get_file(import_file)
+# 	data = read_csv_content(filepath[1])
+# 	count = 0
+# 	for i in data[1:]:
+# 		count = count + 1
+# 		print(count)
+		
+# 		w = frappe.db.exists("Supply Order Data",{"old_sod_no":i[0],"company":"TSL COMPANY - UAE"})
+# 		if w:
+# 			# Extract the currency (letters)
+# 			text = str(i[16])
+# 			currency = ''.join(filter(str.isalpha, text))
+			
+
+# 			# Extract the numeric value (digits, commas, and dots)
+# 			numeric_value = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text))
+# 			# print(currency)
+			
+
+# 			text2 = str(i[17])
+
+# 			# Extract the currency (letters)
+# 			currency2 = ''.join(filter(str.isalpha, text2))
+
+# 			# Extract the numeric value (digits, commas, and dots)
+# 			numeric_value2 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text2))
+# 			# print(currency)
+
+# 			text3 = str(i[18])
+
+# 			# Extract the currency (letters)
+# 			currency3 = ''.join(filter(str.isalpha, text3))
+
+# 			# Extract the numeric value (digits, commas, and dots)
+# 			numeric_value3 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text3))
+# 			# print(currency)
+	
+# 			print(i[0])
+			
+# 			if currency == "AED":
+# 				print(currency)
+# 			else:
+# 				currency = "USD"
+# 				print("USD")
+
+# 			if i[19] == "PAID":
+# 				i[19] = 'Paid'
+# 			if i[19] == "APPROVED":
+# 				i[19] = 'Approved'
+# 			if i[19] == "NOT APPROVED":
+# 				i[19] = 'Approved'
+# 			if i[19] == "QUOTED":
+# 				i[19] = 'Quoted'
+# 			if i[19] == "INVOICED":
+# 				i[19] = 'Invoiced'
+				
+# 			wo = frappe.db.sql("""
+# 			UPDATE `tabSupply Order Data` 
+# 			SET 
+# 				so_old_quoted_amt = %s, 
+# 				so_old_vat = %s, 
+# 				so_old_total_amt = %s,
+# 				status = %s ,
+# 				so_currency_old = %s
+					  
+# 			WHERE name = %s;
+# 		""", (numeric_value or 0, numeric_value2 or 0, numeric_value3 or 0,i[19],currency,w))

@@ -2,6 +2,49 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Report Dashboard', {
+
+	onload(frm){
+		
+		frm.set_value("company","")
+		if(frm.doc.reports == "Sales Person Summary"){
+		if (frappe.session.user == "info@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - Kuwait")
+			// frm.doc.save()
+
+		}
+
+		if (frappe.session.user == "info-uae@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - UAE")
+			// frm.doc.save()
+		}
+	}
+
+		frm.trigger("get_data");
+
+	},
+
+	reports(frm){
+
+		if (frappe.session.user == "info@tsl-me.com"){
+			frm.set_value("company","")
+			if(frm.doc.reports == "Sales Person Summary"){
+				frm.set_value("company","TSL COMPANY - Kuwait")
+			}
+		}
+		
+		if (frappe.session.user == "info-uae@tsl-me.com"){
+			frm.set_value("company","")
+			if(frm.doc.reports == "Sales Person Summary"){
+				frm.set_value("company","TSL COMPANY - UAE")
+			}
+		}
+		
+
+		frm.trigger("get_data");
+
+	},
+
+
 	// refresh: function(frm) {
        
         

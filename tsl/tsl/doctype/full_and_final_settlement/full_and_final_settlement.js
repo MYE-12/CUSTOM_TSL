@@ -8,45 +8,47 @@ frappe.ui.form.on('Full and Final Settlement', {
         }
     },
     get_leave_balance: function (frm) {
-		frappe.call({
-			method: "hrms.hr.doctype.leave_application.leave_application.get_leave_balance_on",
-			args: {
-				employee: frm.doc.employee,
-				date: frm.doc.last_day_of_work || '',
-				to_date: frm.doc.last_day_of_work || '',
-				leave_type: "Annual Leave",
-				consider_all_leaves_in_the_allocation_period: 1,
-			},
-			callback: function (r) {
-				if (!r.exc && r.message) {
-					frm.set_value("leave_balance", r.message);
-					frappe.call({
-					    method:"tsl.custom_py.utils.calculate_leave_payment_amount",
-					    args:{
-					        "company": frm.doc.company,
-					        "total_working_days": frm.doc.total_working_days,
-					        "basic":frm.doc.ctc,
-					        "leave_balance":r.message
-					    },
-					    callback(k){
-					        if(k.message ){
-              	                frm.set_value("leave_payment_amount",k.message)
-					        }
-					    }
-					})
-                
-				} else {
-					frm.set_value("leave_balance", "0");
-				}
-			},
-		});
+        if(frm.doc.docstatus == 0){
+            frappe.call({
+                method: "hrms.hr.doctype.leave_application.leave_application.get_leave_balance_on",
+                args: {
+                    employee: frm.doc.employee,
+                    date: frm.doc.last_day_of_work || '',
+                    to_date: frm.doc.last_day_of_work || '',
+                    leave_type: "Annual Leave",
+                    consider_all_leaves_in_the_allocation_period: 1,
+                },
+                callback: function (r) {
+                    if (!r.exc && r.message) {
+                        frm.set_value("leave_balance", r.message);
+                        frappe.call({
+                            method:"tsl.custom_py.utils.calculate_leave_payment_amount",
+                            args:{
+                                "company": frm.doc.company,
+                                "total_working_days": frm.doc.total_working_days,
+                                "basic":frm.doc.ctc,
+                                "leave_balance":r.message
+                            },
+                            callback(k){
+                                if(k.message ){
+                                      frm.set_value("leave_payment_amount",k.message)
+                                }
+                            }
+                        })
+                    
+                    } else {
+                        frm.set_value("leave_balance", "0");
+                    }
+                },
+            });
+        }
 	},
 	
     type(frm){
         frm.trigger("gratuity_calculation")  
     },
     gratuity_calculation(frm){
-        if(frm.doc.employee){
+        if(frm.doc.employee && frm.doc.docstatus == 0){
             frappe.call({
                 method:"tsl.custom_py.utils.gratuity_amount",
                 args:{
@@ -71,20 +73,21 @@ frappe.ui.form.on('Full and Final Settlement', {
     },
     refresh(frm) {
         frm.trigger("get_leave_balance")
-        if (frm.doc.workflow_state == "Approved") {
-            frm.add_custom_button(__("Print F & F"), function () {
+        frm.add_custom_button(__("Print F & F"), function () {
 
-                var f_name = frm.doc.name
-                var print_format = "Full and Final Settlement";
-                window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
-                    + "doctype=" + encodeURIComponent("Full and Final Settlement")
-                    + "&name=" + encodeURIComponent(f_name)
-                    + "&trigger_print=1"
-                    + "&format=" + print_format
-                    + "&no_letterhead=0"
-                ))
-            });
-        }
+            var f_name = frm.doc.name
+            var print_format = "Full and Final Settlement";
+            window.open(frappe.urllib.get_full_url("/api/method/frappe.utils.print_format.download_pdf?"
+                + "doctype=" + encodeURIComponent("Full and Final Settlement")
+                + "&name=" + encodeURIComponent(f_name)
+                + "&trigger_print=1"
+                + "&format=" + print_format
+                + "&no_letterhead=0"
+            ))
+        });
+        frm.add_custom_button(__('Create Payment Entry'), function() {
+            route_to_payment_entry(frm);
+        });
     },
     net_pay(frm){
         var leave_pay = (frm.doc.leave_payment_amount)
@@ -259,3 +262,13 @@ frappe.ui.form.on('Full and Final Settlement', {
         frm.trigger("encashed_leaves")
     },
 })
+
+function route_to_payment_entry(frm) {
+    frappe.model.with_doctype('Payment Entry', function () {
+        var doc = frappe.model.get_new_doc('Payment Entry');
+        doc.payment_type = "Pay";
+        doc.party_type = "Employee";
+        doc.fnf = frm.doc.name
+        frappe.set_route('Form', doc.doctype, doc.name);
+    });
+}

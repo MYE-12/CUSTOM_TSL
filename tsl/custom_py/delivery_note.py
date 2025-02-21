@@ -18,6 +18,7 @@ def on_update_after_submit(self,method):
                if dn.invoice_no and not  (dn.status_cap or dn.mistaken_ner ==1):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                  
@@ -27,6 +28,7 @@ def on_update_after_submit(self,method):
                elif  (dn.status_cap or dn.mistaken_ner ==1) and dn.invoice_no and not dn.payment_entry_reference:
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
                
@@ -35,6 +37,7 @@ def on_update_after_submit(self,method):
                elif  (dn.status_cap or dn.mistaken_ner ==1) and dn.dn_no and not dn.payment_entry_reference:
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                   
@@ -60,6 +63,7 @@ def on_update_after_submit(self,method):
                      wd.save(ignore_permissions = 1)
                      frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                      frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                     frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
                      frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
             
          if i.supply_order_data:
@@ -82,6 +86,8 @@ def on_submit(self,method):
                if dn.invoice_no and not  (dn.status_cap or dn.mistaken_ner ==1):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
+
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
                  
@@ -91,6 +97,8 @@ def on_submit(self,method):
                elif  (dn.status_cap or dn.mistaken_ner ==1) and dn.invoice_no and not dn.payment_entry_reference:
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
+
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
                
@@ -99,6 +107,8 @@ def on_submit(self,method):
                elif  (dn.status_cap or dn.mistaken_ner ==1) and dn.dn_no and not dn.payment_entry_reference:
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                  frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
+
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                   
@@ -120,6 +130,8 @@ def on_submit(self,method):
                      wd.save(ignore_permissions = 1)
                      frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                      frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
+                     frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
+
                      frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
            
       if i.supply_order_data:

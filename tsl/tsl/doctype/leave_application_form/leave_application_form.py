@@ -207,7 +207,7 @@ def get_roles(user_id):
 		return False
 
 @frappe.whitelist()
-def trigger_mail(name,workflow_state = None,email = None,leave_approver = None):
+def trigger_mail(name,workflow_state = None,email = None,leave_approver = None,hr_mail = None):
 	if leave_approver:
 		parent_doc = frappe.get_doc("Leave Application Form", name)
 		args = parent_doc.as_dict()
@@ -236,6 +236,7 @@ def trigger_mail(name,workflow_state = None,email = None,leave_approver = None):
 		try:
 			frappe.sendmail(
 				recipients=email,
+				cc = hr_mail,
 				sender= "yousuf@tsl-me.com",
 				subject = subject,
 				message = message,
@@ -360,7 +361,7 @@ def get_holidays_no(employee, from_date, to_date, holiday_list=None, company = N
 		holidays = frappe.db.sql(
 			"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
 			where h1.parent = h2.name and h1.holiday_date between %s and %s
-			and h2.name = %s""",
+			and h2.name = %s and h1.weekly_off = 1 """,
 			(from_date, to_date, holiday_list),
 		)[0][0]
 	else:

@@ -120,19 +120,34 @@ def get_wod(from_date,to_date,company):
                 sales = frappe.get_value("Sales Person",i["name"],["user","name"])
                 
                 #RSI - wd
-                gr = frappe.get_all("Sales Invoice",{"department":"Repair - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0]},["*"])
-                if gr:
-                    for i in gr:
-                        gt = gt + i.outstanding_amount
+               
+                if company == "TSL COMPANY - Kuwait":
+                    gr = frappe.get_all("Sales Invoice",{"department":"Repair - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0],"posting_date": ["between", (Week_start,current_date)]},["*"])
+                    if gr:
+                        for i in gr:
+                            gt = gt + i.outstanding_amount
+
+                if company == "TSL COMPANY - UAE":
+                    gr = frappe.get_all("Sales Invoice",{"department":"Repair - TSL-UAE","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0],"posting_date": ["between", (Week_start,current_date)]},["*"])
+                    if gr:
+                        for i in gr:
+                            gt = gt + i.outstanding_amount
+
                 
                 #Invcd - sod
 
                 st = 0
-                sr = frappe.get_all("Sales Invoice",{"department":"Supply - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0]},["*"])
-                if sr:
-                    for i in sr:
-                        st = st + i.outstanding_amount
-                
+                if company == "TSL COMPANY - Kuwait":
+                    sr = frappe.get_all("Sales Invoice",{"department":"Supply - TSL","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0],"posting_date": ["between", (Week_start,current_date)]},["*"])
+                    if sr:
+                        for i in sr:
+                            st = st + i.outstanding_amount
+                if company == "TSL COMPANY - UAE":
+                    sr = frappe.get_all("Sales Invoice",{"department":"Supply - TSL-UAE","status": ["in", ["Unpaid","Overdue","Partly Paid"]],"sales_rep":sales[0],"posting_date": ["between", (Week_start,current_date)]},["*"])
+                    if sr:
+                        for i in sr:
+                            st = st + i.outstanding_amount
+                    
                 total_rsi_old = 0
                 #RSI - wd - old
                 wds_rsi_old = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (Week_start,current_date)]},["*"])

@@ -58,9 +58,10 @@ def on_submit(doc,method):
 	if doc.quotation_type == "Customer Quotation - Repair" or doc.quotation_type == "Revised Quotation - Repair":
 		if doc.items:
 			for i in doc.items:
-				wd = frappe.get_doc("Work Order Data",i.wod_no)
-				wd.quoted = 1
-				wd.save(ignore_permissions =1)
+				if i.wod_no:
+					wd = frappe.get_doc("Work Order Data",i.wod_no)
+					wd.quoted = 1
+					wd.save(ignore_permissions =1)
 			
 @frappe.whitelist()
 def on_update_after_submit(doc,method):
@@ -148,8 +149,9 @@ def get_sqtn_items(sod):
 	sod = json.loads(sod)
 	l=[]
 	for k in list(sod):
-		l += frappe.db.sql('''select si.item_code as item_code,si.mfg as manufacturer,si.supplier_quotation as sqtn,si.model_no as model_no,si.type as type,si.serial_no as serial_no,si.model_no as item_name,si.description as description,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.quantity as qty,si.price as rate,si.amount as amount,s.name as sod from `tabSupply Order Table` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
-		l += frappe.db.sql('''select si.part as item_code,si.manufacturer as manufacturer,si.supplier_quotation as sqtn,si.model as model_no,si.type as type,si.serial_no as serial_no,si.part_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.qty as qty,si.price_ea as rate,si.total as amount,s.name as sod from `tabPart Sheet Item Supply` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by s.modified''',k,as_dict =1)
+		l += frappe.db.sql('''select si.sr_no as sr_no,si.item_code as item_code,si.mfg as manufacturer,si.supplier_quotation as sqtn,si.model_no as model_no,si.type as type,si.serial_no as serial_no,si.model_no as item_name,si.description as description,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.quantity as qty,si.price as rate,si.amount as amount,s.name as sod from `tabSupply Order Table` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by si.idx  ''',k,as_dict =1)
+		
+		l += frappe.db.sql('''select si.part as item_code,si.manufacturer as manufacturer,si.supplier_quotation as sqtn,si.model as model_no,si.type as type,si.serial_no as serial_no,si.part_name as item_name,"Nos" as uom,"Nos" as stock_uom,1 as conversion_factor,si.qty as qty,si.price_ea as rate,si.total as amount,s.name as sod from `tabPart Sheet Item Supply` as si inner join `tabSupply Order Data` as s on si.parent = s.name where s.docstatus = 1 and s.name = %s order by si.idx ''',k,as_dict =1)
 	
 	return l
 
@@ -306,13 +308,13 @@ def show_details(self,method):
 
 
 		for i in self.get("items"):
-			frappe.errprint(i.wod_no)
+			
 			eval =frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
 			if eval:
 				doc = frappe.get_doc("Evaluation Report",{"name":eval}) 
 				if doc:
 					for k in doc.get("items"):
-						frappe.errprint(doc.work_order_data)
+						
 						total_qtn_rate += k.total
 						if self.company == "TSL COMPANY - Kuwait" and k.parts_availability == "No":
 							source = "Supplier"
@@ -854,32 +856,48 @@ def get_quotation_history(source,type = None):
 				if ic.item_code:
 					ic.rate = ic.rate
 
-	else:
+	if doc.company == "TSL COMPANY - UAE":
 		if not doc.quotation_type == "Internal Quotation - Supply":
 			for ic in doclist.get('items'):
-				if not ic.margin_amount:
-					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-					unit_disc = disc
+				if not doc.is_multiple_quotation:
+					if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+						disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+						unit_disc = disc
 
-					ic.rate = doc.after_discount_cost+disc
-					ic.item_price = doc.after_discount_cost
-					# frappe.errprin("Yessss")
-				if not doc.is_multiple_quotation and ic.item_code:
-					ic.rate = doc.after_discount_cost
+						ic.rate = doc.unit_rate_price
+						ic.item_price =  doc.unit_rate_price
+						ic.price_list_rate = doc.unit_rate_price
+					else:
+						disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+						unit_disc = disc
+
+						ic.rate = doc.after_discount_cost+disc
+						ic.item_price = doc.after_discount_cost
+					
+				if doc.is_multiple_quotation:
+					if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+						ic.rate = ic.unit_price
+						ic.item_price = ic.unit_price
+						ic.price_list_rate = ic.unit_price
+					else:
+						ic.rate = ic.margin_amount
+						ic.item_price = ic.margin_amount
+
+					
 			
-		else:
-			for ic in doclist.get('items'):
-				if not ic.margin_amount:
+		# if doc.company == "TSL COMPANY - KSA":
+		# 	for ic in doclist.get('items'):
+		
+		# 		if not ic.margin_amount:
+		# 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+		# 			unit_disc = disc
+		# 			ic.rate = doc.after_discount_cost
+		# 			ic.item_price = doc.after_discount_cost
+		# 			# ic.rate = ic.rate
 				
-					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-					unit_disc = disc
-					ic.rate = doc.after_discount_cost
-					ic.item_price = doc.after_discount_cost
-					# ic.rate = ic.rate
-				
-				else:
-					ic.rate = ic.margin_amount
-					ic.item_price = ic.margin_amount
+		# 		else:
+		# 			ic.rate = ic.margin_amount
+		# 			ic.item_price = ic.margin_amount
 
 		
 	# for i in doc.items:
@@ -895,11 +913,12 @@ def get_quotation_history(source,type = None):
 
 @frappe.whitelist()
 def create_sal_inv(source):
-	frappe.errprint("yesss")
+
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
 	target_doc.purchase_order_no = doc.purchase_order_no 
 	target_doc.project_data = doc.project
+	target_doc.cost_center = doc.department
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Sales Invoice",
@@ -960,7 +979,7 @@ def create_sal_inv_pro(source):
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")
 	new_doc.branch = doc.branch
 	new_doc.project_data = doc.project
-	frappe.errprint(doc.items)
+	
 	# for i in doc.items:
 		# new_doc.append("items",{
 		# 	"item_code":i.sku,

@@ -125,7 +125,7 @@ frappe.ui.form.on('Quotation', {
 		if(frm.doc.is_multiple_quotation == 1){
 			//Changed as per mohammed request
 			var disc_val = (frm.doc.unit_rate_price/100)*frm.doc.default_discount_percentage
-			console.log(disc_val)
+			
 
 			var disc = Math.ceil(frm.doc.unit_rate_price - disc_val).toFixed(2)
 			frm.set_value("after_discount_cost",disc)
@@ -809,17 +809,15 @@ frappe.ui.form.on('Quotation', {
 										cur_frm.clear_table("items");
 										var tot_amt = 0;
 										var tot_qty=0;
+										// r.message.sort((a, b) => (a.sr_no || 0) - (b.sr_no || 0)); 
+
 										for(var i=0;i<r.message.length;i++){
 											var childTable = cur_frm.add_child("items");
-											console.log(r.message[i]["item_code"])
-											// frappe.db.get_value('Accounting Dimension', {'document_type': frm.doc.document_type}, 'document_type', (r) => {
-
-											
 											
 											childTable.item_code = r.message[i]["item_code"],
 											frappe.db.get_value('Item', r.message[i]["item_code"], ['item_name','item_number']) .then(r	=>{
 												let a = r.message;
-												console.log(a)
+												
 												childTable.item_number = a.item_number || ''
 												childTable.item_name = a.item_name
 											})
@@ -938,13 +936,7 @@ frappe.ui.form.on('Quotation', {
 						
 						
 					},
-					// {
-					// 	label: "Approval Date",
-					// 	fieldname: "approval_date",
-					// 	fieldtype: "Date",
-						
-						
-					// },
+					
 				],
 				primary_action: function() {
 					var data = d.get_values();
@@ -988,13 +980,13 @@ frappe.ui.form.on('Quotation', {
 	branch_name:function(frm){
 		if(frm.doc.quotation_type && frm.doc.branch_name){
 			var d = {
-				"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-","Dubai - TSL":"REP-QTN-INT-DU.YY.-"},
-				"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-","Dubai - TSL":"REP-QTN-CUS-DU.YY.-"},
-				"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-","Dubai - TSL":"REP-QTN-REV-DU.YY.-"},
-				"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
-				"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
-				"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
-				"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL-SA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
+				"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-","Dubai - TSL":"REP-QTN-INT-DU.YY.-"},
+				"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-","Dubai - TSL":"REP-QTN-CUS-DU.YY.-"},
+				"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-","Dubai - TSL":"REP-QTN-REV-DU.YY.-"},
+				"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
+				"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
+				"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
+				"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL- KSA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
 				}
 				frm.set_value("naming_series",d[frm.doc.quotation_type][frm.doc.branch_name])
 		
@@ -1085,7 +1077,7 @@ frappe.ui.form.on("Quotation Item",{
 
 				}
 				var act = frm.doc.actual_price
-				console.log(act)
+			
 				frm.set_value("final_approved_price",item.margin_amount);
 				cur_frm.refresh_fields();
 
@@ -1102,18 +1094,17 @@ frappe.ui.form.on("Quotation Item",{
 		frappe.model.set_value(cdt, cdn, "margin_amount_value",disc_val);
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
-		console.log(margin_amount)
-		console.log(item.item_code)
+	
 
 		frappe.db.get_value('Item', {'name':item.item_code}, ['is_stock_item'], (r) => {
-			console.log(r.is_stock_item)
+			
 			if(r.is_stock_item == 1){
-				console.log("Yess")
+			
 				frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
 			}
 
 			else{
-				console.log("No")
+			
 				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
 			}
 		
@@ -1155,8 +1146,8 @@ frappe.ui.form.on('Quotation', {
 			frm.set_query("branch_name", function() {
 				return {
 					filters: [
-						["Warehouse","company", "=", frm.doc.company],
-						["Warehouse","is_branch","=",1]
+						["Branch","company", "=", frm.doc.company],
+						["Branch","territory","=","KSA - Riyadh"]
 						
 					]
 				}

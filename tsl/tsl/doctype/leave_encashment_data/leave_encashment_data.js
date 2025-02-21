@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Leave Encashment Data', {
-	validate : function(frm){
+	encashing_days : function(frm){
 		frm.trigger("calculate_encashable_amount")
 	},
 	leave_type: function(frm) {
@@ -28,7 +28,7 @@ frappe.ui.form.on('Leave Encashment Data', {
 						else{
 							var encashable = k.message
 						}
-						frm.trigger("calculate_encashable_amount")
+						// frm.trigger("calculate_encashable_amount")
 						frm.set_value("encashable_days",encashable)
 					});
 				}
@@ -44,7 +44,7 @@ frappe.ui.form.on('Leave Encashment Data', {
 				},
 				callback(r){
 					if(r){
-						var encashable_amount  = frm.doc.encashable_days * r.message
+						var encashable_amount  = frm.doc.encashing_days * r.message
 						frm.set_value("encashment_amount",encashable_amount)
 					}
 				}

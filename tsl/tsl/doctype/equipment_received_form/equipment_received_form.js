@@ -69,12 +69,12 @@ frappe.ui.form.on('Equipment Received Form', {
 				"Kuwait - TSL": "Repair - Kuwait - TSL",
 				"Dammam - TSL-SA": "Repair - Dammam - TSL-SA",
 				"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
-				"Riyadh - TSL-SA": "Riyadh - TSL-SA"
+				"Riyadh - TSL- KSA": "Riyadh - Repair - TSL - KSA"
 			}
 			frm.set_value("repair_warehouse", d[frm.doc.branch]);
 			var d = {
 				"Dammam - TSL-SA": "ERF-D.YY.-",
-				"Riyadh - TSL-SA": "ERF-R.YY.-",
+				"Riyadh - TSL- KSA": "ERF-R.YY.-",
 				"Jeddah - TSL-SA": "ERF-J.YY.-",
 				"Kuwait - TSL": "ERF-K.YY.-"
 			};

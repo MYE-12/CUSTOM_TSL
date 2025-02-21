@@ -155,7 +155,7 @@ def create_workorder_data(order_no, f):
             "Kuwait - TSL": "Repair - Kuwait - TSL",
             "Dammam - TSL-SA": "Dammam - TSL-SA",
             "Jeddah - TSL-SA": "Jeddah - TSL-SA",
-            "Riyadh - TSL-SA": "Riyadh - TSL-SA",
+            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA",
             "Dubai - TSL": "Dubai - Repair - TSL-UAE"
             
         }
@@ -271,7 +271,7 @@ def create_workorder_data(order_no, f):
 
         d = {
             "Dammam - TSL-SA": "WOD-D.YY.-",
-            "Riyadh - TSL-SA": "WOD-R.YY.-",
+            "Riyadh - TSL- KSA": "WOD-R.YY.-",
             "Jeddah - TSL-SA": "WOD-J.YY.-",
             "Kuwait - TSL": "WOD-K.YY.-",
             "Dubai - TSL": "WOD-DU.YY.-"

@@ -39,6 +39,9 @@ def create_quotation(wod):
 	# new_doc.sales_rep = doc.sales_rep
 	if doc.company == "TSL COMPANY - UAE":
 		new_doc.selling_price_list = "Standard Selling - UAE"
+	elif doc.company == "TSL COMPANY - KSA":
+		new_doc.selling_price_list = "Standard Selling - KSA"
+
 	# new_doc.customer_email = doc.customer_email
 	# new_doc.party_name = new_doc.party_name[0]
 	new_doc.department = doc.department
@@ -72,13 +75,13 @@ def create_quotation(wod):
 	# 	})
 	if doc.branch:
 		d = {
-			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-","Dubai - TSL":"REP-QTN-INT-DU.YY.-"},
-			"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-","Dubai - TSL":"REP-QTN-CUS-DU.YY.-"},
-			"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-","Dubai - TSL":"REP-QTN-REV-DU.YY.-"},
-			"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
-			"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
-			"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL-SA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
-			"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL-SA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
+			"Internal Quotation - Repair":{"Kuwait - TSL":"REP-QTN-INT-K.YY.-","Dammam - TSL-SA":"REP-QTN-INT-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"REP-QTN-INT-J.YY.-","Dubai - TSL":"REP-QTN-INT-DU.YY.-"},
+			"Customer Quotation - Repair":{"Kuwait - TSL":"REP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"REP-QTN-CUS-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"REP-QTN-CUS-J.YY.-","Dubai - TSL":"REP-QTN-CUS-DU.YY.-"},
+			"Revised Quotation - Repair":{"Kuwait - TSL":"REP-QTN-REV-K.YY.-","Dammam - TSL-SA":"REP-QTN-REV-D.YY.-","Riyadh - TSL- KSA":"REP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"REP-QTN-REV-J.YY.-","Dubai - TSL":"REP-QTN-REV-DU.YY.-"},
+			"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
+			"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
+			"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
+			"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL- KSA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
 			}
 		new_doc.naming_series = d[new_doc.quotation_type][doc.branch]
 	
@@ -433,7 +436,7 @@ def create_sal_inv(wod):
 	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
 	d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
 	d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
-	d['Riyadh - TSL-SA'] = 'Repair - Riyadh - TSL-SA'
+	d['Riyadh - TSL- KSA'] = 'Riyadh - Repair - TSL - KSA'
 	d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
 	for i in doc.get("material_list"):
 		qi_details = frappe.db.sql('''select q.name,qi.qty as qty,qi.rate as rate,qi.amount as amount from `tabQuotation Item` as qi inner join `tabQuotation` as q on q.name = qi.parent where q.workflow_state = "Approved By Customer" and qi.wod_no = %s order by q.creation desc''',wod,as_dict=1)
@@ -481,18 +484,20 @@ def create_dn(wod):
 	if doc.company == "TSL COMPANY - UAE":
 		new_doc.branch = "Dubai - TSL-UAE"
 	else:
+		frappe.errprint(doc.branch)
 		new_doc.branch = doc.branch
 	new_doc.department = doc.department
+	new_doc.cost_center = doc.department
 	new_doc.customer_address = doc.address
 	new_doc.contact_person = doc.incharge
 	new_doc.work_order_data = wod
 	d = {}
 	d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
-	d['Dammam - TS'] = 'Repair - Dammam - TSL-SA'
+	d['Dammam - TSL-SA'] = 'Dammam - Repair - TSL - KSA'
 	d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
-	d['Riyadh - TS'] = 'Repair - Riyadh - TSL-SA'
+	d['Riyadh - TSL- KSA'] = 'Riyadh - Repair - TSL - KSA'
 	d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
- 
+	frappe.errprint(d[doc.branch])
 	for i in doc.get("material_list"):
 		# frappe.errprint('qi_details')
      

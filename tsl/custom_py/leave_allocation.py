@@ -42,7 +42,7 @@ def update_leave_allocation():
             else:
                 per_day = 2.5 / total_days
             
-            if frappe.db.exists("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave"}):
+            if frappe.db.exists("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave","docstatus":1}):
                 la = frappe.get_doc("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave"}, ["*"])
                 la.new_leaves_allocated = la.new_leaves_allocated + per_day
                 la.save(ignore_permissions=True)

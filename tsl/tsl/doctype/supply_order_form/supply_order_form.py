@@ -10,7 +10,7 @@ def create_supply_order_data(order_no):
 	l=[]
 	d = {
 			"Dammam - TSL-SA":"SOD-D.YY.-",
-			"Riyadh - TSL-SA":"SOD-R.YY.-",
+			"Riyadh - TSL- KSA":"SOD-R.YY.-",
 			"Jeddah - TSL-SA":"SOD-J.YY.-",
 			"Kuwait - TSL":"SOD-K.YY.-"
 		}

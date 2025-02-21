@@ -6,17 +6,19 @@ frappe.ui.form.on('Weekly Lab Report', {
 
 	// }
 	onload(frm){
-		// frm.set_value("company","")
-		// if (frappe.session.user == "labcoordinator@tsl-me.com"){
-		// 	frm.set_value("company","TSL COMPANY - Kuwait")
-		// 	// frm.doc.save()
+		
+		frm.set_value("company","")
+		if (frappe.session.user == "labcoordinator@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - Kuwait")
+			// frm.doc.save()
 
-		// }
+		}
 
-		// if (frappe.session.user == "lab-uae@tsl-me.com" || frappe.session.user == "purchase-uae@tsl-me.com"){
-		// 	frm.set_value("company","TSL COMPANY - UAE")
-		// 	// frm.doc.save()
-		// }
+		if (frappe.session.user == "lab-uae@tsl-me.com" || frappe.session.user == "purchase-uae@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - UAE")
+			// frm.doc.save()
+		}
+
 		frm.trigger("get_data");
 
 	},
