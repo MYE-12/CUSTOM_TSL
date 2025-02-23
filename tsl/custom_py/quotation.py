@@ -857,31 +857,31 @@ def get_quotation_history(source,type = None):
 					ic.rate = ic.rate
 
 	if doc.company == "TSL COMPANY - UAE":
-		if not doc.quotation_type == "Internal Quotation - Supply":
-			for ic in doclist.get('items'):
-				if not doc.is_multiple_quotation:
-					if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-						disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-						unit_disc = disc
+		# if not doc.quotation_type == "Internal Quotation - Supply":
+		for ic in doclist.get('items'):
+			if not doc.is_multiple_quotation:
+				if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
 
-						ic.rate = doc.unit_rate_price
-						ic.item_price =  doc.unit_rate_price
-						ic.price_list_rate = doc.unit_rate_price
-					else:
-						disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-						unit_disc = disc
+					ic.rate = doc.unit_rate_price
+					ic.item_price =  doc.unit_rate_price
+					ic.price_list_rate = doc.unit_rate_price
+				else:
+					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+					unit_disc = disc
 
-						ic.rate = doc.after_discount_cost+disc
-						ic.item_price = doc.after_discount_cost
-					
-				if doc.is_multiple_quotation:
-					if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-						ic.rate = ic.unit_price
-						ic.item_price = ic.unit_price
-						ic.price_list_rate = ic.unit_price
-					else:
-						ic.rate = ic.margin_amount
-						ic.item_price = ic.margin_amount
+					ic.rate = doc.after_discount_cost+disc
+					ic.item_price = doc.after_discount_cost
+				
+			if doc.is_multiple_quotation:
+				if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+					ic.rate = ic.unit_price
+					ic.item_price = ic.unit_price
+					ic.price_list_rate = ic.unit_price
+				else:
+					ic.rate = ic.margin_amount
+					ic.item_price = ic.margin_amount
 
 					
 			

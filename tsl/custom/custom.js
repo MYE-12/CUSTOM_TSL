@@ -1147,7 +1147,7 @@ frappe.ui.form.on('Quotation', {
 				return {
 					filters: [
 						["Branch","company", "=", frm.doc.company],
-						["Branch","territory","=","KSA - Riyadh"]
+						
 						
 					]
 				}
