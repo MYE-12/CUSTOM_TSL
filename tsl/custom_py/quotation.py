@@ -869,9 +869,7 @@ def get_quotation_history(source,type = None):
 					ic.price_list_rate = doc.unit_rate_price
 				else:
 					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-					unit_disc = disc
-
-					ic.rate = doc.after_discount_cost+disc
+					ic.rate = doc.after_discount_cost
 					ic.item_price = doc.after_discount_cost
 				
 			if doc.is_multiple_quotation:

@@ -82,6 +82,7 @@
    "fetch_from": "emp_no.company",
    "fieldname": "company",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Company",
    "read_only": 1
   },
@@ -145,7 +146,7 @@
    "link_fieldname": "rejoining"
   }
  ],
- "modified": "2024-12-21 12:38:50.476253",
+ "modified": "2025-02-24 10:01:12.341434",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Rejoining Form",

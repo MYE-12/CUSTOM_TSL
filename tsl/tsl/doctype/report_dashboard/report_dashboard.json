@@ -60,7 +60,7 @@
    "fieldtype": "Select",
    "label": "Company",
    "mandatory_depends_on": "eval:doc.reports == \"Salary Summary\" || doc.reports == \"Salary Person Summary\" ",
-   "options": "TSL COMPANY - Kuwait\nTSL COMPANY - UAE"
+   "options": "TSL COMPANY - Kuwait\nTSL COMPANY - UAE\nTSL COMPANY - KSA"
   },
   {
    "default": "0",
@@ -80,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-02-15 08:51:57.090077",
+ "modified": "2025-02-24 10:22:29.634918",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

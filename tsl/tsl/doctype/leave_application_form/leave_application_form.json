@@ -133,6 +133,7 @@
    "fetch_from": "employee.no_of_tickets",
    "fieldname": "no_of_tickets",
    "fieldtype": "Read Only",
+   "hidden": 1,
    "label": "No of Tickets"
   },
   {
@@ -547,7 +548,7 @@
    "link_fieldname": "leave_application"
   }
  ],
- "modified": "2025-02-03 22:47:38.730069",
+ "modified": "2025-02-24 09:12:21.220645",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Application Form",

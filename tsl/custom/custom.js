@@ -162,18 +162,19 @@ frappe.ui.form.on('Quotation', {
 			var add_v = Math.ceil(add_val).toFixed(2)
 			var ds = parseInt(add_v )+ frm.doc.final_approved_price
 			frm.set_value("unit_rate_price",ds)
+		
 			
 
 		}
 		
 		else{
-			frm.set_value("unit_rate_price","")
+			// frm.set_value("unit_rate_price","")
 			var t = 0
 			$.each(frm.doc.items, function(i,v){
 					t = t + v.amount
 			})
-
-			frm.set_value("unit_rate_price",t)
+		
+			// frm.set_value("unit_rate_price",t)
 
 			
 		}
@@ -805,25 +806,25 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-									
+										console.log(r.message)
 										cur_frm.clear_table("items");
 										var tot_amt = 0;
 										var tot_qty=0;
 										// r.message.sort((a, b) => (a.sr_no || 0) - (b.sr_no || 0)); 
-
-										for(var i=0;i<r.message.length;i++){
+										$.each(r.message,function(i,v)
+										{
 											var childTable = cur_frm.add_child("items");
 											
 											childTable.item_code = r.message[i]["item_code"],
 											frappe.db.get_value('Item', r.message[i]["item_code"], ['item_name','item_number']) .then(r	=>{
 												let a = r.message;
-												
-												childTable.item_number = a.item_number || ''
+												childTable.item_number = a.item_number || '',
 												childTable.item_name = a.item_name
 											})
 											
 											childTable.supply_order_data = r.message[i]["sod"],
 											childTable.supplier_quotation = r.message[i]['sqtn'],
+
 											childTable.model_no = r.message[i]["model_no"],
 											childTable.serial_no = r.message[i]["serial_no"],
 											childTable.description = r.message[i]["description"],
@@ -838,7 +839,7 @@ frappe.ui.form.on('Quotation', {
 											tot_amt += r.message[i]['amount'];
 											tot_qty += r.message[i]["qty"];
 											cur_frm.refresh_fields("items");
-										}
+										})
 										frm.doc.total = tot_amt;
 										frm.doc.total_qty = tot_qty;
 										frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
