@@ -98,7 +98,7 @@ def get_data(filters):
 		 from `tabQuotation` 
 		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 		where  `tabQuotation`.Workflow_state in ("Approved By Customer") and `tabQuotation Item`.wod_no = %s ''',i.name,as_dict=1)
-		# frappe.errprint(q_amt)
+		
 		q_m = 0
 		ap_date = ''
 		qu_name = ''

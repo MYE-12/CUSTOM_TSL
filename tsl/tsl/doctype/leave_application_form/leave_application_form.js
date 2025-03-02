@@ -239,6 +239,18 @@ frappe.ui.form.on('Leave Application Form', {
 	},
 	employee(frm){
 		if (frm.doc.employee) {
+			frappe.call({
+				method:"tsl.tsl.doctype.leave_application_form.leave_application_form.return_last_rejoined_date",
+				args:{
+					employee:frm.doc.employee
+				},
+				callback(r){
+					if(r.message){
+						frm.set_value("last_rejoined_date",r.message)
+					}
+				}
+			})
+			
 			if(frm.doc.user_id){
 				frappe.call({
 					method:"tsl.tsl.doctype.leave_application_form.leave_application_form.get_roles",

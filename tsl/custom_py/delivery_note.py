@@ -136,7 +136,7 @@ def on_submit(self,method):
            
       if i.supply_order_data:
          doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
-         doc.status = 'Invoiced'
+         doc.status = 'Delivered'
          doc.save(ignore_permissions = True)
          frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
          frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)

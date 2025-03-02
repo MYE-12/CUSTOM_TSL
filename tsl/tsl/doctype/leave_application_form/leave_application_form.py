@@ -462,3 +462,10 @@ def get_approved_leaves_for_period(employee, leave_type, from_date, to_date):
 			)
 
 	return leave_days
+
+@frappe.whitelist()
+def return_last_rejoined_date(employee):
+	last_rejoined = frappe.db.get_value("Leave Rejoining Form", filters={"emp_no": employee}, fieldname="actual_rejoining_date", order_by="actual_rejoining_date desc")
+	if not last_rejoined:
+		last_rejoined = frappe.db.get_value("Leave Rejoining Form", filters={"emp_no": employee}, fieldname="rejoining_date", order_by="rejoining_date desc")
+	return last_rejoined

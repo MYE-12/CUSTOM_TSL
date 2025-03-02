@@ -46,6 +46,7 @@ def get_attachments(name,doctype):
 	return [attachments]
 
 def on_submit(self,method):
+
 	if self.service_call_form:
 		frappe.db.set_value("Service Call Form",self.service_call_form,"sales_invoice",self.name)
 		frappe.db.set_value("Service Call Form",self.service_call_form,"status","Invoiced")
@@ -79,6 +80,18 @@ def on_submit(self,method):
 	
 
 def before_save(self,method):
+	# frappe.errprint("Hiiiiiiii")
+	# if self.items:
+	# 	wo = 0
+	# 	so = 0
+	# 	for i in self.items:
+	# 		if i.wod_no:
+	# 			wo = wo + 1
+	# 		if i.supply_order_data:
+	# 			so = so + 1
+	# 	if wo > 0 and so > 0:
+	# 		self.wo_so = 1
+		
 	if self.taxes:
 		igst = cgst = sgst = 0
 		for i in self.taxes:

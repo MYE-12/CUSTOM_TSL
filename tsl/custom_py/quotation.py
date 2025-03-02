@@ -911,7 +911,6 @@ def get_quotation_history(source,type = None):
 
 @frappe.whitelist()
 def create_sal_inv(source):
-
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
 	target_doc.purchase_order_no = doc.purchase_order_no 
@@ -927,12 +926,12 @@ def create_sal_inv(source):
 				
 			},
 			
-			
 		},
 		"Quotation Item": {
 			"doctype": "Sales Invoice Item",
 			
 		},
+
 	}, target_doc)
 	if doc.company == "TSL COMPANY - Kuwait":
 		for mg in doc.get('items'):	
@@ -947,6 +946,7 @@ def create_sal_inv(source):
 				if mg.item_code == i.item_code and not doc.is_multiple_quotation:
 					
 					i.rate= doc.after_discount_cost
+
 	elif doc.company == "TSL COMPANY - UAE":
 		for mg in doc.get('items'):	
 			for i in doclist.get('items'):		
@@ -954,7 +954,10 @@ def create_sal_inv(source):
 				if mg.item_code == i.item_code and doc.is_multiple_quotation:
 					
 					i.item_code = mg.item_code
-					i.rate= mg.margin_amount
+					if doc.disc:
+						i.rate= mg.rate
+					else:
+						i.rate= mg.margin_amount
 					i.model= mg.model_no
 					i.manufacturer= mg.manufacturer
 					i.project_data = mg.project

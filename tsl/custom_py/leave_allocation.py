@@ -34,7 +34,7 @@ def update_leave_allocation():
         if joining_date:
             years_of_service = (current_date - joining_date).days // 365
             
-            if emp.get("company") == "COMPANY - KSA":
+            if emp.get("company") == "TSL COMPANY - KSA":
                 if years_of_service < 5 and nationality != "SAUDI":
                     per_day = 2.5 / 21
                 else:
@@ -120,3 +120,33 @@ def calculate_projected_leaves(current_date, leave_start_date):
             projected_leaves += 0  # Just in case, although days_in_month should never be 0
 
     return round(projected_leaves,3)
+
+
+# @frappe.whitelist()
+# def update_leave_allocation_():
+#     employees = frappe.get_all("Employee", {"status": "Active","name":"158"}, ["*"])
+#     current_date = datetime.now().date()
+#     first = get_first_day(current_date)
+#     last = get_last_day(current_date)
+#     total_days = date_diff(last, first) + 1
+#     current_year = getdate().year
+#     first_date_of_year = f"{current_year}-01-01"
+
+#     for emp in employees:
+#         joining_date = emp.get('date_of_joining')
+#         nationality = emp.get('nationality')
+#         if joining_date:
+#             years_of_service = (current_date - joining_date).days // 365
+            
+#             if years_of_service < 5 and nationality != "SAUDI":
+#                 per_day = 2.5 / 21
+#             # else:
+#             #     per_day = 2.5 / total_days
+#                 print(per_day)
+#                 print((date_diff(current_date, joining_date) + 1) * per_day)
+
+#             if frappe.db.exists("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave","docstatus":1}):
+#                 la = frappe.get_doc("Leave Allocation", {'employee': emp.employee, 'leave_type': "Annual Leave"}, ["*"])
+#                 la.new_leaves_allocated = (date_diff(current_date, joining_date) + 1) * per_day
+#                 la.save(ignore_permissions=True)
+#                 la.submit()
