@@ -55,7 +55,7 @@
    "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
   },
   {
-   "depends_on": "eval:doc.reports == \"Salary Summary\" || doc.reports == \"Sales Person Summary\"",
+   "depends_on": "eval:doc.reports == \"Salary Summary\" || doc.reports == \"Sales Person Summary\" || doc.reports == \"Statement of Customer\"",
    "fieldname": "company",
    "fieldtype": "Select",
    "label": "Company",
@@ -80,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-02-24 10:22:29.634918",
+ "modified": "2025-03-04 20:09:08.016671",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Report Dashboard",

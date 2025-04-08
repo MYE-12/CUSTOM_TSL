@@ -394,7 +394,15 @@ def create_workorder_data(order_no, f):
         new_doc.received_date = doc.received_date
         new_doc.sales_rep = doc.sales_person or ''
         new_doc.branch = doc.branch
-        new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
+        if doc.company == "TSL COMPANY - KSA":
+            if doc.branch == "Jeddah - TSL-SA":
+                new_doc.department = "Jeddah-Repair - TSL - KSA"
+            if doc.branch == "Dammam - TSL-SA":
+                new_doc.department = "Dammam-Repair - TSL - KSA"
+            if doc.branch == "Riyadh - TSL- KSA":
+                new_doc.department = "Riyadh-Repair - TSL - KSA"
+        else:
+            new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
         new_doc.repair_warehouse = doc.repair_warehouse
         new_doc.address = doc.address
         new_doc.incharge = doc.incharge

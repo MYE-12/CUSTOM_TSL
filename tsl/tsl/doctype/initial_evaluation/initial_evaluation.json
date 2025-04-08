@@ -9,6 +9,7 @@
  "field_order": [
   "naming_series",
   "customer",
+  "branch",
   "attn",
   "specify_1",
   "hours_spent",
@@ -17,7 +18,6 @@
   "technician",
   "column_break_3",
   "company",
-  "branch",
   "date",
   "priority_status",
   "work_order_data",
@@ -119,7 +119,6 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "hidden": 1,
    "in_standard_filter": 1,
    "label": "Company",
    "options": "Company"
@@ -440,7 +439,6 @@
    "fetch_from": "work_order_data.branch",
    "fieldname": "branch",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Branch",
    "options": "Branch"
   },
@@ -465,7 +463,7 @@
    "fieldname": "status_repair",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nUnder Testing\nComprasion"
+   "options": "\nUnder Testing\nComparison"
   },
   {
    "fieldname": "technician",
@@ -504,7 +502,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2024-11-04 11:16:59.346801",
+ "modified": "2025-04-06 11:37:02.330585",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Initial Evaluation",

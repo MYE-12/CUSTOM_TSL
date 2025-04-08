@@ -129,9 +129,39 @@ frappe.ui.form.on('Work Order Data', {
 			},__('Create'));
 }
 		}
+
 		if(frm.doc.docstatus == 1) {
 		// if(! frappe.user.has_role("Technician")){
-			frm.add_custom_button(__("Sales Invoice"), function(){
+			if(frm.doc.company != "TSL COMPANY - KSA") {
+				frm.add_custom_button(__("Sales Invoice"), function(){
+					frappe.call({
+						method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
+						args: {
+							"wod": frm.doc.name
+						},
+						callback: function(r) {
+							console.log(r.message)
+							if(r.message) {
+								// $.each(r.message,function(i,v){
+								// 	console.log(v.name)
+								// })
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+								
+								
+							}
+						}
+					});
+				},__('Create'));
+			}
+			
+		// }
+}
+
+if(frm.doc.docstatus == 1) {
+	// if(! frappe.user.has_role("Technician")){
+		if(frm.doc.company != "TSL COMPANY - KSA") {
+			frm.add_custom_button(__("Invoice Request"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sal_inv",
 					args: {
@@ -151,7 +181,9 @@ frappe.ui.form.on('Work Order Data', {
 					}
 				});
 			},__('Create'));
-		// }
+		}
+		
+	// }
 }
 		if(frm.doc.docstatus === 1) {
 		if(! frappe.user.has_role("Technician") || frappe.user.has_role("Administrator")){

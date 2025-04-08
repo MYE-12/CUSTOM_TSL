@@ -44,6 +44,7 @@
   "department",
   "status",
   "remarks",
+  "po_no",
   "payment_terms",
   "purchase_order_no",
   "dn_no",
@@ -51,6 +52,7 @@
   "invoice_no",
   "invoice_date",
   "automation",
+  "project_1",
   "section_break_14",
   "image",
   "attach_image",
@@ -129,8 +131,7 @@
    "fieldname": "purchase_order_no",
    "fieldtype": "Link",
    "label": "Purchase Order",
-   "options": "Purchase Order",
-   "read_only": 1
+   "options": "Purchase Order"
   },
   {
    "allow_on_submit": 1,
@@ -296,6 +297,7 @@
    "allow_on_submit": 1,
    "fieldname": "branch",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Branch",
    "options": "Branch"
   },
@@ -589,6 +591,17 @@
    "fieldname": "customer_rep",
    "fieldtype": "Data",
    "label": "Customer Representative"
+  },
+  {
+   "fieldname": "po_no",
+   "fieldtype": "Data",
+   "label": "Po No"
+  },
+  {
+   "default": "0",
+   "fieldname": "project_1",
+   "fieldtype": "Check",
+   "label": "Project"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -599,7 +612,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-02-17 16:02:22.882326",
+ "modified": "2025-04-08 08:21:32.602192",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

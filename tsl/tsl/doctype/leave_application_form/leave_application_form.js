@@ -23,7 +23,7 @@ frappe.ui.form.on('Leave Application Form', {
 				callback(r){
 					if(r){
 						frm.set_value("lop_days",r.message)	
-						if(frm.doc.lop_days > 15){
+						if(frm.doc.lop_days > 15 && frm.doc.is_special_permission == 0){
 							frappe.msgprint("Unpaid Days should not be greater than 15 days")
 							frappe.validated = false
 						}
@@ -155,7 +155,7 @@ frappe.ui.form.on('Leave Application Form', {
 								if(k.message > frm.doc.leave_balance){
 									frappe.msgprint("Kindly fill the Unpaid Start and End Date")
 								}
-								if(frm.doc.leave_balance + 13 <k.message){
+								if(frm.doc.leave_balance + 13 <k.message && frm.doc.is_special_permission == 0){
 									frappe.msgprint("Unpaid Days exceed the permissible limit - <b>"+15+"</b>")
 									frm.set_value("to_date",null)
 									frm.set_value("lop_start_date",null)

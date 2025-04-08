@@ -208,15 +208,157 @@ def getstock_detail(item_details,company):
 					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
 
 			if company == "TSL COMPANY - KSA":
-				data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
-				data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
-				data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+				dm = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Dammam - TSL - KSA"),as_dict=True)
+
+				jed = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Jeddah - TSL - KSA"),as_dict=True)
+
+				ri = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Riyadh - TSL - KSA"),as_dict=True)
+
+				if dm:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(dm[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
 				
+				if jed:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(jed[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
+
+				if ri:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(ri[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
+
 			data += '</tr>'
 			i += 1
 		data += '</table>'
 					
 		return data
+
+@frappe.whitelist() # Stock against the Parts requested in initial Evaluation
+def stock_ksa(item_details,company):
+	item_details = json.loads(item_details)
+	data = ''
+	if item_details:
+		data = ''
+		data += '<h4><center><b>STOCK DETAILS</b></center></h4>'
+		data += '<h6><B>Note:</h6>'
+		data += '<table class="table table-bordered" style = font-size:12px width=100% ><tr><td>REPAIR KUWAIT - <b>TSL</b></td><td>REPAIR DUBAI - <b>TSL</b></td><td>RIYADH MAIN -<b>TSL SA</b></td><td>JEDDAH -<b>TSL SA</b></td><td>DAMMAM- <b>TSL SA</b></tr>'
+		data += '</table>'
+
+		data += '<table class="table table-bordered">'
+		data += '<tr>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+		# data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>PART NUMBER</b><center></td>'
+		if company == "TSL COMPANY - Kuwait":
+			data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>AVAILABLE STOCK - ( KW )</b><center></td>'
+		if company == "TSL COMPANY - UAE":
+			data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>AVAILABLE STOCK-( DUBAI )</b><center></td>'
+		if company == "TSL COMPANY - KSA":
+			data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( RIYADH-SA )</b><center></td>'
+			data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( JEDDAH-SA )</b><center></td>'
+			data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>STOCK - ( DAMMAM-SA )</b><center></td>'
+		data += '</tr>'
+		
+		for j in item_details:
+			country = frappe.get_value("Company",{"name":company},["country"])
+			warehouse_stock = frappe.db.sql("""
+			select sum(b.actual_qty) as qty from `tabBin` b join `tabWarehouse` wh on wh.name = b.warehouse join `tabCompany` c on c.name = wh.company where c.country = '%s' and b.item_code = '%s'
+			""" % (country,j["sku"]),as_dict=True)[0]
+			if not warehouse_stock["qty"]:
+				warehouse_stock["qty"] = 0		
+			new_po = frappe.db.sql("""select sum(`tabPurchase Order Item`.qty) as qty,sum(`tabPurchase Order Item`.received_qty) as d_qty from `tabPurchase Order` 
+			left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
+			where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus = 1 """ % (j["sku"]), as_dict=True)[0]
+			if not new_po['qty']:
+				new_po['qty'] = 0
+			if not new_po['d_qty']:
+				new_po['d_qty'] = 0
+			in_transit = new_po['qty'] - new_po['d_qty']
+			total = warehouse_stock["qty"] + in_transit
+			
+			stocks = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+			where item_code = '%s' """%(j["sku"]),as_dict=True)
+			
+			pos = frappe.db.sql("""select `tabPurchase Order Item`.item_code as item_code,`tabPurchase Order Item`.item_name as item_name,`tabPurchase Order`.supplier as supplier,sum(`tabPurchase Order Item`.qty) as qty,`tabPurchase Order Item`.rate as rate,`tabPurchase Order`.transaction_date as date,`tabPurchase Order`.name as po from `tabPurchase Order`
+			left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent
+			where `tabPurchase Order Item`.item_code = '%s' and `tabPurchase Order`.docstatus != 2 order by rate asc limit 1""" % (j["sku"]), as_dict=True)
+			
+			new_so = frappe.db.sql("""select sum(`tabSales Order Item`.qty) as qty,sum(`tabSales Order Item`.delivered_qty) as d_qty from `tabSales Order`
+			left join `tabSales Order Item` on `tabSales Order`.name = `tabSales Order Item`.parent
+			where `tabSales Order Item`.item_code = '%s' and `tabSales Order`.docstatus = 1  """ % (j["sku"]), as_dict=True)[0]
+			
+			if not new_so['qty']:
+				new_so['qty'] = 0
+			if not new_so['d_qty']:
+				new_so['d_qty'] = 0
+			del_total = new_so['qty'] - new_so['d_qty']
+				
+			i = 0
+		   
+			# for po in pos:
+			#     if pos:
+				
+			data +='<tr>'
+			data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(j["sku"])
+			
+			# data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(frappe.db.get_value("Item Model",j["model"],['model']))
+			# for stock in stocks:
+				# if stock.actual_qty > 0:
+			if company == "TSL COMPANY - Kuwait":
+				kw = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Kuwait - TSL"),as_dict=True)
+				
+				if kw:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(kw[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+
+			dw = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+			where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Dubai - TSL-UAE"),as_dict=True)
+			
+			if company == "TSL COMPANY - UAE":
+				if dw:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(dw[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0)
+
+			if company == "TSL COMPANY - KSA":
+				dm = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Dammam - TSL - KSA"),as_dict=True)
+
+				jed = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Jeddah - TSL - KSA"),as_dict=True)
+
+				ri = frappe.db.sql("""select actual_qty,warehouse,stock_uom,stock_value from tabBin
+				where item_code = '%s' and warehouse = "%s" """%(j["sku"],"Riyadh - TSL - KSA"),as_dict=True)
+
+				if dm:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(dm[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
+				
+				if jed:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(jed[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
+
+				if ri:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(ri[0]["actual_qty"])
+				else:
+					data += '<td style="text-align:center;font-weight:bold;" colspan=1>%s</td>'%(0.0)
+
+			data += '</tr>'
+			i += 1
+		data += '</table>'
+					
+		return data
+
+
+
 @frappe.whitelist() # part number details against the Parts requested in initial Evaluation
 def get_model(item_details,company):
 	item_details = json.loads(item_details)
@@ -437,7 +579,7 @@ def set_payment(data,pe,date):
 		
 		
 @frappe.whitelist()
-def get_receivable(customer,from_date,to_date):	
+def get_receivable(customer,from_date,to_date,company):	
 
 	data = ''
 	data += '<table class="table table-bordered">'
@@ -450,7 +592,10 @@ def get_receivable(customer,from_date,to_date):
 	data += '<td align = center style="border:2px solid #dddddd;;font-size: 11px;width:10%;"><b>Paid</b></td>'
 	data += '<td align = center style="border:2px solid #dddddd;;font-size: 11px;width:15%;"><b>Outstanding</b></td>'
 	data += '</tr>'
-	si = frappe.get_all("Sales Invoice",{"status":"Overdue","customer":customer,"posting_date": ["between", (from_date,to_date)]},["*"],order_by="posting_date asc"  )
+	# if company == "TSL COMPANY _KSA":
+	# si = frappe.get_all("Sales Invoice",{"customer": customer,"posting_date": ["between", (from_date, to_date)],"status": ["in", ["Overdue", "Unpaid"]]})
+	# else:
+	si = frappe.get_all("Sales Invoice",{"status": ["in", ["Overdue", "Unpaid"]],"customer":customer,"posting_date": ["between", (from_date,to_date)]},["*"],order_by="posting_date asc"  )
 	os = 0
 	# for i in si:
 	for index, i in enumerate(si): 
@@ -528,7 +673,8 @@ def get_receivable(customer,from_date,to_date):
 		wods = []
 	data += '<tr>'
 	frmtd_num = "{:,.3f}".format(os)
-	data += '<td align = right colspan = 6 style="border:2px solid #dddddd;;"><b>Balance Due</b></td>'
+	cur = frappe.get_value("Company",company,"default_currency")
+	data += '<td align = right colspan = 6 style="border:2px solid #dddddd;;"><b>Balance Due(%s)</b></td>'%(cur)
 	data += '<td align = center colspan = 2 style="border:2px solid #dddddd;;"><b>%s</b></td>'%(frmtd_num)
 	data += '</tr>'
 	data += '</table>'
@@ -1376,13 +1522,15 @@ def change_shipping_cost(currency,sq):
 	return data,t_amt
 		
 
-@frappe.whitelist()
-def dlt_wo():
-	wo = frappe.db.sql(""" delete from `tabSales Person` where old_wo_no IS NOT NULL """)
+# @frappe.whitelist()
+# def dlt_wo():
+# 	wo = frappe.db.sql(""" delete from `tabSupply Order Data` where company = "TSL COMPANY - KSA" """)
 
 @frappe.whitelist()
 def update_wo():
-	wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
+	# wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
+	wo = frappe.db.sql(""" delete from `tabQuotation` WHERE name = "REP-QTN-INT-DU25-00079" """)
+
 
 
 @frappe.whitelist()
@@ -1686,10 +1834,10 @@ def salary_register(month_name,company,cyrix_employee,civil_id_no):
 				
 				# Format cell value
 				if fieldtype == 'Currency':
-					cell_value = "{:,.3f}".format(cell_value) if isinstance(cell_value, (float, int)) else "0.000"
+					cell_value = "{:,.2f}".format(cell_value) if isinstance(cell_value, (float, int)) else "0.000"
 				elif isinstance(cell_value, float):
-					# cell_value = f"{cell_value:.3f}"
-					cell_value = "{:,.3f}".format(cell_value) 
+					# cell_value = f"{cell_value:.2f}"
+					cell_value = "{:,.2f}".format(cell_value) 
 				data += f'<td style="font-size:6px">{cell_value or ""}</td>'
 			data += '</tr>'
 			sl_no += 1
@@ -1713,7 +1861,7 @@ def salary_register(month_name,company,cyrix_employee,civil_id_no):
 	for i, header in enumerate(filtered_headers[first_currency_index:], start=first_currency_index):
 		fieldname = header['fieldname']
 		if fieldname in currency_columns:
-			total_value = "{:,.3f}".format(totals[fieldname])
+			total_value = "{:,.2f}".format(totals[fieldname])
 		else:
 			total_value = ''
 		data += f'<td style="font-size:6px;font-weight:bold">{total_value}</td>'
@@ -1761,47 +1909,31 @@ def get_incentive(from_date,to_date,company):
 
 	data += '<table class="table table-bordered">'
 
-	# data += '<tr>'
-	# data += '<td colspan = 1 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b></b><center></td>'
-	# data += '<td colspan = 5 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>RS</b><center></td>'
-	# data += '<td colspan = 5 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>NER</b><center></td>'
-	# data += '<td colspan = 1 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b></b><center></td>'
-	# data += '</tr>'	
 	
 
-	# data += '<tr>' 
-	# data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>RANGE<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>1 - 320<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>320 - 640<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>640 - 1200<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>1200 ><center></td>'
-	# data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center><center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>1 - 320<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>320 - 640<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>640 - 1200<center></td>'
-	# data += '<td style="border-color:#000000;width:5%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center>1200 ><center></td>'
-	# data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center><center></td>'
-	# data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;font-weight:bold;"><center><center></td>'
-	# data += '</tr>'	 
-
-
 	data += '<tr>'
-	data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>TECHNICIAN</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Total RS WO Count</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>NER COUNT</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>NER % Against RS</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Total RS Amount</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Total Material Cost</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Net Amount</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>NER DEDUCTION AMT</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Amt After Deduction</b><center></td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Commission</b><center></td>'
+	data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">TECHNICIAN</td>'
+
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total RS WO Count</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total RS Amount</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total Material Cost</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NET Amount</td>'
+
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER COUNT</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER % Against RS</td>'
+	
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION AMT</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION COMMISSION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">AMT AFTER DEDUCTION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">COMMISSION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">AFTER DEDUCTION COMMISSION</td>'
 	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>TOTAL</b><center></td>'
 	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>SUB TOTAL</b><center></td>'
 	data += '</tr>'	
 
+
 	
-	sp = frappe.get_all("Employee",{"designation": ["in", ["Technician",'Senior Technician']],"company":company,"status":"Active"},["*"])
+	sp = frappe.get_all("Employee",{"designation": ["in", ["Technician",'Senior Technician',"Automation Technician"]],"company":company,"status":"Active"},["*"])
 	# wd = frappe.get_all("Work Order Data",{"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (from_date,to_date)]},["*"])
 	for i in sp:
 		data += '<tr>'
@@ -1820,15 +1952,8 @@ def get_incentive(from_date,to_date,company):
 
 	
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs[0]["ct"])
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
-		frappe.errprint((i.employee_name))
-		frappe.errprint(rs[0]["ct"])
-		if rs[0]["ct"] == 0:
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(rs[0]["ct"],"%")
-		else:
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
-		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
-
+		
+	
 	
 		count_a = 0
 		count_b = 0
@@ -1840,24 +1965,54 @@ def get_incentive(from_date,to_date,company):
 		where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" and `tabWork Order Data`.status_cap IS NULL
 		and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,from_date,to_date) ,as_dict=1)
 		
+		wds = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct from `tabWork Order Data` 
+			left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+			where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
+			and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,from_date,to_date) ,as_dict=1)
+			
+		
 		q_m = 0
 		s_total = 0
-		for j in wd:
-			# q_m = 0
+		inv_total = 0
+		
+		for j in wds:
+			ev = frappe.db.sql(""" select  `tabPart Sheet Item`.total as t from `tabEvaluation Report` 
+			left join `tabPart Sheet Item` on `tabEvaluation Report`.name = `tabPart Sheet Item`.parent
+			where  `tabEvaluation Report`.work_order_data = '%s' """ %(j.ct) ,as_dict=1)
+			if ev:
+				for e in ev:
+					if e["t"]:
+						inv_total = inv_total + e["t"]
 			
 			s_amt = frappe.get_all("Supplier Quotation",{"work_order_data":j.ct,"workflow_state":"Approved By Management"},["*"])
-			# s_amt= frappe.db.sql(''' select base_total as b_am,shipping_cost as ship from `tabSupplier Quotation` 
-			# where Workflow_state in ("Approved By Management") and
-			# work_order_data = '%s' ''' %(j.ct) ,as_dict=1)
+			s_amt= frappe.db.sql(''' select base_total as b_am,shipping_cost as ship from `tabSupplier Quotation` 
+			where Workflow_state in ("Approved By Management") and
+			work_order_data = '%s' ''' %(j.ct) ,as_dict=1)
 			if s_amt:
 				for s in s_amt:
-					s_total = s_total + s.base_total
+					# s_total = s_total + s.base_total
 					s_cur = frappe.get_value("Supplier",{"name":s.supplier},["default_currency"])
 					exr = get_exchange_rate(s_cur,"KWD")
-					
 					if s.shipping_cost:
 						s_total = s_total + (s.shipping_cost * exr)
 				# s_total = s_total + s_amt[0]["b_am"]
+
+			
+
+			
+		for j in wd:
+			
+			# s_amt = frappe.get_all("Supplier Quotation",{"work_order_data":j.ct,"workflow_state":"Approved By Management"},["*"])
+			
+			# if s_amt:
+			# 	for s in s_amt:
+			# 		s_total = s_total + s.base_total
+			# 		s_cur = frappe.get_value("Supplier",{"name":s.supplier},["default_currency"])
+			# 		exr = get_exchange_rate(s_cur,"KWD")
+					
+			# 		if s.shipping_cost:
+			# 			s_total = s_total + (s.shipping_cost * exr)
+				
 
 			q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
 			`tabQuotation`.default_discount_percentage as dis,
@@ -1889,19 +2044,33 @@ def get_incentive(from_date,to_date,company):
 						q_m = q_m + amt
 
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m - s_total):,}") 
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m - (s_total + inv_total)):,}") 
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
+
+		if rs[0]["ct"] == 0:
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(rs[0]["ct"],"%")
+		else:
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
+		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
+
+
 		if rs[0]["ct"] == 0:
 			nar = 0
 		else:
 			nar = round((ner[0]["ct"]/rs[0]["ct"])*100)
 		to_rs = round(q_m,2)
 		ner_deduct = (nar * to_rs)/100
-		net_amount =  round((q_m - s_total),2)
+		net_amount =  round((q_m - (s_total + inv_total)),2)
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct):,}")
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct*2/100):,}")
 		aad = round(net_amount - ner_deduct,2)
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad):,}")
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad*2/100):,}") 
+
+		ner_d_com =  round(ner_deduct*2/100)
+		aad_d_com = round(aad*2/100)		
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{aad_d_com-ner_d_com:,}") 
 
 		# frappe.errprint(s_total)
 		# 	sales = frappe.db.sql(""" select `tabSales Invoice`.posting_date,`tabSales Invoice Item`.amount  from `tabSales Invoice`
@@ -2098,9 +2267,9 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
 				if fieldname in currency_columns:
 					totals[fieldname] += float(cell_value) if isinstance(cell_value, (float, int)) else 0
 				if fieldtype == 'Currency':
-					cell_value = "{:,.3f}".format(cell_value) if isinstance(cell_value, (float, int)) else "0.000"
+					cell_value = "{:,.2f}".format(cell_value) if isinstance(cell_value, (float, int)) else "0.000"
 				elif isinstance(cell_value, float):
-					cell_value = "{:,.3f}".format(cell_value)
+					cell_value = "{:,.2f}".format(cell_value)
 				columns.append(cell_value)
 			ws.append(columns)
 			sl_no += 1
@@ -2117,7 +2286,7 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
 	for i, header in enumerate(filtered_headers[first_currency_index:], start=first_currency_index):
 		fieldname = header['fieldname']
 		if fieldname in currency_columns:
-			total_value = "{:,.3f}".format(totals[fieldname])
+			total_value = "{:,.2f}".format(totals[fieldname])
 		else:
 			total_value = ''
 		total_row.append(total_value)
@@ -2152,7 +2321,7 @@ def build_xlsx_response(filename):
 
 
 @frappe.whitelist()
-def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references ):
+def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references,remarks ):
 	data = ""
 	data+= '<table class="table table-bordered" style="border:1px solid black;" >'
 	data+= '<tr><td colspan = 8><center><b style = "color:blue;font-size:15px">TSL COMPANY</b></center></td></tr>'
@@ -2163,6 +2332,7 @@ def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currenc
 	data+='<tr> <td>Amount</td><td>%s</td></tr>' %("{:,.2f}".format(amount_in or total_allocated_amount))
 	data+='<tr><td>Currency</td><td>%s</td></tr>' %(currency_paid)
 	data+='<tr><td>Department</td><td>%s</td></tr>' %(cost_center)
+	data+='<tr><td>Remarks</td><td>%s</td></tr>' %(remarks)
 	for i in references:
 		pat = frappe.get_value("Purchase Invoice",{"name":i.reference_name},["supplier_invoice_attach"])
 		pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
@@ -3212,7 +3382,7 @@ def purchase_report(date,company):
 
 	spo = frappe.db.sql(""" select count(`tabPurchase Order Item`.supply_order_data) as p from `tabPurchase Order`
 		left join `tabPurchase Order Item` on `tabPurchase Order Item`.parent = `tabPurchase Order`.name
-		where `tabPurchase Order`.transaction_date = '%s' and `tabPurchase Order`.docstatus != 2 and `tabPurchase Order`.per_received = %s and `tabPurchase Order`.department != 'Supply Tender - TSL'
+		where `tabPurchase Order`.transaction_date = '%s' and `tabPurchase Order`.docstatus != 2 and `tabPurchase Order`.per_received = %s and `tabPurchase Order`.cost_center != 'Supply Tender - TSL'
 		and `tabPurchase Order`.company = '%s' """ %(date,0,company),as_dict =1)
 
 	spwod = 0
@@ -5344,6 +5514,18 @@ def fill_employee_details(self):
 			"last_day_of_work": ["between", (self.start_date, self.end_date)],
 			"docstatus":1
 		},['name'])
+
+		# loan = frappe.db.sql("""
+		# 	SELECT l.name 
+		# 	FROM `tabLoan` l
+		# 	JOIN `tabLoan Pause Details` lpd ON lpd.parent = l.name
+		# 	WHERE l.docstatus = 1 
+		# 	AND l.applicant = '%s' 
+		# 	AND MONTH(lpd.pause_from) = '%s'
+		# 	AND YEAR(lpd.pause_upto) = '%s'
+		# 	ORDER BY l.creation DESC
+		# 	LIMIT 1
+		# """ % (d['employee'], start_date.month, start_date.year))
 		if leave_salary or fnf:
 			continue
 
@@ -6776,158 +6958,614 @@ def send_mail_to_hr(doc,method):
 		)
 
 
-# @frappe.whitelist()
-# def update_wod(import_file):
-# 	from datetime import datetime
-# 	filepath = get_file(import_file)
-# 	data = read_csv_content(filepath[1])
-# 	count = 0
-# 	for i in data[1:]:
-# 		count = count + 1
-# 		print(count)
-# 		# print(i[0])
-# 		if i[14] == "P" or i[6] == "p":
-# 			i[14] = 'P-Paid'
-# 		if i[14] == "RNRC":
-# 			i[14] = 'RNRC-Return Not Repaired Client'
-# 		if i[14] == "A":
-# 			i[14] = 'A-Approved'
-# 		if i[14] == "C":
-# 			i[14] = 'C-Comparison'
-# 		if i[14] == "CC":
-# 			i[14] = 'CC-Comparison Client'
-# 		if i[14] == "EP" or i[6] == "ED":
-# 			i[14] = 'EP-Extra Parts'
-# 		if i[14] == "NE":
-# 			i[14] = 'NE-Need Evaluation'
-# 		if i[14] == "NER":
-# 			i[14] = 'NER-Need Evaluation Return'
-# 		if i[14] == "Q":
-# 			i[14] = 'Q-Quoted'
-# 		if i[14] == "RNA":
-# 			i[14] = 'RNA-Return Not Approved'
-# 		if i[14] == "RNAC":
-# 			i[14] = 'RNAC-Return Not Approved Client'
-# 		if i[14] == "RNF":
-# 			i[14] = 'RNF-Return No Fault'
-# 		if i[14] == "RNFC":
-# 			i[14] = 'RNFC-Return No Fault Client'
-# 		if i[14] == "RNP":
-# 			i[14] = 'RNP-Return No Parts'
-# 		if i[14] == "RNPC":
-# 			i[14] = 'RNPC-Return No Parts Client'
-# 		if i[14] == "RNR":
-# 			i[14] = 'RNR-Return Not Repaired'
-# 		if i[14] == "RNRC":
-# 			i[14] = 'RNRC-Return Not Repaired Client'
-# 		if i[14] == "RS":
-# 			i[14] = 'RS-Repaired and Shipped'
-# 		if i[14] == "RSC":
-# 			i[14] = 'RSC-Repaired and Shipped Client'
-# 		if i[14] == "RSI":
-# 			i[14] = 'RSI-Repaired and Shipped Invoiced'
-# 		if i[14] == "SP":
-# 			i[14] = 'SP-Searching Parts'
-# 		if i[14] == "TR":
-# 			i[14] ='TR-Technician Repair'
-# 		if i[14] == "UE":
-# 			i[14] = 'UE-Under Evaluation'
-# 		if i[14] == "UTR":
-# 			i[14] = 'UTR-Under Technician Repair'
-# 		if i[14] == "W":
-# 			i[14] = "W-Working"
-# 		if i[14] == "WP":
-# 			i[14] = 'WP-Waiting Parts'
-# 		if i[14] == "CT":
-# 			i[14] = 'CT-Customer Testing'
-# 		w = frappe.db.exists("Work Order Data",{"old_wo_no":i[0],"company":"TSL COMPANY - UAE"})\
+@frappe.whitelist()
+def update_wod(import_file):
+	from datetime import datetime
+	filepath = get_file(import_file)
+	data = read_csv_content(filepath[1])
+	count = 0
+	for i in data[1:]:
+		count = count + 1
+		print(count)
+		# print(i[0])
+		if i[14] == "P" or i[6] == "p":
+			i[14] = 'P-Paid'
+		if i[14] == "RNRC":
+			i[14] = 'RNRC-Return Not Repaired Client'
+		if i[14] == "A":
+			i[14] = 'A-Approved'
+		if i[14] == "C":
+			i[14] = 'C-Comparison'
+		if i[14] == "CC":
+			i[14] = 'CC-Comparison Client'
+		if i[14] == "EP" or i[6] == "ED":
+			i[14] = 'EP-Extra Parts'
+		if i[14] == "NE":
+			i[14] = 'NE-Need Evaluation'
+		if i[14] == "NER":
+			i[14] = 'NER-Need Evaluation Return'
+		if i[14] == "Q":
+			i[14] = 'Q-Quoted'
+		if i[14] == "RNA":
+			i[14] = 'RNA-Return Not Approved'
+		if i[14] == "RNAC":
+			i[14] = 'RNAC-Return Not Approved Client'
+		if i[14] == "RNF":
+			i[14] = 'RNF-Return No Fault'
+		if i[14] == "RNFC":
+			i[14] = 'RNFC-Return No Fault Client'
+		if i[14] == "RNP":
+			i[14] = 'RNP-Return No Parts'
+		if i[14] == "RNPC":
+			i[14] = 'RNPC-Return No Parts Client'
+		if i[14] == "RNR":
+			i[14] = 'RNR-Return Not Repaired'
+		if i[14] == "RNRC":
+			i[14] = 'RNRC-Return Not Repaired Client'
+		if i[14] == "RS":
+			i[14] = 'RS-Repaired and Shipped'
+		if i[14] == "RSC":
+			i[14] = 'RSC-Repaired and Shipped Client'
+		if i[14] == "RSI":
+			i[14] = 'RSI-Repaired and Shipped Invoiced'
+		if i[14] == "SP":
+			i[14] = 'SP-Searching Parts'
+		if i[14] == "TR":
+			i[14] ='TR-Technician Repair'
+		if i[14] == "UE":
+			i[14] = 'UE-Under Evaluation'
+		if i[14] == "UTR":
+			i[14] = 'UTR-Under Technician Repair'
+		if i[14] == "W":
+			i[14] = "W-Working"
+		if i[14] == "WP":
+			i[14] = 'WP-Waiting Parts'
+		if i[14] == "CT":
+			i[14] = 'CT-Customer Testing'
+		w = frappe.db.exists("Work Order Data",{"old_wo_no":i[0],"company":"TSL COMPANY - UAE"})\
 		
 		
 
-# 		if w:
-# 			# if i[12]:
-# 			# 	i[12] = i[12].replace(",","")
-# 			# if i[13]:
-# 			# 	i[13] = i[13].replace(",","")
-# 			# if i[11]:
-# 			# 	i[11] = i[11].replace(",","")
-# 			wo = frappe.db.sql("""
-# 			UPDATE `tabWork Order Data` 
-# 			SET 
-# 				old_wo_q_amount = %s, 
-# 				old_wo_vat = %s, 
-# 				old_wo_total_amt = %s,
-# 				status = %s 
-# 			WHERE name = %s;
-# 			""", (i[12] or 0, i[11] or 0, i[13] or 0,i[14],w))
+		if w:
+			# if i[12]:
+			# 	i[12] = i[12].replace(",","")
+			# if i[13]:
+			# 	i[13] = i[13].replace(",","")
+			# if i[11]:
+			# 	i[11] = i[11].replace(",","")
+			wo = frappe.db.sql("""
+			UPDATE `tabWork Order Data` 
+			SET 
+				old_wo_q_amount = %s, 
+				old_wo_vat = %s, 
+				old_wo_total_amt = %s,
+				status = %s 
+			WHERE name = %s;
+			""", (i[12] or 0, i[11] or 0, i[13] or 0,i[14],w))
 
-# @frappe.whitelist()
-# def update_sod(import_file):
-# 	from datetime import datetime
-# 	filepath = get_file(import_file)
-# 	data = read_csv_content(filepath[1])
-# 	count = 0
-# 	for i in data[1:]:
-# 		count = count + 1
-# 		print(count)
+@frappe.whitelist()
+def update_sod(import_file):
+	from datetime import datetime
+	filepath = get_file(import_file)
+	data = read_csv_content(filepath[1])
+	count = 0
+	for i in data[1:]:
+		count = count + 1
+		print(count)
 		
-# 		w = frappe.db.exists("Supply Order Data",{"old_sod_no":i[0],"company":"TSL COMPANY - UAE"})
-# 		if w:
-# 			# Extract the currency (letters)
-# 			text = str(i[16])
-# 			currency = ''.join(filter(str.isalpha, text))
+		w = frappe.db.exists("Supply Order Data",{"old_sod_no":i[0],"company":"TSL COMPANY - UAE"})
+		if w:
+			# Extract the currency (letters)
+			text = str(i[16])
+			currency = ''.join(filter(str.isalpha, text))
 			
 
-# 			# Extract the numeric value (digits, commas, and dots)
-# 			numeric_value = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text))
-# 			# print(currency)
+			# Extract the numeric value (digits, commas, and dots)
+			numeric_value = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text))
+			# print(currency)
 			
 
-# 			text2 = str(i[17])
+			text2 = str(i[17])
 
-# 			# Extract the currency (letters)
-# 			currency2 = ''.join(filter(str.isalpha, text2))
+			# Extract the currency (letters)
+			currency2 = ''.join(filter(str.isalpha, text2))
 
-# 			# Extract the numeric value (digits, commas, and dots)
-# 			numeric_value2 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text2))
-# 			# print(currency)
+			# Extract the numeric value (digits, commas, and dots)
+			numeric_value2 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text2))
+			# print(currency)
 
-# 			text3 = str(i[18])
+			text3 = str(i[18])
 
-# 			# Extract the currency (letters)
-# 			currency3 = ''.join(filter(str.isalpha, text3))
+			# Extract the currency (letters)
+			currency3 = ''.join(filter(str.isalpha, text3))
 
-# 			# Extract the numeric value (digits, commas, and dots)
-# 			numeric_value3 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text3))
-# 			# print(currency)
+			# Extract the numeric value (digits, commas, and dots)
+			numeric_value3 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text3))
+			# print(currency)
 	
-# 			print(i[0])
+			print(i[0])
 			
-# 			if currency == "AED":
-# 				print(currency)
-# 			else:
-# 				currency = "USD"
-# 				print("USD")
+			if currency == "AED":
+				print(currency)
+			else:
+				currency = "USD"
+				print("USD")
 
-# 			if i[19] == "PAID":
-# 				i[19] = 'Paid'
-# 			if i[19] == "APPROVED":
-# 				i[19] = 'Approved'
-# 			if i[19] == "NOT APPROVED":
-# 				i[19] = 'Approved'
-# 			if i[19] == "QUOTED":
-# 				i[19] = 'Quoted'
-# 			if i[19] == "INVOICED":
-# 				i[19] = 'Invoiced'
+			if i[19] == "PAID":
+				i[19] = 'Paid'
+			if i[19] == "APPROVED":
+				i[19] = 'Approved'
+			if i[19] == "NOT APPROVED":
+				i[19] = 'Approved'
+			if i[19] == "QUOTED":
+				i[19] = 'Quoted'
+			if i[19] == "INVOICED":
+				i[19] = 'Invoiced'
 				
-# 			wo = frappe.db.sql("""
-# 			UPDATE `tabSupply Order Data` 
-# 			SET 
-# 				so_old_quoted_amt = %s, 
-# 				so_old_vat = %s, 
-# 				so_old_total_amt = %s,
-# 				status = %s ,
-# 				so_currency_old = %s
+			wo = frappe.db.sql("""
+			UPDATE `tabSupply Order Data` 
+			SET 
+				so_old_quoted_amt = %s, 
+				so_old_vat = %s, 
+				so_old_total_amt = %s,
+				status = %s ,
+				so_currency_old = %s
 					  
-# 			WHERE name = %s;
-# 		""", (numeric_value or 0, numeric_value2 or 0, numeric_value3 or 0,i[19],currency,w))
+			WHERE name = %s;
+		""", (numeric_value or 0, numeric_value2 or 0, numeric_value3 or 0,i[19],currency,w))
+
+
+# @frappe.whitelist()
+# def crt_pr(import_file):
+# 	from datetime import datetime
+# 	filepath = get_file(import_file)
+# 	data = read_csv_content(filepath[1])
+	# count = 0
+	# a_date = ''
+	# p_date = ''
+	# d_date = ''
+	# pd_date = ''
+	# app_date = ''
+	# inv_date = ''
+
+	# for i in data[1:]:
+	# 	# print(i[0])
+	# 	w = frappe.db.exists("Work Order Data",{"company":"TSL COMPANY - UAE","old_wo_no":i[0]})
+	# 	if w:
+	# 		tech = ""
+	# 		tech_id = ""
+	# 		# if i[10] == "Rajesh" or i[10] == "RAjesh":
+	# 		# 	tech = "rajesh-uae@tsl-me.com"
+	# 		# 	t = frappe.get_value("Technician ID",{"technician":tech},"name")
+	# 		# 	tech_id = t
+	# 		if i[10] == "Bala" or i[10] == "BALA":
+	# 			tech = "bala@tsl-me.com"
+	# 			t = frappe.get_value("Technician ID",{"technician":tech},"name")
+	# 			tech_id = t
+	# 			print(i[10])
+	# 			frappe.set_value("Work Order Data",w,"technician",tech)
+	# 			frappe.set_value("Work Order Data",w,"tech_id",tech_id)
+			# if i[10] == "Glyen" or i[10] == "glyen"  :
+			# 	tech = "03glyen06mariano83@gmail.com"
+			# 	t = frappe.get_value("Technician ID",{"technician":tech},"name")
+			# 	tech_id = t
+			# if i[10] == "Marwin" or "MARWIN":
+			# 	tech = "marwin-uae@tsl-me.com"
+			# 	t = frappe.get_value("Technician ID",{"technician":tech},"name")
+			# 	tech_id = t
+			# if i[10] == "Ahmed":
+			# 	tech = "ahmedmaster75@gmail.com"
+			# 	t = frappe.get_value("Technician ID",{"technician":tech},"name")
+			# 	tech_id = t
+			# if i[10] == "Sami":
+			# 	tech = "sami@tsl-me.com"
+			# 	t = frappe.get_value("Technician ID",{"technician":tech},"name")
+			# 	tech_id = t
+			
+			# print(tech_id)
+
+		# # count = count + 1
+		# print(i[3])
+		# wo = frappe.new_doc("Work Order Data")
+		# cus = frappe.db.exists("Customer",{"name": i[3]})
+		# if not cus:
+		# 	c = frappe.new_doc("Customer")
+		# 	c.customer_name = i[3]
+		# 	c.territory = "DUBAI"
+		# 	c.customer_type = "Company"
+		# 	# c.company_group = "Dubai"
+		# 	c.save(ignore_permissions = 1)
+			
+		
+		# if i[2]:
+		# 	date_ad = str(i[2])
+		# 	day, month, year = date_ad.split("/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+
+		# 	result = "-".join([year,month,day])
+		# 	p_date = result
+		# else:
+		# 	p_date = ''
+		
+		
+		# if i[14]:
+		# 	date_ad = str(i[14])
+		# 	day, month, year = date_ad.split("/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+		# 	result = "-".join([year,month,day])
+		# 	app_date = result
+		# else:
+		# 	app_date = ''
+		
+		
+
+
+
+		# if i[13]:
+		# 	date_ad = str(i[13])
+		# 	day, month, year = date_ad.split("/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+
+		# 	result = "-".join([year,month,day])
+		# 	a_date = result
+		# else:
+		# 	a_date = ''
+		
+			
+
+		# if i[16]:
+		# 	date_ad = str(i[16])
+		# 	day, month, year = date_ad.split("/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+
+		# 	result = "-".join([year,month,day])
+		# 	d_date = result
+		# else:
+		# 	d_date = ''
+		
+		
+
+		# if i[19]:
+		# 	date_ad = str(i[19])
+		# 	day, month, year = date_ad.split("-" or "/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+
+		# 	result = "-".join([year,month,day])
+		# 	pd_date = result
+		# else:
+		# 	pd_date = ''
+		
+		# if i[17]:
+		# 	date_ad = str(i[17])
+		# 	day, month, year = date_ad.split("/")
+		# 	if month == "Jan":
+		# 		month = "1"
+		# 	if month == "Feb":
+		# 		month = "2"
+		# 	if month == "Mar":
+		# 		month = "3"
+		# 	if month == "Apr":
+		# 		month = "4"
+		# 	if month == "May":
+		# 		month = "5"
+		# 	if month == "Jun":
+		# 		month = "6"
+		# 	if month == "Jul":
+		# 		month = "7"
+		# 	if month == "Aug":
+		# 		month = "8"
+		# 	if month == "Sep":
+		# 		month = "9"
+		# 	if month == "Oct":
+		# 		month = "10"
+		# 	if month == "Nov":
+		# 		month = "11"
+		# 	if month == "Dec":
+		# 		month = "12"
+			
+		# 	if year == "17" or year == "2017":
+		# 		year = "2017" 
+		# 	if year == "18" or year == "2018" :
+		# 		year = "2018" 
+		# 	if year == "19" or year == "2019" :
+		# 		year = "2019" 
+		# 	if year == "20" or year == "2020" :
+		# 		year = "2020" 
+		# 	if year == "21" or year == "2021" :
+		# 		year = "2021" 
+		# 	if year == "22" or year == "2012" :
+		# 		year = "2022" 
+		# 	if year == "23" or year == "2023" :
+		# 		year = "2023" 
+		# 	if year == "24" or year == "2024" :
+		# 		year = "2024" 
+
+
+		# 	result = "-".join([year,month,day])
+		# 	inv_date = result
+		# else:
+		# 	inv_date = ''	
+		
+		# if i[12] == "P":
+		# 	i[12] = 'P-Paid'
+		# if i[12] == "RSI":
+		# 	i[12] = 'RSI-Repaired and Shipped Invoiced'
+		# if i[12] == "Q":
+		# 	i[12] = 'Q-Quoted'
+		# if i[12] == "A":
+		# 	i[12] = 'A-Approved'
+		
+		
+		# text = str(i[9])
+
+		# # Extract the currency (letters)
+		# currency = ''.join(filter(str.isalpha, text))
+
+		# # Extract the numeric value (digits, commas, and dots)
+		# numeric_value = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text))
+		# # print(currency)
+		
+
+		# text2 = str(i[10])
+
+		# # Extract the currency (letters)
+		# currency2 = ''.join(filter(str.isalpha, text2))
+
+		# # Extract the numeric value (digits, commas, and dots)
+		# numeric_value2 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text2))
+		# # print(currency)
+
+		# text3 = str(i[11])
+
+		# # Extract the currency (letters)
+		# currency3 = ''.join(filter(str.isalpha, text3))
+
+		# # Extract the numeric value (digits, commas, and dots)
+		# numeric_value3 = ''.join(filter(lambda x: x.isdigit() or x in [',', '.'], text3))
+		# # print(currency)
+	
+		
+		# wo.naming_series = "WOD-DU.YY.-P."
+		# wo.customer = i[3]
+		# wo.old_wod_no = i[0]
+		# wo.status = i[12]
+		# wo.sales_rep = i[1]
+		# wo.company = "TSL COMPANY - UAE"
+		# # wo.department = "Supply - TSL"
+		# wo.posting_date = p_date
+		# wo.received_date = p_date
+		# wo.old_wo_q_amount = numeric_value
+		# wo.old_wo_vat = numeric_value2
+		# wo.old_wo_total_amt = numeric_value3
+		# wo.quoted_date = a_date
+		# wo.payment_date = pd_date
+		# wo.po_number = i[17]
+		# wo.invoice_date = inv_date
+		# wo.remarks = i[20]
+		# wo.delivery = d_date
+		# wo.po_no = i[15]
+		# wo.quotation_approved_date =  app_date
+		
+		
+		# # wo.so_currency_old = currency
+		# wo.append("material_list", {
+		# 	'item_code': "001300",
+		# 	'model': "Old",
+		# 	"mfg":"Old mfg",
+		# 	"type": "Old",
+		# 	"item_name":"001300",
+		# 	"quantity" :1
+				
+		# })
+
+		# wo.save(ignore_permissions = 1)

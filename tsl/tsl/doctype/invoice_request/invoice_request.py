@@ -27,11 +27,24 @@ class InvoiceRequest(Document):
 	
 	def on_update(self):
 		if self.workflow_state == "Pending with Finance":
-			msg = '''Dear Sir,<br> Quotation %s has been approved by the customer.Please take action to make invoice <br><a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>'''%(self.quotation,self.name)
+			msg = '''Dear Sir,<br> Quotation has been approved by the customer.Please take action to make invoice <br><a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>'''%(self.name)
 
 			frappe.sendmail(
+				sender= self.requested_by,
 				recipients=["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
-				sender= "Notification from TSL <info@tsl-me.com>",
+				subject = "Invoice Request",
+				message = msg,
+			
+				)
+	def on_submit(self):
+		if self.workflow_state == "Invoice Created":
+			# self.submitted_by = frappe.session.user
+			frappe.db.set_value("Invoice Request",self.name,"submitted_by",frappe.session.user)
+			msg = '''Dear Info,<br> Against the Quotation invoice has been created.Please find the invoice in Attach Invoice Field <br><a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>'''%(self.name)
+
+			frappe.sendmail(
+				sender= self.submitted_by,
+				recipients=["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
 				subject = "Invoice Request",
 				message = msg,
 			

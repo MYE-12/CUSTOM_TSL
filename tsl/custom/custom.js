@@ -441,27 +441,87 @@ frappe.ui.form.on('Quotation', {
 
             }, __("View"));
     }
+
+
 	if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
-		frm.add_custom_button(__('Sales Invoice'), function(){
+		if(frm.doc.company != "TSL COMPANY - KSA" ) {
 
-			frappe.call({
-				method: "tsl.custom_py.quotation.create_sal_inv",
-				args: {
-					"source": frm.doc.name,
-				},
-				callback: function(r) {
-					if(r.message) {
-						var doc = frappe.model.sync(r.message);
-						frappe.set_route("Form", doc[0].doctype, doc[0].name);
+			frm.add_custom_button(__('Sales Invoice'), function(){
 
+				frappe.call({
+					method: "tsl.custom_py.quotation.create_sal_inv",
+					args: {
+						"source": frm.doc.name,
+					},
+					callback: function(r) {
+						if(r.message) {
+							var doc = frappe.model.sync(r.message);
+							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+						}
 					}
-				}
-			});
-
-
-
-					}, ('Create'))
+				});
+	
+	
+	
+						}, ('Create'))
 		}
+		
+		}
+
+		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
+			if(frm.doc.company == "TSL COMPANY - KSA" && frappe.user.has_role("Accountant") ) {
+	
+				frm.add_custom_button(__('Sales Invoice'), function(){
+	
+					frappe.call({
+						method: "tsl.custom_py.quotation.create_sal_inv",
+						args: {
+							"source": frm.doc.name,
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+		
+							}
+						}
+					});
+		
+		
+		
+							}, ('Create'))
+			}
+			
+			}
+	
+
+		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
+			if(frm.doc.company == "TSL COMPANY - KSA") {
+	
+				frm.add_custom_button(__('Invoice Request'), function(){
+	
+					frappe.call({
+						method: "tsl.custom_py.quotation.create_inv_req",
+						args: {
+							"source": frm.doc.name,
+							"user": frappe.session.user,
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							}
+						}
+					});
+		
+		
+		
+							}, ('Create'))
+			}
+			
+			}
+	
 
 		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer" && frm.doc.project){
 			frm.add_custom_button(__('Sales Invoice'), function(){

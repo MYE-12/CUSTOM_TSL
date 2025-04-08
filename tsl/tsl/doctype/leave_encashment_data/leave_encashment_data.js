@@ -44,6 +44,7 @@ frappe.ui.form.on('Leave Encashment Data', {
 				},
 				callback(r){
 					if(r){
+						console.log(r)
 						var encashable_amount  = frm.doc.encashing_days * r.message
 						frm.set_value("encashment_amount",encashable_amount)
 					}

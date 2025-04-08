@@ -94,8 +94,7 @@ class PurchaseReport(Document):
 				where `tabQuotation`.workflow_state = "Approved By Customer" and `tabQuotation Item`.wod_no = "%s" """ %(i.name),as_dict =1)
 				if pre_q:
 					pre_wod_count = pre_wod_count + 1
-		# frappe.errprint(pre_wod_count)
-
+		
 
 
 		pwod = 0
@@ -195,8 +194,9 @@ class PurchaseReport(Document):
 		spo = frappe.db.sql(""" select count(`tabPurchase Order Item`.supply_order_data) as p from `tabPurchase Order`
 			left join `tabPurchase Order Item` on `tabPurchase Order Item`.parent = `tabPurchase Order`.name
 			where `tabPurchase Order`.transaction_date = '%s' and `tabPurchase Order`.docstatus != 2 and `tabPurchase Order`.per_received = %s
-			and `tabPurchase Order`.company = '%s' and `tabPurchase Order`.department != 'Supply Tender - TSL' """ %(self.date,0,self.company),as_dict =1)
+			and `tabPurchase Order`.company = '%s' and `tabPurchase Order`.cost_center != 'Supply Tender - TSL' """ %(self.date,0,self.company),as_dict =1)
 
+		frappe.errprint(spo)
 		spwod = 0
 		if spo:	
 			spwod = spo[0]["p"]

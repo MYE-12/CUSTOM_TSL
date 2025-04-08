@@ -2,6 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Evaluation Report', {
+	
 	onload: function(frm) {
 		if(frm.doc.company == "TSL COMPANY - UAE" && frm.doc.__islocal){
 		frm.set_value("naming_series","EVAL-DU-REP-.YYYY.-")
@@ -276,9 +277,10 @@ frappe.ui.form.on('Evaluation Report', {
 							},
 							callback: function (r) {
 								if (r.message) {
-								
-									frappe.msgprint("Material Released")
-									// frappe.set_route("Form", "Stock Entry", "new-stock-entry-1");
+									console.log(r.message)
+									// frappe.msgprint("Material Released")
+									// frappe.set_route("Form", "Stock Entry", r.message);
+									// frappe.msgprint("Please Submit the document")
 								}
 							}
 						});

@@ -63,6 +63,21 @@ def get_number_of_leave_days(
 		number_of_days = date_diff(to_date, from_date) + 1
 
 	number_of_days = flt(number_of_days) - flt(
-		get_holidays(employee, from_date, to_date, holiday_list=holiday_list)
+		get_holidays_no_lop(employee, from_date, to_date, holiday_list=holiday_list)
 	)
 	return number_of_days
+
+from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
+
+def get_holidays_no_lop(employee, from_date, to_date, holiday_list=None, company = None):
+	"""get holidays between two dates for the given employee"""
+	if not holiday_list:
+		holiday_list = get_holiday_list_for_employee(employee)
+	holidays = frappe.db.sql(
+		"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+		where h1.parent = h2.name and h1.holiday_date between %s and %s
+		and h2.name = %s and h1.weekly_off = 0 """,
+		(from_date, to_date, holiday_list),
+	)[0][0]
+
+	return holidays

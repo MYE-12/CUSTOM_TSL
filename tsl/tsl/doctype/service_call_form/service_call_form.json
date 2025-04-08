@@ -39,7 +39,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "SCF-.YYYY.-"
+   "options": "SCF-.YYYY.-\nSCF-R-.YYYY.-\nSCF-D-.YYYY.-\nSCF-J-.YYYY.-"
   },
   {
    "default": "Today",
@@ -185,7 +185,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nService Enquiry\nInternally Quoted\nQuoted\nInvoiced\nRejected\nCancelled"
+   "options": "\nService Enquiry\nInternally Quoted\nQuoted\nApproved\nInvoiced\nRejected\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -196,7 +196,7 @@
    "link_fieldname": "service_call_form"
   }
  ],
- "modified": "2024-07-24 21:22:31.437171",
+ "modified": "2025-03-27 12:47:49.864506",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

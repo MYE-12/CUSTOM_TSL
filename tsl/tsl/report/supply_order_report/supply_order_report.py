@@ -51,9 +51,9 @@ def get_columns(filters):
 		_("Quoted Amount") + ":currency:120",
 		_("Total Amount") + ":currency:120",
 		# # _("VAT%") + ":float:120",
-		# # _("VAT Amount%") + ":float:130",
+		_("VAT Amount%") + ":float:130",
 		# # _("Total Amount") + ":float:130",
-		# _("Quotation") + ":Link/Quotation:140",
+		_("Quotation") + ":Link/Quotation:140",
 		# _("NER") + ":Data:120",
 		# _("NER Date") + ":Date:120",
 		_("Status") + ":Data:170",
@@ -108,6 +108,7 @@ def get_data(filters):
 		q_m = 0
 		if q_amt:
 			if q_amt[0]["com"] == "TSL COMPANY - KSA":
+				qu_name = q_amt[0]["q_name"]
 				q_m = q_amt[0]["amt"]
 				if q_amt[0]["tax"]:
 					vat_amt = (q_amt[0]["amt"] * 15)/100
@@ -140,9 +141,9 @@ def get_data(filters):
 		# "",
 		# "",
 		round(q_m),
-		# vat_amt,
+		vat_amt,
 		round(q_m)+vat_amt,
-		# "",
+		qu_name,
 		i.status
 		]
 		data.append(row)

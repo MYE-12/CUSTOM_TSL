@@ -12,8 +12,10 @@
   "date",
   "quotation",
   "go_to",
+  "request_for",
   "column_break_rkfva",
-  "created_by",
+  "requested_by",
+  "submitted_by",
   "amended_from",
   "section_break_nc32n",
   "invoice_list",
@@ -52,17 +54,14 @@
    "label": "HTML"
   },
   {
-   "fieldname": "created_by",
-   "fieldtype": "Data",
-   "label": "Created By"
-  },
-  {
    "depends_on": "eval:doc.workflow_state == \"Pending with Finance\"",
    "fieldname": "go_to",
    "fieldtype": "Button",
+   "hidden": 1,
    "label": "Go to Quotation"
   },
   {
+   "depends_on": "eval:doc.request_for == \"Work Order\"",
    "fieldname": "invoice_list",
    "fieldtype": "Table",
    "label": "Work Order Quotation",
@@ -73,16 +72,33 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.request_for == \"Supply Order\"",
    "fieldname": "sod_quotation",
    "fieldtype": "Table",
    "label": "Supply Order Quotation",
    "options": "SOD IV Creation"
+  },
+  {
+   "fieldname": "request_for",
+   "fieldtype": "Select",
+   "label": "Request For",
+   "options": "\nWork Order\nSupply Order"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Data",
+   "label": "Requested By"
+  },
+  {
+   "fieldname": "submitted_by",
+   "fieldtype": "Data",
+   "label": "Submitted By"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-29 11:13:54.989511",
+ "modified": "2025-03-24 13:17:34.271128",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",

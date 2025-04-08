@@ -22,6 +22,8 @@
   "no_of_tickets",
   "company",
   "department",
+  "is_special_permission",
+  "perm_given_by",
   "leave_balance_section",
   "balance",
   "section_break_5",
@@ -530,6 +532,21 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Employee Clearance"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_special_permission",
+   "fieldtype": "Check",
+   "label": "is special permission",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "is_special_permission",
+   "fieldname": "perm_given_by",
+   "fieldtype": "Link",
+   "label": "Permission Given By",
+   "options": "User",
+   "permlevel": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -548,7 +565,7 @@
    "link_fieldname": "leave_application"
   }
  ],
- "modified": "2025-02-24 09:12:21.220645",
+ "modified": "2025-03-02 11:53:11.938185",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Application Form",

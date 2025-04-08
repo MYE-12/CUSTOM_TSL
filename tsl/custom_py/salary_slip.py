@@ -3,7 +3,7 @@
 
 
 import unicodedata
-from datetime import date
+from datetime import date,datetime
 
 import frappe
 from frappe import _, msgprint
@@ -433,7 +433,17 @@ class CustomSalarySlip(TransactionBase):
 			payment_days = working_days
 
 		if flt(payment_days) > flt(lwp):
-			if frappe.db.exists("Leave Salary",{'employee':self.employee}):
+			start_date = datetime.strptime(str(self.start_date), '%Y-%m-%d')
+			leave_salary = frappe.db.sql(""" select name from `tabLeave Salary` 
+				WHERE docstatus = 1 
+				AND employee = '%s' 
+				AND month(from_date) = '%s' 
+				AND year(from_date) = '%s'
+				ORDER BY creation DESC
+				LIMIT 1
+			"""%(self.employee,start_date.month,start_date.year))
+			if leave_salary:
+			# if frappe.db.exists("Leave Salary",{'employee':self.employee}):
 				self.payment_days = flt(payment_days) - flt(lwp) - flt(count_) - flt(annual_count)
 			else:
 				self.payment_days = flt(payment_days) - flt(lwp) - flt(count_)

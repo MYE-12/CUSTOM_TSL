@@ -155,7 +155,7 @@
    "fieldname": "basic",
    "fieldtype": "Currency",
    "label": "Basic",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -164,7 +164,7 @@
    "fieldname": "food",
    "fieldtype": "Currency",
    "label": "Food Allowance",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -173,7 +173,7 @@
    "fieldname": "other_allowance",
    "fieldtype": "Currency",
    "label": "Other Allowance",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -183,7 +183,7 @@
    "fieldname": "hra_salary",
    "fieldtype": "Currency",
    "label": "HRA",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -193,7 +193,7 @@
    "fieldname": "mobile_allowance",
    "fieldtype": "Currency",
    "label": "Mobile Allowance",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -203,7 +203,7 @@
    "fieldname": "transport_allowance",
    "fieldtype": "Currency",
    "label": "Transport Allowance",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -215,7 +215,7 @@
    "fieldname": "salary_amount_pay",
    "fieldtype": "Currency",
    "label": "Earned Basic",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -223,7 +223,7 @@
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "label": "Total Earned Salary",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -265,7 +265,7 @@
    "fieldname": "air_fair",
    "fieldtype": "Currency",
    "label": "Air Fair Allowance",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -273,7 +273,7 @@
    "fieldname": "total_salary",
    "fieldtype": "Currency",
    "label": "Total Leave Salary",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -281,7 +281,7 @@
    "fieldname": "total_released_amount",
    "fieldtype": "Currency",
    "label": "Total Released Amount",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   },
   {
@@ -323,7 +323,7 @@
    "fieldname": "deduction",
    "fieldtype": "Currency",
    "label": "Deduction",
-   "options": "currency"
+   "options": "Company:company:default_currency"
   },
   {
    "fieldname": "column_break_nnd7z",
@@ -346,7 +346,7 @@
    "fieldname": "payment",
    "fieldtype": "Currency",
    "label": "Payment",
-   "options": "currency"
+   "options": "Company:company:default_currency"
   },
   {
    "fieldname": "column_break_8kymf",
@@ -376,7 +376,7 @@
    "fieldname": "total_gross_pay",
    "fieldtype": "Currency",
    "label": "Total Gross Pay",
-   "options": "currency",
+   "options": "Company:company:default_currency",
    "read_only": 1
   }
  ],
@@ -388,7 +388,7 @@
    "link_fieldname": "leave_salary_reference"
   }
  ],
- "modified": "2024-12-29 16:31:41.653167",
+ "modified": "2025-03-06 02:44:59.433875",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Salary",

@@ -25,21 +25,6 @@ class WOApproval(Document):
             month_index = (current_month - i - 1) % 12  # Handle wrap-around
             last_six_months.append(months[month_index])
 
-
-
-
-
-        # frappe.errprint(last_six_months)
-        # months = list(calendar.month_name)[3:]
-
-        # frappe.errprint(months)
-        # # Get the current month as an integer (1 for January, 12 for December)
-        # current_month = datetime.now().month
-        # frappe.errprint(current_month)
-        # # Filter months that come before and include the current month
-        # months_before_and_including_current = months[]
-        # frappe.errprint(months_before_and_including_current)
-
         data= ""
         data += '<table class="table table-bordered">'
         data += '<tr>'
@@ -78,14 +63,14 @@ class WOApproval(Document):
                 total_q2 = 0
                 # for m in last_six_months:
                 for index, m in enumerate(last_six_months):
-                    # frappe.errprint(index)
+                    
                     month_name = m
                     
                     # Get the month number from the month name
                     month_number = datetime.strptime(month_name, "%B").month
                     # current_date = datetime.now()
                     year = 2024
-                    if month_number == 1 or month_number == 2 or month_number == 3:
+                    if month_number == 1 or month_number == 2 or month_number == 3 or month_number == 4:
                         year = 2025
                    
                     # First date of the month
@@ -95,111 +80,164 @@ class WOApproval(Document):
                     last_day = datetime(year, month_number, calendar.monthrange(year, month_number)[1])
                     
                     data += '<tr>'
-                    if index == 3:
-                        data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(i.name)
+                    if index == 6:
+                        sl_name = frappe.get_value("Sales Person",{"user":sl},["name"])
+                        data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(sl_name)
                     else:
                         data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("")
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(m)
 
                     from_date = first_day.date()
                     to_date = last_day.date()
-
+                    
+                        
                     # w = frappe.db.sql(""" select name from `tabWork Order Data` where sales_rep = '%s' and company = '%s' and old_wo_no IS NULL """ %(i.name,self.company),as_dict =1)
                     # w = frappe.get_all("Work Order Data",{"sales_rep":i.name,"company":self.company,"old_wo_no":["is","not set"]},["*"])
                     
-                    q_m = 0
-                    q_m_2 = 0
-                    # for j in w:
-                    q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
-                    `tabQuotation`.default_discount_percentage as dis,
-                    `tabQuotation`.approval_date as a_date,
-                    `tabQuotation`.is_multiple_quotation as is_m,
-                    `tabQuotation`.after_discount_cost as adc,
-                    `tabQuotation Item`.unit_price as up,
-                    `tabQuotation Item`.margin_amount as ma 
+
+                    wod = frappe.db.sql(''' select 
+                    DISTINCT `tabQuotation Item`.wod_no AS wd
                     from `tabQuotation` 
                     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer") 
-                    and `tabQuotation`.sales_rep = '%s' and
+                    where `tabQuotation`.sales_rep = '%s' and                   
+                    `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") and
                     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
                     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
-
-                    if q_amt:
-                        frappe.errprint(q_amt[0]["q_name"])
-                        frappe.errprint(q_amt)
-                        for k in q_amt:
-                            if k.is_m == 1:
+                   
+                    q_m = 0
+                    q_m_2 = 0
+                    if wod:
+                        if month_number >= 3 and self.company == "TSL COMPANY - UAE" and year == 2025 or self.company == "TSL COMPANY - KSA":
+                            for i in wod:
                                 
-                                per = (k.up * k.dis)/100
-                                q_amt = k.up - per
-                                # q_amt = k.ma
-                                q_m = q_m + q_amt
+                                q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                                `tabQuotation`.default_discount_percentage as dis,
+                                `tabQuotation`.approval_date as a_date,
+                                `tabQuotation`.is_multiple_quotation as is_m,
+                                `tabQuotation`.after_discount_cost as adc,
+                                `tabQuotation Item`.unit_price as up,
+                                `tabQuotation`.grand_total as grand_total,
+                                `tabQuotation Item`.margin_amount as ma 
+                                from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") 
+                                and `tabQuotation`.sales_rep = '%s' and `tabQuotation Item`.wod_no = '%s' and
+                                `tabQuotation`.quotation_type in ("Customer Quotation - Repair")  and transaction_date between '%s' and '%s'
+                                ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
-                            else:
-                                q_amt = k.adc
-        
-                                q_m = q_m + q_amt
-                             
-                        
-                    q_amt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
-                    `tabQuotation`.wod_no as wod,                      
-                    `tabQuotation`.default_discount_percentage as dis,
-                    `tabQuotation`.approval_date as a_date,
-                    `tabQuotation`.is_multiple_quotation as is_m,
-                    `tabQuotation`.after_discount_cost as adc,
-                    `tabQuotation`.Workflow_state,
-                    `tabQuotation Item`.unit_price as up,
-                    `tabQuotation Item`.margin_amount as mar,
-                    `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
-                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                    where `tabQuotation`.Workflow_state in ("Approved By Customer") and
-                    `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
-                    and `tabQuotation`.sales_rep = '%s'
-                    and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date) ,as_dict=1)
+                                if q_amt:
+                                    q_m = q_m + q_amt[0]["grand_total"]
 
-                    if q_amt_2:
-                        for k in q_amt_2:
-                            if k.is_m == 1:
-                                # c_wo = frappe.db.sql(''' select `tabQuotation`.name as q_name,
-                                # `tabQuotation`.transaction as t_date
-                                # from `tabQuotation` 
-                                # left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-                                # where  `tabQuotation`.Workflow_state in ("Approv"Quoted to Customer") 
-                                # and `tabQuotation`.sales_rep = '%s' and tabQuotation Item`.wod_no = '%s' 
-                                # `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
-                                # and transaction_date between '%s' and '%s' ''' %(k.wod,sl,from_date,to_date),as_dict=1)
-                                # frappe.errprint(k.q_name)
-                                per = (k.up * k.dis)/100
-                                q_amt_2 = k.up - per
-                                # q_amt_2 = k.mar
+                                    
+                                rev = frappe.db.sql(''' select 
+                                DISTINCT `tabQuotation Item`.wod_no AS wd
+                                from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.sales_rep = '%s' and                   
+                                `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") and
+                                `tabQuotation`.quotation_type in ("Customer Quotation - Repair") and `tabQuotation Item`.wod_no = '%s'
+                                and transaction_date between '%s' and '%s' ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
                         
                                 
-                                q_m_2 = q_m_2 + q_amt_2
+                                if rev:
+                                    q_amt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                                    `tabQuotation`.default_discount_percentage as dis,
+                                    `tabQuotation`.approval_date as a_date,
+                                    `tabQuotation`.is_multiple_quotation as is_m,
+                                    `tabQuotation`.after_discount_cost as adc,
+                                    `tabQuotation`.grand_total as grand_total,
+                                    `tabQuotation Item`.unit_price as up,
+                                    `tabQuotation Item`.margin_amount as ma 
+                                    
+                                    from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where  `tabQuotation`.Workflow_state in ("Approved By Customer") 
+                                    and `tabQuotation`.sales_rep = '%s' and `tabQuotation Item`.wod_no = '%s' and
+                                    `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
+                                    and transaction_date between '%s' and '%s'
+                                    ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
+                                    if q_amt_2:
+                                        q_m_2 = q_m_2 + q_amt_2[0]["grand_total"]
+                        else:
 
-                            else:
-                                # frappe.errprint(k.q_name)
-                                q_amt_2 = k.adc
-                        
-                                q_m_2 = q_m_2 + q_amt_2
+                            for i in wod:
+                                
+                                q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                                `tabQuotation`.default_discount_percentage as dis,
+                                `tabQuotation`.approval_date as a_date,
+                                `tabQuotation`.is_multiple_quotation as is_m,
+                                `tabQuotation`.after_discount_cost as adc,
+                                `tabQuotation Item`.unit_price as up,
+                                `tabQuotation Item`.margin_amount as ma 
+                                from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") 
+                                and `tabQuotation`.sales_rep = '%s' and `tabQuotation Item`.wod_no = '%s' and
+                                `tabQuotation`.quotation_type in ("Customer Quotation - Repair")  and transaction_date between '%s' and '%s'
+                                ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
+                                if q_amt:
+                                    
+                                    if q_amt[0]["is_m"] == 1:
+                                        per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
+                                        q_amt = q_amt[0]["up"] - per
+                                        q_m = q_m + q_amt
+
+                                    else:
+                                        q_amt = q_amt[0]["adc"]
+                
+                                        q_m = q_m + q_amt
+
+                                
+                                rev = frappe.db.sql(''' select 
+                                DISTINCT `tabQuotation Item`.wod_no AS wd
+                                from `tabQuotation` 
+                                left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                where `tabQuotation`.sales_rep = '%s' and                   
+                                `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") and
+                                `tabQuotation`.quotation_type in ("Customer Quotation - Repair") and `tabQuotation Item`.wod_no = '%s'
+                                and transaction_date between '%s' and '%s' ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
                     
-                    
+                                
+                                if rev:
+                                    q_amt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                                    `tabQuotation`.default_discount_percentage as dis,
+                                    `tabQuotation`.approval_date as a_date,
+                                    `tabQuotation`.is_multiple_quotation as is_m,
+                                    `tabQuotation`.after_discount_cost as adc,
+                                    `tabQuotation Item`.unit_price as up,
+                                    `tabQuotation Item`.margin_amount as ma 
+                                    
+                                    from `tabQuotation` 
+                                    left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                                    where  `tabQuotation`.Workflow_state in ("Approved By Customer") 
+                                    and `tabQuotation`.sales_rep = '%s' and `tabQuotation Item`.wod_no = '%s' and
+                                    `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
+                                    and transaction_date between '%s' and '%s'
+                                    ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
+
+                                    if q_amt_2:
+                                        if q_amt_2[0]["is_m"] == 1:
+                                            per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
+                                            q_amt = q_amt_2[0]["up"] - per
+                                            q_m_2 = q_m_2 + q_amt
+
+                                        else:
+                                            q_amt = q_amt_2[0]["adc"]
+                                            q_m_2 = q_m_2 + q_amt
+                                    
+                            
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>'% (f"{round(q_m):,}" or 0)
                     data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' % (f"{round(q_m_2):,}" or 0)
                     if not q_m or not q_m_2:
-                        data += '<td style="font-weight:bold;background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("0")
+                        data += '<td style="font-weight:bold;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("0")
                     else:
-                        if round((q_m_2/q_m)*100) < 60:
-                            data += '<td style="font-weight:bold;background-color:red;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
-                        if round((q_m_2/q_m)*100) > 60 and round((q_m_2/q_m)*100) < 80:
-                            data += '<td style="font-weight:bold;background-color:yellow;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
-                        if round((q_m_2/q_m)*100) >=80:
-                            data += '<td style="font-weight:bold;background-color:green;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
-
+                        data += '<td style="font-weight:bold;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s%s<center></td>' %(round((q_m_2/q_m)*100),"%")
+                                 
                     total_q1 = total_q1 + round(q_m)
                     total_q2 = total_q2 + round(q_m_2)
-
+                   
                 data += '</tr>'
             
                 data += '<tr>'
@@ -220,11 +258,125 @@ class WOApproval(Document):
                    
                 data += '</tr>'
 
-            
                 data += '<tr>'
                 data += '<td colspan = 5 style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>-</b><center></td>'
                 data += '</tr>'
 
+        
+                   
+                    # for j in w:
+                    
+                    # if month_number >= 3 and self.company == "TSL COMPANY - UAE" and year == 2025:
+                    #     q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                    #     `tabQuotation`.approval_date as a_date,
+                        
+                    #     `tabQuotation`.grand_total as grand_total
+
+                    #     from `tabQuotation` 
+                    #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    #     where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer") 
+                    #     and `tabQuotation`.sales_rep = '%s' and
+                    #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
+                    #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
+                    #     frappe.errprint(sl)
+                    #     if q_amt:
+                    #         for k in q_amt:
+                    #             q_m = q_m + k.grand_total
+
+                    #     q_amt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                    #     `tabQuotation`.approval_date as a_date,
+                        
+                    #     `tabQuotation`.grand_total as grand_total
+
+                    #     from `tabQuotation` 
+                    #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    #     where  `tabQuotation`.Workflow_state in ("Approved By Customer") 
+                    #     and `tabQuotation`.sales_rep = '%s' and
+                    #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
+                    #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
+                    #     frappe.errprint(sl)
+                    #     if q_amt_2:
+                    #         for k in q_amt_2:
+                    #             q_m_2 = q_m_2 + k.grand_total
+
+                               
+                       
+                    # else:
+                    #     q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                    #     `tabQuotation`.default_discount_percentage as dis,
+                    #     `tabQuotation`.approval_date as a_date,
+                    #     `tabQuotation`.is_multiple_quotation as is_m,
+                    #     `tabQuotation`.after_discount_cost as adc,
+                    #     `tabQuotation Item`.unit_price as up,
+                    #     `tabQuotation Item`.margin_amount as ma 
+                    #     from `tabQuotation` 
+                    #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    #     where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer","Rejected by Customer") 
+                    #     and `tabQuotation`.sales_rep = '%s' and
+                    #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair") 
+                    #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
+
+                    #     if q_amt:
+                        
+                    #         for k in q_amt:
+                    #             if k.is_m == 1:
+                                    
+                    #                 per = (k.up * k.dis)/100
+                    #                 q_amt = k.up - per
+                    #                 # q_amt = k.ma
+                    #                 q_m = q_m + q_amt
+
+                    #             else:
+                    #                 q_amt = k.adc
+            
+                    #                 q_m = q_m + q_amt
+                                
+                            
+                    #     q_amt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                    #     `tabQuotation`.wod_no as wod,                      
+                    #     `tabQuotation`.default_discount_percentage as dis,
+                    #     `tabQuotation`.approval_date as a_date,
+                    #     `tabQuotation`.is_multiple_quotation as is_m,
+                    #     `tabQuotation`.after_discount_cost as adc,
+                    #     `tabQuotation`.Workflow_state,
+                    #     `tabQuotation Item`.unit_price as up,
+                    #     `tabQuotation Item`.margin_amount as mar,
+                    #     `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+                    #     left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    #     where `tabQuotation`.Workflow_state in ("Approved By Customer") and
+                    #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
+                    #     and `tabQuotation`.sales_rep = '%s'
+                    #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date) ,as_dict=1)
+
+                    #     if q_amt_2:
+                    #         for k in q_amt_2:
+                    #             if k.is_m == 1:
+                    #                 # c_wo = frappe.db.sql(''' select `tabQuotation`.name as q_name,
+                    #                 # `tabQuotation`.transaction as t_date
+                    #                 # from `tabQuotation` 
+                    #                 # left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+                    #                 # where  `tabQuotation`.Workflow_state in ("Approv"Quoted to Customer") 
+                    #                 # and `tabQuotation`.sales_rep = '%s' and tabQuotation Item`.wod_no = '%s' 
+                    #                 # `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
+                    #                 # and transaction_date between '%s' and '%s' ''' %(k.wod,sl,from_date,to_date),as_dict=1)
+                                    
+                    #                 per = (k.up * k.dis)/100
+                    #                 q_amt_2 = k.up - per
+                    #                 # q_amt_2 = k.mar
+                            
+                                    
+                    #                 q_m_2 = q_m_2 + q_amt_2
+
+
+                    #             else:
+                                
+                    #                 q_amt_2 = k.adc
+                            
+                    #                 q_m_2 = q_m_2 + q_amt_2
+
+                        
+                     
+                
         data += '</table>'
 
         return data

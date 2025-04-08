@@ -10,9 +10,23 @@ def create_qtn(source):
 	doc = frappe.get_doc("Service Call Form",source)
 	new_doc = frappe.new_doc("Quotation")
 	if doc.company == "TSL COMPANY - Kuwait":
-		new_doc.naming_series = "SV-QTN-INT-K.YY.-"
+		new_doc.naming_series = "SV-QTN-K.YY.-"
 	if doc.company == "TSL COMPANY - UAE":
 		new_doc.naming_series = "SV-QTN-INT-DU.YY.-"
+
+	if doc.company == "TSL COMPANY - KSA":
+		if doc.branch == "Dammam - TSL-SA":
+			new_doc.naming_series = "SV-QTN-INT-D.YY.-"
+	
+	if doc.company == "TSL COMPANY - KSA":
+		if doc.branch == "Jeddah - TSL-SA":
+			new_doc.naming_series = "SV-QTN-INT-J.YY.-"
+	
+
+	if doc.company == "TSL COMPANY - KSA":
+		if doc.branch == "Riyadh - TSL- KSA":
+			new_doc.naming_series = "SV-QTN-INT-R.YY.-"
+	
 	
 	new_doc.company = doc.company
 	new_doc.party_name = doc.customer,
@@ -22,7 +36,16 @@ def create_qtn(source):
 	new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.quotation_type = "Site Visit Quotation - Internal"
 	new_doc.sales_rep = doc.salesman_name
-	new_doc.currency = "AED"
+	if doc.company == "TSL COMPANY - Kuwait":
+		new_doc.currency = "KWD"
+		new_doc.selling_price_list = "Standard Selling"
+	if doc.company == "TSL COMPANY - UAE":
+		new_doc.selling_price_list = "Standard Selling - UAE"
+		new_doc.currency = "AED"
+	if doc.company == "TSL COMPANY - KSA":
+		new_doc.selling_price_list = "Standard Selling - KSA"
+		new_doc.currency = "SAR"
+	
 	new_doc.scheduled_date = doc.sch_date
 	new_doc.scheduled_time = doc.sch_time
 	new_doc.scheduled_day = doc.day 

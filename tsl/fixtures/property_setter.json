@@ -335,6 +335,7 @@
   "row_name": null,
   "value": "Zip Code"
  },
+ 
  {
   "default_value": null,
   "doc_type": "Purchase Invoice",

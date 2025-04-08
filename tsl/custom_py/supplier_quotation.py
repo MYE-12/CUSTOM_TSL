@@ -168,7 +168,7 @@ def on_submit(self,method):
     
     
     for i in self.items:
-        if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait":
+        if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
             if i.work_order_data or self.work_order_data:
                 doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data or self.work_order_data),as_dict=1)
                 for d in doc:
@@ -210,29 +210,32 @@ def on_submit(self,method):
             ie.save(ignore_permissions=True)
 
 
-    if self.part_sheet:
-        doc = frappe.get_doc("Evaluation Report",self.part_sheet)
-        for i in self.get("items"):
-            # url = "https://api.exchangerate.host/%s"%(self.currency)
-            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+    if self.work_order_data:
+        evl = frappe.get_value("Evaluation Report",{"Work_order_data":self.work_order_data})
+        if evl:
+            doc = frappe.get_doc("Evaluation Report",evl)
+            for i in self.get("items"):
+                # url = "https://api.exchangerate.host/%s"%(self.currency)
+                url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
 
-            payload = {}
-            headers = {}
-            response = requests.request("GET", url, headers=headers, data=payload)
-            data = response.json()
-            rate_kw = data['rates']['KWD']
-            conv_rate = i.rate * rate_kw
-            for j in doc.get("items"):
-                if j.part == i.item_code:
-                    j.price_ea = conv_rate
-                    j.total = conv_rate * j.qty
-        add = 0
-        for i in doc.items:
-            add += j.total
-        doc.total_amount = add
+                payload = {}
+                headers = {}
+                response = requests.request("GET", url, headers=headers, data=payload)
+                data = response.json()
+                com_cur = frappe.get_value("Company",self.company,"default_currency")
+                rate_kw = data['rates'][com_cur]
+                conv_rate = i.rate * rate_kw
+                for j in doc.get("items"):
+                    if j.part == i.item_code:
+                        j.price_ea = conv_rate
+                        j.total = conv_rate * j.qty
+            add = 0
+            for i in doc.items:
+                add += j.total
+            doc.total_amount = add
 
-        doc.save(ignore_permissions=True)
-   
+            doc.save(ignore_permissions=True)
+    
     elif self.initial_evaluation:
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
         

@@ -45,7 +45,7 @@ class LeaveEncashmentData(Document):
 
 @frappe.whitelist()
 def per_day_salary(employee):
-	basic = frappe.db.get_value("Employee",employee,'basic')
+	basic = frappe.db.get_value("Employee",employee,'ctc')
 	company = frappe.db.get_value("Employee",employee,'company')
 	working_days = frappe.db.get_value("Company Wise Payroll Days",{"company": company},"total_working_days")
 	if basic and basic > 0:

@@ -46,13 +46,15 @@ def on_submit(doc,method):
 		
 
 	if doc.service_call_form:
+		frappe.errprint("sv")
 		if doc. quotation_type == "Site Visit Quotation - Internal":
 			sc = frappe.get_doc("Service Call Form",doc.service_call_form)
 			sc.status = "Internally Quoted"
 			sc.save(ignore_permissions = 1)
 		if doc. quotation_type == "Site Visit Quotation - Customer":
+			frappe.errprint("sv")
 			sc = frappe.get_doc("Service Call Form",doc.service_call_form)
-			sc.status = "Quoted"
+			sc.status = "Approved"
 			sc.save(ignore_permissions = 1)
 		
 	if doc.quotation_type == "Customer Quotation - Repair" or doc.quotation_type == "Revised Quotation - Repair":
@@ -298,6 +300,13 @@ def show_details(self,method):
 							"total_price":total*(20 * exr),
 							"work_order_data":doc.work_order_data
 						})
+					elif self.company == "TSL COMPANY - KSA":
+						self.append("technician_hours_spent",{
+							"total_hours_spent":total,
+							"value":300,
+							"total_price":total*300,
+							"work_order_data":doc.work_order_data
+						})
 					else:
 						self.append("technician_hours_spent",{
 							"total_hours_spent":total,
@@ -317,36 +326,38 @@ def show_details(self,method):
 						
 						total_qtn_rate += k.total
 						if self.company == "TSL COMPANY - Kuwait" and k.parts_availability == "No":
+							
 							source = "Supplier"
 							price = k.price_ea
 							sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
 														where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
 									order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 							
-							for sq in sq_no:
 							
-								if sq.spc:	
-									price = k.price_ea
-									self.append("item_price_details",{
-									"item":k.part,
-									"item_source":source,
-									"model":k.model,
-									"price":price,
-									"amount":k.total,
-									"supplier_quotation":sq["sq"],
-									"work_order_data":doc.work_order_data
+							
+							for sq in sq_no:
+								price = k.price_ea
+								self.append("item_price_details",{
+								"item":k.part,
+								"item_source":source,
+								"model":k.model,
+								"price":price,
+								"amount":k.total,
+								"supplier_quotation":sq["sq"],
+								"work_order_data":doc.work_order_data
 
 							})
-									url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+								url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
 
-									payload = {}
-									headers = {}
+								payload = {}
+								headers = {}
 
-									response = requests.request("GET", url, headers=headers, data=payload)
-									data = response.json()
-									rates_kw = data['rates']['KWD']
-									conv_rate = sq.spc * rates_kw
-									self.shipping_cost = conv_rate
+								response = requests.request("GET", url, headers=headers, data=payload)
+								data = response.json()
+								frappe.errprint(data)
+								rates_kw = data['rates']['KWD']
+								conv_rate = sq.spc * rates_kw
+								self.shipping_cost = conv_rate
 
 								
 							if len(sq_no):
@@ -356,8 +367,8 @@ def show_details(self,method):
 							
 						elif self.company == "TSL COMPANY - UAE" and k.parts_availability == "No":
 							sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
-														where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
-									order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
+							where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+							order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
 							# if sq_no:
 							# 	frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
 							
@@ -379,7 +390,7 @@ def show_details(self,method):
 								sq_no =  ""
 							
 
-							exr = get_exchange_rate("KWD","AED")
+							exr = get_exchange_rate(self.currency,"AED")
 							source = "Supplier"
 							
 							price = k.price_ea
@@ -394,6 +405,45 @@ def show_details(self,method):
 
 							})
 						
+						elif self.company == "TSL COMPANY - KSA" and k.parts_availability == "No":
+							sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+														where sq.docstatus = 1 and sq.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+									order by sq.modified desc limit 1''',(doc.work_order_data,k.part),as_dict=1)	
+							# if sq_no:
+							# 	frappe.db.set_value("Supplier Quotation",sq_no,"quotation",self.name)
+							
+							for sq in sq_no:
+								if sq.spc:	
+									url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+
+									payload = {}
+									headers = {}
+
+									response = requests.request("GET", url, headers=headers, data=payload)
+									data = response.json()
+									rates_kw = data['rates']['SAR']
+									conv_rate = sq.spc * rates_kw
+									self.shipping_cost = conv_rate
+							if len(sq_no):
+								sq_no = sq_no[0]["sq"]
+							else:
+								sq_no =  ""
+							
+
+							exr = get_exchange_rate(self.currency,"SAR")
+							source = "Supplier"
+							
+							price = k.price_ea
+							self.append("item_price_details",{
+							"item":k.part,
+							"item_source":source,
+							"model":k.model,
+							"price":price * exr,
+							"amount":k.total * exr,
+							"supplier_quotation":sq_no,
+							"work_order_data":doc.work_order_data
+
+							})
 						else:
 							price = k.price_ea
 							source = "TSL Inventory"
@@ -565,6 +615,19 @@ def get_quotation(source,type = None):
 		if doc.company == "TSL COMPANY - UAE":
 			target_doc.naming_series = "SV-QTN-CUS-DU.YY.-"
 		
+		if doc.company == "TSL COMPANY - KSA":
+			if doc.branch_name == "Riyadh - TSL- KSA":
+				target_doc.naming_series = "SV-QTN-CUS-R.YY.-"
+		
+		if doc.company == "TSL COMPANY - KSA":
+			if doc.branch_name == "Jeddah - TSL-SA":
+				target_doc.naming_series = "SV-QTN-CUS-J.YY.-"
+		
+		if doc.company == "TSL COMPANY - KSA":
+			if doc.branch_name == "Dammam - TSL-SA":
+				target_doc.naming_series = "SV-QTN-CUS-D.YY.-"
+		
+
 		target_doc.workflow_state = "Quoted to Customer"
 		if type == "Customer Quotation - Repair":
 			target_doc.overall_discount_amount = 0
@@ -592,10 +655,7 @@ def get_quotation(source,type = None):
 def get_quote(source,type = None):
 	target_doc = frappe.new_doc("Quotation")
 	doc = frappe.get_doc("Quotation",source)
-	if not doc.is_multiple_quotation:
-		for i in doc.items:
-			rate = i.margin_amount
-
+	
 	def postprocess(source, target_doc):
 		target_doc.quotation_type = type
 		if type == "Customer Quotation - Repair":
@@ -609,6 +669,7 @@ def get_quote(source,type = None):
 			"quotation_name":doc.name,
 		})
 
+
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Quotation",
@@ -620,38 +681,75 @@ def get_quote(source,type = None):
 		},
 	}, target_doc, postprocess)
 	
-	if not doc.quotation_type == "Internal Quotation - Supply":
-		for ic in doclist.get('items'):
-			if not ic.margin_amount:
-				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-				unit_disc = disc
-				ic.rate = doc.after_discount_cost+disc
-				
-			if not doc.is_multiple_quotation and ic.item_code:
-				if doc.company == "TSL COMPANY - UAE":
-					ic.rate = round(doc.after_discount_cost)
-				else:
-					ic.rate = round(doc.after_discount_cost,2)
+	
+		# if not doc.quotation_type == "Internal Quotation - Supply":
+	for ic in doclist.get('items'):
+		ic.rate = ic.margin_amount
+					
+	return doclist
+	
+	# target_doc = frappe.new_doc("Quotation")
+	# doc = frappe.get_doc("Quotation",source)
+	# if not doc.is_multiple_quotation:
+	# 	for i in doc.items:
+	# 		rate = i.margin_amount
+
+	# def postprocess(source, target_doc):
+	# 	target_doc.quotation_type = type
+	# 	if type == "Customer Quotation - Repair":
+	# 		target_doc.overall_discount_amount = 0
+	# 		target_doc.margin_rate = 0
+	# 		target_doc.discount_amount = 0
+	# 		# target_doc.taxes_and_charges = "UAE VAT 5% - TSL-UAE"
+	# 	target_doc.append("quotation_history",{
+	# 		"quotation_type":doc.quotation_type,
+	# 		"status":doc.workflow_state,
+	# 		"quotation_name":doc.name,
+	# 	})
+
+	# doclist = get_mapped_doc("Quotation",source , {
+	# 	"Quotation": {
+	# 		"doctype": "Quotation",
 			
-			if doc.is_multiple_quotation and ic.item_code:
-				ic.rate = ic.margin_amount
-				ic.item_price = ic.margin_amount
-				
-	else:
-		for ic in doclist.get('items'):
+	# 	},
+	# 	"Quotation Item": {
+	# 		"doctype": "Quotation Item",
 			
-			if not ic.margin_amount:
-				disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-				unit_disc = disc
+	# 	},
+	# }, target_doc, postprocess)
+	
+	# if not doc.quotation_type == "Internal Quotation - Supply":
+	# 	for ic in doclist.get('items'):
+	# 		if not ic.margin_amount:
+	# 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+	# 			unit_disc = disc
+	# 			ic.rate = doc.after_discount_cost+disc
 				
-				ic.rate = ic.rate
+	# 		if not doc.is_multiple_quotation and ic.item_code:
+	# 			if doc.company == "TSL COMPANY - UAE":
+	# 				ic.rate = round(doc.after_discount_cost)
+	# 			else:
+	# 				ic.rate = round(doc.after_discount_cost,2)
 			
-			if ic.item_code:
-				ic.rate = ic.margin_amount
+	# 		if doc.is_multiple_quotation and ic.item_code:
+	# 			ic.rate = ic.margin_amount
+	# 			ic.item_price = ic.margin_amount
+				
+	# else:
+	# 	for ic in doclist.get('items'):
+			
+	# 		if not ic.margin_amount:
+	# 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+	# 			unit_disc = disc
+				
+	# 			ic.rate = ic.rate
+			
+	# 		if ic.item_code:
+	# 			ic.rate = ic.margin_amount
 			
 					
 				
-	return doclist
+	# return doclist
 
 @frappe.whitelist()
 def get_quote_ksa(source,type = None):
@@ -686,6 +784,14 @@ def get_quote_ksa(source,type = None):
 		},
 	}, target_doc, postprocess)
 	
+	
+	# if not doc.quotation_type == "Internal Quotation - Supply":
+	if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+		for ic in doclist.get('items'):
+			ic.rate = ic.unit_price
+	else:
+		for ic in doclist.get('items'):
+			ic.rate = ic.margin_amount
 	# for i in doc.items:
 		
 		
@@ -856,30 +962,36 @@ def get_quotation_history(source,type = None):
 				if ic.item_code:
 					ic.rate = ic.rate
 
-	if doc.company == "TSL COMPANY - UAE":
-		# if not doc.quotation_type == "Internal Quotation - Supply":
-		for ic in doclist.get('items'):
-			if not doc.is_multiple_quotation:
-				if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-					unit_disc = disc
+	if doc.company == "TSL COMPANY - UAE" or doc.company == "TSL COMPANY - KSA":
 
-					ic.rate = doc.unit_rate_price
-					ic.item_price =  doc.unit_rate_price
-					ic.price_list_rate = doc.unit_rate_price
-				else:
-					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-					ic.rate = doc.after_discount_cost
-					ic.item_price = doc.after_discount_cost
+		# if not doc.quotation_type == "Internal Quotation - Supply":
+		if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+			for ic in doclist.get('items'):
+				ic.rate = ic.unit_price
+		else:
+			for ic in doclist.get('items'):
+				ic.rate = ic.margin_amount
+			# if not doc.is_multiple_quotation:
+			# 	if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+			# 		disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+			# 		unit_disc = disc
+
+			# 		ic.rate = doc.unit_rate_price
+			# 		ic.item_price =  doc.unit_rate_price
+			# 		ic.price_list_rate = doc.unit_rate_price
+			# 	else:
+			# 		disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
+			# 		ic.rate = doc.after_discount_cost
+			# 		ic.item_price = doc.after_discount_cost
 				
-			if doc.is_multiple_quotation:
-				if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-					ic.rate = ic.unit_price
-					ic.item_price = ic.unit_price
-					ic.price_list_rate = ic.unit_price
-				else:
-					ic.rate = ic.margin_amount
-					ic.item_price = ic.margin_amount
+			# if doc.is_multiple_quotation:
+			# 	if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+			# 		ic.rate = ic.unit_price
+			# 		ic.item_price = ic.unit_price
+			# 		ic.price_list_rate = ic.unit_price
+			# 	else:
+			# 		ic.rate = ic.margin_amount
+			# 		ic.item_price = ic.margin_amount
 
 					
 			
@@ -965,6 +1077,53 @@ def create_sal_inv(source):
 				# 	i.rate= doc.after_discount_cost
 
 	return doclist
+
+@frappe.whitelist()
+def create_inv_req(source,user):
+	new_doc = frappe.new_doc("Invoice Request")
+	doc = frappe.get_doc("Quotation",source)
+	new_doc.requested_by = user
+
+
+	if doc.quotation_type == "Customer Quotation - Repair" or doc.quotation_type == "Revised Quotation - Repair":
+		new_doc.request_for = "Work Order"
+
+		new_doc.append("invoice_list",{
+		"quotation":doc.name,
+		})
+
+		wd = frappe.db.sql(""" select  `tabQuotation Item`.wod_no from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+			where `tabQuotation`.name = '%s' """ %(doc.name),as_dict = 1)
+		for i in wd:
+			frappe.errprint(i["wod_no"])
+			new_doc.append("invoice_list",{
+			"wod_sod":i["wod_no"],
+		})
+
+	if doc.quotation_type == "Customer Quotation - Supply" or doc.quotation_type == "Revised Quotation - Supply":
+		new_doc.request_for = "Supply Order"
+		new_doc.append("sod_quotation",{
+		"quotation":doc.name,
+		})
+
+		sd = frappe.db.sql(""" select  `tabQuotation Item`.supply_order_data from `tabQuotation` 
+			left join `tabQuotation Item` on `tabQuotation Item`.parent = `tabQuotation`.name
+			where `tabQuotation`.name = '%s' """ %(doc.name),as_dict = 1)
+	
+		
+		for i in sd:
+			new_doc.append("sod_quotation",{
+			"supply_order_data":i["supply_order_data"],
+		})
+	
+		
+			
+	return new_doc
+	
+	
+
+	
 
 @frappe.whitelist()
 def create_sal_inv_pro(source):
@@ -1096,6 +1255,10 @@ def on_update(self, method):
 	# 			wd.save(ignore_permissions =1)
 			
 
+	if self.quotation_type == "Site Visit Quotation - Customer":
+			sc = frappe.get_doc("Service Call Form",self.service_call_form)
+			sc.status = "Quoted"
+			sc.save(ignore_permissions = 1)
 
 	if self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
@@ -1278,7 +1441,8 @@ def send_qtn_reminder_mail():
 				Thank you once again for considering TSL COMPANY.<br><br>
 				Best regards,<br>"""%(mod)
 				
-				msg1="""<div><style>.sh-src a{text-decoration:none!important;}</style></div> <br> <table cellpadding="0" cellspacing="0" border="0" class="sh-src" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td align="center" style="padding: 0px 18px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 13px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/file/5r1rjllxn18j0p" alt="" title="Profile Picture" width="100" height="100" class="" style="display: block; border: 0px; max-width: 100px;"></p></td></tr></table> <table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank"><img src="https://signaturehound.com/api/v1/file/3lwizllxn10tyt" alt="" title="Logo" width="150" height="50" style="display: block; border: 0px; max-width: 150px;"></a></p></td></tr></table></td> <td width="5" style="padding: 1px 0px 0px;"></td> <td style="padding: 0px 1px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163); font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap;"><p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; font-weight: 700; color: rgb(0,92,163); white-space: nowrap; margin: 1px;">Mohammed K Daddy</p> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">Customer Support Officer</p> <!----> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">TSL Group | Kuwait</p></td></tr> <tr><td style="padding: 10px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info@tsl-me.com</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/direct/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741313" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741313</span></a></p></td></tr><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/fax/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741311" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741311</span></a></p></td></tr> <tr><td valign="top" style="padding: 1px 5px 1px 0px; vertical-align: top;"><p style="margin: 1px;">
+				msg1="""<div><style>.sh-src a{text-decoration:none!important;}</style></div> <br> <table cellpadding="0" cellspacing="0" border="0" class="sh-src" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td align="center" style="padding: 0px 18px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 13px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/file/5r1rjllxn18j0p" alt="" title="Profile Picture" width="100" height="100" class="" style="display: block; border: 0px; max-width: 100px;"></p></td></tr></table> <table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank"><img src="https://signaturehound.com/api/v1/file/3lwizllxn10tyt" alt="" title="Logo" width="150" height="50" style="display: block; border: 0px; max-width: 150px;"></a></p></td></tr></table></td> <td width="5" style="padding: 1px 0px 0px;"></td> <td style="padding: 0px 1px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163); font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap;"><p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; font-weight: 700; color: rgb(0,92,163); white-space: nowrap; margin: 1px;">Mohammed K Daddy</p> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">Customer Support Officer</p> <!----> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">TSL Group | Kuwait</p></td></tr> <tr><td style="padding: 10px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info@tsl-me.com</span></a>
+				</p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/direct/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741313" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741313</span></a></p></td></tr><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/fax/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+96524741311" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+965 24741311</span></a></p></td></tr> <tr><td valign="top" style="padding: 1px 5px 1px 0px; vertical-align: top;"><p style="margin: 1px;">
 				<img src="https://signaturehound.com/api/v1/png/map/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://www.google.com/maps/place/TSL+For+Industrial+Electronics+Repairing+%26+Supply+-+Kuwait/@29.3082683,47.9352691,18z/data=!4m6!3m5!1s0x3fcf9a9068440231:0x7321607de759fdc1!8m2!3d29.3082309!4d47.9365244!16s%2Fg%2F11c0rlsd_t?entry=ttu" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">Bldg: 1473, Unit: 13, Street: 24, Block: 1,<br>Al Rai Industrial Area, Kuwait</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,162) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.linkedin.com/company/tsl-me/mycompany/" target="_blank"><img src="https://signaturehound.com/api/v1/png/linkedin/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;">
 				<a href="https://x.com/tsl_mecompany?s=11&amp;t=Zxza0-9Q_18nsDCddfTQPw" target="_blank"><img src="https://signaturehound.com/api/v1/png/x/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.instagram.com/tslcom/?igshid=MzRlODBiNWFlZA%3D%3D" target="_blank"><img src="https://signaturehound.com/api/v1/png/instagram/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.facebook.com/people/TSL-Industrial-Electronics-Services/61550277093129/" target="_blank"><img src="https://signaturehound.com/api/v1/png/facebook/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.youtube.com/@TSLELECTRONICSSERVICES" target="_blank"><img src="https://signaturehound.com/api/v1/png/youtube/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td></tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 15px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 15px 4px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"></p></td> <td style="font-family: Arial, sans-serif; color: rgb(136,136,135) !important; font-weight: 700; font-size: 10px; line-height: 15px; padding: 15px 0px 1px; vertical-align: middle;"><p style="margin: 1px;"</p></td></tr></table></td></tr> <!----></table>"""
 				

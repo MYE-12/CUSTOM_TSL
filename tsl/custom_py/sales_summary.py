@@ -453,7 +453,7 @@ def get_wod(from_date,to_date,company):
 
                 #q-quoted-wd
                 
-                wds_quot = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"status":"Q-Quoted","posting_date": ["between", (Week_start,current_date)]},["*"])
+                wds_quot = frappe.get_all("Work Order Data",{"sales_rep":sales[1],"project_1":0,"status":"Q-Quoted","posting_date": ["between", (Week_start,current_date)]},["*"])
                 quot_am = 0
                 quot_am_2 = 0
                 for j in wds_quot:

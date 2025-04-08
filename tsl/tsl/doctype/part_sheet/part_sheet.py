@@ -53,6 +53,8 @@ def create_rfq(ps):
 	new_doc.work_order_data = doc.work_order_data
 	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
 	new_doc.items=[]
+	if doc.company == "TSL COMPANY - KSA":
+		new_doc.naming_series = "RFQ-SA-.YY.-"
 	warehouse = new_doc.branch
 	if new_doc.branch == "Dammam - TSL-SA":
 		warehouse = "Dammam - TSL - KSA"
@@ -84,6 +86,54 @@ def create_rfq(ps):
 				"department":frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
 			})
 	return new_doc
+
+
+
+@frappe.whitelist()
+def crt_req(ps):
+	ev = frappe.get_value("Evaluation Report",{"work_order_data":ps},"name")
+	doc = frappe.get_doc("Evaluation Report",ev)
+	new_doc = frappe.new_doc("Request for Quotation")
+	new_doc.company = doc.company
+	new_doc.branch = frappe.db.get_value("Work Order Data",doc.work_order_data,"branch")
+	# new_doc.work_order_ = ps
+	new_doc.work_order_data = doc.work_order_data
+	new_doc.department = frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
+	new_doc.items=[]
+	if doc.company == "TSL COMPANY - KSA":
+		new_doc.naming_series = "RFQ-SA-.YY.-"
+	warehouse = new_doc.branch
+	if new_doc.branch == "Dammam - TSL-SA":
+		warehouse = "Dammam - TSL - KSA"
+	if new_doc.branch == "Jeddah - TSL-SA":
+		warehouse = "Jeddah - TSL - KSA"
+	if new_doc.branch == "Riyadh - TSL- KSA":
+		warehouse = "Riyadh - TSL - KSA"
+		
+	for i in doc.get("items"):
+		if i.parts_availability == "No" :
+			new_doc.append("items",{
+				"item_code":i.part,
+				"item_name":i.part_name,
+				"description":i.part_name,
+				'model':i.model,
+				"category":i.category,
+				"sub_category":i.sub_category,
+				"mfg":i.manufacturer,
+				'serial_no':i.serial_no,
+				"uom":"Nos",
+				"stock_uom":"Nos",
+				"conversion_factor":1,
+				"stock_qty":1,
+				"qty":i.qty,
+				"schedule_date":add_to_date(new_doc.transaction_date,days = 2),
+				"warehouse":warehouse,
+				"branch":new_doc.branch,
+				"work_order_data":doc.work_order_data,
+				"department":frappe.db.get_value("Work Order Data",doc.work_order_data,"department")
+			})
+	return new_doc
+
 
 
 @frappe.whitelist()

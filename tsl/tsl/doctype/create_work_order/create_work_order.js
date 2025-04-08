@@ -57,8 +57,8 @@ frappe.ui.form.on('Create Work Order', {
 		if (frm.doc.company && frm.doc.branch) {
 			var d = {
 				"Kuwait - TSL": "Repair - Kuwait - TSL",
-				// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
-				"Jeddah - TSL-SA": "Repair - Jeddah - TSL-SA",
+				"Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
+				"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
 				"Riyadh - TSL- KSA": "Riyadh - Repair - TSL - KSA",
 				"Dubai - TSL": "Dubai - Repair - TSL-UAE"
 			}
@@ -75,6 +75,10 @@ frappe.ui.form.on('Create Work Order', {
 
 		if(frappe.session.user == "info@tsl-me.com"){
 			frm.set_value("company","TSL COMPANY - Kuwait")
+		}
+
+		if(frappe.session.user == "info-sa@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
 		}
 
 		// if(frappe.session.user == "info-dmm@tsl-me.com" || frappe.session.user == "info-jed@tsl-me.com" ){
@@ -113,12 +117,22 @@ frappe.ui.form.on('Create Work Order', {
 			});
 		}
 
-			
+		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Riyadh - TSL- KSA"){
+			frm.set_query('customer', function(doc) {
+				return {
+					filters: {
+						"territory": "Saudi Arabia"
+					}
+				};
+			});
+		}
+
+
 		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Dammam - TSL-SA"){
 			frm.set_query('customer', function(doc) {
 				return {
 					filters: {
-						"territory": "Dammam"
+						"territory": "Saudi Arabia"
 					}
 				};
 			});
@@ -128,7 +142,7 @@ frappe.ui.form.on('Create Work Order', {
 			frm.set_query('customer', function(doc) {
 				return {
 					filters: {
-						"territory": "Jeddah"
+						"territory": "Saudi Arabia"
 					}
 				};
 			});
@@ -327,7 +341,7 @@ frappe.ui.form.on('Create Work Order', {
 		});
 		var d = {
 			"Kuwait - TSL": "Repair - Kuwait - TSL",
-			// "Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
+			"Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
 			"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
 			"Riyadh - TSL- KSA": "Riyadh - TSL - KSA",
 			"Dubai - TSL": "Dubai - Repair - TSL-UAE"

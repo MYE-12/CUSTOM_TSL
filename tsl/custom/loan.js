@@ -61,7 +61,7 @@ frappe.ui.form.on('Loan', {
                                 },
                                 callback(r){
                                     dialog.hide();
-                                    window.location.reload()
+                                    // window.location.reload()
                                 }
                             })
     
