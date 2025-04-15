@@ -33,7 +33,7 @@ def get_columns(filters):
 		# _("Contact Person") + ":Data:150",
 		# _("Contact Email") + ":Data:150",
 		# _("Contact Number") + ":Data:150",
-		_("Technician") + ":Data:150",
+		# _("Technician") + ":Data:150",
 		# _("Quoted Price") + ":Currency:150",
 		# # _("Old Quoted Amount") + ":Data:150",
 		# # _("Old VAT") + ":Data:100",
@@ -66,19 +66,17 @@ def get_data(filters):
 	data = []
 	wr = []
 	if filters.from_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Supply Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.to_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Supply Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
-	if filters.company:
-		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+	
+	if filters.from_date and filters.to_date:
+		w = frappe.get_all("Supply Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Supply Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
-	if filters.from_date and filters.to_date and filters.company:
-		w = frappe.get_all("Supply Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Supply Order Data",{"branch":filters.branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	for i in wr:
 		it = frappe.db.sql(''' select type,mfg,model_no,serial_no,quantity,description from `tabSupply Order Table` where parent = %s ''' ,i.name,as_dict=1)
@@ -127,7 +125,7 @@ def get_data(filters):
 		qty,
 		i.customer,
 		i.customer_reference_number,
-		i.technician,
+		# i.technician,
 		# i.quoted_price,
 		i.quoted_date,
 		# "",

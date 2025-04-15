@@ -206,7 +206,7 @@ if(frm.doc.docstatus == 1) {
 		}
 }
 		if(frm.doc.docstatus == 1 && (frm.doc.status == "RNR-Return Not Repaired" || frm.doc.status == "RNRC-Return Not Repaired Client" ||frm.doc.status == "RNF-Return No Fault" ||frm.doc.status == "RNA-Return Not Approved"|| frm.doc.status == "RNP-Return No Parts" || frm.doc.status == "C-Comparison")){
-			frm.add_custom_button(__("Supply Order Form"), function(){
+			frm.add_custom_button(__("Supply Order Data"), function(){
 				frappe.call({
 					method: "tsl.tsl.doctype.work_order_data.work_order_data.create_sof",
 					args: {

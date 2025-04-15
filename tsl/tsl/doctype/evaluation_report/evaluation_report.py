@@ -21,12 +21,13 @@ class EvaluationReport(Document):
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
 			if i.part and i.parts_availability == "No":
+				frappe.errprint("hiiiiii")
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
-				
 				sts = "Yes"
 				if len(bin) and 'name' in bin[0]:
 					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
 					i.price_ea = price
+					i.total = price * i.qty
 					i.parts_availability = sts
 					frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
 				if i.parts_availability == sts:
@@ -298,7 +299,7 @@ class EvaluationReport(Document):
 				item_doc.sub_category = sub_cat
 				# item_doc.package = package
 				item_doc.item_group = "Components"
-				if frappe.session.user == "purchase@tsl-me.com" :
+				if frappe.session.user == "purchase@tsl-me.com" or frappe.session.user == "purchase-sa1@tsl-me.com":
 					item_doc.save(ignore_permissions = True)
 
 	def on_update_after_submit(self):
@@ -491,11 +492,12 @@ class EvaluationReport(Document):
 				doc.save(ignore_permissions=True)
 			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 			for i in self.items:
-				if i.part and i.parts_availability == "Yes" and not i.is_not_edit:
+				if i.part and i.parts_availability == "Yes":
+					
 					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
-			for i in self.items:
-				i.is_not_edit = 1
-				frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
+			# for i in self.items:
+			# 	i.is_not_edit = 1
+			# 	frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
 			if self.items:
 				lpn = self.items[-1].part_sheet_no
 			for i in self.items:
@@ -520,7 +522,7 @@ class EvaluationReport(Document):
 					item_doc.sub_category_name = scn
 					item_doc.package = package
 					item_doc.item_group = "Components"
-					if frappe.session.user == "purchase@tsl-me.com" :
+					if frappe.session.user == "purchase@tsl-me.com" or frappe.session.user == "purchase-sa1@tsl-me.com" :
 						item_doc.save(ignore_permissions = True)
 		
 	# def before_submit(self):
@@ -682,6 +684,7 @@ def parts_request(name):
 							attachments=get_attachments(parts.name,"Evaluation Report")
 
 							)
+					frappe.msgprint("Mail Sent on Parts Request")
 
 def get_attachments(name,doctype):
 	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Part Sheet")

@@ -14,6 +14,7 @@
   "column_break_6",
   "type",
   "serial_no",
+  "update_serial",
   "item_name",
   "wo",
   "quantity",
@@ -132,12 +133,17 @@
    "fieldtype": "Currency",
    "label": "Online Price",
    "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "update_serial",
+   "fieldtype": "Button",
+   "label": "Update Serial No"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-04 13:53:23.398561",
+ "modified": "2025-04-14 11:31:30.319824",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Material List",

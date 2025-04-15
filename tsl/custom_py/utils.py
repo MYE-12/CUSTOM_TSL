@@ -1522,9 +1522,17 @@ def change_shipping_cost(currency,sq):
 	return data,t_amt
 		
 
-# @frappe.whitelist()
-# def dlt_wo():
-# 	wo = frappe.db.sql(""" delete from `tabSupply Order Data` where company = "TSL COMPANY - KSA" """)
+@frappe.whitelist()
+def dlt_wo():
+	frappe.db.sql("""
+    UPDATE `tabSales Taxes and Charges` AS sii
+    JOIN `tabQuotation` AS si ON sii.parent = si.name
+    SET sii.branch = si.branch_name
+    WHERE si.branch_name = "Dammam - TSL-SA"
+	""")
+
+	# wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
+	# wo = frappe.db.sql(""" delete from `tabSupply Order Data` where company = "TSL COMPANY - KSA" """)
 
 @frappe.whitelist()
 def update_wo():
@@ -1612,15 +1620,15 @@ def set_alert_normal():
 
 
 @frappe.whitelist()
-def send_mail_to_customer(q,type,email):
-	if type == "Customer Quotation - Repair":
+def send_mail_to_customer(q,type,email,company,branch):
+	if type == "Customer Quotation - Repair" and branch =="Kuwait - TSL":
 		if email:
 			frappe.sendmail(recipients=[email],
 			sender="Notification from TSL <info@tsl-me.com>",
 			subject="Quotation from TSL",
 			message=""" 
 		   
-			<p>Dear Sir</p><br><br>,
+			<p>Dear Sir,</p><br><br>
 				I hope this message ﬁnds you well.<br><br>
 				We are pleased to provide the below Quotation for the reference (Wo #No.)<br><br>
 				Awaitng your approval for the same.<br><br>
@@ -1635,7 +1643,30 @@ def send_mail_to_customer(q,type,email):
 			attachments=get_attachments(q,"Quotation")
 			)
 			frappe.msgprint("Mail Successfully Sent to Customer")
-			
+
+	if type == "Customer Quotation - Repair" and branch == "Jeddah - TSL-SA":
+		
+		if email:
+			msg1 = """<p>Dear Sir,</p><br>
+				I hope this message ﬁnds you well.<br><br>
+				We are pleased to provide the below Quotation for the reference (%s)<br><br>
+				Awaitng your approval for the same.<br><br>
+				Thank you for choosing TSL COMPANY.<br><br>
+				Best regards,<br>"""%(q)
+			msg2 = """<div><style>.sh-src a{text-decoration:none!important;}</style></div> <br> <table cellpadding="0" cellspacing="0" border="0" class="sh-src" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td align="center" style="padding: 0px 18px 0px 0px; vertical-align: top;">
+				<table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 13px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/file/5r1rjllxn0zdme" alt="" title="Profile Picture" width="100" height="100" class="" style="display: block; border: 0px; max-width: 100px;"></p></td></tr></table> <table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank"><img src="https://signaturehound.com/api/v1/file/137twgllxltmdmv" alt="" title="Logo" width="150" height="50" style="display: block; border: 0px; max-width: 150px;"></a></p></td></tr></table></td> <td width="5" style="padding: 1px 0px 0px;"></td> <td style="padding: 0px 1px 0px 0px; vertical-align: top;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td style="padding: 0px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163); font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap;"><p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; font-weight: 700; color: rgb(0,92,163); white-space: nowrap; margin: 1px;">Ajai
+				</p> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">Admin &amp; Customer Support</p> <!----> <p style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); margin: 1px;">
+					TSL Group | KSA - Jeddah</p> <!----></td></tr> <tr><td style="padding: 10px 1px 10px 0px; border-bottom: 2px solid rgb(0,92,163);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; margin: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info-jed@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info-jed@tsl-me.com</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/mobile/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; margin: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="tel:+966558803522" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">+966 55 880 3522</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/map/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; margin: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://www.google.com/maps/dir/21.3180818,39.227158/TSL+Industrial+Electronics+for+Repairing+%26+Supply+-+Jeddah,+80th+street%D8%8C+Al-Qarinia+District%D8%8C+Jeddah+22535,+Saudi+Arabia%E2%80%AD/@21.3172514,39.1901511,13z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">80th Street, Al-Qrainia, Jeddah, Saudi Arabia.</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; margin: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,162) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.linkedin.com/company/tsl-me/mycompany/" target="_blank"><img src="https://signaturehound.com/api/v1/png/linkedin/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; margin: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://x.com/tsl_mecompany?s=11&amp;t=Zxza0-9Q_18nsDCddfTQPw" target="_blank"><img src="https://signaturehound.com/api/v1/png/x/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; margin: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.instagram.com/tslcom/?igshid=MzRlODBiNWFlZA%3D%3D" target="_blank"><img src="https://signaturehound.com/api/v1/png/instagram/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; margin: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.facebook.com/people/TSL-Industrial-Electronics-Services/61550277093129/" target="_blank"><img src="https://signaturehound.com/api/v1/png/facebook/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; margin: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.youtube.com/@TSLELECTRONICSSERVICES" target="_blank"><img src="https://signaturehound.com/api/v1/png/youtube/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; margin: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td>
+					</tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 15px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> """
+					
+			frappe.sendmail(recipients=[email],
+			sender="info-jed@tsl-me.com",
+			subject="Quotation from TSL",
+			message= msg1+msg2,
+			attachments=get_jed_att(q,"Quotation")
+			)
+			frappe.msgprint("Mail Successfully Sent to Customer")
+	# Supply Mail
 	if type == "Customer Quotation - Supply":
 		if email:
 			frappe.sendmail(recipients=[email],
@@ -1654,7 +1685,7 @@ def send_mail_to_customer(q,type,email):
 				<img src="https://signaturehound.com/api/v1/png/map/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://www.google.com/maps/place/TSL+For+Industrial+Electronics+Repairing+%26+Supply+-+Kuwait/@29.3082683,47.9352691,18z/data=!4m6!3m5!1s0x3fcf9a9068440231:0x7321607de759fdc1!8m2!3d29.3082309!4d47.9365244!16s%2Fg%2F11c0rlsd_t?entry=ttu" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">Bldg: 1473, Unit: 13, Street: 24, Block: 1,<br>Al Rai Industrial Area, Kuwait</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/round-outlined/0088cc.png" alt="" width="22" height="22" style="display: block; border: 0px; width: 22px; height: 22px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,162) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://tsl-me.com/" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 15px; white-space: nowrap; color: rgb(0,92,163); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.linkedin.com/company/tsl-me/mycompany/" target="_blank"><img src="https://signaturehound.com/api/v1/png/linkedin/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;">
 				<a href="https://x.com/tsl_mecompany?s=11&amp;t=Zxza0-9Q_18nsDCddfTQPw" target="_blank"><img src="https://signaturehound.com/api/v1/png/x/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.instagram.com/tslcom/?igshid=MzRlODBiNWFlZA%3D%3D" target="_blank"><img src="https://signaturehound.com/api/v1/png/instagram/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.facebook.com/people/TSL-Industrial-Electronics-Services/61550277093129/" target="_blank"><img src="https://signaturehound.com/api/v1/png/facebook/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="27" style="font-size: 0px; line-height: 0px; padding: 13px 1px 0px 0px;"><p style="margin: 1px;"><a href="https://www.youtube.com/@TSLELECTRONICSSERVICES" target="_blank"><img src="https://signaturehound.com/api/v1/png/youtube/round/0088cc.png" alt="" width="27" height="27" style="display: block; border: 0px; width: 27px; height: 27px;"></a></p></td> <td width="3" style="padding: 0px 0px 1px;"></td></tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 15px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 12px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 15px 4px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"></p></td> <td style="font-family: Arial, sans-serif; color: rgb(136,136,135) !important; font-weight: 700; font-size: 10px; line-height: 15px; padding: 15px 0px 1px; vertical-align: middle;"><p style="margin: 1px;"</p></td></tr></table></td></tr> <!----></table>
 			""",
-			attachments=get_attach(q,"Quotation")
+			attachments=get_jed_att(q,"Quotation")
 			)
 			frappe.msgprint("Mail Successfully Sent to Customer")
 		
@@ -1662,6 +1693,9 @@ def send_mail_to_customer(q,type,email):
 
 def get_attachments(name,doctype):
 	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL")
+	return [attachments]
+def get_jed_att(name,doctype):
+	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL - KSA - Long")
 	return [attachments]
 
 def get_attach(name,doctype):
@@ -7569,3 +7603,20 @@ def update_sod(import_file):
 		# })
 
 		# wo.save(ignore_permissions = 1)
+
+@frappe.whitelist()
+def update_serial_no(sn,wo):
+	st = frappe.get_value("Stock Entry",{"work_order_data":wo},"name")
+	frappe.errprint(st)
+	
+	serial = frappe.get_value("Serial No",{"purchase_document_no":st},"name")
+	frappe.db.set_value("Serial No",serial,"name",sn)
+	
+	frappe.db.sql("""
+    UPDATE `tabStock Entry Detail` AS sii
+    JOIN `tabStock Entry` AS si ON sii.parent = si.name
+    SET sii.serial_no = %s
+    WHERE si.work_order_data = %s
+    """, (sn,wo))
+
+	

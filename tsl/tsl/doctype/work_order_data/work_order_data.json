@@ -30,6 +30,7 @@
   "expiry_date",
   "equipment_recieved_form",
   "priority_status",
+  "unit_table_no",
   "mistaken_ner",
   "quoted",
   "status_cap",
@@ -602,6 +603,13 @@
    "fieldname": "project_1",
    "fieldtype": "Check",
    "label": "Project"
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "eval:doc.company == \"TSL COMPANY - KSA\"",
+   "fieldname": "unit_table_no",
+   "fieldtype": "Data",
+   "label": "Unit Table No"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -612,7 +620,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-04-08 08:21:32.602192",
+ "modified": "2025-04-13 14:02:55.902672",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

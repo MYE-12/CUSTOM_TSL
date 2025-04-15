@@ -51,7 +51,7 @@ def get_columns(filters):
 		_("Quoted Amount") + ":currency:120",
 		_("Total Amount") + ":currency:120",
 		# _("VAT%") + ":float:120",
-		# _("VAT Amount%") + ":float:130",
+		_("VAT Amount%") + ":float:130",
 		# _("Total Amount") + ":float:130",
 		_("Quotation") + ":Link/Quotation:140",
 		_("NER") + ":Data:120",
@@ -66,20 +66,18 @@ def get_data(filters):
 	data = []
 	wr = []
 	if filters.from_date:
-		w = frappe.get_all("Work Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.to_date:
-		w = frappe.get_all("Work Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
-	if filters.company:
-		w = frappe.get_all("Work Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Work Order Data",{"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
-	if filters.from_date and filters.to_date and filters.company:
-		w = frappe.get_all("Work Order Data",{"company":filters.company,"posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+	if filters.branch:
+		w = frappe.get_all("Work Order Data",{"branch":filters.branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
+	
 	for i in wr:
 		it = frappe.db.sql('''select type,mfg,model_no,serial_no,quantity,item_name from `tabMaterial List` where parent = %s ''',i.name,as_dict=1)
 		mod = frappe.db.get_value("Item Model",it[0]["model_no"],"model")
@@ -122,16 +120,18 @@ def get_data(filters):
 				
 
 			
-		row = [i.name,i.posting_date,i.sales_rep,i.company,i.branch,
+		row = [i.name,i.posting_date,i.old_wo_no,i.sales_rep,i.company,i.branch,
 		it[0]["type"],it[0]["mfg"],mod,it[0]["item_name"],it[0]["serial_no"],it[0]["quantity"],
+		i.customer,
+		i.cus,
 		cont,
 		email,
 		mobile,
 		i.technician,
 		i.quoted_price,
-		i.old_wo_q_amount,
-		i.old_wo_vat,
-		i.old_wo_total_amt,
+		# i.old_wo_q_amount,
+		# i.old_wo_vat,
+		# i.old_wo_total_amt,
 		i.quoted_date,
 		i.payment_reference_number,
 		i.payment_date,
@@ -142,6 +142,7 @@ def get_data(filters):
 		i.returned_date,
 		ap_date,
 		q_m,
+		vat_amt,
 		round((q_m + vat_amt),2),
 		qu_name,
 		i.status_cap,

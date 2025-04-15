@@ -31,7 +31,8 @@ class InvoiceRequest(Document):
 
 			frappe.sendmail(
 				sender= self.requested_by,
-				recipients=["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
+				recipients=["yousuf@tsl-me.com"],
+				cc = ['finance-sa1@tsl-me.com'],
 				subject = "Invoice Request",
 				message = msg,
 			
@@ -44,7 +45,7 @@ class InvoiceRequest(Document):
 
 			frappe.sendmail(
 				sender= self.submitted_by,
-				recipients=["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
+				recipients=["yousuf@tsl-me.com",self.requested_by],
 				subject = "Invoice Request",
 				message = msg,
 			

@@ -21,13 +21,14 @@ frappe.query_reports["Work Order Report"] = {
 			"default": frappe.datetime.get_today(),
 		},
 		
-		{
-			"fieldname":"company",
-			"label": __("Company"),
-			"fieldtype": "Link",
-			"options": "Company",
-			"width": "80",
-		},
+		// {
+		// 	"fieldname":"company",
+		// 	"label": __("Company"),
+		// 	"fieldtype": "Link",
+		// 	"options": "Company",
+		// 	"width": "80",
+		// 	"reqd": 1,
+		// },
 
 		{
 			"fieldname":"branch",
@@ -35,6 +36,7 @@ frappe.query_reports["Work Order Report"] = {
 			"fieldtype": "Link",
 			"options": "Branch",
 			"width": "80",
+			"reqd": 1,
 		}
 
 	]

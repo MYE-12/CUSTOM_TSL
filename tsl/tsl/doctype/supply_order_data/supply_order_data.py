@@ -559,7 +559,7 @@ def supply_order_mail(name):
 				
 		# technician = supply_order.technician
 		frappe.sendmail(
-				recipients="purchase-sa1@tsl-me.com",
+				recipients="purchase-sa@tsl-me.com",
 				sender="info-jed@tsl-me.com",
 				subject= "New Supply Order Created Needed Price",
 				message=msg1+msg2,
@@ -567,7 +567,7 @@ def supply_order_mail(name):
 		)
 		frappe.msgprint("Mail Sent on Parts Request")
 	else:
-		if parts.branch == "Dammam - TSL-SA":
+		if supply_order.branch == "Dammam - TSL-SA":
 
 			msg1 = """Dear Purchaser, <br> <br>Please find the Supply Order Create (<a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a>) need price for further proceeding.<br> 
 				<br><br> Thanks & Regards"""%(supply_order.name,supply_order.name)
@@ -578,11 +578,11 @@ def supply_order_mail(name):
 				Technical Solutions Company for Maintenance</p> <!----></td></tr> <tr><td style="padding: 13px 1px 13px 0px; border-bottom: 2px solid rgb(0,123,255);"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/email/default/007bff.png" alt="" width="18" height="18" style="display: block; border: 0px; margin: 0px; width: 18px; height: 18px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="mailto:info-dmm@tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">info-dmm@tsl-me.com</span></a></p></td></tr>  <tr><td valign="top" style="padding: 1px 5px 1px 0px; vertical-align: top;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/map/default/007bff.png" alt="" width="18" height="18" style="display: block; border: 0px; margin: 0px; width: 18px; height: 18px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,135) !important; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><a href="https://maps.app.goo.gl/VqaMGCLVvnGnotrX7?g_st=iw" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(136,136,136); text-decoration: none !important;">2nd industry، no 38، 166st X 23st Factory, Dammam 32275,<br> Saudi Arabia</span></a></p></td></tr> <tr><td valign="middle" style="padding: 1px 5px 1px 0px; vertical-align: middle;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/website/default/007bff.png" alt="" width="18" height="18" style="display: block; border: 0px; margin: 0px; width: 18px; height: 18px;"></p></td> <td style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(0,123,254) !important; font-weight: 700; padding: 1px 0px; vertical-align: middle;"><p style="margin: 1px;">
 				<a href="http://tsl-me.com" target="_blank" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(0,123,255); font-weight: 700; text-decoration: none !important;"><span style="font-family: Arial, sans-serif; font-size: 13px; line-height: 16px; white-space: nowrap; color: rgb(0,123,255); font-weight: 700; text-decoration: none !important;">tsl-me.com</span></a></p></td></tr></table></td></tr> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0px; border-collapse: collapse;"><tr><td width="30" style="font-size: 0px; line-height: 0px; padding: 16px 1px 0px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/facebook/default/007bff.png" alt="" width="30" height="30" style="display: block; border: 0px; margin: 0px; width: 30px; height: 30px;"></p></td> <td width="3" style="padding: 0px 0px 1px;"></td><td width="30" style="font-size: 0px; line-height: 0px; padding: 16px 1px 0px 0px;"><p style="margin: 1px;"><img src="https://signaturehound.com/api/v1/png/linkedin/default/007bff.png" alt="" width="30" height="30" style="display: block; border: 0px; margin: 0px; width: 30px; height: 30px;"></p></td> <td width="3" style="padding: 0px 0px 1px;"></td></tr></table></td></tr></table></td></tr></table></td></tr> <!----> <tr><td style="padding: 0px 1px 0px 0px;"><table cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0px; border-collapse: collapse;"><tr><td style="padding: 20px 1px 0px 0px; font-family: Arial, sans-serif; font-size: 10px; line-height: 13px; color: rgb(136,136,136);"><p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 13px; color: rgb(136,136,136); margin: 1px;">The content of this email is confidential and intended for the recipient specified in message only. It is strictly forbidden to share any part of this message with any third party, without a written consent of the sender. If you received this message by mistake, please reply to this message and follow with its deletion, so that we can ensure such a mistake does not occur in the future.</p></td></tr></table></td></tr> <!----> <!----></table>"""
 			frappe.sendmail(
-					recipients="purchase-sa1@tsl-me.com",
+					recipients="purchase-sa@tsl-me.com",
 					sender="info-dmm@tsl-me.com",
 					subject= "New Supply Order Created Needed Price",
 					message= msg1+msg2,
-					attachments=get_attachments(parts.name,"Supply Order Data")
+					attachments=get_attachments(supply_order.name,"Supply Order Data")
 
 					)
 

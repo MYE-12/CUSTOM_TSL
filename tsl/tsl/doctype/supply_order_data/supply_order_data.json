@@ -53,6 +53,8 @@
   "advance_paid_date",
   "tender_closing",
   "supplier_closing_date",
+  "notified",
+  "work_order_data",
   "section_break_14",
   "in_stock",
   "material_list",
@@ -443,12 +445,25 @@
    "fieldname": "so_currency_old",
    "fieldtype": "Data",
    "label": "SO Currency Old"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "notified",
+   "fieldtype": "Check",
+   "label": "Notified"
+  },
+  {
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "label": "Work Order Data",
+   "options": "Work Order Data"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-08 10:15:08.437832",
+ "modified": "2025-04-08 15:04:49.240963",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

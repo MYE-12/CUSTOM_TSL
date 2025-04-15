@@ -1327,6 +1327,7 @@ def before_submit(self,method):
 		# 	for i in self.get("item_price_details"):
 		# 		frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_price",i.price)
 		# 		frappe.db.set_value("Item",{"item_name":i.item},"last_quoted_client",self.party_name)
+		
 	if self.quotation_type == "Internal Quotation - Supply":
 		d = {}
 		for i in self.get('items'):
@@ -1339,6 +1340,7 @@ def before_submit(self,method):
 		
 		for k,v in d.items():
 			to_add = []
+			
 			doc = frappe.get_doc("Supplier Quotation",k)
 			for i in doc.get("items"):
 				if i.item_code in v:
@@ -1348,55 +1350,8 @@ def before_submit(self,method):
 				doc.append("items",i)
 			doc.quotation = self.name
 			doc.save(ignore_permissions= True)
+			
 			doc.submit()
-
-		
-
-
-	
-				
-#def validate(self, method):
-#	items = self.get("items")
-#	for item in items:
-#		if item.wod_no:
-#			eval_report = frappe.db.sql("""select * from `tabEvaluation Report` where work_order_data = '%s'"""%(item.wod_no),as_dict =1)
-#			for eval in eval_report:
-#				eval_time = eval.evaluation_time or 0
-#				spent_time = eval.estimated_repair_time or 0
-#				total_time = str(datetime.timedelta(seconds = eval_time + spent_time))
-#				total_hrs = total_time.split(":")[0]
-#				self.append("technician_hours_spent",{
-#							"total_hours_spent":total_hrs,
-#							"value":20,
-#							"total_price":20*int(total_hrs),
-#							"comments": eval.status
-#						})
-#		tech = self.technician_hours_spent
-#		for t in tech:
-#			self.actual_price += t.total_price
-    			
-#	if not self.edit_final_approved_price and self.quotation_type=="Internal Quotation - Repair":
-#		self.overall_discount_amount = (self.final_approved_price * self.discount_percent)/100
-#		self.final_approved_price -= self.overall_discount_amount
-#		self.final_approved_price += self.margin_rate
-#	l = []
-#	if self.quotation_type == "Internal Quotation - Repair":
-#		for i in self.get("items"):
-#			if i.item_name:
-#				item = frappe.db.sql('''select parent,item_name,rate from `tabQuotation Item` where parenttype = "Quotation" and item_name = %s and docstatus = 1 order by creation desc''',i.item_name,as_dict=1)
-#				for j in item:
-#					if frappe.db.get_value("Quotation",j['parent'],"quotation_type") == "Internal Quotation - Repair":
-#						l.append({
-#							"item":j['item_name'],
-#							"client":frappe.db.get_value("Quotation",j['parent'],"party_name"),
-#							"price":j['rate'],
-#
-#						})
-#		self.similar_items_quoted_before = []
-#		for i in range(len(l)):
-#			if i==3:
-#				break
-#			self.append("similar_items_quoted_before",l[i])
 
 def send_qtn_reminder_mail():
 	q = frappe.get_all("Quotation",{"workflow_state":"Quoted to Customer", "transaction_date": [">","2024-03-01"]},["*"])
@@ -1483,32 +1438,6 @@ def send_qtn_reminder_mail():
 				message = msg+msg1,
 				attachments= get_attachments_supply(s,"Quotation")
 				)
-	# for i in frappe.db.sql('''select  q.name as name,c.email_id as email_id,q.branch_name as branch,q.is_email_sent as ecount,q.party_name as customer_name from `tabQuotation` as q join `tabCustomer` as c on c.name = q.party_name where q.docstatus = 0 and 
-	# 			q.workflow_state = 'Quoted to Customer' ''',as_dict=1):
-	# 	receiver = []
-	# 	receiver.append(i['email_id'])
-	# 	sender = frappe.db.get_value("Email Account",{"branch":i['branch']},"email_id")
-	# 	doctype = "Quotation"
-	# 	name = i['name']
-		# msg = '''Dear Mr./Ms. %s,{Dear Sir,}<br>We would like to remind you about the Quotation (WO/ Quotation Ref.: %s) sent earlier.<br>Kindly advise in order to proceed with
-		# 	work or we will return the unit in your facility.<br><br>Your quick response will be highly appreciated.'''%(i['customer_name'],i['name'])
-	# 	if not i['ecount']:
-	# 		msg = '''Dear Mr./Ms. %s,{Dear Sir,}<br>We would like to remind you about the Quotation (WO/ Quotation Ref.: %s) sent earlier. We have<br>attached the quotation
-	# 			for your reference.<br><br>We look forward to your approval of the work.'''%(i['customer_name'],i['name'])
-
-	# 	if len(receiver):
-	# 		try:
-	# 			frappe.sendmail(
-	# 				recipients = receiver,
-	# 				sender = sender,
-	# 				subject = str(doctype)+" "+str(name),
-	# 				message = msg,
-	# 				attachments=get_attachments(name,doctype)
-	# 			)
-	# 			print("Email sent")
-	# 			frappe.db.set_value("Quotation",name,"is_email_sent",1)
-	# 		except frappe.OutgoingEmailError as e:
-	# 			print(str(e))
 
 def get_attachments(name,doctype):
 	attachments = frappe.attach_print(doctype, name,file_name=doctype, print_format="Quotation TSL")

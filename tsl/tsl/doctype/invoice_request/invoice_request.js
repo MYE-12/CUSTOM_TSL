@@ -18,7 +18,8 @@ frappe.ui.form.on('Invoice Request', {
             // Custom filter logic
             return {
                 filters: {
-                    'quotation_type': ['in', ['Customer Quotation - Repair','Revised Quotation - Repair','Internal Quotation - Repair']],
+                    'quotation_type': ['in', ['Customer Quotation - Repair','Revised Quotation - Repair']],
+					'workflow_state': ['in', ['Approved By Customer']],
                     
                 }
             };
@@ -29,8 +30,8 @@ frappe.ui.form.on('Invoice Request', {
             // Custom filter logic
             return {
                 filters: {
-                    'quotation_type': ['in', ['Customer Quotation - Supply','Revised Quotation - supply','Internal Quotation - Supply']],
-                    
+                    'quotation_type': ['in', ['Customer Quotation - Supply','Revised Quotation - supply']],
+                    'workflow_state': ['in', ['Approved By Customer']],
                 }
             };
         };

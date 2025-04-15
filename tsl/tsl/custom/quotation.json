@@ -6015,7 +6015,7 @@
    "creation": "2023-08-23 13:23:34.235318",
    "delete": 0,
    "docstatus": 0,
-   "email": 0,
+   "email": 1,
    "export": 1,
    "idx": 0,
    "if_owner": 0,
@@ -6034,7 +6034,7 @@
    "role": "Admin",
    "select": 1,
    "set_user_permissions": 0,
-   "share": 0,
+   "share": 1,
    "submit": 1,
    "write": 1
   },

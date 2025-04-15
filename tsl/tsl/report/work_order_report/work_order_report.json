@@ -10,12 +10,12 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "KSA Foorter",
- "modified": "2025-02-25 12:48:54.215139",
+ "modified": "2025-04-09 16:19:04.181956",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Report",
  "owner": "Administrator",
- "prepared_report": 0,
+ "prepared_report": 1,
  "ref_doctype": "Work Order Data",
  "report_name": "Work Order Report",
  "report_type": "Script Report",
@@ -25,6 +25,9 @@
   },
   {
    "role": "Manufacturing User"
+  },
+  {
+   "role": "Admin"
   }
  ]
 }

@@ -38,8 +38,9 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
-   "options": "SCF-.YYYY.-\nSCF-R-.YYYY.-\nSCF-D-.YYYY.-\nSCF-J-.YYYY.-"
+   "options": "SCF-.YYYY.-\nSCF-DU.YY.-\nSCF-D.YY.-\nSCF-J.YY.-\nSCF-R.YY.-"
   },
   {
    "default": "Today",
@@ -196,7 +197,7 @@
    "link_fieldname": "service_call_form"
   }
  ],
- "modified": "2025-03-27 12:47:49.864506",
+ "modified": "2025-04-09 10:11:42.208807",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

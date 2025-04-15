@@ -36,7 +36,9 @@ def create_quotation(wod):
     new_doc= frappe.new_doc("Quotation")
     new_doc.company = doc.company
     new_doc.party_name = doc.customer
-    # new_doc.sales_rep = doc.sales_rep
+    s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")
+    if s_user:
+        new_doc.sales_rep = s_user
     if doc.company == "TSL COMPANY - UAE":
         new_doc.selling_price_list = "Standard Selling - UAE"
     elif doc.company == "TSL COMPANY - KSA":
@@ -389,25 +391,47 @@ def create_stock_entry(wod):
 @frappe.whitelist()
 def create_sof(wod):
     doc = frappe.get_doc("Work Order Data",wod)
-    new_doc = frappe.new_doc("Supply Order Form")
+    new_doc = frappe.new_doc("Supply Order Data")
     new_doc.company = doc.company
     new_doc.customer = doc.customer
+    new_doc.customer_name = doc.customer_name
     new_doc.branch = doc.branch
-    new_doc.address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
-    new_doc.incharge = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
-    new_doc.sales_person = doc.sales_rep
-    new_doc.work_order_data = wod
+    new_doc.Status = "Inquiry"
+    new_doc.image = doc.attach_image
+    new_doc.attach_image = doc.attach_image
+    new_doc.work_order_data = doc.name
+    if doc.branch == "Jeddah - TSL-SA":
+        new_doc.naming_series = "SOD-J.YY.-"
+        new_doc.department = "Jeddah-Supply - TSL - KSA"
+    if doc.branch == "Dammam - TSL-SA":
+        new_doc.naming_series = "SOD-D.YY.-"
+        new_doc.department = "Dammam-Supply - TSL - KSA"
+    if doc.branch == "Riyadh - TSL- KSA":
+        new_doc.naming_series = "SOD-R.YY.-"
+        new_doc.department = "Riyadh-Supply - TSL - KSA"
+    # new_doc.address = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"address")
+    # new_doc.incharge = frappe.db.get_value("Equipment Received Form",doc.equipment_recieved_form,"incharge")
+    new_doc.sales_rep = doc.sales_rep
+    # new_doc.work_order_data = wod
     for i in doc.get("material_list"):
-        new_doc.append("received_equipment",{
+        new_doc.append("material_list",{
+            "item_code":i.item_code,
             "item_name":i.item_name,
             "type":i.type,
-            "manufacturer":i.mfg,
-            "model":i.model_no,
+            "mfg":i.mfg,
+            "model_no":i.model_no,
             "serial_no":i.serial_no,
-            "qty":i.quantity
+            "qty":i.quantity,
+           
 
         })
-    return new_doc
+    new_doc.save(ignore_permissions = 1)
+    new_doc.submit()
+    link = []
+    link.append(
+        """ <a href='/app/supply-order-data/{0}'>{0}</a> """.format(new_doc.name))
+    frappe.msgprint("Supply Order created: "+', '.join(link))
+    # return new_doc
 
 @frappe.whitelist()
 def create_rn(wod):
@@ -548,7 +572,7 @@ def create_dn(wod):
     d = {}
     d['Kuwait - TSL'] = "Repair - Kuwait - TSL"
     d['Dammam - TSL-SA'] = 'Dammam - Repair - TSL - KSA'
-    d['Jeddah - TS'] = 'Repair - Jeddah - TSL-SA'
+    d['Jeddah - TSL-SA'] = 'Repair - Jeddah - TSL-SA'
     d['Riyadh - TSL- KSA'] = 'Riyadh - Repair - TSL - KSA'
     d['Dubai - TSL'] = 'Dubai - Repair - TSL-UAE'
     

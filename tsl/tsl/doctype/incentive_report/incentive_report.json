@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
+  "branch",
   "from_date",
   "to_date",
   "view",
@@ -55,13 +56,19 @@
    "fieldname": "html",
    "fieldtype": "HTML",
    "label": "HTML"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Select",
+   "label": "Branch",
+   "options": "\nKuwait - TSL\nDubai - TSL\nDammam - TSL-SA\nJeddah - TSL-SA\nRiyadh - TSL- KSA"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-06-19 12:23:29.373345",
+ "modified": "2025-04-10 12:23:37.665568",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Incentive Report",
