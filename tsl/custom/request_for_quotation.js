@@ -140,7 +140,7 @@ frappe.ui.form.on('Request for Quotation', {
                 add_filters_group: 1,
                 get_query() {
                         return {
-                                filters: { is_quotation_created: 0, docstatus:1,branch :frm.doc.branch_name }
+                                filters: { docstatus:1,branch :frm.doc.branch_name }
                         }
                 },
                 action(selections) {

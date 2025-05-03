@@ -8,6 +8,7 @@
  "field_order": [
   "tsl_inventory",
   "supplier",
+  "scrap",
   "total_material_cost"
  ],
  "fields": [
@@ -28,12 +29,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Total Material Cost"
+  },
+  {
+   "fieldname": "scrap",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Scrap"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-05 15:34:38.015115",
+ "modified": "2025-04-22 11:16:09.663488",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Parts Price",

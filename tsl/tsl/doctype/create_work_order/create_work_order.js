@@ -77,8 +77,9 @@ frappe.ui.form.on('Create Work Order', {
 			frm.set_value("company","TSL COMPANY - Kuwait")
 		}
 
-		if(frappe.session.user == "info-sa@tsl-me.com"){
+		if(frappe.session.user == "info-sa@tsl-me.com" || frappe.session.user == "lab-sa@tsl-me.com"){
 			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Riyadh - TSL- KSA")
 		}
 
 		// if(frappe.session.user == "info-dmm@tsl-me.com" || frappe.session.user == "info-jed@tsl-me.com" ){

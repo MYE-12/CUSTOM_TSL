@@ -64,27 +64,26 @@ def execute(filters=None):
 		for d in ded_types:
 			row.update({frappe.scrub(d): ss_ded_map.get(ss.name, {}).get(d)})
 			
+		row.update({"loan_amount":ss.total_loan_repayment})
 		if ded_types:
 			for d in ded_types:
 				if d == "Loan":
 					l_amt = ss_ded_map.get(ss.name, {}).get(d) or 0
 					loan_amt = l_amt + ss.total_loan_repayment
 					row.update({"loan_amount":loan_amt})
-		else:
-			row.update({"loan_amount":ss.total_loan_repayment})
 
 		if currency == company_currency:
 			row.update(
 				{
 					"gross_pay": flt(ss.gross_pay) * flt(ss.exchange_rate),
-					"total_deduction": flt(ss.total_deduction) * flt(ss.exchange_rate),
+					"total_deduction": (flt(ss.total_deduction)+flt(ss.total_loan_repayment)) * flt(ss.exchange_rate),
 					"net_pay": flt(ss.net_pay) * flt(ss.exchange_rate),
 				}
 			)
 
 		else:
 			row.update(
-				{"gross_pay": ss.gross_pay, "total_deduction": ss.total_deduction, "net_pay": ss.net_pay}
+				{"gross_pay": ss.gross_pay, "total_deduction": ss.total_deduction+ss.total_loan_repayment, "net_pay": ss.net_pay}
 			)
 
 		data.append(row)

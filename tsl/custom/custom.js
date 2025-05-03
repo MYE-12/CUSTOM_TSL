@@ -183,14 +183,19 @@ frappe.ui.form.on('Quotation', {
 	},
 	validate(frm){
 		// cur_frm.clear_table('technician_hours_spent')
-		var name = frm.doc.name
-		var split_name = name.split("-")
-		var doc_name = split_name[1]
-		var branch = split_name[3]
-		var no = split_name[4]
+		if (frm.doc.company == "TSL COMPANY - Kuwait" || frm.doc.company == "TSL COMPANY - UAE"){
+			var name = frm.doc.name
+			var split_name = name.split("-")
+			var doc_name = split_name[1]
+			var branch = split_name[3]
+			var no = split_name[4]
 		
-		frm.set_value('qtn_no',doc_name+'-'+ branch +'-'+ no)
+			frm.set_value('qtn_no',doc_name+'-'+ branch +'-'+ no)
 		
+		}
+
+
+			
 		if(frm.doc.is_multiple_quotation){
 			$.each(frm.doc.items, function(i,v){
 				if(v.margin_amount <= 0){
@@ -218,12 +223,18 @@ frappe.ui.form.on('Quotation', {
 		frm.refresh_field('technician_hours_spent')
 		var amt = 0
 		var sup_amt = 0
+		var scrap_amt = 0
 		$.each(frm.doc.item_price_details,function(i,v){
 			if (v.item_source =="TSL Inventory"){
 				amt += v.amount	
 			} 
-			else{
+
+			if (v.item_source =="Supplier"){
 				sup_amt += v.amount
+			}
+
+			if (v.item_source =="Scrap"){
+				scrap_amt += v.amount
 			}
 		})
 		if(frm.doc.item_price_details){
@@ -232,7 +243,8 @@ frappe.ui.form.on('Quotation', {
 			var spc = frm.doc.shipping_cost
 			child.tsl_inventory = Math.ceil(amt).toFixed(2),
 			child.supplier = Math.ceil(sup_amt).toFixed(2),
-			child.total_material_cost = Math.ceil(sup_amt + amt + spc).toFixed(2) || 0,
+			child.scrap = Math.ceil(scrap_amt).toFixed(2),
+			child.total_material_cost = Math.ceil(sup_amt + amt + spc + scrap_amt).toFixed(2) || 0,
 			cur_frm.refresh_fields("parts_price_list_");
 		
 		}
@@ -692,7 +704,9 @@ frappe.ui.form.on('Quotation', {
 						target: frm,
 						setters: {
 							customer:frm.doc.party_name,
-							wod_component:null
+							plant:frm.doc.plant,
+							
+							
 						},
 						
 						add_filters_group: 1,
@@ -709,7 +723,7 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
+										// cur_frm.doc.sales_rep = r.message[0]["sales_rep"];
 										var tot_amt = 0;
 										var tot_qty=0;
 										var wo_no_txt = r.message[0]["wod"]
@@ -1149,29 +1163,31 @@ frappe.ui.form.on("Quotation Item",{
 	   margin_amount:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
 		var margin_amount = item.margin_amount
-
+		
 		var disc_per = 5
 		var disc_val = (margin_amount/100)*disc_per
 		frappe.model.set_value(cdt, cdn, "margin_amount_value",disc_val);
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
+		
 	
-
+		console.log(dic_val)
 		frappe.db.get_value('Item', {'name':item.item_code}, ['is_stock_item'], (r) => {
 			
 			if(r.is_stock_item == 1){
 			
 				frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
+				
 			}
 
 			else{
-			
+				
 				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
+				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
+				
 			}
 		
 			});
-		// frappe.model.set_value(cdt, cdn, "rate",margin_amount);
-		// item.margin_amount_value = disc_val
 		
 	   },
 	   rate:function(frm,cdt,cdn){

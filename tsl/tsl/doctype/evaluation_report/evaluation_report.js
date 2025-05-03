@@ -266,7 +266,7 @@ frappe.ui.form.on('Evaluation Report', {
 			})
 			
 			if(s > 0){
-				if(frappe.user.has_role("Procurement")){
+				if(frappe.user.has_role("Procurement") || (frappe.user.has_role("Lab Coordinator"))){
 					frm.add_custom_button(__("Release Parts"), function () {
 						
 						frappe.call({
@@ -286,6 +286,10 @@ frappe.ui.form.on('Evaluation Report', {
 						});
 					}, __('Create'));
 				}
+			}
+
+		 if(frappe.user.has_role("Technician")){
+			set_field_options("status", ["Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Spare Parts",])
 			}
 	},
 	if_parts_required:function(frm){

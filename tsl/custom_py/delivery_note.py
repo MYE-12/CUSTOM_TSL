@@ -68,10 +68,23 @@ def on_update_after_submit(self,method):
             
          if i.supply_order_data:
             doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
-            doc.status = 'Invoiced'
-            doc.save(ignore_permissions = True)
-            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
-            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+            if doc.payment_entry_reference and doc.invoice_no:
+               doc.status = 'Paid'
+               doc.save(ignore_permissions = True)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+
+            elif not doc.payment_entry_reference and not doc.invoice_no:
+               doc.status = 'Delivered'
+               doc.save(ignore_permissions = True)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+            
+            elif doc.invoice_no:
+               doc.status = 'Invoiced'
+               doc.save(ignore_permissions = True)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+               frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
 
       
 
@@ -136,15 +149,24 @@ def on_submit(self,method):
            
       if i.supply_order_data:
          doc = frappe.get_doc("Supply Order Data",i.supply_order_data)
-         doc.status = 'Delivered'
-         doc.save(ignore_permissions = True)
-         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
-         frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+         if doc.payment_entry_reference and doc.invoice_no:
+            doc.status = 'Paid'
+            doc.save(ignore_permissions = True)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
 
-   
+         elif not doc.payment_entry_reference and not doc.invoice_no:
+            doc.status = 'Delivered'
+            doc.save(ignore_permissions = True)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+         
+         elif doc.invoice_no:
+            doc.status = 'Invoiced'
+            doc.save(ignore_permissions = True)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_no",self.name)
+            frappe.db.set_value("Supply Order Data",i.supply_order_data,"dn_date",self.posting_date)
+         
 
-@frappe.whitelist()
-def wo_status_count():
-    wo_status = frappe.db.sql("""select status from `tabWork Order Data` status""")
-    for wo in wo_status:
-      print(wo_status)
+      
+

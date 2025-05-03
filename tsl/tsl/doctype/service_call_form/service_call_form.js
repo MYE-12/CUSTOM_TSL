@@ -13,15 +13,12 @@ frappe.ui.form.on('Service Call Form', {
 						callback: function(r) {
 							if(r.message) {
 								var doc = frappe.model.sync(r.message);
-								// doc[0].similar_items_quoted_before = [];
 								frappe.set_route("Form", doc[0].doctype, doc[0].name);
 								
 							}
 						}
 					});
-					
-					
-								   
+									   
 			}, ('Create'))
 
 		}

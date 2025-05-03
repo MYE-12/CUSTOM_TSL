@@ -20,14 +20,26 @@ class EvaluationReport(Document):
 		
 		invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 		for i in self.items:
-			if i.part and i.parts_availability == "No":
-				frappe.errprint("hiiiiii")
+			if i.part:
+				
 				bin = frappe.db.sql('''select name from `tabBin` where item_code = '{0}' and warehouse in ('{1}') and (actual_qty) >={2} '''.format(i.part,"','".join(invent),i.qty),as_dict =1)
 				sts = "Yes"
 				if len(bin) and 'name' in bin[0]:
-					price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
+					# price = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate") or frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
+					bn = frappe.db.get_value("Bin",{"item_code":i.part},"valuation_rate")
+					price = 0
+					if bn:
+						price = bn
+						
+					else:
+						ip = frappe.db.get_value("Item Price",{"item_code":i.part,"buying":1},"price_list_rate")
+						if ip:
+							price = ip
+							# frappe.errprint(price)
+					
+					
 					i.price_ea = price
-					i.total = price * i.qty
+					i.total = i.price_ea * i.qty
 					i.parts_availability = sts
 					frappe.db.sql('''update `tabPart Sheet Item` set parts_availability = '{0}' ,price_ea = {1} where name ='{2}' '''.format(sts,price,i.name))
 				if i.parts_availability == sts:
@@ -59,7 +71,7 @@ class EvaluationReport(Document):
 			# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
 			# 	doc.status = "Parts Priced"
 			elif self.status == "Spare Parts" and self.parts_availability == "Yes":
-				frappe.errprint('hi')
+			
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "AP-Available Parts"
 				doc.save(ignore_permissions=True)
@@ -303,8 +315,9 @@ class EvaluationReport(Document):
 					item_doc.save(ignore_permissions = True)
 
 	def on_update_after_submit(self):
+		
 		if not self.evaluation_time or not self.estimated_repair_time:
-			if self.status != "Comparison":
+			if not self.status == "Comparison":
 				frappe.throw("Note: Evaluation Time and Estimated Repair Time is not given.")
 		add = total = 0
 		self.total_amount = 0
@@ -493,8 +506,11 @@ class EvaluationReport(Document):
 			invent = [i[0] for i in frappe.db.get_list("Warehouse",{"company":self.company,"is_branch":1},"name",as_list=1)]
 			for i in self.items:
 				if i.part and i.parts_availability == "Yes":
-					
-					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",(frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")+i.qty))
+					ev_qty = 0
+					ev = frappe.db.get_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty")
+					if ev:
+						ev_qty = ev
+					frappe.db.set_value('Bin',{"item_code":i.part,"warehouse":["in",invent]},"evaluation_qty",ev_qty+i.qty)
 			# for i in self.items:
 			# 	i.is_not_edit = 1
 			# 	frappe.db.sql('''update `tabPart Sheet Item` set is_not_edit = 1 where name = %s''',(i.name))
@@ -509,6 +525,7 @@ class EvaluationReport(Document):
 				category = pm.category
 				sub_cat = pm.sub_category
 				package = pm.part_description
+				des = pm.part_name
 				# ptof = frappe.db.exists ("Item",{'name':pm.part,'model':model,'category':category,'sub_category':sub_cat})
 				if  not part_no:
 					item_doc = frappe.new_doc("Item")
@@ -521,6 +538,7 @@ class EvaluationReport(Document):
 					item_doc.sub_category = sub_cat
 					item_doc.sub_category_name = scn
 					item_doc.package = package
+					item_doc.description = des
 					item_doc.item_group = "Components"
 					if frappe.session.user == "purchase@tsl-me.com" or frappe.session.user == "purchase-sa1@tsl-me.com" :
 						item_doc.save(ignore_permissions = True)
@@ -585,7 +603,7 @@ def create_material_issue_from_ini_eval(name):
 		
 		for i in ini.items:
 			if i.released == 0 and i.parts_availability == "Yes":
-				frappe.errprint(i.part)
+				
 				new_doc.append("items",{
 					's_warehouse':"Dubai - TSL-UAE",
 					'item_code':i.part,

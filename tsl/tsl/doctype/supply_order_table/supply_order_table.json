@@ -130,12 +130,14 @@
   },
   {
    "allow_on_submit": 1,
+   "fetch_from": "item_code.item_number",
    "fieldname": "item_number",
    "fieldtype": "Data",
    "label": "Item Number"
   },
   {
    "allow_on_submit": 1,
+   "fetch_from": "item_code.stock_uom",
    "fieldname": "unit",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -179,7 +181,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-12 10:01:36.998485",
+ "modified": "2025-04-29 13:25:23.067598",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Table",

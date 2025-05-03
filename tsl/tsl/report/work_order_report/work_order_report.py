@@ -49,10 +49,10 @@ def get_columns(filters):
 		_("Return Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
 		_("Quoted Amount") + ":currency:120",
-		_("Total Amount") + ":currency:120",
+		# _("Total Amount") + ":currency:120",
 		# _("VAT%") + ":float:120",
 		_("VAT Amount%") + ":float:130",
-		# _("Total Amount") + ":float:130",
+		_("Total Amount") + ":float:130",
 		_("Quotation") + ":Link/Quotation:140",
 		_("NER") + ":Data:120",
 		_("NER Date") + ":Date:120",
@@ -65,18 +65,19 @@ def get_columns(filters):
 def get_data(filters):
 	data = []
 	wr = []
+	frappe.errprint(frappe.session.user)
+	branch = frappe.get_value("Employee",{"user_id":frappe.session.user},["branch"])
+	frappe.errprint(branch)
 	if filters.from_date:
-		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.to_date:
-		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
 	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
-	if filters.branch:
-		w = frappe.get_all("Work Order Data",{"branch":filters.branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
+	
 	
 	for i in wr:
 		it = frappe.db.sql('''select type,mfg,model_no,serial_no,quantity,item_name from `tabMaterial List` where parent = %s ''',i.name,as_dict=1)
@@ -96,6 +97,7 @@ def get_data(filters):
 		`tabQuotation`.purchase_order_no as po_no,
 		`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,
 		`tabQuotation`.approval_date as a_date,
+		`tabQuotation`.transaction_date as qd,
 		`tabQuotation`.is_multiple_quotation as is_m,
 		`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
 		`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma,
@@ -107,10 +109,12 @@ def get_data(filters):
 		q_m = 0
 		ap_date = ''
 		qu_name = ''
+		quoted_date = ''
 		po = ''
 		vat = 0
 		vat_amt = 0
 		if q_amt:
+			quoted_date = q_amt[0]["qd"]
 			ap_date = q_amt[0]["a_date"]
 			qu_name =  q_amt[0]["q_name"]
 			po =  q_amt[0]["po_no"]
@@ -132,7 +136,7 @@ def get_data(filters):
 		# i.old_wo_q_amount,
 		# i.old_wo_vat,
 		# i.old_wo_total_amt,
-		i.quoted_date,
+		quoted_date,
 		i.payment_reference_number,
 		i.payment_date,
 		i.dn_no,

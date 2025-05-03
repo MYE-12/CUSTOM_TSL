@@ -29,6 +29,8 @@
   "sales_person_name",
   "suggested_price",
   "customer_reference_number",
+  "sec",
+  "plant",
   "is_returned_unit",
   "work_order_data",
   "section_break_9",
@@ -239,12 +241,23 @@
    "fieldtype": "Select",
    "label": "Branch",
    "options": "\nKuwait - TSL\nDubai - TSL\nDammam - TSL-SA\nJeddah - TSL-SA\nRiyadh - TSL- KSA"
+  },
+  {
+   "default": "0",
+   "fieldname": "sec",
+   "fieldtype": "Check",
+   "label": "SEC"
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Data",
+   "label": "Plant"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-09 12:38:10.093643",
+ "modified": "2025-04-21 08:14:43.818184",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

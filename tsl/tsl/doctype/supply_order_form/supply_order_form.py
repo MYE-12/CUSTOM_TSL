@@ -74,6 +74,7 @@ def create_supply_order_data(order_no):
 							if sn_doc.name:
 								sn_no = sn_doc.name
 					else:
+						frappe.errprint("donee")
 						i_doc = frappe.new_doc('Item')
 						i_doc.naming_series = '.######'
 						i_doc.item_name = i['item_name']
@@ -88,6 +89,7 @@ def create_supply_order_data(order_no):
 						if 'has_serial_no' in i and i['has_serial_no']:
 							i_doc.has_serial_no = 1
 						i_doc.save(ignore_permissions = True)
+						frappe.errprint("donee")
 						
 						if i_doc.name:
 							i['item_code'] = i_doc.name

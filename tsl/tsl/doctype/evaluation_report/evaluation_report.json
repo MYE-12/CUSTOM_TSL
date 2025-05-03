@@ -65,6 +65,7 @@
   "info_comment",
   "column_break_45",
   "purchaser_comment",
+  "send",
   "test_result",
   "technician_on_work_section",
   "technician_details",
@@ -357,7 +358,8 @@
    "allow_on_submit": 1,
    "fieldname": "comment",
    "fieldtype": "Small Text",
-   "label": "Comment"
+   "label": "Comment",
+   "mandatory_depends_on": "eval:doc.status == \"Return Not Repaired\" || doc.status == \"Return No Fault\""
   },
   {
    "fieldname": "column_break_45",
@@ -382,8 +384,7 @@
    "fieldtype": "Duration",
    "hide_days": 1,
    "hide_seconds": 1,
-   "label": "Extra Repair Time",
-   "mandatory_depends_on": "eval:(doc.status == \"Extra Parts\");"
+   "label": "Extra Repair Time"
   },
   {
    "allow_on_submit": 1,
@@ -524,6 +525,7 @@
    "options": "Technician ID"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "branch",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -535,12 +537,17 @@
    "fieldname": "info_comment",
    "fieldtype": "Text Editor",
    "label": "Info Comment"
+  },
+  {
+   "fieldname": "send",
+   "fieldtype": "Button",
+   "label": "Send"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-08 08:34:04.801667",
+ "modified": "2025-04-30 09:06:45.179929",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

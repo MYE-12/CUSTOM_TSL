@@ -11,6 +11,7 @@
   "sales_rep",
   "customer",
   "customer_name",
+  "incharge",
   "address",
   "quoted_date",
   "received_date",
@@ -54,6 +55,7 @@
   "tender_closing",
   "supplier_closing_date",
   "notified",
+  "plant",
   "work_order_data",
   "section_break_14",
   "in_stock",
@@ -458,12 +460,25 @@
    "fieldtype": "Link",
    "label": "Work Order Data",
    "options": "Work Order Data"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "plant",
+   "fieldtype": "Data",
+   "label": "Plant"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "incharge",
+   "fieldtype": "Link",
+   "label": "Incharge",
+   "options": "Contact"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-08 15:04:49.240963",
+ "modified": "2025-04-28 15:45:53.799248",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",

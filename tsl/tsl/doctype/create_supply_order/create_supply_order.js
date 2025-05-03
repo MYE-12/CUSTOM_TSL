@@ -35,9 +35,9 @@ frappe.ui.form.on('Create Supply Order', {
 		if(frm.doc.company && frm.doc.branch){
 			console.log("io")
 			var d = {
-				"Kuwait - TSL":"Supply - Kuwait - TSL",
-				"Dammam - TSL-SA":"Supply - Dammam - TSL-SA",
-				"Jeddah - TSL-SA":"Supply - Jeddah - TSL-SA",
+				"Kuwait - TSL":"Supply - TSL",
+				"Dammam - TSL-SA":"Dammam-Supply - TSL - KSA",
+				"Jeddah - TSL-SA":"Jeddah-Supply - TSL - KSA",
 				"Riyadh - TSL- KSA":"Riyadh-Supply - TSL - KSA"
 			}
 			frm.set_value("repair_warehouse",d[frm.doc.branch]);
@@ -51,6 +51,17 @@ frappe.ui.form.on('Create Supply Order', {
 	company:function(frm){
 		frm.trigger("branch")
 	},
+
+	onload(frm){
+        if(frappe.session.user == "info-sa@tsl-me.com" || frappe.session.user == "purchase-sa@tsl-me.com" || frappe.sesssion.user == "purchase-sa1@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Riyadh - TSL- KSA")
+		}
+       
+        
+   
+    },
+
 	customer:function(frm){
 		if(!frm.doc.customer){
 				return

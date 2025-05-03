@@ -10,6 +10,7 @@
  "field_order": [
   "html",
   "date",
+  "branch",
   "quotation",
   "go_to",
   "request_for",
@@ -93,12 +94,19 @@
    "fieldname": "submitted_by",
    "fieldtype": "Data",
    "label": "Submitted By"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-24 13:17:34.271128",
+ "modified": "2025-04-16 15:11:28.797664",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",

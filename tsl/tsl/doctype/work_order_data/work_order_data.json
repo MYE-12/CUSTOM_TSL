@@ -54,6 +54,8 @@
   "invoice_date",
   "automation",
   "project_1",
+  "sec",
+  "plant",
   "section_break_14",
   "image",
   "attach_image",
@@ -606,10 +608,22 @@
   },
   {
    "allow_on_submit": 1,
-   "depends_on": "eval:doc.company == \"TSL COMPANY - KSA\"",
    "fieldname": "unit_table_no",
    "fieldtype": "Data",
    "label": "Unit Table No"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "sec",
+   "fieldtype": "Check",
+   "label": "SEC"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "plant",
+   "fieldtype": "Data",
+   "label": "Plant"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -620,7 +634,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-04-13 14:02:55.902672",
+ "modified": "2025-04-24 15:02:42.739203",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

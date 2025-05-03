@@ -2,15 +2,15 @@ frappe.ui.form.on('Purchase Order', {
 	onload_post_render:function(frm){
 		var end_date = frappe.datetime.add_days(frm.doc.transaction_date, 15);
 		cur_frm.set_value("schedule_date", end_date);
-        frm.set_query("branch", function() {
-                return {
-                        filters: [
-                                ["Warehouse","company", "=", frm.doc.company],
-                                ["Warehouse","is_branch","=",1]
+        // frm.set_query("branch", function() {
+        //         return {
+        //                 filters: [
+        //                         ["Warehouse","company", "=", frm.doc.company],
+        //                         // ["Warehouse","is_branch","=",1]
                                 
-                        ]
-                };
-        });
+        //                 ]
+        //         };
+        // });
         frm.fields_dict['items'].grid.get_field('item_code').get_query = function(frm, cdt, cdn) {
 		var child = locals[cdt][cdn];
 		return{

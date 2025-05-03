@@ -4,6 +4,7 @@ import frappe
 
 def on_submit(self,method):
     if self.work_order_data:
+        frappe.errprint('1')
         for i in self.get("items"):
             doc = frappe.get_doc("Item",i.item_code)
             l = []
@@ -35,6 +36,17 @@ def on_submit(self,method):
         wod.purchase_order_no = self.name
         wod.status = "WP-Waiting Parts"
         wod.save(ignore_permissions = True)
+    if not self.work_order_data:
+        frappe.errprint('11')
+
+        for i in self.get("items"):
+
+            wod = i.work_order_data
+            frappe.errprint(wod)
+            # wod.purchase_order_no = self.name
+            frappe.db.set_value("Work Order Data",wod,"status","WP-Waiting Parts")
+            frappe.db.set_value("Work Order Data",wod,"purchase_order_no",self.name)
+
     if self.supply_order_data:
         sod = frappe.get_doc("Supply Order Data",self.supply_order_data)
         sod.status = "Ordered"

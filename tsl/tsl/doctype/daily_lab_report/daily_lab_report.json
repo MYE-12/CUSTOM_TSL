@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
+  "branch",
   "date",
   "column_break_i2zic",
   "download",
@@ -49,14 +50,20 @@
    "fieldname": "company",
    "fieldtype": "Select",
    "label": "Company",
-   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE"
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE\nTSL COMPANY - KSA"
+  },
+  {
+   "depends_on": "eval:doc.company == \"TSL COMPANY - KSA\"",
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Branch"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-02-08 09:17:18.975934",
+ "modified": "2025-04-21 09:49:14.745290",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Daily Lab Report",

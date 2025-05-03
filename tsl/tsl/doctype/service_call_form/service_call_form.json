@@ -85,11 +85,13 @@
    "label": "Suitable Date and Time for Customer"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "cus_date",
    "fieldtype": "Date",
    "label": "Date"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "time",
    "fieldtype": "Time",
    "label": "Time"
@@ -122,9 +124,9 @@
   },
   {
    "fieldname": "technician_name",
-   "fieldtype": "Link",
+   "fieldtype": "Table MultiSelect",
    "label": "Technician Name",
-   "options": "User"
+   "options": "Technician List"
   },
   {
    "fieldname": "amended_from",
@@ -170,12 +172,14 @@
    "label": "Salesman Name"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "quotation",
    "fieldtype": "Link",
    "label": "Quotation",
    "options": "Quotation"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sales_invoice",
    "fieldtype": "Link",
    "label": "Sales Invoice",
@@ -186,7 +190,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nService Enquiry\nInternally Quoted\nQuoted\nApproved\nInvoiced\nRejected\nCancelled"
+   "options": "\nService Enquiry\nInternally Quoted\nQuoted\nApproved\nRSC - Repair to Ship\nUnder Process\nInvoiced\nRejected\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -197,7 +201,7 @@
    "link_fieldname": "service_call_form"
   }
  ],
- "modified": "2025-04-09 10:11:42.208807",
+ "modified": "2025-05-01 09:58:14.310973",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

@@ -32,7 +32,7 @@ class InvoiceRequest(Document):
 			frappe.sendmail(
 				sender= self.requested_by,
 				recipients=["yousuf@tsl-me.com"],
-				cc = ['finance-sa1@tsl-me.com'],
+				cc = ['finance-sa1@tsl-me.com',"finance@tsl-me.com"],
 				subject = "Invoice Request",
 				message = msg,
 			

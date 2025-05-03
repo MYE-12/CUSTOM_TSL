@@ -36,6 +36,9 @@ def create_quotation(wod):
     new_doc= frappe.new_doc("Quotation")
     new_doc.company = doc.company
     new_doc.party_name = doc.customer
+    new_doc.plant = doc.plant
+    if doc.branch == "Riyadh - TSL- KSA":
+        new_doc.without_discount = 1
     s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")
     if s_user:
         new_doc.sales_rep = s_user
@@ -43,6 +46,7 @@ def create_quotation(wod):
         new_doc.selling_price_list = "Standard Selling - UAE"
     elif doc.company == "TSL COMPANY - KSA":
         new_doc.selling_price_list = "Standard Selling - KSA"
+       
 
     # new_doc.customer_email = doc.customer_email
     # new_doc.party_name = new_doc.party_name[0]
@@ -397,6 +401,7 @@ def create_sof(wod):
     new_doc.customer_name = doc.customer_name
     new_doc.branch = doc.branch
     new_doc.Status = "Inquiry"
+    new_doc.plant = doc.plant
     new_doc.image = doc.attach_image
     new_doc.attach_image = doc.attach_image
     new_doc.work_order_data = doc.name
@@ -440,6 +445,7 @@ def create_rn(wod):
     new_doc.company = doc.company
     new_doc.customer = doc.customer
     new_doc.branch = doc.branch
+    new_doc.plant = doc.plant
     if doc.company == "TSL COMPANY - KSA":
         if doc.branch == "Jeddah - TSL-SA":
             new_doc.naming_series = "RE-J.YY.-"
@@ -463,7 +469,7 @@ def create_rn(wod):
     d['Dubai - TSL'] = "Dubai - Repair - TSL-UAE"
     d['Dammam - TSL-SA'] = 'Repair - Dammam - TSL-SA'
     d['Jeddah - TSL-SA'] = 'Jeddah - Repair - TSL - KSA'
-    d['Riyadh - TSL-SA'] = 'Dammam - Repair - TSL - KSA'
+    d['Riyadh - TSL- KSA'] = 'Riyadh - Repair - TSL - KSA'
     for i in doc.material_list:
         new_doc.append("items",{
             "item_name":i.item_name,
@@ -549,6 +555,7 @@ def create_dn(wod):
     new_doc = frappe.new_doc("Delivery Note")
     new_doc.company = doc.company
     new_doc.customer = doc.customer
+    new_doc.plant = doc.plant
     if doc.company == "TSL COMPANY - UAE":
         new_doc.branch = "Dubai - TSL"
     if doc.company == "TSL COMPANY - KSA":
@@ -568,6 +575,7 @@ def create_dn(wod):
     new_doc.customer_address = doc.address
     new_doc.contact_person = doc.incharge
     new_doc.work_order_data = wod
+    new_doc.sales_rep = frappe.get_value("Sales Person",doc.sales_rep,"user")
 
     d = {}
     d['Kuwait - TSL'] = "Repair - Kuwait - TSL"

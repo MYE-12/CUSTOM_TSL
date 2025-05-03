@@ -595,7 +595,7 @@ def get_receivable(customer,from_date,to_date,company):
 	# if company == "TSL COMPANY _KSA":
 	# si = frappe.get_all("Sales Invoice",{"customer": customer,"posting_date": ["between", (from_date, to_date)],"status": ["in", ["Overdue", "Unpaid"]]})
 	# else:
-	si = frappe.get_all("Sales Invoice",{"status": ["in", ["Overdue", "Unpaid"]],"customer":customer,"posting_date": ["between", (from_date,to_date)]},["*"],order_by="posting_date asc"  )
+	si = frappe.get_all("Sales Invoice",{"company":company,"status": ["in", ["Overdue", "Unpaid"]],"customer":customer,"posting_date": ["between", (from_date,to_date)]},["*"],order_by="posting_date asc"  )
 	os = 0
 	# for i in si:
 	for index, i in enumerate(si): 
@@ -642,7 +642,13 @@ def get_receivable(customer,from_date,to_date,company):
 		if index % 2 == 0:
 			data += '<tr>'
 			data += '<td style="font-size:10px;border:2px solid #dddddd;;">%s</td>'%(formatted_due_date)
-			data += '<td align = center style="border:2px solid #dddddd;;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice TSL&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+			if company == "TSL COMPANY - Kuwait":
+				data += '<td align = center style="border:2px solid #dddddd;;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+			if company == "TSL COMPANY - UAE":
+				data += '<td align = center style="border:2px solid #dddddd;;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice - UAE&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+			if company == "TSL COMPANY - KSA":
+				data += '<td align = center style="border:2px solid #dddddd;;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice KSA (R3)&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+			
 			data += '<td align = center style="font-size: 10px;border:2px solid #dddddd;;">%s</td>'%(wod)
 			data += '<td align = center style="font-size: 10px;border:2px solid #dddddd;;">%s</td>'%(po_no)
 			gt = "{:,.3f}".format(i.grand_total)
@@ -657,7 +663,7 @@ def get_receivable(customer,from_date,to_date,company):
 		else:
 			data += '<tr>'
 			data += '<td style="font-size: 10px;background-color:#CCCCCC;border:2px solid #dddddd;;">%s</td>'%(formatted_due_date)
-			data += '<td align = center style="border:2px solid #dddddd;;background-color:#CCCCCC;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice TSL&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
+			data += '<td align = center style="border:2px solid #dddddd;;background-color:#CCCCCC;font-size: 10px;font-weight: bold;"><a href="https://erp.tsl-me.com/api/method/frappe.utils.print_format.download_pdf?doctype=Sales Invoice&name=%s&format=Sales Invoice&no_letterhead=0&letterhead=TSL New&settings={}&_lang=en">%s</a></td>'%(i.name,i.name)
 			data += '<td align = center style="background-color:#CCCCCC;font-size:10px;border:2px solid #dddddd;;">%s</td>'%(wod)
 			data += '<td align = center style="background-color:#CCCCCC;font-size: 10px;border:2px solid #dddddd;;">%s</td>'%(po_no)
 			gt = "{:,.3f}".format(i.grand_total)
@@ -1528,7 +1534,7 @@ def dlt_wo():
     UPDATE `tabSales Taxes and Charges` AS sii
     JOIN `tabQuotation` AS si ON sii.parent = si.name
     SET sii.branch = si.branch_name
-    WHERE si.branch_name = "Dammam - TSL-SA"
+    WHERE si.branch_name = "Riyadh - TSL- KSA"
 	""")
 
 	# wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
@@ -1801,7 +1807,7 @@ def salary_register(month_name,company,cyrix_employee,civil_id_no):
 	result = execute(filters)
 	headers = result[0]
 	records = result[1]
-	skip_columns = ['total_loan_repayment','loan','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
+	skip_columns = ['total_loan_repayment','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
 	int_columns = ['leave_without_pay', 'payment_days',"civil_id_no"]
 	currency_columns = [header['fieldname'] for header in headers if header.get('fieldtype') == 'Currency']
 	filtered_headers = []
@@ -2185,7 +2191,7 @@ def get_leave_application(leave_application):
 			val = get_leave_details(lap.employee,today())
 			if val['leave_allocation'].get("Annual Leave", {}).get("remaining_leaves"):
 				remaining_leaves = (val['leave_allocation'].get("Annual Leave", {}).get("remaining_leaves"))
-			from_date = lap.leave_start_date
+			from_date = lap.leave_start_date or lap.from_date
 			first_of_month = from_date.replace(day=1)
 			if first_of_month != from_date:
 				before_day = from_date - timedelta(days=1)
@@ -2235,7 +2241,7 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
 	result = execute(filters)
 	headers = result[0]
 	records = result[1]
-	skip_columns = ['total_loan_repayment','loan','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
+	skip_columns = ['total_loan_repayment','company','salary_slip_id', 'branch', 'date_of_joining', 'start_date', 'end_date','currency','data_of_joining','department','leave_without_pay']
 	int_columns = ['leave_without_pay', 'payment_days']
 	currency_columns = [header['fieldname'] for header in headers if header.get('fieldtype') == 'Currency']
 	filtered_headers = []
@@ -2358,15 +2364,15 @@ def build_xlsx_response(filename):
 def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references,remarks ):
 	data = ""
 	data+= '<table class="table table-bordered" style="border:1px solid black;" >'
-	data+= '<tr><td colspan = 8><center><b style = "color:blue;font-size:15px">TSL COMPANY</b></center></td></tr>'
-	data+= '<tr><td colspan = 8><center><b style = "color:red";>PAYMENT TRANSFER APPROVAL FORM</b></center></td></tr>'
+	data+= '<tr><td colspan = 6><center><b style = "color:blue;font-size:15px">TSL COMPANY</b></center></td></tr>'
+	data+= '<tr><td colspan = 2><center><b style = "color:red";>PAYMENT TRANSFER APPROVAL FORM</b></center></td></tr>'
 	data+= '<tr><td>Date</td><td>%s</td></tr>' %(posting_date)
 	data+='<tr><td>REF NO</td><td>%s</td></tr>' %(name)
 	data+='<tr>  <td>Supplier Name</td><td>%s</td></tr>' %(party_name)
 	data+='<tr> <td>Amount</td><td>%s</td></tr>' %("{:,.2f}".format(amount_in or total_allocated_amount))
 	data+='<tr><td>Currency</td><td>%s</td></tr>' %(currency_paid)
 	data+='<tr><td>Department</td><td>%s</td></tr>' %(cost_center)
-	data+='<tr><td>Remarks</td><td>%s</td></tr>' %(remarks)
+	data+='<tr><td >Remarks</td><td>%s</td></tr>' %(remarks)
 	for i in references:
 		pat = frappe.get_value("Purchase Invoice",{"name":i.reference_name},["supplier_invoice_attach"])
 		pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
@@ -2374,8 +2380,10 @@ def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currenc
 		where `tabPurchase Invoice`.name = '%s' """ %(i.reference_name),as_dict =1)
 		data+='<tr><td>Attached With Supporting Document</td><td><b>%s</b>/ <a href="%s"><u><b style = "color:red">Supplier Invoice Link</b></u></a></td><br>'%(i.reference_name,pat)
 		for j in pi:
-			if j["wo"] or j["so"]:
-				data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s</a></td></tr>' %(j["wo"] or j["so"],j["wo"] or j["so"])
+			if j["wo"]:
+				data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s</a></td></tr>' %(j["wo"],j["wo"])
+			if j["so"]:
+				data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a></td></tr>' %(j["so"],j["so"])
 	data+= "</table>"
 	return data
 
@@ -2397,6 +2405,8 @@ def get_q(name):
 		data+= '<tr><td colspan = 8><center><b style = "color:red";>PAYMENT TRANSFER APPROVAL FORM</b></center></td></tr>'
 		data+= "</table>"
 		return "Yes"
+
+
 
 @frappe.whitelist()
 def get_mc(name):

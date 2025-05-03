@@ -378,6 +378,7 @@ def create_quotation(sod):
 	doc = frappe.get_doc("Supply Order Data",sod)
 	new_doc= frappe.new_doc("Quotation")
 	new_doc.company = doc.company
+	new_doc.plant = doc.plant
 	new_doc.party_name = doc.customer
 	new_doc.purchase_order_no = doc.po_number
 	new_doc.supplier_name = doc.supplier_name

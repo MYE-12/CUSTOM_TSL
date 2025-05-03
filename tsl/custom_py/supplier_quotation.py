@@ -235,7 +235,32 @@ def on_submit(self,method):
             doc.total_amount = add
 
             doc.save(ignore_permissions=True)
-    
+    if not self.work_order_data and not self.supply_order_data:
+        for i in self.get("items"):
+            wod = i.work_order_data
+
+            evl = frappe.get_value("Evaluation Report",{"Work_order_data":wod})
+
+            doc = frappe.get_doc("Evaluation Report",evl)
+            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+
+            payload = {}
+            headers = {}
+            response = requests.request("GET", url, headers=headers, data=payload)
+            data = response.json()
+            com_cur = frappe.get_value("Company",self.company,"default_currency")
+            rate_kw = data['rates'][com_cur]
+            conv_rate = i.rate * rate_kw
+            for j in doc.get("items"):
+                if j.part == i.item_code:
+                    j.price_ea = conv_rate
+                    j.total = conv_rate * j.qty
+            add = 0
+            for i in doc.items:
+                add += j.total
+            doc.total_amount = add
+
+            doc.save(ignore_permissions=True)
     elif self.initial_evaluation:
         doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
         

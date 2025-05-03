@@ -1,11 +1,11 @@
 frappe.listview_settings['Supply Order Data'] = {
-	add_fields: ["status","name"],
+	add_fields: ["status","name","priority_status"],
 	get_indicator: function (doc) {
 	if (doc.status === "Inquiry") {
 		return [__("Inquiry"), "blue", "status,=,Inquiry"];
 
 	}
-      else if (doc.status === "Searching Items") {
+       else if (doc.status === "Searching Items") {
 		return [__("Searching Items"), "yellow", "status,=,Searching Items"];
 
 	} else if (doc.status === "Not Found") {
@@ -39,13 +39,19 @@ frappe.listview_settings['Supply Order Data'] = {
         else if (doc.status === "Paid") {
 			return [__("Paid"), "green", "status,=,Paid"];
         }
-        else if (doc.status === "Delivered and Invoiced") {
-			return [__("Delivered and Invoiced"), "cyan", "status,=,Delivered and Invoiced"];
+        else if (doc.status === "Delivered") {
+			return [__("Delivered"), "cyan", "status,=,Delivered"];
         }
+        else if (doc.status === "Invoiced") {
+              return [__("Invoiced"), "cyan", "status,=,Invoiced"];
+ }
         else if (doc.status === "Parts Priced") {
               return [__("Parts Priced"), "green", "status,=,Parts Priced"];
- }
+       }
         
+       else if (doc.priority_status == "Not Urgent") {
+              return [__("Not Urgent"), "gray", "priority_status=Not Urgent"];
+       }
 
 
         // else if(doc.docstatus==0){

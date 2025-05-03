@@ -17,7 +17,7 @@ frappe.ui.form.on('Work Order Data', {
 		}
 	},
 	onload(frm){
-		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator" ) && !frappe.user.has_role("Procurement" ) && !frappe.user.has_role("Admin")){
+		if(!frappe.user.has_role("Administrator") && !frappe.user.has_role("Lab Coordinator" ) && !frappe.user.has_role("Procurement" ) && !frappe.user.has_role("Admin") && !frappe.user.has_role("Sales Manager")){
 			frm.set_df_property("technician","read_only",1)
 			frm.set_df_property("status","read_only",1)
 			frm.set_df_property("advance_payment_amount","hidden",1)
@@ -235,6 +235,7 @@ if(frm.doc.docstatus == 1) {
                                 });
                         },__('Create'));
 		}
+		
 		if(frm.doc.docstatus == 1 && (frm.doc.status == "RSC-Repaired and Shipped Client")) {
 			frm.add_custom_button(__("Payment Entry"), function(){
 				frappe.call({

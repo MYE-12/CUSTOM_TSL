@@ -65,6 +65,8 @@ def get_columns(filters):
 			"options": 'currency',
 			"width": 150
 		},
+
+		
 		{
 			"fieldname": "termination_days",
 			"label": _("Termination Days"),

@@ -30,14 +30,7 @@ frappe.query_reports["Work Order Report"] = {
 		// 	"reqd": 1,
 		// },
 
-		{
-			"fieldname":"branch",
-			"label": __("Branch"),
-			"fieldtype": "Link",
-			"options": "Branch",
-			"width": "80",
-			"reqd": 1,
-		}
+		
 
 	]
 };

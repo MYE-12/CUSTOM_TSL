@@ -50,6 +50,18 @@ frappe.ui.form.on('Daily Lab Report', {
 			// frm.doc.save()
 		}
 
+		if (frappe.session.user == "lab-dmm@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Dammam - TSL-SA")
+			// frm.doc.save()
+		}
+
+		if (frappe.session.user == "lab-jd@tsl-me.com"){
+			frm.set_value("company","TSL COMPANY - KSA")
+			frm.set_value("branch","Jeddah - TSL-SA")
+			// frm.doc.save()
+		}
+
 		frm.trigger("get_data");
 	},
 

@@ -26,7 +26,11 @@ frappe.listview_settings['Service Call Form'] = {
         }
         else if (doc.status === "Invoiced") {
             return [__("Invoiced"), "green", "status,=,Invoiced"];
-    }
+    	}
+		else if (doc.status === "Approved") {
+            return [__("Approved"), "green", "status,=,Approved"];
+    	}
+		
             
           
           

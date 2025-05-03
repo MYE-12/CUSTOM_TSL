@@ -141,8 +141,8 @@ doc_events = {
 			"tsl.custom_py.quotation.update_cq",
 			# "tsl.custom_py.quotation.get_pre_eval"
             
-            
 		],
+		
 		"before_submit":[
 			"tsl.custom_py.quotation.before_submit"
 		],
@@ -163,6 +163,7 @@ doc_events = {
 		# ]
 	},
 	"Supplier Quotation":{
+		
 		"on_submit":[
 			"tsl.custom_py.supplier_quotation.on_submit"
 		],

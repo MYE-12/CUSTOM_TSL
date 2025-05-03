@@ -152,11 +152,11 @@ def create_workorder_data(order_no, f):
         frappe.throw("Please Mention the Customer Representative")
     if not doc.repair_warehouse:
         d = {
-            "Kuwait - TSL": "Repair - Kuwait - TSL",
-            "Dammam - TSL-SA": "Dammam - TSL-SA",
-            "Jeddah - TSL-SA": "Jeddah - TSL-SA",
-            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA",
-            "Dubai - TSL": "Dubai - Repair - TSL-UAE"
+            "Kuwait - TSL": "Repair - Kuwait - TSL", #Equipments warehouse
+            "Dammam - TSL-SA": "Dammam - TSL-SA",#Equipments warehouse
+            "Jeddah - TSL-SA": "Jeddah - TSL-SA",#Equipments warehouse
+            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA", #Equipments warehouse
+            "Dubai - TSL": "Dubai - Repair - TSL-UAE" #Equipments warehouse
             
         }
         doc.repair_warehouse = d[doc.branch]
@@ -391,6 +391,8 @@ def create_workorder_data(order_no, f):
             new_doc.specify = i["specify"]
         new_doc.wod_component = i["item_code"] if "item_code" in i else ""
         new_doc.customer = doc.customer
+        new_doc.sec = doc.sec
+        new_doc.plant = doc.plant
         new_doc.received_date = doc.received_date
         new_doc.sales_rep = doc.sales_person or ''
         new_doc.branch = doc.branch

@@ -36,6 +36,7 @@
    "label": "Description and Specification"
   },
   {
+   "allow_on_submit": 1,
    "columns": 2,
    "fetch_from": "item.mfg",
    "fieldname": "manufacturer",
@@ -45,6 +46,7 @@
    "options": "Item Mfg"
   },
   {
+   "allow_on_submit": 1,
    "columns": 2,
    "fetch_from": "item.model",
    "fieldname": "model",
@@ -76,6 +78,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "columns": 2,
    "fetch_from": "item.type",
    "fieldname": "type",
@@ -109,7 +112,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-16 16:31:43.674469",
+ "modified": "2025-04-24 11:17:12.597671",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Item",
