@@ -16,6 +16,7 @@
   "request_for",
   "column_break_rkfva",
   "requested_by",
+  "email_sent",
   "submitted_by",
   "amended_from",
   "section_break_nc32n",
@@ -101,12 +102,19 @@
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Branch"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "email_sent",
+   "fieldtype": "Check",
+   "label": "Email Sent"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-16 15:11:28.797664",
+ "modified": "2025-05-19 14:02:40.838204",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",

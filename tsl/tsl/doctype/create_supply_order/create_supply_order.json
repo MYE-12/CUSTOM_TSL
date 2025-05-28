@@ -38,6 +38,7 @@
   "section_break_9",
   "equipments_in_stock",
   "received_equipment",
+  "part_details",
   "previously_quoted_item_in_repair_section",
   "previously_quoted",
   "attach_image_section",
@@ -164,9 +165,9 @@
    "label": "Received Date"
   },
   {
-   "depends_on": "eval:(!doc.sales_person);",
    "fieldname": "sales_person",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Sales Person",
    "options": "Sales Person"
   },
@@ -275,12 +276,18 @@
    "fieldname": "supplier_closing_date",
    "fieldtype": "Date",
    "label": "Supplier Closing Date"
+  },
+  {
+   "depends_on": "eval:doc.department == \"Supply Tender - TSL\"",
+   "fieldname": "part_details",
+   "fieldtype": "Button",
+   "label": "Part Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-27 09:20:05.734779",
+ "modified": "2025-05-18 10:53:37.710453",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order",

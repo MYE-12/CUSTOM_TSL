@@ -156,6 +156,7 @@
   {
    "fieldname": "sales_person",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Sales Person",
    "options": "Sales Person"
   },
@@ -257,7 +258,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-21 08:14:43.818184",
+ "modified": "2025-05-12 10:48:09.137622",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order",

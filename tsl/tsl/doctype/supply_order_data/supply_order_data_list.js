@@ -48,7 +48,16 @@ frappe.listview_settings['Supply Order Data'] = {
         else if (doc.status === "Parts Priced") {
               return [__("Parts Priced"), "green", "status,=,Parts Priced"];
        }
-        
+       else if (doc.status === "Bid Submitted") {
+              return [__("Bid Submitted"), "green", "status,=,Bid Submitted"];
+       }
+       else if (doc.status === "Awarded") {
+              return [__("Awarded"), "green", "status,=,Awarded"];
+       }
+       else if (doc.status === "Lost") {
+              return [__("Lost"), "green", "status,=,Lost"];
+       }
+       
        else if (doc.priority_status == "Not Urgent") {
               return [__("Not Urgent"), "gray", "priority_status=Not Urgent"];
        }

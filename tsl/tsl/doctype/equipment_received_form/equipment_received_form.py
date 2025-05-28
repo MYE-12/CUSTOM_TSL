@@ -150,6 +150,7 @@ def create_workorder_data(order_no, f):
         frappe.throw("Please Mention the Customer Name")
     if not doc.incharge:
         frappe.throw("Please Mention the Customer Representative")
+        
     if not doc.repair_warehouse:
         d = {
             "Kuwait - TSL": "Repair - Kuwait - TSL", #Equipments warehouse
@@ -287,7 +288,7 @@ def create_workorder_data(order_no, f):
             warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
             if warr['delivery'] and warr['warranty']:
                 date = frappe.utils.add_to_date(warr['delivery'], months=int(warr['warranty']))
-                print(date, type(date))
+                
                 frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
                 frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
                 eval = frappe.db.exists("Evaluation Report",{"work_order_data":doc.work_order_data})
@@ -296,7 +297,7 @@ def create_workorder_data(order_no, f):
                     
                     if eval:
                         frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
-                    
+                    frappe.errprint(date)
                     wd = frappe.get_doc("Work Order Data",doc.work_order_data)
                     wd.status = "NER-Need Evaluation Return"
                     if i["no_power"]:

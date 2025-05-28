@@ -20,10 +20,11 @@ class WOApproval(Document):
 
 
 
-        last_six_months = []
-        for i in range(11, -1, -1):  # 5 months before and including the current month
-            month_index = (current_month - i - 1) % 12  # Handle wrap-around
-            last_six_months.append(months[month_index])
+        last_six_months = ["May"]
+        # for i in range(1, -1, -1):  # 5 months before and including the current month
+        #     month_index = (current_month - i - 1) % 12  # Handle wrap-around
+        #     last_six_months.append(months[month_index])
+       
 
         data= ""
         data += '<table class="table table-bordered">'
@@ -47,8 +48,8 @@ class WOApproval(Document):
     
         sp = frappe.get_all("Sales Person",{"company":self.company},["*"])
         for i in sp:
-            if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Yousef" or i.name == "Mohannad" or i.name == "Karoline":              
-            # if i.name == "Maaz":         
+            # if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Yousef" or i.name == "Mohannad" or i.name == "Karoline":              
+            if i.name == "Ahmad":         
                 sl = frappe.get_value("Sales Person",{"name":i.name},["user"])
                 data += '<tr>'
                 data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Sales</b><center></td>'
@@ -90,7 +91,6 @@ class WOApproval(Document):
                     from_date = first_day.date()
                     to_date = last_day.date()
                     
-                        
                     # w = frappe.db.sql(""" select name from `tabWork Order Data` where sales_rep = '%s' and company = '%s' and old_wo_no IS NULL """ %(i.name,self.company),as_dict =1)
                     # w = frappe.get_all("Work Order Data",{"sales_rep":i.name,"company":self.company,"old_wo_no":["is","not set"]},["*"])
                     
@@ -162,7 +162,7 @@ class WOApproval(Document):
                         else:
 
                             for i in wod:
-                                
+                                frappe.errprint(i["wd"])
                                 q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                                 `tabQuotation`.default_discount_percentage as dis,
                                 `tabQuotation`.approval_date as a_date,
@@ -176,7 +176,7 @@ class WOApproval(Document):
                                 and `tabQuotation`.sales_rep = '%s' and `tabQuotation Item`.wod_no = '%s' and
                                 `tabQuotation`.quotation_type in ("Customer Quotation - Repair")  and transaction_date between '%s' and '%s'
                                 ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
-
+                               
                                 if q_amt:
                                     
                                     if q_amt[0]["is_m"] == 1:
@@ -278,7 +278,7 @@ class WOApproval(Document):
                     #     and `tabQuotation`.sales_rep = '%s' and
                     #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
                     #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
-                    #     frappe.errprint(sl)
+                        
                     #     if q_amt:
                     #         for k in q_amt:
                     #             q_m = q_m + k.grand_total
@@ -294,7 +294,7 @@ class WOApproval(Document):
                     #     and `tabQuotation`.sales_rep = '%s' and
                     #     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
                     #     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
-                    #     frappe.errprint(sl)
+                 
                     #     if q_amt_2:
                     #         for k in q_amt_2:
                     #             q_m_2 = q_m_2 + k.grand_total

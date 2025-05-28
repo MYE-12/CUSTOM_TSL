@@ -17,6 +17,9 @@ def get_columns(filters):
 
 	columns = [
 		_("Work Order") + ":Link/Work Order Data:150",
+		_("Purchase Order") + ":Link/Purchase Order:150",
+		_("Purchase Invoice") + ":Link/Purchase Invoice:150",
+		_("Tracking ID") + ":Data:150",
 		_("Customer") + ":Data:200",
 		_("Sales Person") + ":Data:150",
 		_("Received Date") + ":Date:150",
@@ -35,6 +38,10 @@ def get_data(filters):
 	data = []
 	if filters.work_order_data:
 		evr = frappe.get_all("Evaluation Report",{"work_order_data":filters.work_order_data ,"docstatus":1,"date": ["between", [filters.from_date,filters.to_date]]},["*"])
+	
+	elif filters.branch:
+		evr = frappe.get_all("Evaluation Report",{"branch":filters.branch ,"docstatus":1,"date": ["between", [filters.from_date,filters.to_date]]},["*"])
+	
 	else:
 		evr = frappe.get_all("Evaluation Report",{"docstatus":1,"date": ["between", [filters.from_date,filters.to_date]]},["*"])
 
@@ -55,9 +62,28 @@ def get_data(filters):
 		if psi:
 			for j in psi:
 				im = frappe.get_value("Item Model",{"name":j["model"]},["model"])
-				row = [wods,cus,sales,rec_date,i.date,dn_date or "-",w_status,i.status,im,j["com"] or j["ts"]]
+
+				po = ""
+				p_order = frappe.db.sql(""" select `tabPurchase Order`.name as po from `tabPurchase Order` 
+				left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent 
+				where `tabPurchase Order Item`.work_order_data = '%s' """ %(wods),as_dict =1)
+				if p_order:
+					po = p_order[0]["po"]
+			
+				pi = ""
+				tr_id = ""
+						
+				p_inv = frappe.db.sql(""" select `tabPurchase Invoice`.tracking_id as td,`tabPurchase Invoice`.name as pi from `tabPurchase Invoice` 
+				left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
+				where `tabPurchase Invoice Item`.work_order_data = '%s' """ %(wods),as_dict =1)
+				if p_inv:
+					pi = p_inv[0]["pi"]
+					tr_id = p_inv[0]["td"]
+
+								
+				row = [wods,po,pi,tr_id,cus,sales,rec_date,i.date,dn_date or "-",w_status,i.status,im,j["com"] or j["ts"]]
 				data.append(row)
-			data.append(["","","","","","","","","",""])		
+			data.append(["","","","","","","","","","","","",""])		
 	return data
 
 	

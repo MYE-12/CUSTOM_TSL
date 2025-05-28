@@ -36,6 +36,8 @@ def create_leave_rejoining():
 					rejoin = frappe.new_doc("Leave Rejoining Form")
 					rejoin.emp_no = leave.employee
 					rejoin.leave_application = leave.name
+					rejoin.from_date = leave.from_date
+					rejoin.to_date = leave.to_date
 					rejoin.rejoining_date = add_days(today_date, 1) 
 					rejoin.save()
 				except Exception as e:

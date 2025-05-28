@@ -15,7 +15,7 @@ def on_update_after_submit(self,method):
             for dn in dn_rsi:
               
                # if there is invoice_no status will be RSI
-               if dn.invoice_no and not  (dn.status_cap or dn.mistaken_ner ==1):
+               if dn.invoice_no and not (dn.status_cap or dn.mistaken_ner ==1):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)

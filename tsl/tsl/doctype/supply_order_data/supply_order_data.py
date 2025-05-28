@@ -409,8 +409,11 @@ def create_quotation(sod):
 	# 		new_doc.st = doc.st
 	else:
 		new_doc.quotation_type = "Internal Quotation - Supply"
+	s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")
+	if s_user:
+		new_doc.sales_rep = s_user
 	
-	new_doc.sales_rep = doc.sales_rep
+	
 	new_doc.ignore_pricing_rule = 1
 	# for i in doc.get("in_stock"):
 	# 	new_doc.append("items",{

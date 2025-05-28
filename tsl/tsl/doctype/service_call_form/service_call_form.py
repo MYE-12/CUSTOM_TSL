@@ -35,7 +35,11 @@ def create_qtn(source):
 	# new_doc.customer_address = frappe.db.get_value("Customer",doc.customer,"customer_primary_address")
 	# new_doc.address_display = frappe.db.get_value("Customer",doc.customer,"primary_address")
 	new_doc.quotation_type = "Site Visit Quotation - Internal"
-	new_doc.sales_rep = doc.salesman_name
+	s_user = frappe.get_value("Sales Person",doc.salesman_name,"user")
+	if s_user:
+		new_doc.sales_rep = s_user
+	
+
 	if doc.company == "TSL COMPANY - Kuwait":
 		new_doc.currency = "KWD"
 		new_doc.selling_price_list = "Standard Selling"

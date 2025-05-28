@@ -54,6 +54,7 @@ def get_sales(company):
             data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>Approved Amount</b><center></td>'
             data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b> % of Approved Amount</b><center></td>'
             data += '</tr>'
+            
             tmt = 0
             tmt_2 = 0
             for m in last_six_months:

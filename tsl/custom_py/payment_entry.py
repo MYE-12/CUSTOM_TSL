@@ -7,8 +7,9 @@ def on_submit(self,method):
         doc.save(ignore_permissions = True)
     if self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive':
         doc = frappe.get_doc("Work Order Data",self.work_order_data)
-        doc.status = "P-Paid"
-        doc.save(ignore_permissions = True)
+        if doc.dn_no:
+            doc.status = "P-Paid"
+            doc.save(ignore_permissions = True)
     
     # if not self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive' and len(self.work_orders)>0:
     #     for i in self.work_orders:

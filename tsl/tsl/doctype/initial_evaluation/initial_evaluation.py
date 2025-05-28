@@ -53,24 +53,24 @@ class InitialEvaluation(Document):
 			doc.status = "C-Comparison"
 
 		doc.save(ignore_permissions = True)
-		if self.if_parts_required:
-			f=0
-			for i in self.get("items"):
-				if not i.part_sheet_no:
-					i.part_sheet_no = 1
-				if i.parts_availability == "No" and not i.from_scrap:
-					f=1
-			if f:
-				self.parts_availability = "No"
-				doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		# if self.if_parts_required:
+		# 	f=0
+		# 	for i in self.get("items"):
+		# 		if not i.part_sheet_no:
+		# 			i.part_sheet_no = 1
+		# 		if i.parts_availability == "No" and not i.from_scrap:
+		# 			f=1
+		# 	if f:
+		# 		self.parts_availability = "No"
+		# 		doc = frappe.get_doc("Work Order Data",self.work_order_data)
 
-				if self.status_repair == "Comprasion":
-					doc.status = "C-Comparison"
-				else:
-					doc.status = "SP-Searching Parts"
-			else:
-				self.parts_availability = "Yes"
-				doc.status = "AP-Available Parts"
+		# 		if self.status_repair == "Comprasion":
+		# 			doc.status = "C-Comparison"
+		# 		else:
+		# 			doc.status = "SP-Searching Parts"
+		# 	else:
+		# 		self.parts_availability = "Yes"
+		# 		doc.status = "AP-Available Parts"
 		if not self.evaluation_time or not self.estimated_repair_time:
 			frappe.msgprint("Note: Evaluation Time and Estimated Repair Time is not given.")
 
@@ -89,20 +89,20 @@ class InitialEvaluation(Document):
 				item_doc.item_group = "Components"
 				if frappe.session.user == "purchase@tsl-me.com":
 					item_doc.save(ignore_permissions = True)
-		if self.if_parts_required:
-			doc = frappe.get_doc("Work Order Data",self.work_order_data)
-			if self.parts_availability == "Yes":
-				doc.status = "AP-Available Parts"
-			if self.parts_availability != "Yes":
-				sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
-				if sq:
-					doc.status = "Parts Priced"
-				if self.status_repair == "Comprasion":
-					doc.status = "C-Comparison"
-				else:
-					doc.status = "SP-Searching Parts"
+		# if self.if_parts_required:
+		# 	doc = frappe.get_doc("Work Order Data",self.work_order_data)
+		# 	if self.parts_availability == "Yes":
+		# 		doc.status = "AP-Available Parts"
+		# 	if self.parts_availability != "Yes":
+		# 		sq = frappe.db.sql("""select work_order_data from `tabSupplier Quotation` where work_order_data = '%s' and docstatus = 1 """%(self.work_order_data))
+		# 		if sq:
+		# 			doc.status = "Parts Priced"
+		# 		if self.status_repair == "Comprasion":
+		# 			doc.status = "C-Comparison"
+		# 		else:
+		# 			doc.status = "SP-Searching Parts"
 			
-			doc.save(ignore_permissions=True)
+		# 	doc.save(ignore_permissions=True)
 	def on_update_after_submit(self):
 		add = total = 0
 		self.total_amount = 0

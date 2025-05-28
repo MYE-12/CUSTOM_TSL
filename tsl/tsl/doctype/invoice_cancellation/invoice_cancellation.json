@@ -10,6 +10,7 @@
  "field_order": [
   "date",
   "company",
+  "branch",
   "column_break_ef9tw",
   "created_by",
   "section_break_e4nvk",
@@ -48,11 +49,17 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-28 08:21:34.039120",
+ "modified": "2025-05-13 10:19:04.247393",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Cancellation",

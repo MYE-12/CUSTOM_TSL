@@ -76,7 +76,7 @@ def make_supplier_quotation_from_rfq(source_name, target_doc=None, for_supplier=
 def validate(self,method):
     for i in self.items:
         if i.work_order_data:
-            doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' and docstatus != 2 """%(i.work_order_data),as_dict=1)
+            doc = frappe.db.sql("""select name,status,work_order_data from `tabEvaluation Report` where work_order_data = '%s' and docstatus != 2 and status not in ('Return Not Repaired', 'RNP-Return no Parts', 'Return No Fault')"""%(i.work_order_data),as_dict=1)
         
             for d in doc:
                 ev = frappe.get_doc("Evaluation Report",d.name)
@@ -169,12 +169,13 @@ def on_submit(self,method):
     
     for i in self.items:
         if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
-            if i.work_order_data or self.work_order_data:
-                doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data or self.work_order_data),as_dict=1)
+            if i.work_order_data:
+                doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
                 for d in doc:
                     ev = frappe.get_doc("Work Order Data",d.name)
-                    ev.status = "Parts Priced"
-                ev.save(ignore_permissions =1)
+                    if not ev.quotation:
+                        ev.status = "Parts Priced"
+                    ev.save(ignore_permissions =1)
         
         
         if i.supply_order_data or self.supply_order_data:
@@ -212,6 +213,7 @@ def on_submit(self,method):
 
     if self.work_order_data:
         evl = frappe.get_value("Evaluation Report",{"Work_order_data":self.work_order_data})
+        frappe.errprint(evl)
         if evl:
             doc = frappe.get_doc("Evaluation Report",evl)
             for i in self.get("items"):

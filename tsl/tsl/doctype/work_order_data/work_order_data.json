@@ -33,6 +33,7 @@
   "unit_table_no",
   "mistaken_ner",
   "quoted",
+  "quotation",
   "status_cap",
   "status_cap_date",
   "column_break_7",
@@ -95,6 +96,7 @@
    "allow_on_submit": 1,
    "fieldname": "sales_rep",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Sales Rep",
    "options": "Sales Person"
   },
@@ -205,6 +207,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
+   "in_global_search": 1,
    "in_preview": 1,
    "label": "Naming Series",
    "options": "WOD-.YY.-\nWOD-R.YY.-\nWOD-D.YY.-\nWOD-J.YY.-\nWOD-K.YY.-\nWOD-KO.YY.-\nWOD-DU-O-.YY.-\nWOD-DU.YY.-P.\nWOD-DU.YY.-PA."
@@ -231,7 +234,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved"
+   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved\nThird Party\nIP-Internal Extra Parts"
   },
   {
    "default": "Repair - TSL",
@@ -514,7 +517,8 @@
    "allow_on_submit": 1,
    "fieldname": "status_cap",
    "fieldtype": "Data",
-   "label": "Status Cap"
+   "label": "Status Cap",
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
@@ -541,7 +545,8 @@
    "allow_on_submit": 1,
    "fieldname": "status_cap_date",
    "fieldtype": "Date",
-   "label": "Status Cap Date"
+   "label": "Status Cap Date",
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
@@ -596,6 +601,7 @@
    "label": "Customer Representative"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "po_no",
    "fieldtype": "Data",
    "label": "Po No"
@@ -624,6 +630,12 @@
    "fieldname": "plant",
    "fieldtype": "Data",
    "label": "Plant"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "quotation",
+   "fieldtype": "Data",
+   "label": "Quotation"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -634,7 +646,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-04-24 15:02:42.739203",
+ "modified": "2025-05-26 08:33:59.126891",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

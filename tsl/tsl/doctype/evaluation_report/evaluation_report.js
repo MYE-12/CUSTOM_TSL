@@ -288,7 +288,7 @@ frappe.ui.form.on('Evaluation Report', {
 				}
 			}
 
-		 if(frappe.user.has_role("Technician")){
+		 if(frappe.user.has_role("Technician") && (!frappe.user.has_role("Administrator"))){
 			set_field_options("status", ["Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Spare Parts",])
 			}
 	},

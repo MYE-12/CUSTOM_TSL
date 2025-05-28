@@ -21,6 +21,7 @@ jinja = {
         "tsl.custom_py.utils.get_incentive",
         "tsl.custom_py.utils.get_pi",
         "tsl.custom_py.utils.get_q",
+        "tsl.custom_py.utils.get_sales_table",
 		"tsl.custom_py.utils.get_mc",
         "tsl.custom_py.utils.get_mc_2",
         "tsl.custom_py.utils.purchase_report",
@@ -344,7 +345,9 @@ from tsl.custom_py import utils as cpp
 pp.get_payroll_period_days = cpp.get_payroll_period_days
 
 
-
+from erpnext.setup.doctype.employee.employee import Employee as emp
+from tsl.custom_py import utils
+emp.update_user_permissions = utils.update_user_permissions
 
 #
 # each overriding function accepts a `data` argument;

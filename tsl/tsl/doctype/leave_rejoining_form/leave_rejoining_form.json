@@ -17,6 +17,10 @@
   "department",
   "date_of_joining",
   "company",
+  "leave_details_section",
+  "from_date",
+  "column_break_d3n0k",
+  "to_date",
   "leave_balance_section",
   "leave_balance",
   "section_break_5",
@@ -89,8 +93,7 @@
   {
    "fieldname": "section_break_5",
    "fieldtype": "Section Break",
-   "label": "Rejoining Details",
-   "read_only": 1
+   "label": "Rejoining Details"
   },
   {
    "bold": 1,
@@ -136,6 +139,27 @@
   {
    "fieldname": "leave_balance",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "leave_details_section",
+   "fieldtype": "Section Break",
+   "label": "Leave Details"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_d3n0k",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -146,7 +170,7 @@
    "link_fieldname": "rejoining"
   }
  ],
- "modified": "2025-02-24 10:01:12.341434",
+ "modified": "2025-05-19 19:34:32.911247",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Rejoining Form",

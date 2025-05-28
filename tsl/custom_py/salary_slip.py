@@ -54,6 +54,24 @@ from hrms.payroll.doctype.payroll_period.payroll_period import (
 )
 from hrms.payroll.utils import sanitize_expression
 
+UNSAFE_ATTRIBUTES = {
+	# Generator Attributes
+	"gi_frame",
+	"gi_code",
+	# Coroutine Attributes
+	"cr_frame",
+	"cr_code",
+	"cr_origin",
+	# Async Generator Attributes
+	"ag_code",
+	"ag_frame",
+	# Traceback Attributes
+	"tb_frame",
+	"tb_next",
+	# Format Attributes
+	"format",
+	"format_map",
+}
 
 class CustomSalarySlip(TransactionBase):
 	def __init__(self, *args, **kwargs):
@@ -1898,8 +1916,7 @@ class CustomSalarySlip(TransactionBase):
 					loan.interest_amount,
 					loan.principal_amount,
 					loan.total_payment,
-					payroll_payable_account=payroll_payable_account,
-					process_payroll_accounting_entry_based_on_employee=process_payroll_accounting_entry_based_on_employee,
+					payroll_payable_account=payroll_payable_account
 				)
 
 				repayment_entry.save()
@@ -2346,7 +2363,7 @@ def _safe_eval(code: str, eval_globals: dict | None = None, eval_locals: dict | 
 def _check_attributes(code: str) -> None:
 	import ast
 
-	from frappe.utils.safe_exec import UNSAFE_ATTRIBUTES
+	# from frappe.utils.safe_exec import UNSAFE_ATTRIBUTES
 
 	unsafe_attrs = set(UNSAFE_ATTRIBUTES).union(["__"]) - {"format"}
 

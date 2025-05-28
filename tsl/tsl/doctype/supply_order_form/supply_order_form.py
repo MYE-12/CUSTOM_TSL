@@ -117,7 +117,7 @@ def create_supply_order_data(order_no):
 		for i in doc.get("received_equipment"):
 			
 			if not 'item_code' in i:
-				item = frappe.db.get_value("Item",{"item_number":i['item_number']},"name")
+				item = frappe.db.exists("Item",{"item_number":i['item_number'],"item_group": ["not in", ["Components", "Equipment"]]})
 				if not item:
 					frappe.errprint("ji")
 					i_doc = frappe.new_doc('Item')
@@ -125,16 +125,16 @@ def create_supply_order_data(order_no):
 					i_doc.description = i['description']
 					i_doc.item_number = i['item_number']
 					i_doc.item_name = i['item_name']
-					# i_doc.model_no = i['model']
+					i_doc.stock_uom = i['uom']
 					if i['item_group']:
 						i_doc.item_group = i['item_group']
 					else:
 						i_doc.item_group = "Equipments"
-					# i_doc.model = i['model']
 					i_doc.is_stock_item = 0
 					if 'has_serial_no' in i and i['has_serial_no']:
 						i_doc.has_serial_no = 1
 					i_doc.save(ignore_permissions = True)
+					
 					if i_doc.name:
 						i['item_code'] = i_doc.name
 						if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
@@ -145,31 +145,34 @@ def create_supply_order_data(order_no):
 							sn_doc.save(ignore_permissions = True)
 							if sn_doc.name:
 								sn_no = sn_doc.name
-				# else:
-				# 	if item:
-				# 		new_doc.append("material_list",{
-				# 		"item_code": item,
-				# 		# "model_no": i['model'],
-				# 		# "mfg": i['manufracturer'],
-				# 		"description":i['description'],
-				# 		"item_name":i['item_name'],	
-				# 		"unit":i['uom'],
-				# 		"item_group": i['item_group'],
-				# 		"item_number":i['item_number'],
-				# 		"quantity":i['qty'],
-				# 	})
+								
+						new_doc.append("material_list",{
+						"item_code": i['item_code'],
+						# "model_no": i['model'],
+						# "mfg": i['manufracturer'],
+						"description":i['description'],
+						"item_name":i['item_name'],	
+						"unit":i['uom'],
+						"item_group": i['item_group'],
+						"item_number":i['item_number'],
+						"quantity":i['qty'],
+						})
+						
+				else:
+					if item:
+						new_doc.append("material_list",{
+						"item_code": item,
+						# "model_no": i['model'],
+						# "mfg": i['manufracturer'],
+						"description":i['description'],
+						"item_name":i['item_name'],	
+						"unit":i['uom'],
+						"item_group": i['item_group'],
+						"item_number":i['item_number'],
+						"quantity":i['qty'],
+					})
 				
-			new_doc.append("material_list",{
-				"item_code": i['item_code'],
-				# "model_no": i['model'],
-				# "mfg": i['manufracturer'],
-				"description":i['description'],
-				"item_name":i['item_name'],	
-				"unit":i['uom'],
-				"item_group": i['item_group'],
-				"item_number":i['item_number'],
-				"quantity":i['qty'],
-			})
+		
 			
 	for i in doc.get("equipments_in_stock"):
 		category = i['category'] if "category" in i else ""

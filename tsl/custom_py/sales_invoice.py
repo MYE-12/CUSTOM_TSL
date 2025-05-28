@@ -67,6 +67,13 @@ def on_submit(self,method):
 			doc = frappe.get_doc("Work Order Data",wod)
 			doc.status = 'RSI-Repaired and Shipped Invoiced'
 			doc.save(ignore_permissions = True)
+
+			doc = frappe.get_doc("Work Order Data",wod)
+			if doc.quotation and not doc.dn_no:
+				doc.status = 'A-Approved'
+			doc.save(ignore_permissions = True)
+			
+
 			frappe.db.set_value("Work Order Data",wod,"invoice_no",self.name)
 			frappe.db.set_value("Work Order Data",wod,"invoice_date",self.posting_date)
 

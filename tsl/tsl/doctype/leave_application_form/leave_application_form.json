@@ -534,11 +534,11 @@
    "label": "Employee Clearance"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "is_special_permission",
    "fieldtype": "Check",
-   "label": "is special permission",
-   "permlevel": 1
+   "label": "is special permission"
   },
   {
    "depends_on": "is_special_permission",
@@ -565,7 +565,7 @@
    "link_fieldname": "leave_application"
   }
  ],
- "modified": "2025-03-02 11:53:11.938185",
+ "modified": "2025-05-08 16:23:00.459798",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Application Form",

@@ -68,7 +68,7 @@ frappe.ui.form.on('Report Dashboard', {
 		if(frm.doc.reports == "Salary Summary"){
 				
 			var path = "tsl.custom_py.utils.salary_register_excel"
-			var args = 'month_name=%(month_name)s&company=%(company)s&cyrix_employee=%(cyrix_employee)s'
+			var args = 'month_name=%(month_name)s&company=%(company)s&cyrix_employee=%(cyrix_employee)s&doc_status=%(doc_status)s'
 				
 		}
 
@@ -79,7 +79,8 @@ frappe.ui.form.on('Report Dashboard', {
 				args: args,
 				month_name: frm.doc.month,
 				company : frm.doc.company,
-				cyrix_employee : frm.doc.cyrix_employee,	
+				cyrix_employee : frm.doc.cyrix_employee,
+				doc_status : frm.doc.doc_status
 			
 			});
 		}

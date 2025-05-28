@@ -113,6 +113,10 @@ frappe.listview_settings['Work Order Data'] = {
             else if (doc.status === "NEA-Need Evaluation Approved") {
                   return[__("NEA-Need Evaluation Approved"),"red","status,=,NEA-Need Evaluation Approved"];
                         }
+
+            else if (doc.status === "Third Party") {
+                  return[__("Third Party"),"blue","status,=,Third Party"];
+                        }
           
       },
 };

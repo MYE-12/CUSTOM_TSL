@@ -6,7 +6,14 @@ frappe.ui.form.on('Quotation', {
 //			frm.doc.grand_total = frm.doc.grand_total + (frm.doc.discount_amount)
 //		}
 //	},
+
+	on_submit(frm){
+		frm.reload_doc();
+	},
+	
 	onload_post_render:function(frm){
+		
+
 		if(frm.doc.docstatus == 0){
 			frm.set_query("branch", function() {
                 return {
@@ -250,6 +257,116 @@ frappe.ui.form.on('Quotation', {
 		}
 	},
     refresh:function(frm){
+		if(frm.doc.docstatus == 1 && frm.doc.quotation_type == "Customer Quotation - Repair" || frm.doc.docstatus == 1 && frm.doc.quotation_type == "Revised Quotation - Repair")
+		frappe.call({
+			method: "tsl.custom_py.quotation.get_invoice",
+			args: {
+				"item":frm.doc.items,
+			},
+			callback: function(r) {
+				if(r.message) {
+				
+					console.log(r.message[0].name)
+					frm.add_custom_button(__('Sales Invoice'), function(){
+						frappe.set_route("Form", "Sales Invoice",r.message[0].name);
+
+					})
+					
+				}
+			}
+		});
+		
+	// 	if(frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
+			
+	// 		var d = new frappe.ui.Dialog({
+				
+	// 			fields: [
+	// 				{
+	// 					label: 'Type Of Approval',
+	// 					fieldname: 'type_of_approval',
+	// 					fieldtype: 'Select',
+	// 					options:["Email","Phone Call","PO","Others"],
+	// 					change: () => {
+	// 						let template_type = d.get_value('type_of_approval');
+	
+	// 						if (template_type === "Others") {
+	// 							d.set_df_property('specify', 'hidden',0);
+	// 							d.set_df_property('po_no', 'hidden',1);
+	// 							d.set_df_property('po_date', 'hidden',1);
+	// 						} 
+	// 						if (template_type === "PO") {
+	// 							d.set_df_property('po_no', 'hidden',0);
+	// 							d.set_df_property('po_date', 'hidden',0);
+	// 							d.set_df_property('specify', 'hidden',1);
+	// 						}
+	// 						if (template_type === "Email") {
+	// 							d.set_df_property('specify', 'hidden',1);
+	// 							d.set_df_property('po_no', 'hidden',1);
+	// 							d.set_df_property('po_date', 'hidden',1);
+	// 						}
+	// 						if (template_type === "Phone Call") {
+	// 							d.set_df_property('specify', 'hidden',1);
+	// 							d.set_df_property('po_no', 'hidden',1);
+	// 							d.set_df_property('po_date', 'hidden',1);
+	// 						}   
+							
+	// 					}
+	// 				},
+	// 				{
+	// 					label: "Specify",
+	// 					fieldname: "specify",
+	// 					fieldtype: "Data",
+	// 					hidden:1,
+						
+	// 				},
+	// 				{
+	// 					label: "PO No",
+	// 					fieldname: "po_no",
+	// 					fieldtype: "Data",
+	// 					hidden:1,
+						
+	// 				},
+	// 				{
+	// 					label: "PO Date",
+	// 					fieldname: "po_date",
+	// 					fieldtype: "Date",
+	// 					hidden:1,
+						
+	// 				},
+	// 				{
+	// 					label: "Attach",
+	// 					fieldname: "attach",
+	// 					fieldtype: "Attach",
+						
+						
+	// 				},
+					
+	// 			],
+	// 			primary_action: function() {
+	// 				var data = d.get_values();
+	// 				frm.set_value("type_of_approval",data.type_of_approval)
+					
+					
+	// 				if(data.type_of_approval == "Others"){
+	// 					frm.set_value("specify",data.specify)
+	// 				}
+	// 				if(data.type_of_approval == "PO"){
+	// 					frm.set_value("purchase_order_no",data.po_no);
+	// 					frm.set_value("purchase_order_date", data.po_date);
+	// 				}
+					
+	// 				// cur_frm.refresh_fields();
+	// 				frm.set_value("approval_date",data.approval_date);
+	// 				d.hide();
+					
+	// 			},
+	// 			primary_action_label: __('Submit')
+	// 		});
+	// 		d.show();
+			
+	//   }
+
+		
 		// frm.add_custom_button(__('Customer Quotation'), function(){
 			
 		// 	frappe.call({
@@ -303,6 +420,33 @@ frappe.ui.form.on('Quotation', {
 
 							
 		}
+
+
+		if(frm.doc.quotation_type == "Site Visit Quotation - Customer" && frm.doc.workflow_state == "Rejected by Customer"){
+			frm.add_custom_button(__('Revised Quotation'), function(){
+					
+					
+					frappe.call({
+						method: "tsl.custom_py.quotation.get_quotation",
+						args: {
+							"source": frm.doc.name,
+							"type":"Site Visit Quotation - Revised"
+						},
+						callback: function(r) {
+							if(r.message) {
+								var doc = frappe.model.sync(r.message);
+								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+	
+							}
+						}
+					});
+	
+	
+							}, ('Create'))
+
+							
+		}
+
 
 
 		if(frm.doc.quotation_type == "Quotation - Supply Tender" && frm.doc.workflow_state == "Rejected" || frm.doc.quotation_type == "Revised Quotation - Supply Tender" && frm.doc.workflow_state == "Rejected"){
@@ -483,35 +627,59 @@ frappe.ui.form.on('Quotation', {
 
 		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
 			if(frm.doc.company == "TSL COMPANY - KSA" && frappe.user.has_role("Accountant") ) {
-	
-				frm.add_custom_button(__('Sales Invoice'), function(){
-	
-					frappe.call({
-						method: "tsl.custom_py.quotation.create_sal_inv",
-						args: {
-							"source": frm.doc.name,
-						},
-						callback: function(r) {
-							if(r.message) {
-								var doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+				// frappe.call({
+				// 	method: "tsl.custom_py.quotation.get_invoice",
+				// 	args: {
+				// 		"item":frm.doc.items,
+				// 	},
+				// 	callback: function(r) {
+				// 		if(r.message) {
+						
+				// 			console.log(r.message[0].name)
+				// 			frm.add_custom_button(__('Sales Invoice'), function(){
+				// 				frappe.set_route("Form", "Sales Invoice",r.message[0].name);
 		
-							}
+				// 			})
+							
+						// }
+
+						// else{
+							frm.add_custom_button(__('Sales Invoice'), function(){
+	
+								frappe.call({
+									method: "tsl.custom_py.quotation.create_sal_inv",
+									args: {
+										"source": frm.doc.name,
+									},
+									callback: function(r) {
+										if(r.message) {
+											var doc = frappe.model.sync(r.message);
+											frappe.set_route("Form", doc[0].doctype, doc[0].name);
+					
+										}
+									}
+								});
+					
+					
+					
+										}, ('Create'))
+			
 						}
-					});
-		
-		
-		
-							}, ('Create'))
-			}
+					// }
+				// });
+
+							// }
 			
 			}
 	
 
 		if(frm.doc.docstatus == 1 && frm.doc.workflow_state == "Approved By Customer"){
 			if(frm.doc.company == "TSL COMPANY - KSA") {
-	
+			
+			
+			  
 				frm.add_custom_button(__('Invoice Request'), function(){
+					
 	
 					frappe.call({
 						method: "tsl.custom_py.quotation.create_inv_req",
@@ -521,8 +689,19 @@ frappe.ui.form.on('Quotation', {
 						},
 						callback: function(r) {
 							if(r.message) {
+								
 								var doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+								frappe.db.get_value('Customer', {'name':frm.doc.customer}, ['customer_type'], (r) => {
+									console.log(r.customer_type)
+									if(r.customer_type == "Company"){
+										if(!frm.doc.customer_address){
+									 frappe.throw("Please ensure the customer address is filled in; otherwise, the quotation will not be created. 😞 ")
+								 }
+								 frappe.set_route("Form", doc[0].doctype, doc[0].name);
+									   }
+						 
+								 });
+								
 							}
 						}
 					});
@@ -855,6 +1034,7 @@ frappe.ui.form.on('Quotation', {
 					}
 
 				});
+
 			}, __("Get Items From"), "btn-default");
 	}
 		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Quotation - Supply Tender" || frm.doc.quotation_type == "Internal Quotation - Supply" ||  frm.doc.quotation_type == "Revised Quotation - Supply") {
@@ -947,96 +1127,9 @@ frappe.ui.form.on('Quotation', {
 		// else{ 
 		// 	frm.set_df_property("final_approved_price", "read_only", 1)
 		// }
-		if(frm.doc.quotation_type != "Internal Quotation - Repair" && frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
-			
-			var d = new frappe.ui.Dialog({
-				
-				fields: [
-					{
-						label: 'Type Of Approval',
-						fieldname: 'type_of_approval',
-						fieldtype: 'Select',
-						options:["Email","Phone Call","PO","Others"],
-						change: () => {
-							let template_type = d.get_value('type_of_approval');
-	
-							if (template_type === "Others") {
-								d.set_df_property('specify', 'hidden',0);
-								d.set_df_property('po_no', 'hidden',1);
-								d.set_df_property('po_date', 'hidden',1);
-							} 
-							if (template_type === "PO") {
-								d.set_df_property('po_no', 'hidden',0);
-								d.set_df_property('po_date', 'hidden',0);
-								d.set_df_property('specify', 'hidden',1);
-							}
-							if (template_type === "Email") {
-								d.set_df_property('specify', 'hidden',1);
-								d.set_df_property('po_no', 'hidden',1);
-								d.set_df_property('po_date', 'hidden',1);
-							}
-							if (template_type === "Phone Call") {
-								d.set_df_property('specify', 'hidden',1);
-								d.set_df_property('po_no', 'hidden',1);
-								d.set_df_property('po_date', 'hidden',1);
-							}   
-							
-						}
-					},
-					{
-						label: "Specify",
-						fieldname: "specify",
-						fieldtype: "Data",
-						hidden:1,
-						
-					},
-					{
-						label: "PO No",
-						fieldname: "po_no",
-						fieldtype: "Data",
-						hidden:1,
-						
-					},
-					{
-						label: "PO Date",
-						fieldname: "po_date",
-						fieldtype: "Date",
-						hidden:1,
-						
-					},
-					{
-						label: "Attach",
-						fieldname: "attach",
-						fieldtype: "Attach",
-						
-						
-					},
-					
-				],
-				primary_action: function() {
-					var data = d.get_values();
-					frm.set_value("type_of_approval",data.type_of_approval)
-					
-					
-					if(data.type_of_approval == "Others"){
-						frm.set_value("specify",data.specify)
-					}
-					if(data.type_of_approval == "PO"){
-						frm.set_value("purchase_order_no",data.po_no);
-						frm.set_value("purchase_order_date", data.po_date);
-					}
-					
-					// cur_frm.refresh_fields();
-					frm.set_value("approval_date",data.approval_date);
-					d.hide();
-					
-				},
-				primary_action_label: __('Submit')
-			});
-			d.show();
-			
-	  }
 
+
+		
     },
 	is_advance_pay:function(frm){
 		frm.save_or_update();
@@ -1174,16 +1267,29 @@ frappe.ui.form.on("Quotation Item",{
 		console.log(dic_val)
 		frappe.db.get_value('Item', {'name':item.item_code}, ['is_stock_item'], (r) => {
 			
-			if(r.is_stock_item == 1){
+			if(r.is_stock_item == 1 && !item.no_discount){
 			
 				frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
 				
 			}
 
-			else{
+
+			if(r.is_stock_item == 1 && item.no_discount == 1){
+			
 				
 				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
 				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
+				frappe.model.set_value(cdt, cdn, "margin_amount_value",0);
+				
+			}
+
+			
+
+			if(r.is_stock_item == 0 && !item.no_discount){
+				console.log("Doneeeee")
+				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
+				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
+				frappe.model.set_value(cdt, cdn, "margin_amount_value",0);
 				
 			}
 		

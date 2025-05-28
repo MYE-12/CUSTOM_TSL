@@ -22,6 +22,20 @@ from frappe.utils import (
 	today,
 )
 
+@frappe.whitelist()
+def get_invoice(item):
+	item_details = json.loads(item)
+	for i in item_details:
+		
+		si = frappe.db.sql(""" select `tabSales Invoice`.name from `tabSales Invoice` 
+		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+		where `tabSales Invoice Item`.wod_no = '%s' """ %(i["wod_no"]),as_dict =1)
+		if si:
+			
+			return si
+
+	
+
 
 @frappe.whitelist()
 def on_submit(doc,method):
@@ -58,6 +72,9 @@ def on_submit(doc,method):
 				if i.wod_no:
 					wd = frappe.get_doc("Work Order Data",i.wod_no)
 					wd.quoted = 1
+					wd.quotation = doc.name
+					if doc.purchase_order_no:
+						wd.po_no = doc.purchase_order_no
 					wd.save(ignore_permissions =1)
 			
 @frappe.whitelist()
@@ -351,9 +368,12 @@ def show_details(self,method):
 								response = requests.request("GET", url, headers=headers, data=payload)
 								data = response.json()
 								frappe.errprint(data)
-								rates_kw = data['rates']['KWD']
-								conv_rate = sq.spc * rates_kw
-								self.shipping_cost = conv_rate
+								# rates_kw = data['rates']['KWD']
+								rates_kw = get_exchange_rate("USD","KWD")
+								frappe.errprint(rates_kw)
+								if sq.spc:
+									conv_rate = sq.spc * rates_kw
+									self.shipping_cost = conv_rate
 
 								
 							if len(sq_no):
@@ -609,23 +629,44 @@ def get_quotation(source,type = None):
 
 	def postprocess(source, target_doc):
 		target_doc.quotation_type = type
-		if doc.company == "TSL COMPANY - Kuwait":
+		if doc.company == "TSL COMPANY - Kuwait" and doc.quotation_type == "Site Visit Quotation - Customer":
 			target_doc.naming_series = "SV-QTN-CUS-K.YY.-"
 
-		if doc.company == "TSL COMPANY - UAE":
+		if doc.company == "TSL COMPANY - Kuwait" and doc.quotation_type == "Site Visit Quotation - Revised":
+			target_doc.naming_series = "SV-QTN-REV-K.YY.-"
+
+
+		if doc.company == "TSL COMPANY - UAE" and doc.quotation_type == "Site Visit Quotation - Customer":
 			target_doc.naming_series = "SV-QTN-CUS-DU.YY.-"
 		
-		if doc.company == "TSL COMPANY - KSA":
+		if doc.company == "TSL COMPANY - UAE" and doc.quotation_type == "Site Visit Quotation - Revised":
+			target_doc.naming_series = "SV-QTN-REV-DU.YY.-"
+		
+
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Customer":
 			if doc.branch_name == "Riyadh - TSL- KSA":
 				target_doc.naming_series = "SV-QTN-CUS-R.YY.-"
+			
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Revised":
+			if doc.branch_name == "Riyadh - TSL- KSA":
+				target_doc.naming_series = "SV-QTN-REV-R.YY.-"
 		
-		if doc.company == "TSL COMPANY - KSA":
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Customer":
 			if doc.branch_name == "Jeddah - TSL-SA":
 				target_doc.naming_series = "SV-QTN-CUS-J.YY.-"
 		
-		if doc.company == "TSL COMPANY - KSA":
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Revised":
+			if doc.branch_name == "Jeddah - TSL-SA":
+				target_doc.naming_series = "SV-QTN-REV-J.YY.-"
+		
+
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Customer":
 			if doc.branch_name == "Dammam - TSL-SA":
 				target_doc.naming_series = "SV-QTN-CUS-D.YY.-"
+		
+		if doc.company == "TSL COMPANY - KSA" and doc.quotation_type == "Site Visit Quotation - Revised":
+			if doc.branch_name == "Dammam - TSL-SA":
+				target_doc.naming_series = "SV-QTN-REV-D.YY.-"
 		
 
 		target_doc.workflow_state = "Quoted to Customer"
@@ -1030,6 +1071,7 @@ def create_sal_inv(source):
 	target_doc = frappe.new_doc("Sales Invoice")
 	doc = frappe.get_doc("Quotation",source)
 	target_doc.purchase_order_no = doc.purchase_order_no 
+	target_doc.po_no = doc.purchase_order_no 
 	target_doc.project_data = doc.project
 	target_doc.cost_center = doc.department
 	doclist = get_mapped_doc("Quotation",source , {
@@ -1191,7 +1233,7 @@ def final_price_validate_si(wod):
 	return qi_details
 
 def update_cq(self, method):
-	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair" or self.quotation_type == "Revised Quotation - Supply"  or self.quotation_type == "Site Visit Quotation - Customer" or self.quotation_type == "Customer Quotation - Project":
+	if self.quotation_type == "Customer Quotation - Repair" or self.quotation_type == "Customer Quotation - Supply" or self.quotation_type == "Revised Quotation - Repair" or self.quotation_type == "Revised Quotation - Supply"  or self.quotation_type == "Site Visit Quotation - Customer" or self.quotation_type == "Site Visit Quotation - Revised" or self.quotation_type == "Customer Quotation - Project":
 		frappe.db.set_value(self.doctype, self.name, "workflow_state", "Quoted to Customer")
 	if self.quotation_type == "Internal Quotation - Repair" or self.quotation_type == "Internal Quotation - Supply" or self.quotation_type == "Site Visit Quotation - Internal" or self.quotation_type == "Internal Quotation - Project":
 			frappe.db.set_value(self.doctype, self.name, "workflow_state", "Waiting For Approval")
@@ -1320,6 +1362,7 @@ def on_update(self, method):
 				if frappe.db.get_value(self.doctype, self.name, "workflow_state") == "Approved By Management":
 					doc.status = "Internal Quotation"	
 				doc.save(ignore_permissions=True)
+
 	if not self.quotation_type == "Internal Quotation - Repair":
 		for i in self.get("items"):
 			if i.wod_no:
@@ -1362,6 +1405,8 @@ def on_update(self, method):
 					doc.save(ignore_permissions=True)
 
 def before_submit(self,method):
+	if not self.type_of_approval and self.quotation_type in("Customer Quotation - Repair","Revised Quotation - Repair","Revised Quotation - Supply","Customer Quotation - Supply" ,"Site Visit Quotation - Customer"):
+		frappe.throw("Cannot submit: 'Type of Approval' field is required.")
 	if self.supplier_quotation:
 		frappe.db.set_value("Supplier Quotation",self.supplier_quotation,"quotation",self.name)
 	if self.quotation_type == "Internal Quotation - Repair":

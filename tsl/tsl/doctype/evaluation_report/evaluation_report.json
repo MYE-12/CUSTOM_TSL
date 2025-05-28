@@ -25,6 +25,7 @@
   "amended_from",
   "section_break_7",
   "evaluation_details",
+  "replacement_unit",
   "section_break_9",
   "no_power",
   "no_output",
@@ -159,8 +160,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Work Order Data",
-   "options": "Work Order Data",
-   "reqd": 1
+   "options": "Work Order Data"
   },
   {
    "fieldname": "company",
@@ -542,12 +542,19 @@
    "fieldname": "send",
    "fieldtype": "Button",
    "label": "Send"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "replacement_unit",
+   "fieldtype": "Table",
+   "label": "Replacement Unit",
+   "options": "Evaluation Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-30 09:06:45.179929",
+ "modified": "2025-05-22 13:04:27.146070",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",
@@ -570,5 +577,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "track_changes": 1
+ "track_changes": 1,
+ "track_views": 1
 }

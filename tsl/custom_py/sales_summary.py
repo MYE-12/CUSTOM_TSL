@@ -243,7 +243,8 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.is_multiple_quotation as is_m,
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
-                        `tabQuotation Item`.margin_amount as ma 
+                        `tabQuotation Item`.margin_amount as ma,
+                        `tabQuotation Item`.qty as qty
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where  `tabQuotation`.Workflow_state in ("Approved By Customer") and 
@@ -254,8 +255,9 @@ def get_wod(from_date,to_date,company):
                     if sup_qamt_del:
                         # frappe.errprint(i.name)
                         if sup_qamt_del[0]["is_m"] == 1:
-                            per = (sup_qamt_del[0]["up"] * sup_qamt_del[0]["dis"])/100
-                            q_amt = sup_qamt_del[0]["up"] - per
+                            up = sup_qamt_del[0]["up"] * sup_qamt_del[0]["qty"]
+                            per = (up * sup_qamt_del[0]["dis"])/100
+                            q_amt = up - per
                             sp_del = sp_del + q_amt
 
                         else:

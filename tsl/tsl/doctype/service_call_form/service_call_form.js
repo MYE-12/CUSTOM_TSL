@@ -73,14 +73,14 @@ frappe.ui.form.on('Service Call Form', {
 					frm.set_value("department","");	
 				}
 			})
-			var sales_rep = frappe.db.get_value(doc_type,{"name":data},"sales_rep",(r) =>{
-				if(r.sales_rep){
-					frm.set_value("salesman_name",r.sales_rep);	
-				}
-				else{
-					frm.set_value("salesman_name","");	
-				}
-			})
+			// var sales_rep = frappe.db.get_value(doc_type,{"name":data},"sales_rep",(r) =>{
+			// 	if(r.sales_rep){
+			// 		frm.set_value("salesman_name",r.sales_rep);	
+			// 	}
+			// 	else{
+			// 		frm.set_value("salesman_name","");	
+			// 	}
+			// })
 			var technician = frappe.db.get_value(doc_type,{"name":data},"technician",(r) =>{
 				if(r.technician){
 					frm.set_value("technician_name",r.technician);	

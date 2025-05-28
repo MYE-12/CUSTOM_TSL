@@ -14,6 +14,7 @@ from frappe.utils import (
 	today,
 )
 from frappe import _
+from frappe.model.mapper import get_mapped_doc
 from frappe.utils.file_manager import save_file
 from frappe.utils.file_manager import get_file
 from frappe.utils import add_to_date
@@ -24,6 +25,8 @@ from frappe.utils.csvutils import read_csv_content
 from tsl.tsl.doctype.leave_application_form.leave_application_form import validate_balance_leaves
 from hrms.payroll.doctype.salary_slip.salary_slip import generate_password_for_pdf
 from frappe.utils.background_jobs import enqueue
+from frappe.core.doctype.communication.email import make
+
 #from frappe.permissions import has_role
 # @frappe.whitelist()
 # def currency():
@@ -462,15 +465,19 @@ def item_qty():
 	)
 
 @frappe.whitelist()
-def amount(amount,currency):
-	url = "https://api.exchangerate-api.com/v4/latest/%s"%(currency)
-	payload = {}
-	headers = {}
-	response = requests.request("GET", url, headers=headers, data=payload)
-	data = response.json()
+def amount(amount,currency,company):
+	cc = frappe.get_value("Company",{"name":company},["default_currency"])
+	# url = "https://api.exchangerate-api.com/v4/latest/%s"%(currency)
+	# payload = {}
+	# headers = {}
+	# response = requests.request("GET", url, headers=headers, data=payload)
+	# data = response.json()
+	# frappe.errprint(data['rates'])
+	# rate_kw = data['rates']['KWD']
 	
-	rate_kw = data['rates']['KWD']
-	conv_rate = float(amount) / 0.31
+	# conv_rate = float(amount) / rate_kw
+	exr = get_exchange_rate(cc,currency)
+	conv_rate = float(amount) * exr
 	return conv_rate
 	
 
@@ -1528,22 +1535,21 @@ def change_shipping_cost(currency,sq):
 	return data,t_amt
 		
 
-@frappe.whitelist()
-def dlt_wo():
-	frappe.db.sql("""
-    UPDATE `tabSales Taxes and Charges` AS sii
-    JOIN `tabQuotation` AS si ON sii.parent = si.name
-    SET sii.branch = si.branch_name
-    WHERE si.branch_name = "Riyadh - TSL- KSA"
-	""")
+# @frappe.whitelist()
+# def dlt_wo():
+	# frappe.db.sql("""
+	# UPDATE `tabSales Taxes and Charges` AS sii
+	# JOIN `tabQuotation` AS si ON sii.parent = si.name
+	# SET sii.branch = si.branch_name
+	# WHERE si.branch_name = "Riyadh - TSL- KSA"
+	# """)
 
-	# wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
+	# wo = frappe.db.sql(""" UPDATE `tabEvaluation Report` SET branch = "Kuwait - TSL" WHERE company = "TSL COMPANY - Kuwait"; """)
 	# wo = frappe.db.sql(""" delete from `tabSupply Order Data` where company = "TSL COMPANY - KSA" """)
 
 @frappe.whitelist()
 def update_wo():
-	# wo = frappe.db.sql(""" UPDATE `tabItem` SET has_serial_no = 1 WHERE name = "002304"; """)
-	wo = frappe.db.sql(""" delete from `tabQuotation` WHERE name = "REP-QTN-INT-DU25-00079" """)
+	wo = frappe.db.sql(""" delete from `tabEvaluation Report` WHERE name = "EVAL-R-25-00038" """)
 
 
 
@@ -1786,7 +1792,7 @@ def update_item(model,item):
 		frappe.msgprint("Model Number Updated")
 
 @frappe.whitelist()
-def salary_register(month_name,company,cyrix_employee,civil_id_no):
+def salary_register(month_name,company,cyrix_employee,civil_id_no,docstatus):
 	from datetime import timedelta
 	current_year = datetime.now().year
 	month_number = datetime.strptime(month_name, '%B').month
@@ -1798,11 +1804,11 @@ def salary_register(month_name,company,cyrix_employee,civil_id_no):
 		next_month = datetime(current_year, month_number + 1, 1)
 		last_date = next_month - timedelta(days=1)
 	if company == "TSL COMPANY - Kuwait":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'KWD', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'KWD', 'company': company, 'docstatus': docstatus}
 	if company == "TSL COMPANY - KSA":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': docstatus}
 	if company == "TSL COMPANY - UAE":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': docstatus}
 	from tsl.tsl.report.salary_register_report.salary_register_report import execute
 	result = execute(filters)
 	headers = result[0]
@@ -1918,7 +1924,7 @@ def update_wd():
 	
 
 @frappe.whitelist()
-def get_incentive(from_date,to_date,company):	
+def get_incentive(from_date,to_date,company,branch):	
 	d = datetime.now().date()
 	ogdate = datetime.strptime(str(d),"%Y-%m-%d")
 	fr =datetime.strptime(str(from_date),"%Y-%m-%d")
@@ -1936,10 +1942,26 @@ def get_incentive(from_date,to_date,company):
 	
 	if company == "TSL COMPANY - UAE":
 		data += '<td style="width:30%;border-color:#000000;color:#055c9d;"><center><b style="color:#055c9d;font-size:19px;font-weight:bold;">TSL Company</b></center><br><center style="font-weight:bold;font-size:15px;color:#055c9d;">Branch - UAE</center></td>' 
+
+	if company == "TSL COMPANY - KSA":
+		if branch == "Jeddah - TSL-SA":
+			data += '<td style="width:30%;border-color:#000000;color:#055c9d;"><center><b style="color:#055c9d;font-size:19px;font-weight:bold;">TSL Company</b></center><br><center style="font-weight:bold;font-size:15px;color:#055c9d;">Branch - Jeddah</center></td>' 
+
+		if branch == "Dammam - TSL-SA":
+			data += '<td style="width:30%;border-color:#000000;color:#055c9d;"><center><b style="color:#055c9d;font-size:19px;font-weight:bold;">TSL Company</b></center><br><center style="font-weight:bold;font-size:15px;color:#055c9d;">Branch - Dammam</center></td>' 
+	
+		if branch == "Riyadh - TSL- KSA":
+			data += '<td style="width:30%;border-color:#000000;color:#055c9d;"><center><b style="color:#055c9d;font-size:19px;font-weight:bold;">TSL Company</b></center><br><center style="font-weight:bold;font-size:15px;color:#055c9d;">Branch - Riyadh</center></td>' 
+	
 	if company == "TSL COMPANY - Kuwait":
 		data += '<td style="width:30%;border-color:#000000;"><center><img src = "/files/kuwait flag.jpg" width ="120"></center></td>'
+
 	if company == "TSL COMPANY - UAE":
 		data += '<td style="width:30%;border-color:#000000;"><center><img src = "files/Flag_of_the_United_Arab_Emirates.svg.jpg" width ="120"></center></td>'
+	
+	if company == "TSL COMPANY - KSA":
+		data += '<td style="width:30%;border-color:#000000;"><center></center></td>'
+	
 	data += '</tr>'
 	data += '<tr>'
 	data += '<td colspan = 2 align = left style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><b style="color:white;">From : %s    To : %s</b></td>' %(formatted_date_1,formatted_date_2)
@@ -1993,8 +2015,6 @@ def get_incentive(from_date,to_date,company):
 	
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs[0]["ct"])
 		
-	
-	
 		count_a = 0
 		count_b = 0
 		count_c = 0
@@ -2024,7 +2044,7 @@ def get_incentive(from_date,to_date,company):
 					if e["t"]:
 						inv_total = inv_total + e["t"]
 			
-			s_amt = frappe.get_all("Supplier Quotation",{"work_order_data":j.ct,"workflow_state":"Approved By Management"},["*"])
+			# s_amt = frappe.get_all("Supplier Quotation",{"work_order_data":j.ct,"workflow_state":"Approved By Management"},["*"])
 			s_amt= frappe.db.sql(''' select base_total as b_am,shipping_cost as ship from `tabSupplier Quotation` 
 			where Workflow_state in ("Approved By Management") and
 			work_order_data = '%s' ''' %(j.ct) ,as_dict=1)
@@ -2042,24 +2062,13 @@ def get_incentive(from_date,to_date,company):
 			
 		for j in wd:
 			
-			# s_amt = frappe.get_all("Supplier Quotation",{"work_order_data":j.ct,"workflow_state":"Approved By Management"},["*"])
-			
-			# if s_amt:
-			# 	for s in s_amt:
-			# 		s_total = s_total + s.base_total
-			# 		s_cur = frappe.get_value("Supplier",{"name":s.supplier},["default_currency"])
-			# 		exr = get_exchange_rate(s_cur,"KWD")
-					
-			# 		if s.shipping_cost:
-			# 			s_total = s_total + (s.shipping_cost * exr)
-				
-
 			q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
 			`tabQuotation`.default_discount_percentage as dis,
 			`tabQuotation`.is_multiple_quotation as is_m,
 			`tabQuotation`.after_discount_cost as adc,
 			`tabQuotation`.Workflow_state,
 			`tabQuotation Item`.unit_price as up,
+			`tabQuotation`.grand_total as gt,
 			`tabQuotation Item`.margin_amount as mar,
 			`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
 			left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -2067,21 +2076,26 @@ def get_incentive(from_date,to_date,company):
 			`tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
 			and `tabQuotation Item`.wod_no = '%s' ''' %(j.ct) ,as_dict=1)
 
-			if q_amt:
-				
-				for k in q_amt:
-					if k.is_m == 1:
-						
-						per = (k.up * k.dis)/100
-						amt = k.up - per
-						
-						q_m = q_m + amt
-
-
-					else:
-						amt = k.adc
+			if company == "TSL Company - Kuwait":
+				if q_amt:
 					
-						q_m = q_m + amt
+					for k in q_amt:
+						if k.is_m == 1:
+							
+							per = (k.up * k.dis)/100
+							amt = k.up - per
+							
+							q_m = q_m + amt
+
+
+						else:
+							amt = k.adc
+						
+							q_m = q_m + amt
+
+			else:
+				if q_amt:			
+					q_m = q_m + q_amt[0]["gt"]
 
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")
@@ -2094,11 +2108,12 @@ def get_incentive(from_date,to_date,company):
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
 		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 
-
+		nar = 0
 		if rs[0]["ct"] == 0:
 			nar = 0
 		else:
 			nar = round((ner[0]["ct"]/rs[0]["ct"])*100)
+			
 		to_rs = round(q_m,2)
 		ner_deduct = (nar * to_rs)/100
 		net_amount =  round((q_m - (s_total + inv_total)),2)
@@ -2198,10 +2213,26 @@ def get_leave_application(leave_application):
 				to_date = lap.leave_end_date
 				worked_days = validate_balance_leaves(lap.company,first_of_month,before_day,lap.employee,lap.leave_type)
 				leave_days = date_diff(to_date,from_date) +1
-				return first_of_month,before_day,lap.leave_start_date,lap.leave_end_date,worked_days,lap.leave_days,lap.leave_balance
+				holiday_count = get_holidays_no(lap.employee, lap.leave_start_date,lap.leave_end_date , holiday_list=None, company = lap.company)
+				return first_of_month,before_day,lap.leave_start_date,lap.leave_end_date,worked_days,lap.leave_days,lap.leave_balance,holiday_count
 			else:
 				to_date = lap.leave_end_date
-				return '','',lap.leave_start_date,lap.leave_end_date,0,lap.leave_days,lap.leave_balance
+				return '','',lap.leave_start_date,lap.leave_end_date,0,lap.leave_days,lap.leave_balance,0
+
+def get_holidays_no(employee, from_date, to_date, holiday_list=None, company = None):
+	"""get holidays between two dates for the given employee"""
+	from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
+	if not holiday_list:
+		holiday_list = get_holiday_list_for_employee(employee)
+	holidays = frappe.db.sql(
+		"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+		where h1.parent = h2.name and h1.holiday_date between %s and %s
+		and h2.name = %s and h1.weekly_off = 0 """,
+		(from_date, to_date, holiday_list),
+	)[0][0]
+
+	return holidays
+
 
 import openpyxl
 from openpyxl import Workbook
@@ -2221,6 +2252,7 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
 	ws = wb.create_sheet(sheet_name, 0)
 	month_name = args.month_name
 	company = args.company
+	docstatus = args.doc_status
 	cyrix_employee = args.cyrix_employee
 	from datetime import timedelta
 	current_year = datetime.now().year
@@ -2232,11 +2264,11 @@ def make_xlsx(data, sheet_name=None, wb=None, column_widths=None):
 		next_month = datetime(current_year, month_number + 1, 1)
 		last_date = next_month - timedelta(days=1)
 	if company == "TSL COMPANY - Kuwait":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'KWD', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'KWD', 'company': company, 'docstatus': docstatus}
 	if company == "TSL COMPANY - KSA":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'SAR', 'company': company, 'docstatus': docstatus}
 	if company == "TSL COMPANY - UAE":
-		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': 'Draft'}
+		filters = {'from_date': first_date.date(), 'to_date': last_date.date(), 'currency': 'AED', 'company': company, 'docstatus': docstatus}
 	from tsl.tsl.report.salary_register_report.salary_register_report import execute
 	result = execute(filters)
 	headers = result[0]
@@ -2359,6 +2391,51 @@ def build_xlsx_response(filename):
 	frappe.response['filecontent'] = xlsx_file.getvalue()
 	frappe.response['type'] = 'binary'
 
+def build_xlsx_response2(filename):
+	xlsx_file = make_xlsx2(filename)
+	frappe.response['filename'] = filename + '.xlsx'
+	frappe.response['filecontent'] = xlsx_file.getvalue()
+	frappe.response['type'] = 'binary'
+
+
+@frappe.whitelist()
+def rfq_excel():
+	args = frappe.local.form_dict
+	filename = args.name
+
+	test = build_xlsx_response2(filename)
+
+def make_xlsx2(data, sheet_name=None, wb=None, column_widths=None):
+	args = frappe.local.form_dict
+	column_widths = column_widths or []
+	if wb is None:
+		wb = openpyxl.Workbook()
+	ws = wb.create_sheet(sheet_name, 0)
+	
+	headers = []
+	records = []
+	ws.append(["Request for Quotation"])
+	ws.append([""])
+	rfq = frappe.get_doc("Request for Quotation",args.name)
+	ws.append(["Sr","Sku","Category","Sub Category","Model / Part Number","Description","Package","Qty","Supplier Price"])
+	sno = 0
+	for i in rfq.items:
+		sno = sno + 1
+		cat = frappe.get_value("Item",i.item_code,["category_"])
+		sub_cat = frappe.get_value("Item",i.item_code,["sub_category_name"])
+		model = frappe.get_value("Item",i.item_code,["model_num"])
+		des = frappe.get_value("Item",i.item_code,["description"])
+		pac = frappe.get_value("Item",i.item_code,["package"])
+		ws.append([sno,i.item_code,cat,sub_cat,model,des,pac,i.qty])
+	
+	for header in ws.iter_rows(min_row=1 , max_row=3, min_col=1, max_col=9):
+		for cell in header:
+			cell.font = Font(bold=True)
+
+	xlsx_file = BytesIO()
+	wb.save(xlsx_file)
+	return xlsx_file
+
 
 @frappe.whitelist()
 def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references,remarks ):
@@ -2407,6 +2484,71 @@ def get_q(name):
 		return "Yes"
 
 
+
+
+@frappe.whitelist()
+def get_sales_table(name):
+	ic = frappe.get_doc("Invoice Cancellation",name)
+
+	if ic:
+		for i in ic.cancellation_list:
+			customer = frappe.get_value("Sales Invoice",i.invoice_no,"customer")
+			data = ""
+			ogdate = datetime.strptime(str(ic.date),"%Y-%m-%d")
+			formatted_date = ogdate.strftime("%d-%m-%Y")
+			data+= '<p><span style="font-size:14px;font-weight:bold">Customer : %s</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b style = "text-align:left">Date : %s</b></p><br><br>' %(customer,formatted_date)
+			
+	
+	data+= '<tr>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Sr</b></td>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Invoice No</b></td>'
+	if ic:
+		for i in ic.cancellation_list:
+			si = frappe.get_doc("Sales Invoice",i.invoice_no)
+			if si.cost_center == "Repair - TSL":
+				data+= '<td style = "text-align:center;font-weight:bold;"><b>Work Order</b></td>'
+			if si.cost_center == "Supply - TSL":
+				data+= '<td style = "text-align:center;font-weight:bold;"><b>Supply Order</b></td>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Model</b></td>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Mfg</b></td>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Serial No</b></td>'
+	data+= '<td style = "text-align:center;font-weight:bold;"><b>Amount</b></td>'
+	data+='</tr>'
+
+	if ic:
+		for i in ic.cancellation_list:
+			if i.invoice_no:
+				si = frappe.get_doc("Sales Invoice",i.invoice_no)
+				count = 0
+				for idx, k in enumerate(si.items):
+					count = count + 1
+					data+= '<tr>'
+					data+= '<td style = "text-align:center;">%s</td>' %(count)
+					if idx == 0:
+						data+= '<td style = "text-align:center;">%s</td>' %(i.invoice_no)
+					else:
+						data+= '<td style = "text-align:center;">%s</td>' %("")
+					if idx == 0:
+						if k.wod_no or k.work_order_data:
+							data += '<td style="text-align:center;">%s</td>' % (k.wod_no or k.work_order_data)
+						if k.supply_order_data:
+							data += '<td style="text-align:center;">%s</td>' % (k.supply_order_data)
+					else:
+						if k.wod_no or k.work_order_data:
+							data += '<td style="text-align:center;">%s</td>' % ("")
+						if k.supply_order_data:
+							data += '<td style="text-align:center;">%s</td>' % ("")
+
+					md = frappe.get_value("Item Model",k.model,"model")
+					data+= '<td style = "text-align:center;">%s</td>' %(md)
+					data+= '<td style = "text-align:center;">%s</td>' %(k.manufacturer)
+					data+= '<td style = "text-align:center;">%s</td>' %(k.serial_number or "-")
+					data+= '<td style = "text-align:center;">%s</td>'  % (f"{k.amount or 0:,.2f}")
+					data+='</tr>'
+
+
+
+	return data
 
 @frappe.whitelist()
 def get_mc(name):
@@ -5925,7 +6067,7 @@ def wo_cu_list():
 	data += '</table>'
 	frappe.sendmail(
 		recipients= ['yousuf@tsl-me.com'],
-		cc=['omar@tsl-me.com','maaz@tsl-me.com'],
+		cc=['omar@tsl-me.com'],
 		subject="Inactive Customers for Past 3 months",
 		message = msg+msg1+data)
 
@@ -7623,10 +7765,169 @@ def update_serial_no(sn,wo):
 	frappe.db.set_value("Serial No",serial,"name",sn)
 	
 	frappe.db.sql("""
-    UPDATE `tabStock Entry Detail` AS sii
-    JOIN `tabStock Entry` AS si ON sii.parent = si.name
-    SET sii.serial_no = %s
-    WHERE si.work_order_data = %s
-    """, (sn,wo))
+	UPDATE `tabStock Entry Detail` AS sii
+	JOIN `tabStock Entry` AS si ON sii.parent = si.name
+	SET sii.serial_no = %s
+	WHERE si.work_order_data = %s
+	""", (sn,wo))
 
+@frappe.whitelist()
+def set_tech(company,branch):
+	# company = filters.get("company")
+	# sales_list = []
+	sales = frappe.get_all("Employee",{"company":company,"branch":branch,"technician":1},["user_id"])
+	# for i in sales:
+	# 	sales_list.append(i.user_id)
+	# frappe.errprint(sales_list)
+	return sales
 	
+	
+from frappe.permissions import (
+	add_user_permission,
+	get_doc_permissions,
+	has_permission,
+	remove_user_permission,
+	set_user_permission_if_allowed,
+	get_role_permissions
+)
+def set_user_permission_if_allowed(doctype, name, user, with_message=False,hide_descendants = 0):
+	if get_role_permissions(frappe.get_meta(doctype), user).set_user_permissions != 1:
+		add_user_permission(doctype, name, user,hide_descendants=hide_descendants)
+
+def update_user_permissions(self):
+	if not self.create_user_permission:
+		return
+	if not has_permission("User Permission", ptype="write", raise_exception=False):
+		return
+
+	employee_user_permission_exists = frappe.db.exists(
+		"User Permission", {"allow": "Employee", "for_value": self.name, "user": self.user_id}
+	)
+
+	if employee_user_permission_exists:
+		return
+
+	add_user_permission("Employee", self.name, self.user_id,hide_descendants = 1)
+	add_user_permission("Branch", self.branch, self.user_id,hide_descendants = 1)
+	set_user_permission_if_allowed("Company", self.company, self.user_id,hide_descendants = 1)
+
+
+@frappe.whitelist()
+
+def test_email():
+# 	make(
+# 		sender = "info@tsl-me.com",
+# 		recipients="yousuf@tsl-me.com",
+# 		content= "TEST EMAIL",
+# 		subject="TEST",
+# 		send_mail=True,
+# 		cc="mohamedyousufesi46@gmail.com",
+# 
+	# )
+	sq = frappe.db.sql("""
+		UPDATE `tabSupply Order Data` 
+		SET branch = 'Dubai - TSL' 
+		WHERE company = 'TSL COMPANY - UAE'
+	""", as_dict=1)
+
+@frappe.whitelist()
+def get_item_number(item_details,company):
+	item_details = json.loads(item_details)
+	data = ''
+	if item_details:
+		data = ''
+		data += '<h5><center><b>PART DETAILS</b></center></h5>'
+		data += '<table class="table table-bordered">'
+		data += '<tr>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>ITEM NUMBER</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+		data += '</tr>'
+		for j in item_details:
+			data += '<tr>'
+			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(j["item_number"])
+			s = ""
+			sku = frappe.get_value("Item",{"item_number":j["item_number"]},["name"])
+			if sku:
+				s = sku
+			else:
+				s = "NA"
+			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(s)
+			data += '</tr>'
+
+		data += '</table>'
+		return data 
+
+
+
+import frappe
+from frappe.utils.pdf import get_pdf
+
+@frappe.whitelist()
+def download_custom_pdf(doctype, name, print_format="Standard", no_letterhead=0):
+	doc = frappe.get_doc(doctype, name)
+	html = frappe.get_print(doctype, name, print_format, doc=doc, no_letterhead=no_letterhead)
+	pdf = get_pdf(html)
+
+	# Clean filename (remove spaces, special chars)
+	customer = (doc.customer_name or "").replace(" ", "_").replace("/", "_")
+	filename = f"{name}_{customer}.pdf"
+
+	frappe.local.response.filename = filename
+	frappe.local.response.filecontent = pdf
+	frappe.local.response.type = "download"
+
+
+@frappe.whitelist()
+def create_replacement_item(customer,wod,items):
+	ev = frappe.db.exists("Evaluation Report",{"work_order_data":wod})
+	if ev:
+		# evaluation = frappe.get_doc("Evaluation Report",ev)
+		# items = json.loads(items)
+		# for i in items:
+		#     evaluation.append("replacement_unit",{
+		#         "item":i["item_code"],
+		#         "model":i["model_no"],
+		#         "manufacturer":i["mfg"],
+		#         "type":i["type"],
+		#         "serial_no":"",
+		#         "description":i["item_name"]
+			  
+
+		#     })
+		# evaluation.save(ignore_permissions = True)
+
+		wd = frappe.new_doc("Replacement Unit")
+		wd.name = wod
+
+		
+		doclist = get_mapped_doc("Work Order Data",wod, {
+		"Work Order Data": {
+			"doctype": "Work Order Data",
+			
+		},
+		
+		},wd)
+		
+		for i in doclist.get('material_list'):		
+			i.serial_no = ""
+		wd.status = "Inquiry"
+		wd.save()
+
+		# w = frappe.get_doc("Work Order Data",wod)
+		# st = frappe.new_doc("Stock Entry")
+		# st.company = w.company
+		# st.stock_entry_type = "Material Issue"
+		# for i in w.material_list:
+		#     st.append("items",{
+		#     "item_code":i.item_code,
+		#     "qty":i.quantity,
+		#     "s_warehouse":"Repair - Kuwait - TSL",
+		#     "uom":"Nos",
+		#     "stock_uom":"Nos",
+		#     "serial_no":i.serial_no,
+		#     'conversion_factor':1,
+					
+		# })
+			
+		# st.save(ignore_permissions = True)
+

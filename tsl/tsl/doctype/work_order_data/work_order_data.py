@@ -136,8 +136,8 @@ def create_evaluation_report(doc_no):
     new_doc.work_order_data = doc.name
     new_doc.attach_image = doc.attach_image
     new_doc.technician = doc.technician
-    if doc.company == "TSL COMPANY - KSA":
-        new_doc.branch = doc.branch
+   
+    new_doc.branch = doc.branch
     if doc.branch == "Dammam - TSL-SA":
         new_doc.naming_series = "EVAL-D-.YY.-"
     if doc.branch == "Jeddah - TSL-SA":
@@ -559,6 +559,8 @@ def create_dn(wod):
     if doc.company == "TSL COMPANY - UAE":
         new_doc.branch = "Dubai - TSL"
     if doc.company == "TSL COMPANY - KSA":
+        new_doc.selling_price_list = "Standard Selling - KSA"
+        new_doc.currency = "SAR"
         new_doc.branch = doc.branch
 
     # if doc.branch == "Riyadh - TSL- KSA":
@@ -697,21 +699,21 @@ class WorkOrderData(Document):
         # 		"date":now,
         # 	})
     def on_update_after_submit(self):
-        if self.material_list:
-            for i in self.material_list:
-                item = frappe.get_doc("Item",i.item_code)
-                item.set("online_price_table", [])
-                for j in self.price_table:
-                    item.append("online_price_table",{
-                    "item_code":j.item_code,
-                    "price_type":j.price_type,
-                    "price":j.price,
-                    "website":j.website,
-                    "comments":j.comments
+        # if self.material_list:
+        #     for i in self.material_list:
+        #         item = frappe.get_doc("Item",i.item_code)
+        #         item.set("online_price_table", [])
+        #         for j in self.price_table:
+        #             item.append("online_price_table",{
+        #             "item_code":j.item_code,
+        #             "price_type":j.price_type,
+        #             "price":j.price,
+        #             "website":j.website,
+        #             "comments":j.comments
                     
 
-                    })
-                item.save(ignore_permissions = 1)
+        #             })
+        #         item.save(ignore_permissions = 1)
 
         if self.mistaken_ner:
             ev = frappe.get_value("Evaluation Report",{"work_order_data":self.name},["name"])

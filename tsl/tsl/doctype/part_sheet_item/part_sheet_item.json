@@ -81,6 +81,7 @@
    "in_list_view": 1,
    "label": "Parts Availability",
    "options": "\nYes\nNo",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -235,7 +236,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-24 14:11:44.685105",
+ "modified": "2025-05-11 11:28:58.809676",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Part Sheet Item",
