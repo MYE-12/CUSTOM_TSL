@@ -337,20 +337,20 @@ override_whitelisted_methods = {
 }
 
 
-# to Skip the employees in Payroll Entry
-from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry as fed
-from tsl.custom_py import utils as nfed
-fed.fill_employee_details = nfed.fill_employee_details
+# # to Skip the employees in Payroll Entry
+# from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry as fed
+# from tsl.custom_py import utils as nfed
+# fed.fill_employee_details = nfed.fill_employee_details
 
-#to override the include_holidays in total_working days
-from hrms.payroll.doctype.payroll_period import payroll_period as pp
-from tsl.custom_py import utils as cpp
-pp.get_payroll_period_days = cpp.get_payroll_period_days
+# #to override the include_holidays in total_working days
+# from hrms.payroll.doctype.payroll_period import payroll_period as pp
+# from tsl.custom_py import utils as cpp
+# pp.get_payroll_period_days = cpp.get_payroll_period_days
 
 
-from erpnext.setup.doctype.employee.employee import Employee as emp
-from tsl.custom_py import utils
-emp.update_user_permissions = utils.update_user_permissions
+# from erpnext.setup.doctype.employee.employee import Employee as emp
+# from tsl.custom_py import utils
+# emp.update_user_permissions = utils.update_user_permissions
 
 #
 # each overriding function accepts a `data` argument;
