@@ -7788,14 +7788,14 @@ def set_tech(company,branch):
 	return sales
 	
 	
-from frappe.permissions import (
-	add_user_permission,
-	get_doc_permissions,
-	has_permission,
-	remove_user_permission,
-	set_user_permission_if_allowed,
-	get_role_permissions
-)
+# from frappe.permissions import (
+# 	add_user_permission,
+# 	get_doc_permissions,
+# 	has_permission,
+# 	remove_user_permission,
+# 	set_user_permission_if_allowed,
+# 	get_role_permissions
+# )
 def set_user_permission_if_allowed(doctype, name, user, with_message=False,hide_descendants = 0):
 	if get_role_permissions(frappe.get_meta(doctype), user).set_user_permissions != 1:
 		add_user_permission(doctype, name, user,hide_descendants=hide_descendants)
