@@ -209,6 +209,7 @@ def get_sod_items_from_quotation(sod):
 	l=[]
 	# if doc.company == "TSL Company - Kuwait":
 	for k in list(sod):
+		frappe.errprint(k)
 		# tot = frappe.db.sql('''select sum(total_amount) as total_amount  from `tabEvaluation Report` where work_order_data = %s and docstatus=1 group by work_order_data''',k,as_dict=1)
 		# if not tot:
 		# 	link = []
@@ -231,31 +232,55 @@ def get_sod_items_from_quotation(sod):
 			qi.model_no as model_no,
 			qi.stock_uom as uom,
 			qi.serial_no as serial_no,
-			q.after_discount_cost as adc  
-			from `tabQuotation` as q join `tabQuotation Item` as qi on qi.parent = q.name where q.party_name = %s and workflow_state = "Approved By Customer"
-			and qi.item_code = %s and q.docstatus = 1''',(doc.customer,i.item_code),as_dict=1)
+			q.after_discount_cost as adc,
+			q.net_total as nt   
+			from `tabQuotation` as q join `tabQuotation Item` as qi on qi.parent = q.name where q.party_name = %s and q.workflow_state = "Approved By Customer" and qi.supply_order_data = %s
+			and qi.item_code = %s and q.docstatus = 1 ''',(doc.customer,k,i.item_code),as_dict=1)
 			
 		
 			if len(price_details) and 'rate' in price_details[-0]:
 				rate = price_details[-1]['rate']
-			l.append(frappe._dict({
-				"item_code" :i.item_code,
-				"item_name" : i.item_name,
-				"description":i.item_name,
-				"sod": k,
-				"mfg":i.mfg,
-				"type": i.type,
-				"uom":"Nos",
-				"model_no": i.model_no,
-				"serial_no": i.serial_no,
-				"qty": i.quantity,
-				"sales_rep":doc.sales_rep,
-				"total_amt": price_details[0]["ma"] or price_details[0]["adc"],
-				"supply_order_data":doc.name,
-				"cost_center":doc.department,
-				"branch":branch,
-				"income_account":"4101002 - Revenue from Service - TSL"
+			if doc.company == "TSL Company - Kuwait":
+				l.append(frappe._dict({
+					"item_code" :i.item_code,
+					"item_name" : i.description,
+					"description":i.description,
+					"sod": k,
+					"mfg":i.mfg,
+					"type": i.type,
+					"uom":"Nos",
+					"model_no": i.model_no,
+					"serial_no": i.serial_no,
+					"qty": i.quantity,
+					"sales_rep":doc.sales_rep,
+					"total_amt": price_details[0]["ma"] or price_details[0]["adc"],
+					"supply_order_data":doc.name,
+					"cost_center":doc.department,
+					"branch":branch,
+					# "income_account":"4101002 - Revenue from Service - TSL"
 
-			}))
+				}))
+			else:
+				if price_details:
+					l.append(frappe._dict({
+						"item_code" :i.item_code,
+						"item_name" : i.description,
+						"description":i.description,
+						"sod": k,
+						"mfg":i.mfg,
+						"type": i.type,
+						"uom":"Nos",
+						"model_no": i.model_no,
+						"serial_no": i.serial_no,
+						"qty": i.quantity,
+						"sales_rep":doc.sales_rep,
+						"total_amt": price_details[0]["nt"],
+						"supply_order_data":doc.name,
+						"cost_center":doc.department,
+						"branch":branch,
+						# "income_account":"4101002 - Revenue from Service - TSL"
+
+					}))
+
 	return l
 		

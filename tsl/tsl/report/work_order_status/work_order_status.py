@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from datetime import datetime,timedelta
+from erpnext.setup.utils import get_exchange_rate
 
 def execute(filters=None):
 	columns=get_columns(filters)
@@ -45,7 +46,9 @@ def get_columns(filters):
 		_("Invoice Date") + ":Date:150",
 		_("Return Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
+		_("RS Date") + ":Date:150",
 		_("Quoted Amount") + ":currency:120",
+		_("Cost") + ":currency:120",
 		_("VAT%") + ":float:120",
 		_("VAT Amount%") + ":float:130",
 		_("Total Amount") + ":float:130",
@@ -87,7 +90,31 @@ def get_data(filters):
 		
 		mod = frappe.db.get_value("Item Model",it[0]["model_no"],"model")
 
+		s_total = 0
+		inv_total = 0
 		
+		ev = frappe.db.sql(""" select  `tabPart Sheet Item`.total as t from `tabEvaluation Report` 
+		left join `tabPart Sheet Item` on `tabEvaluation Report`.name = `tabPart Sheet Item`.parent
+		where  `tabEvaluation Report`.work_order_data = '%s' """ %(i.name) ,as_dict=1)
+		if ev:
+			for e in ev:
+				if e["t"]:
+					inv_total = inv_total + e["t"]
+		
+			
+		s_amt= frappe.db.sql(''' select base_total as b_am,shipping_cost as ship from `tabSupplier Quotation` 
+		where Workflow_state in ("Approved By Management") and
+		work_order_data = '%s' ''' %(i.name) ,as_dict=1)
+		if s_amt:
+			for s in s_amt:
+				# s_total = s_total + s.base_total
+				s_cur = frappe.get_value("Supplier",{"name":s.supplier},["default_currency"])
+				exr = get_exchange_rate(s_cur,"KWD")
+				if s.shipping_cost:
+					s_total = s_total + (s.shipping_cost * exr)
+
+
+
 		q_amt = frappe.db.sql(''' select `tabQuotation`.company as com,`tabQuotation`.taxes_and_charges as tax,
 		`tabQuotation`.purchase_order_no as po_no,
 		`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,
@@ -233,6 +260,16 @@ def get_data(filters):
 			email = contact[0]['email_id']
 			mobile = contact[0]['phone_number']
 
+		rs_date = ""
+		rs = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rs:
+			frappe.errprint(rs[0]["date"])
+			rs_date = rs[0]["date"]
+
 		row = [i.posting_date,
 		i.name,
 		i.old_wo_no,
@@ -265,7 +302,9 @@ def get_data(filters):
 		i.invoice_date,
 		i.returned_date,
 		ap_date,
+		rs_date,
 		q_m,
+		s_total + inv_total,
 		vat,
 		vat_amt,
 		q_m + vat_amt,

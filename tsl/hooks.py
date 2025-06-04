@@ -112,9 +112,11 @@ after_migrate = [
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
+permission_query_conditions = {
+	"Quotation": "tsl.custom_py.quotation.get_permission_query_conditions"
+
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
+}
 #
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
@@ -137,6 +139,7 @@ doc_events = {
 		"on_update": [
 			"tsl.custom_py.quotation.on_update"   
 		],
+        "onload": "tsl.custom_py.quotation.block_internal_quotation_for_sales_user",
 
 		"after_insert": [
 			"tsl.custom_py.quotation.update_cq",

@@ -11,6 +11,28 @@ frappe.ui.form.on('Quotation', {
 		frm.reload_doc();
 	},
 	
+	onload: function(frm) {
+		if( frm.doc.company === "TSL COMPANY - KSA" &&
+			!["Internal Quotation - Repair", "Internal Quotation - Supply"].includes(frm.doc.quotation_type)){
+			if (frm.doc.items && frm.doc.items.length > 0 && !frm.doc.taxes_and_charges) {
+				frappe.db.get_value('Sales Taxes and Charges Template', { title: 'KSA VAT 15%' }, 'name')
+					.then(r => {
+						if (r.message && r.message.name) {
+							frm.set_value('taxes_and_charges', r.message.name);
+							frm.refresh_field('taxes_and_charges');
+	
+							// Trigger ERPNext's built-in recalculation logic
+							frm.trigger('taxes_and_charges');
+						} else {
+							frappe.msgprint(__('KSA VAT 15% tax template not found.'));
+						}
+					});
+			}
+		}
+		
+	},
+
+	
 	onload_post_render:function(frm){
 		
 
@@ -1154,7 +1176,9 @@ frappe.ui.form.on('Quotation', {
 				"Internal Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-INT-K.YY.-","Dammam - TSL-SA":"SUP-QTN-INT-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-INT-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-INT-J.YY.-","Dubai - TSL":"SUP-QTN-INT-DU.YY.-"},
 				"Customer Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-CUS-K.YY.-","Dammam - TSL-SA":"SUP-QTN-CUS-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-CUS-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-CUS-J.YY.-","Dubai - TSL":"SUP-QTN-CUS-DU.YY.-"},
 				"Revised Quotation - Supply":{"Kuwait - TSL":"SUP-QTN-REV-K.YY.-","Dammam - TSL-SA":"SUP-QTN-REV-D.YY.-","Riyadh - TSL- KSA":"SUP-QTN-REV-R.YY.-","Jeddah - TSL-SA":"SUP-QTN-REV-J.YY.-","Dubai - TSL":"SUP-QTN-REV-DU.YY.-"},
-				"Site Visit Quotation":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL- KSA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
+				"Site Visit Quotation - Customer":{"Kuwait - TSL":"SV-QTN-K.YY.-","Dammam - TSL-SA":"SV-QTN-D.YY.-","Riyadh - TSL- KSA":"SV-QTN-R.YY.-","Jeddah - TSL-SA":"SV-QTN-J.YY.-"},
+				"Site Visit Quotation - Internal":{"Kuwait - TSL":"SV-Q-I-K.YY.-","Dammam - TSL-SA":"SV-Q-I-D.YY.-","Riyadh - TSL- KSA":"SV-Q-I-R.YY.-","Jeddah - TSL-SA":"SV-Q-I-J.YY.-"},
+				"Site Visit Quotation - Revised":{"Kuwait - TSL":"SV-Q-R-K.YY.-","Dammam - TSL-SA":"SV-Q-R-D.YY.-","Riyadh - TSL- KSA":"SV-Q-R-R.YY.-","Jeddah - TSL-SA":"SV-Q-R-J.YY.-"},
 				}
 				frm.set_value("naming_series",d[frm.doc.quotation_type][frm.doc.branch_name])
 		

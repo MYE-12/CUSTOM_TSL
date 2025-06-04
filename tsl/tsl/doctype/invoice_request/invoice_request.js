@@ -18,7 +18,7 @@ frappe.ui.form.on('Invoice Request', {
             // Custom filter logic
             return {
                 filters: {
-                    'quotation_type': ['in', ['Customer Quotation - Repair','Revised Quotation - Repair']],
+                    'quotation_type': ['in', ['Customer Quotation - Repair','Revised Quotation - Repair','Site Visit Quotation - Customer','Site Visit Quotation - Revised']],
 					'workflow_state': ['in', ['Approved By Customer']],
                     
                 }

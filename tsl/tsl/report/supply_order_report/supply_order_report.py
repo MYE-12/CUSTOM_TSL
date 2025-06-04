@@ -39,6 +39,7 @@ def get_columns(filters):
 		# # _("Old VAT") + ":Data:100",
 		# # _("Old Total Amount") + ":Data:100",
 		_("Quoted Date") + ":Date:150",
+		_("Approval Date") + ":Date:150",
 		# # _("Po No") + ":Data:150",
 		_("Payment Ref") + ":Link/Payment Entry:140",
 		_("Payment Date") + ":Date:150",
@@ -47,7 +48,7 @@ def get_columns(filters):
 		_("Invoice No") +  ":Link/Sales Invoice:140",
 		_("Invoice Date") + ":Date:150",
 		# _("Return Date") + ":Date:150",
-		# _("Approval Date") + ":Date:150",
+	
 		_("Quoted Amount") + ":currency:120",
 		_("Total Amount") + ":currency:120",
 		# # _("VAT%") + ":float:120",
@@ -95,12 +96,22 @@ def get_data(filters):
 			des = it[0]["description"]
 			qty = it[0]["quantity"]
 			s_n = it[0]["serial_no"]
-		q_amt = frappe.db.sql(''' select `tabQuotation`.taxes_and_charges as tax,`tabQuotation`.company as com,`tabQuotation`.transaction_date as date,`tabQuotation Item`.amount as amt,`tabQuotation Item`.margin_amount as m_am,`tabQuotation`.purchase_order_no as po_no,`tabQuotation Item`.supply_order_data as sod,`tabQuotation Item`.qty as qty,`tabQuotation Item`.item_code as ic,`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+		q_amt = frappe.db.sql(''' select `tabQuotation`.taxes_and_charges as tax,`tabQuotation`.company as com,
+		`tabQuotation`.transaction_date as date,`tabQuotation Item`.amount as amt,
+		`tabQuotation Item`.margin_amount as m_am,
+		`tabQuotation`.purchase_order_no as po_no,`tabQuotation Item`.supply_order_data as sod,
+		`tabQuotation Item`.qty as qty,`tabQuotation Item`.item_code as ic,`tabQuotation`.name as q_name,
+		`tabQuotation`.default_discount_percentage as dis,`tabQuotation`.approval_date as a_date,
+		`tabQuotation`.is_multiple_quotation as is_m,`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
+		`tabQuotation Item`.unit_price as up,
+		`tabQuotation`.approval_date as a_date,
+		`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
 		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 		where  `tabQuotation`.Workflow_state in ("Approved By Customer","Quoted to Customer") and `tabQuotation Item`.supply_order_data = %s ''',i.name,as_dict=1)
 		
 		
 		ap_date = ''
+		# a_date = ''
 		qu_name = ''
 		qu_date = ""
 		vat_amt = 0
@@ -108,6 +119,7 @@ def get_data(filters):
 		if q_amt:
 			if q_amt[0]["com"] == "TSL COMPANY - KSA":
 				qu_name = q_amt[0]["q_name"]
+				ap_date = q_amt[0]["a_date"]
 				qu_date = q_amt[0]["date"]
 				q_m = q_amt[0]["amt"]
 				if q_amt[0]["tax"]:
@@ -130,7 +142,7 @@ def get_data(filters):
 		# i.technician,
 		# i.quoted_price,
 		qu_date,
-		# "",
+		ap_date,
 		i.payment_entry_reference,
 		i.payment_date,
 		i.dn_no,

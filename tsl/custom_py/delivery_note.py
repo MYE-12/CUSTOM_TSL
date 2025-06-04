@@ -100,8 +100,11 @@ def on_submit(self,method):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
-
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
+                  if self.warranty and self.posting_date:
+                     date = frappe.utils.add_to_date(self.posting_date, months=int(self.warranty))
+                     frappe.db.set_value("Work Order Data",wod,"expiry_date",date)
+        
                   frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
                  
             
@@ -111,8 +114,11 @@ def on_submit(self,method):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
-
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
+                  if self.warranty and self.posting_date:
+                     date = frappe.utils.add_to_date(self.posting_date, months=int(self.warranty))
+                     frappe.db.set_value("Work Order Data",wod,"expiry_date",date)
+        
                   frappe.db.set_value("Work Order Data",wod,"status","RSI-Repaired and Shipped Invoiced")
                
                # if there is NER and dn the status will be RSC
@@ -121,8 +127,11 @@ def on_submit(self,method):
                   frappe.db.set_value("Work Order Data",wod,"dn_no",self.name)
                   frappe.db.set_value("Work Order Data",wod,"dn_date",self.posting_date)
                   frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
-
                   frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
+                  if self.warranty and self.posting_date:
+                     date = frappe.utils.add_to_date(self.posting_date, months=int(self.warranty))
+                     frappe.db.set_value("Work Order Data",wod,"expiry_date",date)
+        
                   frappe.db.set_value("Work Order Data",wod,"status","RSC-Repaired and Shipped Client")
                   
 
@@ -146,6 +155,10 @@ def on_submit(self,method):
                      frappe.db.set_value("Work Order Data",wod,"warranty",self.warranty)
 
                      frappe.db.set_value("Work Order Data",wod,"delivery",self.posting_date)
+                     if self.warranty and self.posting_date:
+                        date = frappe.utils.add_to_date(self.posting_date, months=int(self.warranty))
+                        frappe.db.set_value("Work Order Data",wod,"expiry_date",date)
+        
            
       if i.supply_order_data:
          doc = frappe.get_doc("Supply Order Data",i.supply_order_data)

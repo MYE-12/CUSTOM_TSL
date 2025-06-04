@@ -721,9 +721,9 @@ class WorkOrderData(Document):
                 frappe.db.set_value("Evaluation Report",ev,"ner_field","")
         
             
-        if self.warranty and self.delivery:
-            date = frappe.utils.add_to_date(self.delivery, months=int(self.warranty))
-            frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
+        # if self.warranty and self.delivery:
+        #     date = frappe.utils.add_to_date(self.delivery, months=int(self.warranty))
+        #     frappe.db.set_value(self.doctype,self.name,"expiry_date",date)
         
         if not self.old_wo_no:
             if self.status != self.status_duration_details[-1].status:

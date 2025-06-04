@@ -438,6 +438,7 @@
    "label": "Return Repair Time"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "technician_image",
    "fieldtype": "Attach",
    "label": "Technician Image"
@@ -554,7 +555,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-22 13:04:27.146070",
+ "modified": "2025-06-01 09:07:21.794129",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

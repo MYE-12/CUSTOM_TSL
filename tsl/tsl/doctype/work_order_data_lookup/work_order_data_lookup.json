@@ -80,7 +80,8 @@
    "fieldname": "material_list",
    "fieldtype": "Table",
    "label": "Material List",
-   "options": "Material List"
+   "options": "Material List",
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -102,13 +103,14 @@
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
-   "options": "Testing Part Sheet"
+   "options": "Testing Part Sheet",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-04-18 12:59:52.148514",
+ "modified": "2025-06-02 21:02:15.395892",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data Lookup",

@@ -2099,7 +2099,7 @@ def get_incentive(from_date,to_date,company,branch):
 
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m - (s_total + inv_total)):,}") 
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(c):,}") 
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 
 		if rs[0]["ct"] == 0:
@@ -2451,16 +2451,22 @@ def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currenc
 	data+='<tr><td>Department</td><td>%s</td></tr>' %(cost_center)
 	data+='<tr><td >Remarks</td><td>%s</td></tr>' %(remarks)
 	for i in references:
-		pat = frappe.get_value("Purchase Invoice",{"name":i.reference_name},["supplier_invoice_attach"])
-		pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
-		left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
-		where `tabPurchase Invoice`.name = '%s' """ %(i.reference_name),as_dict =1)
-		data+='<tr><td>Attached With Supporting Document</td><td><b>%s</b>/ <a href="%s"><u><b style = "color:red">Supplier Invoice Link</b></u></a></td><br>'%(i.reference_name,pat)
-		for j in pi:
-			if j["wo"]:
-				data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s</a></td></tr>' %(j["wo"],j["wo"])
-			if j["so"]:
-				data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a></td></tr>' %(j["so"],j["so"])
+		if i.reference_doctype == "Purchase Invoice" or i.reference_doctype == "Sales Invoice":
+			pat = frappe.get_value("Purchase Invoice",{"name":i.reference_name},["supplier_invoice_attach"])
+			pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
+			left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
+			where `tabPurchase Invoice`.name = '%s' """ %(i.reference_name),as_dict =1)
+			data+='<tr><td>Attached With Supporting Document</td><td><b>%s</b>/ <a href="%s"><u><b style = "color:red">Supplier Invoice Link</b></u></a></td><br>'%(i.reference_name,pat)
+			for j in pi:
+				if j["wo"]:
+					data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/work-order-data/%s">%s</a></td></tr>' %(j["wo"],j["wo"])
+				if j["so"]:
+					data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a></td></tr>' %(j["so"],j["so"])
+
+		if i.reference_doctype == "Journal Entry":
+			je_attach = frappe.get_value("Journal Entry",{"name":i.reference_name},["attach"])
+			data+='<tr><td>Attached With Supporting Document</td><td><b>%s</b>/ <a href="%s"><u><b style = "color:red">Journal Entry Attachment</b></u></a></td><br>'%(i.reference_name,je_attach)
+
 	data+= "</table>"
 	return data
 

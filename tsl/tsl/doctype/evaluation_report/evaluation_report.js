@@ -15,6 +15,7 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	frm.set_df_property("repaired_time", "reqd", 1);
 		// 	console.log("sdfnfsn")
 		// }
+		
 },
 
 
@@ -120,6 +121,12 @@ frappe.ui.form.on('Evaluation Report', {
 		}
 	},
 	refresh:function(frm){
+		// if(frappe.user.has_role("Technician")){
+		// 	frm.fields_dict.items.grid.update_docfield_property('price_ea', 'hidden', 1);
+		// 	frm.fields_dict.items.grid.update_docfield_property('total', 'hidden', 1);
+		// }
+		
+
 		// if(frm.doc.work_order_data){
 		// 	
 		//frappe.call({
@@ -389,6 +396,8 @@ frappe.ui.form.on('Part Sheet Item', {
                                 }
                         }
                }
+		frm.fields_dict.items.grid.update_docfield_property('price_ea', 'hidden', 1);
+
 	},
 
 //	before_items_remove:function(frm,cdt,cdn){

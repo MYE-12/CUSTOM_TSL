@@ -66,7 +66,7 @@ def get_data(filters):
 				po = ""
 				p_order = frappe.db.sql(""" select `tabPurchase Order`.name as po from `tabPurchase Order` 
 				left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent 
-				where `tabPurchase Order Item`.work_order_data = '%s' """ %(wods),as_dict =1)
+				where `tabPurchase Order Item`.work_order_data = '%s' and `tabPurchase Order`.status != 'Cancelled' """ %(wods),as_dict =1)
 				if p_order:
 					po = p_order[0]["po"]
 			
