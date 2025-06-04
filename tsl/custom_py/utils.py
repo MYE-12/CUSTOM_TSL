@@ -23,7 +23,7 @@ from datetime import datetime
 from erpnext.setup.utils import get_exchange_rate
 from frappe.utils.csvutils import read_csv_content
 from tsl.tsl.doctype.leave_application_form.leave_application_form import validate_balance_leaves
-from hrms.payroll.doctype.salary_slip.salary_slip import generate_password_for_pdf
+# from hrms.payroll.doctype.salary_slip.salary_slip import generate_password_for_pdf
 from frappe.utils.background_jobs import enqueue
 from frappe.core.doctype.communication.email import make
 
