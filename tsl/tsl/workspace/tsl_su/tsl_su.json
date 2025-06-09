@@ -12,8 +12,8 @@
  "is_hidden": 0,
  "label": "TSL SU",
  "links": [],
- "modified": "2025-06-04 10:44:09.407160",
- "modified_by": "mohammed.d@tsl-me.com",
+ "modified": "2025-06-08 12:46:22.674392",
+ "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL SU",
  "number_cards": [],
@@ -26,7 +26,7 @@
    "role": "Sales User"
   }
  ],
- "sequence_id": 8.0,
+ "sequence_id": 7.0,
  "shortcuts": [
   {
    "color": "Green",
@@ -41,6 +41,7 @@
    "doc_view": "List",
    "label": "Supply Order Report - KSA",
    "link_to": "Supply Order Report",
+   "report_ref_doctype": "Supply Order Data",
    "type": "Report"
   },
   {
@@ -86,6 +87,7 @@
    "doc_view": "List",
    "label": "Work Order Status",
    "link_to": "Work Order Status",
+   "report_ref_doctype": "Work Order Data",
    "type": "Report"
   },
   {
@@ -93,6 +95,7 @@
    "doc_view": "List",
    "label": "Work Order Report - KSA",
    "link_to": "Work Order Report",
+   "report_ref_doctype": "Work Order Data",
    "type": "Report"
   },
   {
@@ -100,6 +103,7 @@
    "doc_view": "List",
    "label": "Supply Order Status",
    "link_to": "Supply Order Status",
+   "report_ref_doctype": "Supply Order Data",
    "type": "Report"
   },
   {

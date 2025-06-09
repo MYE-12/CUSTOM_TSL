@@ -75,7 +75,7 @@ frappe.ui.form.on('Supply Order Data', {
 		if(frm.doc.department == "Supply - TSL"){
 		frm.add_custom_button(__("Sales Invoice"), function(){
 			frappe.call({
-				method: "tsl.tsl.doctype.supply_order_data.supply_order_data.create_sal_inv_tender",
+				method: "tsl.tsl.doctype.supply_order_data.supply_order_data.create_sal_inv",
 				args: {
 					"sod": frm.doc.name
 				},

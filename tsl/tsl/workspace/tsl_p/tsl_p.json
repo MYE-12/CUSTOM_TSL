@@ -12,8 +12,8 @@
  "is_hidden": 0,
  "label": "TSL P",
  "links": [],
- "modified": "2025-06-04 10:44:09.548309",
- "modified_by": "mohammed.d@tsl-me.com",
+ "modified": "2025-06-08 12:46:22.796656",
+ "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL P",
  "number_cards": [],
@@ -29,7 +29,7 @@
    "role": "CEO"
   }
  ],
- "sequence_id": 10.0,
+ "sequence_id": 9.0,
  "shortcuts": [
   {
    "color": "Grey",
@@ -135,6 +135,7 @@
    "doc_view": "List",
    "label": "Lab Report",
    "link_to": "Lab Report",
+   "report_ref_doctype": "Work Order Data",
    "type": "Report"
   },
   {
@@ -142,6 +143,7 @@
    "doc_view": "List",
    "label": "Stock Ledger",
    "link_to": "Stock Ledger",
+   "report_ref_doctype": "Stock Ledger Entry",
    "type": "Report"
   },
   {

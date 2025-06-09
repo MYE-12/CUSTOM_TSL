@@ -1,0 +1,314 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-06-08 16:04:51.198166",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "customer",
+  "customer_branch_name",
+  "mobile",
+  "email",
+  "address",
+  "customer_address",
+  "incharge",
+  "incharge_name",
+  "incharge_email",
+  "incharge_phone_no",
+  "is_quotation_created",
+  "sales_person",
+  "sts",
+  "column_break_3",
+  "company",
+  "branch",
+  "department",
+  "repair_warehouse",
+  "client_rfq_date",
+  "tender_closing",
+  "supplier_closing_date",
+  "received_date",
+  "sales_person_name",
+  "suggested_price",
+  "customer_reference_number",
+  "is_returned_unit",
+  "work_order_data",
+  "section_break_9",
+  "equipments_in_stock",
+  "received_equipment",
+  "part_details",
+  "previously_quoted_item_in_repair_section",
+  "previously_quoted",
+  "attach_image_section",
+  "images",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SER-####"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_branch_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Branch Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.mobile_no",
+   "fieldname": "mobile",
+   "fieldtype": "Data",
+   "label": "Mobile",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.email_id",
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "depends_on": "eval:(doc.address);",
+   "fieldname": "customer_address",
+   "fieldtype": "HTML",
+   "label": "Customer Address"
+  },
+  {
+   "fieldname": "incharge",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer Representative",
+   "options": "Contact",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "incharge.first_name",
+   "fieldname": "incharge_name",
+   "fieldtype": "Data",
+   "label": "Customer Representative Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "incharge.email_id",
+   "fieldname": "incharge_email",
+   "fieldtype": "Data",
+   "label": "Customer Representative Email",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "incharge.phone",
+   "fieldname": "incharge_phone_no",
+   "fieldtype": "Data",
+   "label": "Customer Representative Phone No",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_quotation_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Quotation Created"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Sales Person",
+   "options": "Sales Person"
+  },
+  {
+   "fieldname": "sts",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Normal\nUrgent"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Branch"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "fieldname": "repair_warehouse",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Repair Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "depends_on": "eval:doc.department == \"Supply Tender - TSL\"",
+   "fieldname": "client_rfq_date",
+   "fieldtype": "Date",
+   "label": "Tender Issue Date"
+  },
+  {
+   "depends_on": "eval:doc.department == \"Supply Tender - TSL\"",
+   "fieldname": "tender_closing",
+   "fieldtype": "Date",
+   "label": "Tender Closing"
+  },
+  {
+   "depends_on": "eval:doc.department == \"Supply Tender - TSL\"",
+   "fieldname": "supplier_closing_date",
+   "fieldtype": "Date",
+   "label": "Supplier Closing Date"
+  },
+  {
+   "default": "Today",
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date"
+  },
+  {
+   "fieldname": "sales_person_name",
+   "fieldtype": "Data",
+   "label": "Sales Person Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "suggested_price",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Suggested Price",
+   "options": "currency"
+  },
+  {
+   "fieldname": "customer_reference_number",
+   "fieldtype": "Data",
+   "label": "Customer REF.NO/RFQ"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_returned_unit",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Returned Unit"
+  },
+  {
+   "depends_on": "eval:(doc.is_returned_unit == 1);",
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Returned WOD ",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "Materials"
+  },
+  {
+   "fieldname": "equipments_in_stock",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "TSL Inventory(Spare Parts)",
+   "options": "Supply Data Item"
+  },
+  {
+   "fieldname": "received_equipment",
+   "fieldtype": "Table",
+   "label": "Equipments & Components",
+   "options": "Received Equipment"
+  },
+  {
+   "depends_on": "eval:doc.department == \"Supply Tender - TSL\"",
+   "fieldname": "part_details",
+   "fieldtype": "Button",
+   "label": "Part Details"
+  },
+  {
+   "fieldname": "previously_quoted_item_in_repair_section",
+   "fieldtype": "Section Break",
+   "label": "Previously Quoted Item in Repair",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previously_quoted",
+   "fieldtype": "Table",
+   "label": "Previously Quoted",
+   "options": "Similar Item Repair",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attach_image_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Attach Image"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Recieved Equipment Image"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Equipment Received Form",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-06-08 16:04:51.198166",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Create Supply Tender Kuwait",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

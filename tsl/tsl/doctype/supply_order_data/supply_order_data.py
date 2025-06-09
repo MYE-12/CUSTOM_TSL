@@ -25,6 +25,7 @@ def create_sal_inv(sod):
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
 	new_doc.supply_order_data = sod
+	new_doc.sales_person = doc.sales_rep
 	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
 	new_doc.cost_center = doc.department
 	
@@ -110,6 +111,7 @@ def create_sal_inv_tender(sod):
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
 	new_doc.supply_order_data = sod
+	new_doc.sales_person = doc.sales_rep
 	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
 	new_doc.cost_center = doc.department
 	
@@ -200,6 +202,10 @@ def create_dn(sod):
 	new_doc.department = doc.department
 	new_doc.cost_center = doc.department
 	new_doc.supply_order_data = doc.name
+	new_doc.custom_sales_person = doc.sales_rep
+	s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")
+	if s_user:
+		new_doc.sales_rep = s_user
 	new_doc.currency = frappe.db.get_value("Company",doc.company,"default_currency")
 	
 	
@@ -383,6 +389,7 @@ def create_quotation(sod):
 	new_doc.purchase_order_no = doc.po_number
 	new_doc.supplier_name = doc.supplier_name
 	new_doc.supply_tender_no = doc.name
+	new_doc.custom_sales_person =doc.sales_rep
 	new_doc.customer_reference_number = doc.customer_reference_number
 	# new_doc.party_name = new_doc.party_name
 	new_doc.customer_name = frappe.db.get_value("Customer",doc.customer,"customer_name")

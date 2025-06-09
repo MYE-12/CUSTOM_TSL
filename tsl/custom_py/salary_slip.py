@@ -29,13 +29,13 @@ from frappe.utils.background_jobs import enqueue
 
 import erpnext
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.loan_management.doctype.loan_repayment.loan_repayment import (
-	calculate_amounts,
-	create_repayment_entry,
-)
-from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import (
-	process_loan_interest_accrual_for_term_loans,
-)
+# from erpnext.loan_management.doctype.loan_repayment.loan_repayment import (
+# 	calculate_amounts,
+# 	create_repayment_entry,
+# )
+# from erpnext.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual import (
+# 	process_loan_interest_accrual_for_term_loans,
+# )
 from erpnext.utilities.transaction_base import TransactionBase
 
 from hrms.hr.utils import get_holiday_dates_for_employee, validate_active_employee

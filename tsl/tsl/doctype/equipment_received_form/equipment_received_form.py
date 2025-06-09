@@ -474,7 +474,1046 @@ def create_workorder_data(order_no, f):
         l.append(new_doc.name)
         
     if l:
-        frappe.delete_doc("Create Work Order", "Create Work Order")
+        frappe.delete_doc("Create Work Order - Dubai", "Create Work Order - Dubai")
+        link = []
+        for i in l:
+            link.append(
+                """ <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
+        frappe.msgprint("Work Order created: "+', '.join(link))
+        return True
+    return False
+
+@frappe.whitelist()
+def create_workorder_data_uae(order_no, f):
+    l = []
+    sn_no = ""
+    doc = frappe._dict(json.loads(order_no))
+    if not doc.branch:
+        frappe.throw("Please Specify Branch Name")
+    if not doc.customer:
+        frappe.throw("Please Mention the Customer Name")
+    if not doc.incharge:
+        frappe.throw("Please Mention the Customer Representative")
+        
+    if not doc.repair_warehouse:
+        d = {
+            "Kuwait - TSL": "Repair - Kuwait - TSL", #Equipments warehouse
+            "Dammam - TSL-SA": "Dammam - TSL-SA",#Equipments warehouse
+            "Jeddah - TSL-SA": "Jeddah - TSL-SA",#Equipments warehouse
+            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA", #Equipments warehouse
+            "Dubai - TSL": "Dubai - Repair - TSL-UAE" #Equipments warehouse
+            
+        }
+        doc.repair_warehouse = d[doc.branch]
+    if doc.address:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.address, "link_doctype": "Customer"}, "link_name"):
+            addr = frappe.get_doc("Address", doc.address)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if doc.incharge:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.incharge, "link_doctype": "Customer", "parenttype": "Contact"}, "link_name"):
+            addr = frappe.get_doc("Contact", doc.incharge)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if int(f) == 0:
+        for i in doc.get("received_equipment"):
+            if i["no_power"]:
+                f = 1
+            if i["no_output"]:
+                f = 1
+            if i["no_display"]:
+                f = 1
+            if i["no_communication"]:
+                f = 1
+            if i["supply_voltage"]:
+                f = 1
+            if i["touchkeypad_not_working"]:
+                f = 1
+            if i["no_backlight"]:
+                f = 1
+            if i["error_code"]:
+                f = 1
+            if i["short_circuit"]:
+                f = 1
+            if i["overloadovercurrent"]:
+                f = 1
+            if i["other"]:
+                f = 1
+                
+            if int(f) == 0:
+                return "Confirm"
+            
+    for i in doc.get("received_equipment"):
+        if not 'item_code' in i:
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            
+            if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+            elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_doc = frappe.new_doc("Serial No")
+                sn_doc.serial_no = i['serial_no']
+                sn_doc.item_code = i['item_code']
+                sn_doc.save(ignore_permissions=True)
+                if sn_doc.name:
+                    sn_no = sn_doc.name
+            elif item:
+                i['item_code'] = item
+                i['item_name'] = frappe.db.get_value("Item", item, "item_name")
+            else:
+                if not 'item_name' in i:
+                    i['item_name'] = ""
+                new_doc = frappe.new_doc('Item')
+                new_doc.naming_series = '.######'
+                new_doc.item_name = i['item_name']
+                new_doc.item_group = "Equipments"
+                new_doc.description = i['item_name']
+                new_doc.model = i['model']
+                new_doc.image = i["attach_image"]
+                new_doc.is_stock_item = 1
+                new_doc.mfg = i['manufacturer']
+                new_doc.type = i['type']
+                if 'has_serial_no' in i and i['has_serial_no']:
+                    new_doc.has_serial_no = 1
+                new_doc.save(ignore_permissions=True)
+                if new_doc.name:
+                    i['item_code'] = new_doc.name
+                    if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
+                        frappe.defaults.set_user_default("warehouse", None)
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no']
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+        else:
+            if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_exist = frappe.db.exists("Serial No",i['serial_no'])
+                if sn_exist:
+                    sn_doc = frappe.get_doc("Serial No",i['serial_no'])
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
+
+                else:
+                    if i["serial_no"]:
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no'] or ''
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+
+        d = {
+            "Dammam - TSL-SA": "WOD-D.YY.-",
+            "Riyadh - TSL- KSA": "WOD-R.YY.-",
+            "Jeddah - TSL-SA": "WOD-J.YY.-",
+            "Kuwait - TSL": "WOD-K.YY.-",
+            "Dubai - TSL": "WOD-DU.YY.-"
+            
+        }
+        if frappe.db.get_value("Item", i['item_code'], "has_serial_no") and not i['has_serial_no']:
+            frappe.throw(
+                "Item {0} in Row -{1} has serial number ".format(i['item_code'], i['idx']))
+
+        new_doc = frappe.new_doc("Work Order Data")
+        if doc.work_order_data:
+            link0 = []
+            warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
+            if warr['delivery'] and warr['warranty']:
+                date = frappe.utils.add_to_date(warr['delivery'], months=int(warr['warranty']))
+                
+                frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
+                frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
+                eval = frappe.db.exists("Evaluation Report",{"work_order_data":doc.work_order_data})
+
+                if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
+                    
+                    if eval:
+                        frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
+                    frappe.errprint(date)
+                    wd = frappe.get_doc("Work Order Data",doc.work_order_data)
+                    wd.status = "NER-Need Evaluation Return"
+                    if i["no_power"]:
+                        wd.no_power = 1
+                    if i["no_output"]:
+                        wd.no_output = 1
+                    if i["no_display"]:
+                        wd.no_display = 1
+                    if i["no_communication"]:
+                        wd.no_communication = 1
+                    if i["supply_voltage"]:
+                        wd.supply_voltage = 1
+                    if i["touchkeypad_not_working"]:
+                        wd.touch_keypad_not_working = 1
+                    if i["no_backlight"]:
+                        wd.no_backlight = 1
+                    if i["error_code"]:
+                        wd.error_code =1
+                    if i["short_circuit"]:
+                        wd.short_circuit=1
+                    if i["overloadovercurrent"]:
+                        wd.overload_overcurrent =1
+                    if i["other"]:
+                        wd.others = 1
+                        wd.specify = i["specify"]
+                    wd.save(ignore_permissions = 1)
+                    # frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap_date", datetime.now().date())
+              
+                if i['item_code']:
+                    se_doc = frappe.new_doc("Stock Entry")
+                    se_doc.stock_entry_type = "Material Receipt"
+                    se_doc.company = doc.company
+                    se_doc.branch = doc.branch
+                    se_doc.to_warehouse = doc.repair_warehouse
+                    se_doc.work_order_data = new_doc.name
+                    se_doc.append("items",{
+                        't_warehouse': doc.repair_warehouse,
+                        'item_code':i['item_code'],
+                        'item_name':i['item_name'],
+                        'description':i['item_name'],
+                        'serial_no':sn_no or "",
+                        'qty':i['qty'],
+                        'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                        'branch':doc.branch,
+                        'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                        'work_order_data':new_doc.name,
+                        'conversion_factor':1,
+                        'allow_zero_valuation_rate':1
+                    })
+                    se_doc.save(ignore_permissions = True)
+                    if se_doc.name:
+                        se_doc.submit()
+                        try:
+                            se_doc.submit()
+                        except Exception as e:
+                            frappe.log_error(frappe.get_traceback())
+                        pass
+                    if not doc.name == "Create Work Order":
+                        frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
+                        link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
+                    frappe.msgprint(" ".join(["Work Order Updated"]))
+                    delete_single_doctype("Create Work Order", "Create Work Order")
+                    return True
+                else:
+                    frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+            else:
+                frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
+        if i["no_power"]:
+            new_doc.no_power = 1
+        if i["no_output"]:
+            new_doc.no_output = 1
+        if i["no_display"]:
+            new_doc.no_display = 1
+        if i["no_communication"]:
+            new_doc.no_communication = 1
+        if i["supply_voltage"]:
+            new_doc.supply_voltage = 1
+        if i["touchkeypad_not_working"]:
+            new_doc.touch_keypad_not_working = 1
+        if i["no_backlight"]:
+            new_doc.no_backlight = 1
+        if i["error_code"]:
+            new_doc.error_code =1
+        if i["short_circuit"]:
+            new_doc.short_circuit=1
+        if i["overloadovercurrent"]:
+            new_doc.overload_overcurrent =1
+        if i["other"]:
+            new_doc.others = 1
+            new_doc.specify = i["specify"]
+        new_doc.wod_component = i["item_code"] if "item_code" in i else ""
+        new_doc.customer = doc.customer
+        new_doc.sec = doc.sec
+        new_doc.plant = doc.plant
+        new_doc.received_date = doc.received_date
+        new_doc.sales_rep = doc.sales_person or ''
+        new_doc.branch = doc.branch
+        if doc.company == "TSL COMPANY - KSA":
+            if doc.branch == "Jeddah - TSL-SA":
+                new_doc.department = "Jeddah-Repair - TSL - KSA"
+            if doc.branch == "Dammam - TSL-SA":
+                new_doc.department = "Dammam-Repair - TSL - KSA"
+            if doc.branch == "Riyadh - TSL- KSA":
+                new_doc.department = "Riyadh-Repair - TSL - KSA"
+        else:
+            new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
+        new_doc.repair_warehouse = doc.repair_warehouse
+        new_doc.address = doc.address
+        new_doc.incharge = doc.incharge
+        new_doc.customer_rep = doc.incharge
+        new_doc.letter_head = "TSL New"
+        new_doc.company = doc.company
+        new_doc.customer_reference_number = doc.customer_reference_number
+        new_doc.priority_status = doc.sts
+        new_doc.naming_series = d[new_doc.branch]
+        new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
+        # serial_no=""
+        # if i['has_serial_no'] and i['serial_no']:
+        # 	serial_no = i['serial_no']
+        # 	sn_doc = frappe.new_doc("Serial No")
+        # 	sn_doc.serial_no = i['serial_no']
+        # 	sn_doc.item_code = i['item_code']
+        # 	sn_doc.warehouse = ""
+        # 	sn_doc.status = "Inactive"
+        # 	sn_doc.save(ignore_permissions = True)
+        if "type" in i:
+            item_type = i['type']
+        new_doc.append("material_list",{
+            "item_code": i['item_code'],
+            "item_name":i['item_name'],
+            "type":item_type,
+            "model_no":i['model'],
+            "mfg":i['manufacturer'],
+            "serial_no":sn_no,
+            "quantity":i['qty'],
+        })
+#
+        new_doc.save(ignore_permissions = True)
+        if new_doc.name and "attach_image" in i:
+            frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
+        new_doc.submit()
+        if i['item_code']:
+            se_doc = frappe.new_doc("Stock Entry")
+            se_doc.stock_entry_type = "Material Receipt"
+            se_doc.company = doc.company
+            se_doc.branch = doc.branch
+            se_doc.to_warehouse = doc.repair_warehouse
+            se_doc.work_order_data = new_doc.name
+            se_doc.append("items",{
+                't_warehouse': doc.repair_warehouse,
+                'item_code':i['item_code'],
+                'item_name':i['item_name'],
+                'description':i['item_name'],
+                'serial_no':sn_no or "",
+                'qty':i['qty'],
+                'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                'branch':doc.branch,
+                'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                'work_order_data':new_doc.name,
+                'conversion_factor':1,
+                'allow_zero_valuation_rate':1
+            })
+            se_doc.save(ignore_permissions = True)
+            if se_doc.name:
+                se_doc.submit()
+                try:
+                    se_doc.submit()
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback())
+                pass
+            
+        l.append(new_doc.name)
+        
+    if l:
+        frappe.delete_doc("Create Work Order UAE", "Create Work Order UAE")
+        link = []
+        for i in l:
+            link.append(
+                """ <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
+        frappe.msgprint("Work Order created: "+', '.join(link))
+        return True
+    return False
+
+@frappe.whitelist()
+def create_workorder_data_kuwait(order_no, f):
+    l = []
+    sn_no = ""
+    doc = frappe._dict(json.loads(order_no))
+    if not doc.branch:
+        frappe.throw("Please Specify Branch Name")
+    if not doc.customer:
+        frappe.throw("Please Mention the Customer Name")
+    if not doc.incharge:
+        frappe.throw("Please Mention the Customer Representative")
+        
+    if not doc.repair_warehouse:
+        d = {
+            "Kuwait - TSL": "Repair - Kuwait - TSL", #Equipments warehouse
+            "Dammam - TSL-SA": "Dammam - TSL-SA",#Equipments warehouse
+            "Jeddah - TSL-SA": "Jeddah - TSL-SA",#Equipments warehouse
+            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA", #Equipments warehouse
+            "Dubai - TSL": "Dubai - Repair - TSL-UAE" #Equipments warehouse
+            
+        }
+        doc.repair_warehouse = d[doc.branch]
+    if doc.address:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.address, "link_doctype": "Customer"}, "link_name"):
+            addr = frappe.get_doc("Address", doc.address)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if doc.incharge:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.incharge, "link_doctype": "Customer", "parenttype": "Contact"}, "link_name"):
+            addr = frappe.get_doc("Contact", doc.incharge)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if int(f) == 0:
+        for i in doc.get("received_equipment"):
+            if i["no_power"]:
+                f = 1
+            if i["no_output"]:
+                f = 1
+            if i["no_display"]:
+                f = 1
+            if i["no_communication"]:
+                f = 1
+            if i["supply_voltage"]:
+                f = 1
+            if i["touchkeypad_not_working"]:
+                f = 1
+            if i["no_backlight"]:
+                f = 1
+            if i["error_code"]:
+                f = 1
+            if i["short_circuit"]:
+                f = 1
+            if i["overloadovercurrent"]:
+                f = 1
+            if i["other"]:
+                f = 1
+                
+            if int(f) == 0:
+                return "Confirm"
+            
+    for i in doc.get("received_equipment"):
+        if not 'item_code' in i:
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            
+            if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+            elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_doc = frappe.new_doc("Serial No")
+                sn_doc.serial_no = i['serial_no']
+                sn_doc.item_code = i['item_code']
+                sn_doc.save(ignore_permissions=True)
+                if sn_doc.name:
+                    sn_no = sn_doc.name
+            elif item:
+                i['item_code'] = item
+                i['item_name'] = frappe.db.get_value("Item", item, "item_name")
+            else:
+                if not 'item_name' in i:
+                    i['item_name'] = ""
+                new_doc = frappe.new_doc('Item')
+                new_doc.naming_series = '.######'
+                new_doc.item_name = i['item_name']
+                new_doc.item_group = "Equipments"
+                new_doc.description = i['item_name']
+                new_doc.model = i['model']
+                new_doc.image = i["attach_image"]
+                new_doc.is_stock_item = 1
+                new_doc.mfg = i['manufacturer']
+                new_doc.type = i['type']
+                if 'has_serial_no' in i and i['has_serial_no']:
+                    new_doc.has_serial_no = 1
+                new_doc.save(ignore_permissions=True)
+                if new_doc.name:
+                    i['item_code'] = new_doc.name
+                    if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
+                        frappe.defaults.set_user_default("warehouse", None)
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no']
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+        else:
+            if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_exist = frappe.db.exists("Serial No",i['serial_no'])
+                if sn_exist:
+                    sn_doc = frappe.get_doc("Serial No",i['serial_no'])
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
+
+                else:
+                    if i["serial_no"]:
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no'] or ''
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+
+        d = {
+            "Dammam - TSL-SA": "WOD-D.YY.-",
+            "Riyadh - TSL- KSA": "WOD-R.YY.-",
+            "Jeddah - TSL-SA": "WOD-J.YY.-",
+            "Kuwait - TSL": "WOD-K.YY.-",
+            "Dubai - TSL": "WOD-DU.YY.-"
+            
+        }
+        if frappe.db.get_value("Item", i['item_code'], "has_serial_no") and not i['has_serial_no']:
+            frappe.throw(
+                "Item {0} in Row -{1} has serial number ".format(i['item_code'], i['idx']))
+
+        new_doc = frappe.new_doc("Work Order Data")
+        if doc.work_order_data:
+            link0 = []
+            warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
+            if warr['delivery'] and warr['warranty']:
+                date = frappe.utils.add_to_date(warr['delivery'], months=int(warr['warranty']))
+                
+                frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
+                frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
+                eval = frappe.db.exists("Evaluation Report",{"work_order_data":doc.work_order_data})
+
+                if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
+                    
+                    if eval:
+                        frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
+                    frappe.errprint(date)
+                    wd = frappe.get_doc("Work Order Data",doc.work_order_data)
+                    wd.status = "NER-Need Evaluation Return"
+                    if i["no_power"]:
+                        wd.no_power = 1
+                    if i["no_output"]:
+                        wd.no_output = 1
+                    if i["no_display"]:
+                        wd.no_display = 1
+                    if i["no_communication"]:
+                        wd.no_communication = 1
+                    if i["supply_voltage"]:
+                        wd.supply_voltage = 1
+                    if i["touchkeypad_not_working"]:
+                        wd.touch_keypad_not_working = 1
+                    if i["no_backlight"]:
+                        wd.no_backlight = 1
+                    if i["error_code"]:
+                        wd.error_code =1
+                    if i["short_circuit"]:
+                        wd.short_circuit=1
+                    if i["overloadovercurrent"]:
+                        wd.overload_overcurrent =1
+                    if i["other"]:
+                        wd.others = 1
+                        wd.specify = i["specify"]
+                    wd.save(ignore_permissions = 1)
+                    # frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap_date", datetime.now().date())
+              
+                if i['item_code']:
+                    se_doc = frappe.new_doc("Stock Entry")
+                    se_doc.stock_entry_type = "Material Receipt"
+                    se_doc.company = doc.company
+                    se_doc.branch = doc.branch
+                    se_doc.to_warehouse = doc.repair_warehouse
+                    se_doc.work_order_data = new_doc.name
+                    se_doc.append("items",{
+                        't_warehouse': doc.repair_warehouse,
+                        'item_code':i['item_code'],
+                        'item_name':i['item_name'],
+                        'description':i['item_name'],
+                        'serial_no':sn_no or "",
+                        'qty':i['qty'],
+                        'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                        'branch':doc.branch,
+                        'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                        'work_order_data':new_doc.name,
+                        'conversion_factor':1,
+                        'allow_zero_valuation_rate':1
+                    })
+                    se_doc.save(ignore_permissions = True)
+                    if se_doc.name:
+                        se_doc.submit()
+                        try:
+                            se_doc.submit()
+                        except Exception as e:
+                            frappe.log_error(frappe.get_traceback())
+                        pass
+                    if not doc.name == "Create Work Order":
+                        frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
+                        link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
+                    frappe.msgprint(" ".join(["Work Order Updated"]))
+                    delete_single_doctype("Create Work Order", "Create Work Order")
+                    return True
+                else:
+                    frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+            else:
+                frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
+        if i["no_power"]:
+            new_doc.no_power = 1
+        if i["no_output"]:
+            new_doc.no_output = 1
+        if i["no_display"]:
+            new_doc.no_display = 1
+        if i["no_communication"]:
+            new_doc.no_communication = 1
+        if i["supply_voltage"]:
+            new_doc.supply_voltage = 1
+        if i["touchkeypad_not_working"]:
+            new_doc.touch_keypad_not_working = 1
+        if i["no_backlight"]:
+            new_doc.no_backlight = 1
+        if i["error_code"]:
+            new_doc.error_code =1
+        if i["short_circuit"]:
+            new_doc.short_circuit=1
+        if i["overloadovercurrent"]:
+            new_doc.overload_overcurrent =1
+        if i["other"]:
+            new_doc.others = 1
+            new_doc.specify = i["specify"]
+        new_doc.wod_component = i["item_code"] if "item_code" in i else ""
+        new_doc.customer = doc.customer
+        new_doc.sec = doc.sec
+        new_doc.plant = doc.plant
+        new_doc.received_date = doc.received_date
+        new_doc.sales_rep = doc.sales_person or ''
+        new_doc.branch = doc.branch
+        if doc.company == "TSL COMPANY - KSA":
+            if doc.branch == "Jeddah - TSL-SA":
+                new_doc.department = "Jeddah-Repair - TSL - KSA"
+            if doc.branch == "Dammam - TSL-SA":
+                new_doc.department = "Dammam-Repair - TSL - KSA"
+            if doc.branch == "Riyadh - TSL- KSA":
+                new_doc.department = "Riyadh-Repair - TSL - KSA"
+        else:
+            new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
+        new_doc.repair_warehouse = doc.repair_warehouse
+        new_doc.address = doc.address
+        new_doc.incharge = doc.incharge
+        new_doc.customer_rep = doc.incharge
+        new_doc.letter_head = "TSL New"
+        new_doc.company = doc.company
+        new_doc.customer_reference_number = doc.customer_reference_number
+        new_doc.priority_status = doc.sts
+        new_doc.naming_series = d[new_doc.branch]
+        new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
+        # serial_no=""
+        # if i['has_serial_no'] and i['serial_no']:
+        # 	serial_no = i['serial_no']
+        # 	sn_doc = frappe.new_doc("Serial No")
+        # 	sn_doc.serial_no = i['serial_no']
+        # 	sn_doc.item_code = i['item_code']
+        # 	sn_doc.warehouse = ""
+        # 	sn_doc.status = "Inactive"
+        # 	sn_doc.save(ignore_permissions = True)
+        if "type" in i:
+            item_type = i['type']
+        new_doc.append("material_list",{
+            "item_code": i['item_code'],
+            "item_name":i['item_name'],
+            "type":item_type,
+            "model_no":i['model'],
+            "mfg":i['manufacturer'],
+            "serial_no":sn_no,
+            "quantity":i['qty'],
+        })
+#
+        new_doc.save(ignore_permissions = True)
+        if new_doc.name and "attach_image" in i:
+            frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
+        new_doc.submit()
+        if i['item_code']:
+            se_doc = frappe.new_doc("Stock Entry")
+            se_doc.stock_entry_type = "Material Receipt"
+            se_doc.company = doc.company
+            se_doc.branch = doc.branch
+            se_doc.to_warehouse = doc.repair_warehouse
+            se_doc.work_order_data = new_doc.name
+            se_doc.append("items",{
+                't_warehouse': doc.repair_warehouse,
+                'item_code':i['item_code'],
+                'item_name':i['item_name'],
+                'description':i['item_name'],
+                'serial_no':sn_no or "",
+                'qty':i['qty'],
+                'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                'branch':doc.branch,
+                'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                'work_order_data':new_doc.name,
+                'conversion_factor':1,
+                'allow_zero_valuation_rate':1
+            })
+            se_doc.save(ignore_permissions = True)
+            if se_doc.name:
+                se_doc.submit()
+                try:
+                    se_doc.submit()
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback())
+                pass
+            
+        l.append(new_doc.name)
+        
+    if l:
+        frappe.delete_doc("Create Work Order Kuwait", "Create Work Order Kuwait")
+        link = []
+        for i in l:
+            link.append(
+                """ <a href='/app/work-order-data/{0}'>{0}</a> """.format(i))
+        frappe.msgprint("Work Order created: "+', '.join(link))
+        return True
+    return False
+
+@frappe.whitelist()
+def create_workorder_data_ksa(order_no, f):
+    l = []
+    sn_no = ""
+    doc = frappe._dict(json.loads(order_no))
+    if not doc.branch:
+        frappe.throw("Please Specify Branch Name")
+    if not doc.customer:
+        frappe.throw("Please Mention the Customer Name")
+    if not doc.incharge:
+        frappe.throw("Please Mention the Customer Representative")
+        
+    if not doc.repair_warehouse:
+        d = {
+            "Kuwait - TSL": "Repair - Kuwait - TSL", #Equipments warehouse
+            "Dammam - TSL-SA": "Dammam - TSL-SA",#Equipments warehouse
+            "Jeddah - TSL-SA": "Jeddah - TSL-SA",#Equipments warehouse
+            "Riyadh - Repair - TSL - KSA": "Riyadh - Repair - TSL - KSA", #Equipments warehouse
+            "Dubai - TSL": "Dubai - Repair - TSL-UAE" #Equipments warehouse
+            
+        }
+        doc.repair_warehouse = d[doc.branch]
+    if doc.address:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.address, "link_doctype": "Customer"}, "link_name"):
+            addr = frappe.get_doc("Address", doc.address)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if doc.incharge:
+        if not frappe.db.get_value("Dynamic Link", {"parent": doc.incharge, "link_doctype": "Customer", "parenttype": "Contact"}, "link_name"):
+            addr = frappe.get_doc("Contact", doc.incharge)
+            addr.append("links", {
+                "link_doctype": "Customer",
+                "link_name": doc.customer
+            })
+            addr.save(ignore_permissions=True)
+    if int(f) == 0:
+        for i in doc.get("received_equipment"):
+            if i["no_power"]:
+                f = 1
+            if i["no_output"]:
+                f = 1
+            if i["no_display"]:
+                f = 1
+            if i["no_communication"]:
+                f = 1
+            if i["supply_voltage"]:
+                f = 1
+            if i["touchkeypad_not_working"]:
+                f = 1
+            if i["no_backlight"]:
+                f = 1
+            if i["error_code"]:
+                f = 1
+            if i["short_circuit"]:
+                f = 1
+            if i["overloadovercurrent"]:
+                f = 1
+            if i["other"]:
+                f = 1
+                
+            if int(f) == 0:
+                return "Confirm"
+            
+    for i in doc.get("received_equipment"):
+        if not 'item_code' in i:
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            
+            if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+            elif item and 'serial_no' in i and i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
+                i['item_code'] = item
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_doc = frappe.new_doc("Serial No")
+                sn_doc.serial_no = i['serial_no']
+                sn_doc.item_code = i['item_code']
+                sn_doc.save(ignore_permissions=True)
+                if sn_doc.name:
+                    sn_no = sn_doc.name
+            elif item:
+                i['item_code'] = item
+                i['item_name'] = frappe.db.get_value("Item", item, "item_name")
+            else:
+                if not 'item_name' in i:
+                    i['item_name'] = ""
+                new_doc = frappe.new_doc('Item')
+                new_doc.naming_series = '.######'
+                new_doc.item_name = i['item_name']
+                new_doc.item_group = "Equipments"
+                new_doc.description = i['item_name']
+                new_doc.model = i['model']
+                new_doc.image = i["attach_image"]
+                new_doc.is_stock_item = 1
+                new_doc.mfg = i['manufacturer']
+                new_doc.type = i['type']
+                if 'has_serial_no' in i and i['has_serial_no']:
+                    new_doc.has_serial_no = 1
+                new_doc.save(ignore_permissions=True)
+                if new_doc.name:
+                    i['item_code'] = new_doc.name
+                    if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
+                        frappe.defaults.set_user_default("warehouse", None)
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no']
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+        else:
+            if i['item_code'] and 'serial_no' in i and i['serial_no'] not in [i for i in frappe.db.get_list("Serial No", {"item_code": i['item_code']}, as_list=1)]:
+                frappe.defaults.set_user_default("warehouse", None)
+                sn_exist = frappe.db.exists("Serial No",i['serial_no'])
+                if sn_exist:
+                    sn_doc = frappe.get_doc("Serial No",i['serial_no'])
+                    sn_doc.serial_no = i['serial_no'] or ''
+                    sn_doc.item_code = i['item_code']
+                    sn_doc.save(ignore_permissions=True)
+                    if sn_doc.name:
+                        sn_no = sn_doc.name
+
+                else:
+                    if i["serial_no"]:
+                        sn_doc = frappe.new_doc("Serial No")
+                        sn_doc.serial_no = i['serial_no'] or ''
+                        sn_doc.item_code = i['item_code']
+                        sn_doc.save(ignore_permissions=True)
+                        if sn_doc.name:
+                            sn_no = sn_doc.name
+
+        d = {
+            "Dammam - TSL-SA": "WOD-D.YY.-",
+            "Riyadh - TSL- KSA": "WOD-R.YY.-",
+            "Jeddah - TSL-SA": "WOD-J.YY.-",
+            "Kuwait - TSL": "WOD-K.YY.-",
+            "Dubai - TSL": "WOD-DU.YY.-"
+            
+        }
+        if frappe.db.get_value("Item", i['item_code'], "has_serial_no") and not i['has_serial_no']:
+            frappe.throw(
+                "Item {0} in Row -{1} has serial number ".format(i['item_code'], i['idx']))
+
+        new_doc = frappe.new_doc("Work Order Data")
+        if doc.work_order_data:
+            link0 = []
+            warr = frappe.db.get_value("Work Order Data", doc.work_order_data, ["delivery", "warranty"], as_dict=1)
+            if warr['delivery'] and warr['warranty']:
+                date = frappe.utils.add_to_date(warr['delivery'], months=int(warr['warranty']))
+                
+                frappe.db.set_value("Work Order Data",doc.work_order_data, "expiry_date", date)
+                frappe.db.set_value("Work Order Data", doc.work_order_data, "returned_date", doc.received_date)
+                eval = frappe.db.exists("Evaluation Report",{"work_order_data":doc.work_order_data})
+
+                if (datetime.strptime(doc.received_date, '%Y-%m-%d').date()) <= date:
+                    
+                    if eval:
+                        frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
+                    frappe.errprint(date)
+                    wd = frappe.get_doc("Work Order Data",doc.work_order_data)
+                    wd.status = "NER-Need Evaluation Return"
+                    if i["no_power"]:
+                        wd.no_power = 1
+                    if i["no_output"]:
+                        wd.no_output = 1
+                    if i["no_display"]:
+                        wd.no_display = 1
+                    if i["no_communication"]:
+                        wd.no_communication = 1
+                    if i["supply_voltage"]:
+                        wd.supply_voltage = 1
+                    if i["touchkeypad_not_working"]:
+                        wd.touch_keypad_not_working = 1
+                    if i["no_backlight"]:
+                        wd.no_backlight = 1
+                    if i["error_code"]:
+                        wd.error_code =1
+                    if i["short_circuit"]:
+                        wd.short_circuit=1
+                    if i["overloadovercurrent"]:
+                        wd.overload_overcurrent =1
+                    if i["other"]:
+                        wd.others = 1
+                        wd.specify = i["specify"]
+                    wd.save(ignore_permissions = 1)
+                    # frappe.db.set_value("Work Order Data", doc.work_order_data, "status", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap", "NER-Need Evaluation Return")
+                    frappe.db.set_value("Work Order Data", doc.work_order_data, "status_cap_date", datetime.now().date())
+              
+                if i['item_code']:
+                    se_doc = frappe.new_doc("Stock Entry")
+                    se_doc.stock_entry_type = "Material Receipt"
+                    se_doc.company = doc.company
+                    se_doc.branch = doc.branch
+                    se_doc.to_warehouse = doc.repair_warehouse
+                    se_doc.work_order_data = new_doc.name
+                    se_doc.append("items",{
+                        't_warehouse': doc.repair_warehouse,
+                        'item_code':i['item_code'],
+                        'item_name':i['item_name'],
+                        'description':i['item_name'],
+                        'serial_no':sn_no or "",
+                        'qty':i['qty'],
+                        'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                        'branch':doc.branch,
+                        'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                        'work_order_data':new_doc.name,
+                        'conversion_factor':1,
+                        'allow_zero_valuation_rate':1
+                    })
+                    se_doc.save(ignore_permissions = True)
+                    if se_doc.name:
+                        se_doc.submit()
+                        try:
+                            se_doc.submit()
+                        except Exception as e:
+                            frappe.log_error(frappe.get_traceback())
+                        pass
+                    if not doc.name == "Create Work Order":
+                        frappe.db.set_value("Work Order Data",doc.work_order_data,"equipment_recieved_form",doc.name)
+                        link0.append(""" <a href='/app/work-order-data/{0}'>{0}</a> """.format(doc.work_order_data))
+                    frappe.msgprint(" ".join(["Work Order Updated"]))
+                    delete_single_doctype("Create Work Order", "Create Work Order")
+                    return True
+                else:
+                    frappe.throw("Warranty Expired for the Work Order Data - "+str(doc.work_order_data))
+            else:
+                frappe.throw("No Warranty Period or Delivery Date is Mentioned In work order")
+        if i["no_power"]:
+            new_doc.no_power = 1
+        if i["no_output"]:
+            new_doc.no_output = 1
+        if i["no_display"]:
+            new_doc.no_display = 1
+        if i["no_communication"]:
+            new_doc.no_communication = 1
+        if i["supply_voltage"]:
+            new_doc.supply_voltage = 1
+        if i["touchkeypad_not_working"]:
+            new_doc.touch_keypad_not_working = 1
+        if i["no_backlight"]:
+            new_doc.no_backlight = 1
+        if i["error_code"]:
+            new_doc.error_code =1
+        if i["short_circuit"]:
+            new_doc.short_circuit=1
+        if i["overloadovercurrent"]:
+            new_doc.overload_overcurrent =1
+        if i["other"]:
+            new_doc.others = 1
+            new_doc.specify = i["specify"]
+        new_doc.wod_component = i["item_code"] if "item_code" in i else ""
+        new_doc.customer = doc.customer
+        new_doc.sec = doc.sec
+        new_doc.plant = doc.plant
+        new_doc.received_date = doc.received_date
+        new_doc.sales_rep = doc.sales_person or ''
+        new_doc.branch = doc.branch
+        if doc.company == "TSL COMPANY - KSA":
+            if doc.branch == "Jeddah - TSL-SA":
+                new_doc.department = "Jeddah-Repair - TSL - KSA"
+            if doc.branch == "Dammam - TSL-SA":
+                new_doc.department = "Dammam-Repair - TSL - KSA"
+            if doc.branch == "Riyadh - TSL- KSA":
+                new_doc.department = "Riyadh-Repair - TSL - KSA"
+        else:
+            new_doc.department = frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1})
+        new_doc.repair_warehouse = doc.repair_warehouse
+        new_doc.address = doc.address
+        new_doc.incharge = doc.incharge
+        new_doc.customer_rep = doc.incharge
+        new_doc.letter_head = "TSL New"
+        new_doc.company = doc.company
+        new_doc.customer_reference_number = doc.customer_reference_number
+        new_doc.priority_status = doc.sts
+        new_doc.naming_series = d[new_doc.branch]
+        new_doc.attach_image = (i['attach_image']).replace(" ","%20") if 'attach_image' in i and i['attach_image'] else ""
+        # serial_no=""
+        # if i['has_serial_no'] and i['serial_no']:
+        # 	serial_no = i['serial_no']
+        # 	sn_doc = frappe.new_doc("Serial No")
+        # 	sn_doc.serial_no = i['serial_no']
+        # 	sn_doc.item_code = i['item_code']
+        # 	sn_doc.warehouse = ""
+        # 	sn_doc.status = "Inactive"
+        # 	sn_doc.save(ignore_permissions = True)
+        if "type" in i:
+            item_type = i['type']
+        new_doc.append("material_list",{
+            "item_code": i['item_code'],
+            "item_name":i['item_name'],
+            "type":item_type,
+            "model_no":i['model'],
+            "mfg":i['manufacturer'],
+            "serial_no":sn_no,
+            "quantity":i['qty'],
+        })
+#
+        new_doc.save(ignore_permissions = True)
+        if new_doc.name and "attach_image" in i:
+            frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
+        new_doc.submit()
+        if i['item_code']:
+            se_doc = frappe.new_doc("Stock Entry")
+            se_doc.stock_entry_type = "Material Receipt"
+            se_doc.company = doc.company
+            se_doc.branch = doc.branch
+            se_doc.to_warehouse = doc.repair_warehouse
+            se_doc.work_order_data = new_doc.name
+            se_doc.append("items",{
+                't_warehouse': doc.repair_warehouse,
+                'item_code':i['item_code'],
+                'item_name':i['item_name'],
+                'description':i['item_name'],
+                'serial_no':sn_no or "",
+                'qty':i['qty'],
+                'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",
+                'branch':doc.branch,
+                'cost_center':frappe.db.get_value("Cost Center",{"company":doc.company,"is_repair":1}) or "",
+                'work_order_data':new_doc.name,
+                'conversion_factor':1,
+                'allow_zero_valuation_rate':1
+            })
+            se_doc.save(ignore_permissions = True)
+            if se_doc.name:
+                se_doc.submit()
+                try:
+                    se_doc.submit()
+                except Exception as e:
+                    frappe.log_error(frappe.get_traceback())
+                pass
+            
+        l.append(new_doc.name)
+        
+    if l:
+        if doc.branch == "Jeddah - TSL-SA":
+            frappe.delete_doc("Create Work Order Jeddah", "Create Work Order Jeddah")
+        if doc.branch == " Riyadh - TSL- KSA":
+            frappe.delete_doc("Create Work Order Riyadh", "Create Work Order Riyadh")
+        if doc.branch == "Dammam - TSL-SA":
+            frappe.delete_doc("Create Work Order Dammam", "Create Work Order Dammam")
+           
+        
         link = []
         for i in l:
             link.append(

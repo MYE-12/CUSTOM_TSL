@@ -234,7 +234,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved\nThird Party\nIP-Internal Extra Parts"
+   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved\nTP-Third Party\nIP-Internal Extra Parts"
   },
   {
    "default": "Repair - TSL",
@@ -646,7 +646,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-05-26 08:33:59.126891",
+ "modified": "2025-06-09 19:46:07.015755",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",
@@ -666,6 +666,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "sales_rep,customer",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,

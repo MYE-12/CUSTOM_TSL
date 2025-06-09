@@ -1074,6 +1074,7 @@ def create_sal_inv(source):
 	target_doc.po_no = doc.purchase_order_no 
 	target_doc.project_data = doc.project
 	target_doc.cost_center = doc.department
+	target_doc.sales_person = doc.custom_sales_person
 	doclist = get_mapped_doc("Quotation",source , {
 		"Quotation": {
 			"doctype": "Sales Invoice",

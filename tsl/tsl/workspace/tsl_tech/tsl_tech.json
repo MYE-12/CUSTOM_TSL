@@ -12,8 +12,8 @@
  "is_hidden": 0,
  "label": "TSL TECH",
  "links": [],
- "modified": "2025-06-04 10:44:09.483806",
- "modified_by": "mohammed.d@tsl-me.com",
+ "modified": "2025-06-08 12:46:22.739879",
+ "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL TECH",
  "number_cards": [],
@@ -29,7 +29,7 @@
    "role": "CEO"
   }
  ],
- "sequence_id": 9.0,
+ "sequence_id": 8.0,
  "shortcuts": [
   {
    "color": "Grey",
@@ -92,6 +92,7 @@
    "doc_view": "List",
    "label": "Stock Ledger Report",
    "link_to": "Stock Ledger Report",
+   "report_ref_doctype": "Item",
    "type": "Report"
   },
   {

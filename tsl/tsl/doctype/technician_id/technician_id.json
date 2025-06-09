@@ -26,9 +26,10 @@
    "options": "User"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-13 10:29:44.247728",
+ "modified": "2025-06-08 13:06:00.811802",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Technician ID",
@@ -48,6 +49,8 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
+ "search_fields": "technician",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

@@ -28,6 +28,7 @@
    "link_to": "Work Order Status",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "Work Order Data",
    "type": "Link"
   },
   {
@@ -38,6 +39,7 @@
    "link_to": "Supply Order Status",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "Supply Order Data",
    "type": "Link"
   },
   {
@@ -48,6 +50,7 @@
    "link_to": "Price Comparison Sheet",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "Supplier Quotation",
    "type": "Link"
   },
   {
@@ -293,8 +296,8 @@
    "type": "Link"
   }
  ],
- "modified": "2025-06-04 10:44:08.882121",
- "modified_by": "mohammed.d@tsl-me.com",
+ "modified": "2025-06-08 12:46:22.359084",
+ "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW",
  "number_cards": [],
@@ -307,7 +310,7 @@
    "role": "Administrator"
   }
  ],
- "sequence_id": 2.0,
+ "sequence_id": 3.0,
  "shortcuts": [
   {
    "color": "Grey",

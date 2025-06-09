@@ -7887,20 +7887,20 @@ def download_custom_pdf(doctype, name, print_format="Standard", no_letterhead=0)
 def create_replacement_item(customer,wod,items):
 	ev = frappe.db.exists("Evaluation Report",{"work_order_data":wod})
 	if ev:
-		# evaluation = frappe.get_doc("Evaluation Report",ev)
-		# items = json.loads(items)
-		# for i in items:
-		#     evaluation.append("replacement_unit",{
-		#         "item":i["item_code"],
-		#         "model":i["model_no"],
-		#         "manufacturer":i["mfg"],
-		#         "type":i["type"],
-		#         "serial_no":"",
-		#         "description":i["item_name"]
+		evaluation = frappe.get_doc("Evaluation Report",ev)
+		items = json.loads(items)
+		for i in items:
+			evaluation.append("replacement_unit",{
+				"item":i["item_code"],
+				"model":i["model_no"],
+				"manufacturer":i["mfg"],
+				"type":i["type"],
+				"serial_no":"",
+				"description":i["item_name"]
 			  
 
-		#     })
-		# evaluation.save(ignore_permissions = True)
+			})
+		evaluation.save(ignore_permissions = True)
 
 		wd = frappe.new_doc("Replacement Unit")
 		wd.name = wod
@@ -7908,32 +7908,51 @@ def create_replacement_item(customer,wod,items):
 		
 		doclist = get_mapped_doc("Work Order Data",wod, {
 		"Work Order Data": {
-			"doctype": "Work Order Data",
-			
+			"doctype": "Work Order Data",	
 		},
-		
 		},wd)
 		
 		for i in doclist.get('material_list'):		
 			i.serial_no = ""
 		wd.status = "Inquiry"
+		wd.status_duration_details = ""
 		wd.save()
 
-		# w = frappe.get_doc("Work Order Data",wod)
-		# st = frappe.new_doc("Stock Entry")
-		# st.company = w.company
-		# st.stock_entry_type = "Material Issue"
-		# for i in w.material_list:
-		#     st.append("items",{
-		#     "item_code":i.item_code,
-		#     "qty":i.quantity,
-		#     "s_warehouse":"Repair - Kuwait - TSL",
-		#     "uom":"Nos",
-		#     "stock_uom":"Nos",
-		#     "serial_no":i.serial_no,
-		#     'conversion_factor':1,
+		w = frappe.get_doc("Work Order Data",wod)
+		st = frappe.new_doc("Stock Entry")
+		st.company = w.company
+		st.stock_entry_type = "Material Issue"
+		for i in w.material_list:
+			st.append("items",{
+			"item_code":i.item_code,
+			"qty":i.quantity,
+			"s_warehouse":"Repair - Kuwait - TSL",
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"serial_no":i.serial_no,
+			'conversion_factor':1,
 					
-		# })
-			
-		# st.save(ignore_permissions = True)
+		})
+		st.save(ignore_permissions = True)
+
+
+# @frappe.whitelist()
+# def get_sales_person():
+# 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
+# 	for i in s:
+# 		print(i[0])
+
+# @frappe.whitelist()
+# def set_sales_person():
+# 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
+# 	for i in s:
+		
+# 		user = frappe.get_value("Sales Person",{"custom_user":i[0]},["name"])
+# 		if user:
+# 			print(user)
+# 			k = frappe.db.sql(""" UPDATE `tabSales Invoice`
+# 			SET sales_person = '%s'
+# 			WHERE sales_rep = '%s' """ %(user,i[0]))
+
+
 

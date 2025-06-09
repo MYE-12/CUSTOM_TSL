@@ -71,7 +71,7 @@ class WOApproval(Document):
                     month_number = datetime.strptime(month_name, "%B").month
                     # current_date = datetime.now()
                     year = 2024
-                    if month_number == 1 or month_number == 2 or month_number == 3 or month_number == 4 or month_number == 5:
+                    if month_number == 1 or month_number == 2 or month_number == 3 or month_number == 4 or month_number == 5 or month_number == 6:
                         year = 2025
                    
                     # First date of the month

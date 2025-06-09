@@ -408,7 +408,7 @@ def list_leave_dates(employee, from_date, to_date,leave_type,leave_balance,compa
 @frappe.whitelist()
 def trigger_mail_on_lap_form():
 	current_date = nowdate()
-	leaves = frappe.db.get_all("Leave Application Form",{'from_date':current_date,"leave_type":"Annual Leave"},['*'])
+	leaves = frappe.db.get_all("Leave Application Form",{'from_date':current_date,"leave_type":"Annual Leave","status":"Approved"},['*'])
 	for self in leaves:
 		parent_doc = frappe.get_doc("Leave Application Form", self.name)
 		args = parent_doc.as_dict()
