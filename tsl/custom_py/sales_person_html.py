@@ -72,9 +72,12 @@ def get_sales(company):
 
     sp = frappe.get_all("Sales Person",{"company":company},["*"])
     for i in sp:
-        if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Yousef" or i.name == "Mohannad" or i.name == "Karoline":                         
-        # if i.name == "Ahmad":         
-            sl = frappe.get_value("Sales Person",{"name":i.name},["user"])
+        # if company == "TSL COMPANY - UAE":
+        if i.name in ["Nidhin","EHAB","Mr. Yousef","Mohannad","Ahmed Yahia"]:
+        
+        # if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Mr. Yousef" or i.name == "Mohannad" or i.name == "Karoline" or i.name == "Ahmed Yahia":                              
+            sl = frappe.get_value("Sales Person",{"name":i.name},["custom_user"])
+            
             if company == "TSL COMPANY - Kuwait":
                 data += '<tr>'
                 data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b style="color:white;">Sales</b><center></td>'
@@ -114,8 +117,9 @@ def get_sales(company):
                 last_day = datetime(year, month_number, calendar.monthrange(year, month_number)[1])
                 
                 data += '<tr>'
-                sl_name = frappe.get_value("Sales Person",{"user":sl},["name"])
+                sl_name = frappe.get_value("Sales Person",{"custom_user":sl},["name"])
                 if index == 6:
+                    
                     data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(sl_name)
                 else:
                     data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("")
@@ -145,6 +149,7 @@ def get_sales(company):
                             `tabQuotation`.is_multiple_quotation as is_m,
                             `tabQuotation`.after_discount_cost as adc,
                             `tabQuotation Item`.unit_price as up,
+                            `tabQuotation Item`.net_amount as na,
                             `tabQuotation`.grand_total as grand_total,
                             `tabQuotation Item`.margin_amount as ma 
                             from `tabQuotation` 
@@ -155,7 +160,11 @@ def get_sales(company):
                             ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
                             if q_amt:
-                                q_m = q_m + q_amt[0]["grand_total"]
+                                d = frappe.get_doc("Quotation",q_amt[0]["q_name"])
+                                if len(d.items) > 1:
+                                    q_m = q_m + q_amt[0]["na"]
+                                else:
+                                    q_m = q_m + q_amt[0]["grand_total"]
 
                                 
                             rev = frappe.db.sql(''' select 
@@ -175,6 +184,7 @@ def get_sales(company):
                                 `tabQuotation`.is_multiple_quotation as is_m,
                                 `tabQuotation`.after_discount_cost as adc,
                                 `tabQuotation`.grand_total as grand_total,
+                                `tabQuotation Item`.net_amount as na,
                                 `tabQuotation Item`.unit_price as up,
                                 `tabQuotation Item`.margin_amount as ma 
                                 
@@ -187,7 +197,11 @@ def get_sales(company):
                                 ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
                                 if q_amt_2:
-                                    q_m_2 = q_m_2 + q_amt_2[0]["grand_total"]
+                                    d = frappe.get_doc("Quotation",q_amt_2[0]["q_name"])
+                                    if len(d.items) > 1:
+                                        q_m_2 = q_m_2 + q_amt_2[0]["na"]
+                                    else:
+                                        q_m_2 = q_m_2 + q_amt_2[0]["grand_total"]
 
                                    
                     else:

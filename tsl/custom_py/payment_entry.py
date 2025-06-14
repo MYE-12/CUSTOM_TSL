@@ -7,10 +7,17 @@ def on_submit(self,method):
         doc.save(ignore_permissions = True)
     if self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive':
         doc = frappe.get_doc("Work Order Data",self.work_order_data)
-        if doc.dn_no:
-            doc.status = "P-Paid"
-            doc.save(ignore_permissions = True)
+        doc.status = "P-Paid"
+        doc.save(ignore_permissions = True)
     
+    if self.work_orders:
+        for i in self.work_orders:
+            if i.work_order_data:
+                frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "P-Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.work_order_data))
+            if i.supply_order_data:
+                frappe.db.sql('''update `tabSupply Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.supply_order_data))
+                
+
     # if not self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive' and len(self.work_orders)>0:
     #     for i in self.work_orders:
     #         doc = frappe.get_doc("Work Order Data",i.work_order_data)

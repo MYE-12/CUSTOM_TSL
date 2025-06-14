@@ -206,6 +206,7 @@ frappe.ui.form.on('Create Work Order', {
 		});
 
 	},
+	
 	address: function (frm) {
 		if (frm.doc.address) {
 			frappe.call({
@@ -220,6 +221,7 @@ frappe.ui.form.on('Create Work Order', {
 			});
 		}
 	},
+
 	work_order_data: function (frm) {
 		if (frm.doc.work_order_data) {
 			frappe.call({

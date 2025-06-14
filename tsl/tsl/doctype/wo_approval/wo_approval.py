@@ -20,10 +20,13 @@ class WOApproval(Document):
 
 
 
-        last_six_months = ["May"]
-        # for i in range(1, -1, -1):  # 5 months before and including the current month
-        #     month_index = (current_month - i - 1) % 12  # Handle wrap-around
-        #     last_six_months.append(months[month_index])
+        last_six_months = []
+        for i in range(11, -1, -1):  # 5 months before and including the current month
+            month_index = (current_month - i - 1) % 12  # Handle wrap-around
+            last_six_months.append(months[month_index])
+
+
+
        
 
         data= ""
@@ -48,9 +51,9 @@ class WOApproval(Document):
     
         sp = frappe.get_all("Sales Person",{"company":self.company},["*"])
         for i in sp:
-            # if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Yousef" or i.name == "Mohannad" or i.name == "Karoline":              
-            if i.name == "Ahmad":         
-                sl = frappe.get_value("Sales Person",{"name":i.name},["user"])
+            if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Mr. Yousef" or i.name == "Mohannad" or i.name == "Karoline" or i.name == "Ahmed Yahia":              
+                     
+                sl = frappe.get_value("Sales Person",{"name":i.name},["custom_user"])
                 data += '<tr>'
                 data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Sales</b><center></td>'
                 data += '<td style="width:20%;border-color:#000000;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>Month</b><center></td>'
@@ -82,7 +85,9 @@ class WOApproval(Document):
                     
                     data += '<tr>'
                     if index == 6:
-                        sl_name = frappe.get_value("Sales Person",{"user":sl},["name"])
+                        frappe.errprint(sl)
+                        sl_name = frappe.get_value("Sales Person",{"custom_user":sl},["name"])
+                       
                         data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:12px;font-weight:bold"><center>%s<center></td>' %(sl_name)
                     else:
                         data += '<td style="border-bottom:hidden;border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center>%s<center></td>' %("")
@@ -126,6 +131,9 @@ class WOApproval(Document):
                                 ''' %(sl,i["wd"],from_date,to_date),as_dict=1)
 
                                 if q_amt:
+                                    
+                                    d = frappe.get_doc("Quotation",q_amt[0]["q_name"])
+                                   
                                     q_m = q_m + q_amt[0]["grand_total"]
 
                                     
@@ -162,7 +170,7 @@ class WOApproval(Document):
                         else:
 
                             for i in wod:
-                                frappe.errprint(i["wd"])
+                               
                                 q_amt = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                                 `tabQuotation`.default_discount_percentage as dis,
                                 `tabQuotation`.approval_date as a_date,

@@ -1310,7 +1310,7 @@ frappe.ui.form.on("Quotation Item",{
 			
 
 			if(r.is_stock_item == 0 && !item.no_discount){
-				console.log("Doneeeee")
+				
 				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
 				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
 				frappe.model.set_value(cdt, cdn, "margin_amount_value",0);

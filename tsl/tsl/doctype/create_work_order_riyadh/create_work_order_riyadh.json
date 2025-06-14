@@ -39,8 +39,7 @@
   "previously_quoted_item_in_repair_section",
   "previously_quoted",
   "attach_image_section",
-  "images",
-  "amended_from"
+  "images"
  ],
  "fields": [
   {
@@ -138,15 +137,13 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
-   "label": "Company",
-   "options": "Company"
+   "fieldtype": "Data",
+   "label": "Company"
   },
   {
    "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Branch"
+   "fieldtype": "Data",
+   "label": "Branch"
   },
   {
    "fieldname": "repair_warehouse",
@@ -244,22 +241,13 @@
    "fieldtype": "Table",
    "label": "Images",
    "options": "Recieved Equipment Image"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Equipment Received Form",
-   "print_hide": 1,
-   "read_only": 1
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-08 17:36:49.994175",
+ "modified": "2025-06-10 20:03:57.350026",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order Riyadh",

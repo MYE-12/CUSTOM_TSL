@@ -112,12 +112,12 @@ def get_wod(from_date,to_date,company):
     
     for i in wo:
         if not i["name"] == None:
-            if not i["name"] == 'Sales Team' and not i["name"] == 'Walkin' and not i["name"] == 'OMAR' and not i["name"] == '' and not i["name"] == 'Mazz' and not i["name"] == 'Abdullah' and not i["name"] == "karoline" and not i["name"] == "Dilshad" and not i["name"] == "Dhinesh" and not i["name"] == "Karoline" and not i["name"] == "Nour" and not i["name"] == "Mohannad" and not i["name"] == "Samar Moussa" and not i["name"] == "Rana Ali":  
+            if not i["name"] == 'Sales Team' and not i["name"] == 'Walkin' and not i["name"] == 'OMAR' and not i["name"] == '' and not i["name"] == 'Mazz' and not i["name"] == 'Abdullah' and not i["name"] == "karoline" and not i["name"] == "Dilshad" and not i["name"] == "Dhinesh" and not i["name"] == "Karoline" and not i["name"] == "Nour" and not i["name"] == "Mohannad" and not i["name"] == "Samar Moussa" and not i["name"] == "Rana Ali" and not i["name"] == "Michael Veniston":  
             
             # if i["name"] == 'Vazeem':   
             
                 gt = 0
-                sales = frappe.get_value("Sales Person",i["name"],["user","name"])
+                sales = frappe.get_value("Sales Person",i["name"],["custom_user","name"])
                 
                 #RSI - wd
                
@@ -177,9 +177,13 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.default_discount_percentage as dis,
                         `tabQuotation`.approval_date as a_date,
                         `tabQuotation`.is_multiple_quotation as is_m,
-                        `tabQuotation`.after_discount_cost as adc,
+                        `tabQuotation`.after_discount_cost as adc,         
+                        `tabQuotation`.transaction_date as td,
                         `tabQuotation Item`.unit_price as up,
-                        `tabQuotation Item`.margin_amount as ma 
+                        `tabQuotation Item`.margin_amount as ma,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where  `tabQuotation`.Workflow_state in ("Approved By Customer") and 
@@ -188,15 +192,29 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if q_amt:
-                        
-                        if q_amt[0]["is_m"] == 1:
-                            per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
-                            q_amt = q_amt[0]["up"] - per
-                            q_m = q_m + q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+
+                        if q_amt[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",q_amt[0]["q_name"])
+                           
+                            if len(d.items) > 1:
+                                q_amt = q_amt[0]["am"]
+                                q_m = q_m + q_amt
+
+                            else:
+                                q_amt = q_amt[0]["gt"]
+                                q_m = q_m + q_amt
 
                         else:
-                            q_amt = q_amt[0]["adc"]
-                            q_m = q_m + q_amt
+                            if q_amt[0]["is_m"] == 1:
+                                per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
+                                q_amt = q_amt[0]["up"] - per
+                                q_m = q_m + q_amt
+
+                            else:
+                                q_amt = q_amt[0]["adc"]
+                                q_m = q_m + q_amt
                             
                     else:
                         
@@ -207,6 +225,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -215,14 +236,26 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if q_amt_2:
-                            if q_amt_2[0]["is_m"] == 1:
-                                per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
-                                q_amt_2 = q_amt_2[0]["up"] - per
-                                q_m_2 = q_m_2 + q_amt_2
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if q_amt_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",q_amt_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                    q_amt_2 = q_amt_2[0]["am"]
+                                    q_m_2 = q_m_2 + q_amt_2
 
+                                else:
+                                    q_amt_2 = q_amt_2[0]["gt"]
+                                    q_m_2 = q_m_2 + q_amt_2
                             else:
-                                q_amt_2 = q_amt_2[0]["adc"]
-                                q_m_2 = q_m_2 + q_amt_2
+                                if q_amt_2[0]["is_m"] == 1:
+                                    per = (q_amt_2[0]["up"] * q_amt_2[0]["dis"])/100
+                                    q_amt_2 = q_amt_2[0]["up"] - per
+                                    q_m_2 = q_m_2 + q_amt_2
+
+                                else:
+                                    q_amt_2 = q_amt_2[0]["adc"]
+                                    q_m_2 = q_m_2 + q_amt_2
 
                 #RSC-old
                 rsc_old = 0
@@ -244,6 +277,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
                         `tabQuotation Item`.margin_amount as ma,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.qty as qty
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -253,16 +289,28 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if sup_qamt_del:
-                        # frappe.errprint(i.name)
-                        if sup_qamt_del[0]["is_m"] == 1:
-                            up = sup_qamt_del[0]["up"] * sup_qamt_del[0]["qty"]
-                            per = (up * sup_qamt_del[0]["dis"])/100
-                            q_amt = up - per
-                            sp_del = sp_del + q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                        if sup_qamt_del[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",sup_qamt_del[0]["q_name"])
+                            if len(d.items) > 1:
+                                q_amt = sup_qamt_del[0]["am"] 
+                                sp_del = sp_del + q_amt
+
+                            else:
+                                q_amt = sup_qamt_del[0]["gt"]
+                                sp_del = sp_del + q_amt
 
                         else:
-                            q_amt = sup_qamt_del[0]["adc"]
-                            sp_del = sp_del + q_amt
+                            if sup_qamt_del[0]["is_m"] == 1:
+                                up = sup_qamt_del[0]["up"] * sup_qamt_del[0]["qty"]
+                                per = (up * sup_qamt_del[0]["dis"])/100
+                                q_amt = up - per
+                                sp_del = sp_del + q_amt
+
+                            else:
+                                q_amt = sup_qamt_del[0]["adc"]
+                                sp_del = sp_del + q_amt
                             
                     else:
                         
@@ -273,6 +321,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -281,14 +332,27 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if sup_qamt_del_2:
-                            if sup_qamt_del_2[0]["is_m"] == 1:
-                                per = (sup_qamt_del_2[0]["up"] * sup_qamt_del_2[0]["dis"])/100
-                                q_amt_2 = sup_qamt_del_2[0]["up"] - per
-                                sp_del_2 = sp_del_2 + q_amt_2
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if sup_qamt_del_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",sup_qamt_del_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                    q_amt_2 = sup_qamt_del_2[0]["am"]
+                                    sp_del_2 = sp_del_2 + q_amt_2
 
+                                else:
+                                    q_amt_2 = sup_qamt_del_2[0]["gt"]
+                                    sp_del_2 = sp_del_2 + q_amt_2
+                            
                             else:
-                                q_amt_2 = sup_qamt_del_2[0]["adc"]
-                                sp_del_2 = sp_del_2 + q_amt_2
+                                if sup_qamt_del_2[0]["is_m"] == 1:
+                                    per = (sup_qamt_del_2[0]["up"] * sup_qamt_del_2[0]["dis"])/100
+                                    q_amt_2 = sup_qamt_del_2[0]["up"] - per
+                                    sp_del_2 = sp_del_2 + q_amt_2
+
+                                else:
+                                    q_amt_2 = sup_qamt_del_2[0]["adc"]
+                                    sp_del_2 = sp_del_2 + q_amt_2
                 
                 #delivered-so-old
                 sodel_old = 0
@@ -323,6 +387,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.is_multiple_quotation as is_m,
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma 
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -332,18 +399,29 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if rs_qamt:
-                        # frappe.errprint(i.name)
-                        if rs_qamt[0]["is_m"] == 1:
-                            per = (rs_qamt[0]["up"] * rs_qamt[0]["dis"])/100
-                            q_amt = rs_qamt[0]["up"] - per
-                            rs_am = rs_am + q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                        if rs_qamt[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",rs_qamt[0]["q_name"])
+                            if len(d.items) > 1:
+                                q_amt = rs_qamt[0]["am"]
+                                rs_am = rs_am + q_amt
 
+                            else:
+                                q_amt = rs_qamt[0]["gt"]
+                                rs_am = rs_am + q_amt
                         else:
-                            q_amt = rs_qamt[0]["adc"]
-                            rs_am = rs_am + q_amt
+                            if rs_qamt[0]["is_m"] == 1:
+                                per = (rs_qamt[0]["up"] * rs_qamt[0]["dis"])/100
+                                q_amt = rs_qamt[0]["up"] - per
+                                rs_am = rs_am + q_amt
+
+                            else:
+                                q_amt = rs_qamt[0]["adc"]
+                                rs_am = rs_am + q_amt
+                           
                             
                     else:
-                        
                         rs_qamt_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                         `tabQuotation`.default_discount_percentage as dis,
                         `tabQuotation`.approval_date as a_date,
@@ -351,6 +429,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -359,14 +440,27 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if rs_qamt_2:
-                            if rs_qamt_2[0]["is_m"] == 1:
-                                per = (rs_qamt_2[0]["up"] * rs_qamt_2[0]["dis"])/100
-                                q_amt_2 = rs_qamt_2[0]["up"] - per
-                                rs_am_2 = rs_am_2 + q_amt_2
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if rs_qamt_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",rs_qamt_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                    q_amt_2 = rs_qamt_2[0]["am"] 
+                                    rs_am_2 = rs_am_2 + q_amt_2
+
+                                else:
+                                    q_amt_2 = rs_qamt_2[0]["gt"]
+                                    rs_am_2= rs_am_2 + q_amt_2
 
                             else:
-                                q_amt_2 = rs_qamt_2[0]["adc"]
-                                rs_am_2= rs_am_2 + q_amt_2
+                                if rs_qamt_2[0]["is_m"] == 1:
+                                    per = (rs_qamt_2[0]["up"] * rs_qamt_2[0]["dis"])/100
+                                    q_amt_2 = rs_qamt_2[0]["up"] - per
+                                    rs_am_2 = rs_am_2 + q_amt_2
+
+                                else:
+                                    q_amt_2 = rs_qamt_2[0]["adc"]
+                                    rs_am_2= rs_am_2 + q_amt_2
      
                         
                 #rs-old
@@ -392,6 +486,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
                         `tabQuotation Item`.qty as qty,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma 
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -401,16 +498,27 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if sup_qamt_rec:
-                #         
-                        if sup_qamt_rec[0]["is_m"] == 1:
-                            per = (sup_qamt_rec[0]["up"] * sup_qamt_rec[0]["dis"])/100
-                            q_amt = (sup_qamt_rec[0]["up"] - per) * sup_qamt_rec[0]["qty"]
-                            sp_rec = sp_rec + q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                        if sup_qamt_rec[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",sup_qamt_rec[0]["q_name"])
+                            if len(d.items) > 1:
+                                q_amt = sup_qamt_rec[0]["am"]
+                                sp_rec = sp_rec + q_amt
+
+                            else:
+                                q_amt = sup_qamt_rec[0]["gt"]
+                                sp_rec = sp_rec + q_amt
 
                         else:
-                            q_amt = sup_qamt_rec[0]["adc"]
-                            sp_rec = sp_rec + q_amt
-                            
+                            if sup_qamt_rec[0]["is_m"] == 1:
+                                    per = (sup_qamt_rec[0]["up"] * sup_qamt_rec[0]["dis"])/100
+                                    q_amt = (sup_qamt_rec[0]["up"] - per) * sup_qamt_rec[0]["qty"]
+                                    sp_rec = sp_rec + q_amt
+
+                            else:
+                                q_amt = sup_qamt_rec[0]["adc"]
+                                sp_rec = sp_rec + q_amt                            
                     else:
                         sup_qamt_rec_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
                         `tabQuotation`.default_discount_percentage as dis,
@@ -420,6 +528,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
                         `tabQuotation Item`.qty as qty,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -428,15 +539,28 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if sup_qamt_rec_2:
-                        # if sup_qamt_rec_2:
-                            if sup_qamt_rec_2[0]["is_m"] == 1:
-                                per = (sup_qamt_rec_2[0]["up"] * sup_qamt_rec_2[0]["dis"])/100
-                                q_amt_2 = (sup_qamt_rec_2[0]["up"] - per) * sup_qamt_rec_2[0]["qty"]
-                                sp_rec = sp_rec + q_amt_2
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if sup_qamt_rec_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",sup_qamt_rec_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                   
+                                    q_amt_2 = sup_qamt_rec_2[0]["am"]
+                                    sp_rec = sp_rec + q_amt_2
+
+                                else:
+                                    q_amt_2 = sup_qamt_rec_2[0]["gt"]
+                                    sp_rec_2 = sp_rec_2 + q_amt_2
 
                             else:
-                                q_amt_2 = sup_qamt_rec_2[0]["adc"]
-                                sp_rec_2 = sp_rec_2 + q_amt_2
+                                if sup_qamt_rec_2[0]["is_m"] == 1:
+                                    per = (sup_qamt_rec_2[0]["up"] * sup_qamt_rec_2[0]["dis"])/100
+                                    q_amt_2 = (sup_qamt_rec_2[0]["up"] - per) * sup_qamt_rec_2[0]["qty"]
+                                    sp_rec = sp_rec + q_amt_2
+
+                                else:
+                                    q_amt_2 = sup_qamt_rec_2[0]["adc"]
+                                    sp_rec_2 = sp_rec_2 + q_amt_2
      
                 
                 #rec-so-old
@@ -466,6 +590,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.is_multiple_quotation as is_m,
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma 
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -475,15 +602,27 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if q_amt_q:
-                        # frappe.errprint(i.name)
-                        if q_amt_q[0]["is_m"] == 1:
-                            per = (q_amt_q[0]["up"] * q_amt_q[0]["dis"])/100
-                            t_q_amt = q_amt_q[0]["up"] - per
-                            quot_am = quot_am + t_q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                        if q_amt_q[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",q_amt_q[0]["q_name"])
+                            if len(d.items) > 1:
+                                t_q_amt = q_amt_q[0]["am"]
+                                quot_am = quot_am + t_q_amt
 
-                        else:
-                            t_q_amt = q_amt_q[0]["adc"]
-                            quot_am = quot_am + t_q_amt
+                            else:
+                                t_q_amt = q_amt_q[0]["gt"]
+                                quot_am = quot_am + t_q_amt
+
+                        else:  
+                            if q_amt_q[0]["is_m"] == 1:
+                                per = (q_amt_q[0]["up"] * q_amt_q[0]["dis"])/100
+                                t_q_amt = q_amt_q[0]["up"] - per
+                                quot_am = quot_am + t_q_amt
+
+                            else:
+                                t_q_amt = q_amt_q[0]["adc"]
+                                quot_am = quot_am + t_q_amt
                             
                     else:
                         q_amt_q_2 = frappe.db.sql(''' select `tabQuotation`.name as q_name,
@@ -493,6 +632,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -501,14 +643,30 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if q_amt_q_2:
-                            if q_amt_q_2[0]["is_m"] == 1:
-                                per = (q_amt_q_2[0]["up"] * q_amt_q_2[0]["dis"])/100
-                                t_q_amt = q_amt_q_2[0]["up"] - per
-                                quot_am_2 = quot_am_2 + t_q_amt
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if q_amt_q_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",q_amt_q_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                   
+                                    t_q_amt = q_amt_q_2[0]["am"]
+                                    quot_am_2 = quot_am_2 + t_q_amt
+
+                                else:
+                                    t_q_amt = q_amt_q_2[0]["gt"]
+                                    quot_am_2 = quot_am_2 + t_q_amt
+
+
 
                             else:
-                                t_q_amt = q_amt_q_2[0]["adc"]
-                                quot_am_2 = quot_am_2 + t_q_amt
+                                if q_amt_q_2[0]["is_m"] == 1:
+                                    per = (q_amt_q_2[0]["up"] * q_amt_q_2[0]["dis"])/100
+                                    t_q_amt = q_amt_q_2[0]["up"] - per
+                                    quot_am_2 = quot_am_2 + t_q_amt
+
+                                else:
+                                    t_q_amt = q_amt_q_2[0]["adc"]
+                                    quot_am_2 = quot_am_2 + t_q_amt
 
                 
 
@@ -534,6 +692,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.after_discount_cost as adc,
                         `tabQuotation Item`.unit_price as up,
                         `tabQuotation Item`.qty as qty,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma 
                         from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
@@ -543,15 +704,29 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date),as_dict=1)
 
                     if sup_qamt_qted:
-                        if sup_qamt_qted[0]["is_m"] == 1:
-                            for k in sup_qamt_qted:
-                                per = (k.up * k.dis)/100
-                                q_amt = (k.up - per) * k.qty
-                                sp_qted = sp_qted + q_amt
+                        date_string = "01-03-2025"
+                        date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                        if sup_qamt_qted[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                            d = frappe.get_doc("Quotation",sup_qamt_qted[0]["q_name"])
+                            if len(d.items) > 1:
+                                for k in sup_qamt_qted:
+                                    q_amt = k.am
+                                    sp_qted = sp_qted + q_amt
+
+                                else:
+                                    q_amt = sup_qamt_qted[0]["gt"]
+                                    sp_qted = sp_qted + q_amt
 
                         else:
-                            q_amt = sup_qamt_qted[0]["adc"]
-                            sp_qted = sp_qted + q_amt
+                            if sup_qamt_qted[0]["is_m"] == 1:
+                                for k in sup_qamt_qted:
+                                    per = (k.up * k.dis)/100
+                                    q_amt = (k.up - per) * k.qty
+                                    sp_qted = sp_qted + q_amt
+
+                            else:
+                                q_amt = sup_qamt_qted[0]["adc"]
+                                sp_qted = sp_qted + q_amt
                             
                     else:
                         
@@ -563,6 +738,9 @@ def get_wod(from_date,to_date,company):
                         `tabQuotation`.Workflow_state,
                         `tabQuotation Item`.qty as qty,
                         `tabQuotation Item`.unit_price as up,
+                        `tabQuotation`.transaction_date as td,
+                        `tabQuotation Item`.net_amount as am,
+                        `tabQuotation`.grand_total as gt,
                         `tabQuotation Item`.margin_amount as ma from `tabQuotation` 
                         left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
                         where `tabQuotation`.Workflow_state in ("Quoted to Customer") and
@@ -571,15 +749,29 @@ def get_wod(from_date,to_date,company):
                         and transaction_date between '%s' and '%s' ''' %(j.name,Week_start,current_date) ,as_dict=1)
 
                         if sup_qamt_qted_2:
-                            if sup_qamt_qted_2[0]["is_m"] == 1:
-                                for k in sup_qamt_qted_2:
-                                    per = (k.up * k.dis)/100
-                                    q_amt_2 = (k.up - per)  * k.qty
-                                    sp_qted_2 = sp_qted_2 + q_amt_2
+                            date_string = "01-03-2025"
+                            date_obj = datetime.strptime(date_string, "%d-%m-%Y").date()
+                            if sup_qamt_qted_2[0]["td"] > date_obj and company == "TSL COMPANY - UAE":
+                                d = frappe.get_doc("Quotation",sup_qamt_qted_2[0]["q_name"])
+                                if len(d.items) > 1:
+                                    for k in sup_qamt_qted_2:
+                                        q_amt_2 = k.am
+                                        sp_qted_2 = sp_qted_2 + q_amt_2
 
+                                else:
+                                    q_amt_2 = sup_qamt_qted_2[0]["gt"]
+                                    sp_qted_2 = sp_qted_2 + q_amt_2
+                            
                             else:
-                                q_amt_2 = sup_qamt_qted_2[0]["adc"]
-                                sp_qted_2 = sp_qted_2 + q_amt_2
+                                if sup_qamt_qted_2[0]["is_m"] == 1:
+                                    for k in sup_qamt_qted_2:
+                                        per = (k.up * k.dis)/100
+                                        q_amt_2 = (k.up - per)  * k.qty
+                                        sp_qted_2 = sp_qted_2 + q_amt_2
+
+                                else:
+                                    q_amt_2 = sup_qamt_qted_2[0]["adc"]
+                                    sp_qted_2 = sp_qted_2 + q_amt_2
      
                 
             

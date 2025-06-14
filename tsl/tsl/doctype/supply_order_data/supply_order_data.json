@@ -328,14 +328,13 @@
   {
    "fieldname": "advance_payment_amount",
    "fieldtype": "Currency",
-   "hidden": 1,
    "label": "Advance Payment Amount",
    "read_only": 1
   },
   {
    "fieldname": "advance_paid_date",
    "fieldtype": "Date",
-   "label": "Advance Paid Date",
+   "label": "Paid Date",
    "read_only": 1
   },
   {
@@ -478,7 +477,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-28 15:45:53.799248",
+ "modified": "2025-06-12 15:54:44.091855",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
@@ -498,6 +497,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

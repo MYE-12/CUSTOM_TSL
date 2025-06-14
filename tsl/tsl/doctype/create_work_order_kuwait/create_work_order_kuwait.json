@@ -137,15 +137,13 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
-   "label": "Company",
-   "options": "Company"
+   "fieldtype": "Data",
+   "label": "Company"
   },
   {
    "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Branch"
+   "fieldtype": "Data",
+   "label": "Branch"
   },
   {
    "fieldname": "repair_warehouse",
@@ -258,7 +256,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-08 17:39:42.573102",
+ "modified": "2025-06-10 09:33:25.251459",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Work Order Kuwait",

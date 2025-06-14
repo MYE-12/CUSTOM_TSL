@@ -485,17 +485,34 @@ def amount(amount,currency,company):
 def get_work_orders(data):
 	data = json.loads(data)
 	wods = []
+	sods = []
 	for i in data:
-		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w from `tabSales Invoice` 
+		wo = frappe.db.sql(""" select DISTINCT `tabSales Invoice Item`.work_order_data as wo,`tabSales Invoice Item`.wod_no as w,
+		`tabSales Invoice Item`.supply_order_data as so from `tabSales Invoice` 
 		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
 		where `tabSales Invoice`.name = '%s' """ %(i["reference_name"]),as_dict =1)
-		for j in wo:
-			if j["wo"]:
-				wods.append(j["wo"])
-			else:
-				wods.append(j["w"])
-
+		if wo:
+			for j in wo:	
+				wods.append(j)
 	return wods
+
+@frappe.whitelist()
+def get_wod_purchase(data):
+	data = json.loads(data)
+	frappe.errprint(data)
+	wods = []
+	for i in data:
+		pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
+		left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
+		where `tabPurchase Invoice`.name = '%s' """ %(i["reference_name"]),as_dict =1)
+
+		if pi:
+			for j in pi:	
+				wods.append(j)
+	return wods
+
+				
+				
 
 
 @frappe.whitelist()
@@ -562,7 +579,7 @@ def set_payment(data,pe,date):
 		frappe.db.set_value("Work Order Data",i["work_order_data"],"payment_entry_reference",pe)
 		wd = frappe.get_doc("Work Order Data",i["work_order_data"])
 		wd.status = "P-Paid"
-		ldate = wd.status_duration_details[-1].date
+		# ldate = wd.status_duration_details[-1].date
 		now = datetime.now()
 		time_date = str(ldate).split(".")[0]
 		format_data = "%Y-%m-%d %H:%M:%S"
@@ -7938,21 +7955,26 @@ def create_replacement_item(customer,wod,items):
 
 # @frappe.whitelist()
 # def get_sales_person():
-# 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
-# 	for i in s:
-# 		print(i[0])
+	# s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
+	# for i in s:
+	# 	print(i[0])
+	# k = frappe.db.sql(""" UPDATE `tabQuotation`
+ 	# 		SET workflow_state = "Approved By Management"
+ 	# 		WHERE name = "SUP-QTN-INT-DU25-00174" """)
+
 
 # @frappe.whitelist()
 # def set_sales_person():
+# 	k = frappe.db.sql(""" UPDATE `tabQuotation`
+# 	SET sales_rep = "yehia@tsl-me.com"
+# 	WHERE custom_sales_person = 'Ahmed Yahia' """)
 # 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
 # 	for i in s:
 		
 # 		user = frappe.get_value("Sales Person",{"custom_user":i[0]},["name"])
 # 		if user:
 # 			print(user)
-# 			k = frappe.db.sql(""" UPDATE `tabSales Invoice`
-# 			SET sales_person = '%s'
-# 			WHERE sales_rep = '%s' """ %(user,i[0]))
+	
 
 
 

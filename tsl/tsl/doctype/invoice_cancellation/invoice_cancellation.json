@@ -11,8 +11,11 @@
   "date",
   "company",
   "branch",
+  "attachment",
   "column_break_ef9tw",
   "created_by",
+  "creater",
+  "submitted_by",
   "section_break_e4nvk",
   "cancellation_list"
  ],
@@ -55,11 +58,27 @@
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Branch"
+  },
+  {
+   "fieldname": "creater",
+   "fieldtype": "Data",
+   "label": "Name"
+  },
+  {
+   "fieldname": "submitted_by",
+   "fieldtype": "Data",
+   "label": "Submitted By"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment",
+   "make_attachment_public": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-13 10:19:04.247393",
+ "modified": "2025-06-12 12:44:12.375192",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Cancellation",
@@ -79,6 +98,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

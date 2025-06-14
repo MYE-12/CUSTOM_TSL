@@ -273,7 +273,7 @@ frappe.ui.form.on('Evaluation Report', {
 			})
 			
 			if(s > 0){
-				if(frappe.user.has_role("Procurement") || (frappe.user.has_role("Lab Coordinator"))){
+				if(frappe.user.has_role("Procurement") || (frappe.user.has_role("Lab Coordinator"))|| (frappe.user.has_role("Admin"))){
 					frm.add_custom_button(__("Release Parts"), function () {
 						
 						frappe.call({

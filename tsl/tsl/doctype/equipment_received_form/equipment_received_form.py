@@ -797,6 +797,7 @@ def create_workorder_data_uae(order_no, f):
                 'item_code':i['item_code'],
                 'item_name':i['item_name'],
                 'description':i['item_name'],
+                'use_serial_batch_feilds':1,
                 'serial_no':sn_no or "",
                 'qty':i['qty'],
                 'uom':frappe.db.get_value("Item",i['item_code'],'stock_uom') or "Nos",

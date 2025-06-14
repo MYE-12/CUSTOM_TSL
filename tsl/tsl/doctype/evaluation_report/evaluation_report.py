@@ -421,6 +421,7 @@ class EvaluationReport(Document):
 				doc = frappe.get_doc("Work Order Data",self.work_order_data)
 				doc.status = "W-Working"
 			doc.save(ignore_permissions = True)
+			
 		if self.if_parts_required:
 			
 			self.part_no = 0
@@ -599,6 +600,8 @@ def create_material_issue_from_ini_eval(name):
 					'item_code':i.part,
 					'qty':i.qty,
 					'uom':frappe.db.get_value("Item",i.part,'stock_uom'),
+					'work_order_data':ini.work_order_data,
+
 					# 'conversion_factor':1,
 					# 'allow_zero_valuation_rate':1
 				})
@@ -651,6 +654,7 @@ def create_material_issue_from_ini_eval(name):
 		new_doc.from_warehouse = war
 
 		for i in ini.items:
+			
 			if i.released == 0 and i.parts_availability == "Yes":
 				uom = frappe.db.get_value("Item",i.part,'stock_uom')
 				serial_no = frappe.db.get_value("Serial No",{"item_code":i.part},"name")

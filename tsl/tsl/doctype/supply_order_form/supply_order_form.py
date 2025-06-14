@@ -1038,13 +1038,41 @@ def create_supply_order_data_ksa(order_no):
 			for i in doc.get("received_equipment"):
 				if not 'item_name' in i or not 'manufacturer' in i or not 'model' in i or not 'type' in i:
 					frappe.throw("Model, Manufacturer , Type and Item Name are Mandatory")
-				if not 'item_code' in i:
-					item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type'],"item_name":i['item_name']},"name")
-					if item:
-						if i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
-							i['item_code'] = item
-						elif i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
-							i['item_code'] = item
+				# if not 'item_code' in i:
+				# 	item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type'],"item_name":i['item_name']},"name")
+				# 	if item:
+				# 		if i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+				# 			i['item_code'] = item
+				# 		elif i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+				# 			i['item_code'] = item
+				# 			sn_no = ""
+				# 			sn_doc = frappe.new_doc("Serial No")
+				# 			sn_doc.serial_no = i['serial_no']
+				# 			sn_doc.item_code = i['item_code']
+				# 			sn_doc.save(ignore_permissions = True)
+				# 			if sn_doc.name:
+				# 				sn_no = sn_doc.name
+				else:
+					frappe.errprint("donee")
+					i_doc = frappe.new_doc('Item')
+					i_doc.naming_series = '.######'
+					i_doc.item_name = i['item_name']
+					i_doc.item_group = "Equipments"
+					i_doc.item_name = i['item_name'] 
+					i_doc.description = i['item_name']
+					i_doc.model = i['model']
+					# i_doc.item_number = i['item_number'] or ""
+					i_doc.is_stock_item = 1
+					i_doc.mfg = i['manufacturer']
+					i_doc.type = i['type']
+					if 'has_serial_no' in i and i['has_serial_no']:
+						i_doc.has_serial_no = 1
+					i_doc.save(ignore_permissions = True)
+					frappe.errprint("donee")
+					
+					if i_doc.name:
+						i['item_code'] = i_doc.name
+						if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
 							sn_no = ""
 							sn_doc = frappe.new_doc("Serial No")
 							sn_doc.serial_no = i['serial_no']
@@ -1052,34 +1080,6 @@ def create_supply_order_data_ksa(order_no):
 							sn_doc.save(ignore_permissions = True)
 							if sn_doc.name:
 								sn_no = sn_doc.name
-					else:
-						frappe.errprint("donee")
-						i_doc = frappe.new_doc('Item')
-						i_doc.naming_series = '.######'
-						i_doc.item_name = i['item_name']
-						i_doc.item_group = "Equipments"
-						i_doc.item_name = i['item_name'] 
-						i_doc.description = i['item_name']
-						i_doc.model = i['model']
-						# i_doc.item_number = i['item_number'] or ""
-						i_doc.is_stock_item = 1
-						i_doc.mfg = i['manufacturer']
-						i_doc.type = i['type']
-						if 'has_serial_no' in i and i['has_serial_no']:
-							i_doc.has_serial_no = 1
-						i_doc.save(ignore_permissions = True)
-						frappe.errprint("donee")
-						
-						if i_doc.name:
-							i['item_code'] = i_doc.name
-							if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
-								sn_no = ""
-								sn_doc = frappe.new_doc("Serial No")
-								sn_doc.serial_no = i['serial_no']
-								sn_doc.item_code = i['item_code']
-								sn_doc.save(ignore_permissions = True)
-								if sn_doc.name:
-									sn_no = sn_doc.name
 				# else:
 				# 	if frappe.db.get_value("Item",i['item_code'],"has_serial_no") and not i['has_serial_no']:
 				# 		frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))

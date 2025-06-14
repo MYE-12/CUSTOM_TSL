@@ -148,15 +148,13 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
-   "label": "Company",
-   "options": "Company"
+   "fieldtype": "Data",
+   "label": "Company"
   },
   {
    "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Branch"
+   "fieldtype": "Data",
+   "label": "Branch"
   },
   {
    "fieldname": "department",
@@ -290,7 +288,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-08 17:28:45.605867",
+ "modified": "2025-06-10 10:02:12.035828",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Create Supply Order Riyadh",

@@ -248,7 +248,7 @@ setup:function(frm){
 
 }
 });
-frappe.ui.form.on("Create Supply Order", {
+frappe.ui.form.on("Create Supply Order Dammam", {
 	setup: function(frm) {
 		frm.set_query("address", function() {
 			return {
@@ -268,7 +268,7 @@ frappe.ui.form.on("Create Supply Order", {
 
 
 
-frappe.ui.form.on('Create Supply Order', {
+frappe.ui.form.on('Create Supply Order Dammam', {
 	setup: function(frm) {
 		// frm.set_query("branch", function() {
 		// 	return {

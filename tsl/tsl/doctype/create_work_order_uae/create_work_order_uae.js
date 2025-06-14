@@ -4,53 +4,62 @@
 frappe.ui.form.on('Create Work Order UAE', {
 	refresh: function (frm) {
 		frm.disable_save()
-		frm.add_custom_button(__("Create Work Order"), function () {
-			frappe.call({
-				'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data_uae',
-				'freeze': true,
-				'args': {
-					'order_no': cur_frm.doc,
-					'f': 0
+		frappe.db.get_value('Employee', {'user_id':frappe.session.user}, ['company'], (r) => {
 
-				},
-				'callback': function (res) {
-					console.log(res.message)
-
-					if (res.message) {
-						console.log(res.message)
-						if (res.message == "Confirm") {
-							frappe.confirm(
-								'Complaints not given.Are you sure to Continue?',
-								function () {
-									frappe.call({
-										'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data_uae',
-										'freeze': true,
-										'args': {
-											'order_no': cur_frm.doc,
-											'f': 1
-
+  	 
+			if(frm.doc.company == r.company){
+				frm.add_custom_button(__("Create Work Order"), function () {
+					frappe.call({
+						'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data_uae',
+						'freeze': true,
+						'args': {
+							'order_no': cur_frm.doc,
+							'f': 0
+		
+						},
+						'callback': function (res) {
+							console.log(res.message)
+		
+							if (res.message) {
+								console.log(res.message)
+								if (res.message == "Confirm") {
+									frappe.confirm(
+										'Complaints not given.Are you sure to Continue?',
+										function () {
+											frappe.call({
+												'method': 'tsl.tsl.doctype.equipment_received_form.equipment_received_form.create_workorder_data_uae',
+												'freeze': true,
+												'args': {
+													'order_no': cur_frm.doc,
+													'f': 1
+		
+												},
+												'callback': function (res) {
+													if (res.message) {
+														console.log(res)
+														cur_frm.reload_doc();
+													}
+												}
+											})
 										},
-										'callback': function (res) {
-											if (res.message) {
-												console.log(res)
-												cur_frm.reload_doc();
-											}
-										}
-									})
-								},
-							)
-
+									)
+		
+								}
+								else {
+									cur_frm.reload_doc();
+								}
+		
+							}
 						}
-						else {
-							cur_frm.reload_doc();
-						}
-
-					}
-				}
-
-
-			})
-		});
+		
+		
+					})
+				});
+			}
+		  
+	});
+	
+		
 	},
 
 	branch: function (frm) {
@@ -69,44 +78,44 @@ frappe.ui.form.on('Create Work Order UAE', {
 		frm.trigger("branch")
 	},
 	onload: function(frm) {
-		if(frappe.session.user == "info-uae@tsl-me.com"){
-			frm.set_value("company","TSL COMPANY - UAE")
-		}
-
-		if(frappe.session.user == "info@tsl-me.com"){
-			frm.set_value("company","TSL COMPANY - Kuwait")
-		}
-
-		if(frappe.session.user == "info-sa@tsl-me.com" || frappe.session.user == "lab-sa@tsl-me.com"){
-			frm.set_value("company","TSL COMPANY - KSA")
-			frm.set_value("branch","Riyadh - TSL- KSA")
-		}
-
-		// if(frappe.session.user == "info-dmm@tsl-me.com" || frappe.session.user == "info-jed@tsl-me.com" ){
-		// 	frm.set_value("company","TSL COMPANY - KSA")
+		// if(frappe.session.user == "info-uae@tsl-me.com"){
+		// 	frm.set_value("company","TSL COMPANY - UAE")
 		// }
 
-		if(frappe.session.user == "info-dmm@tsl-me.com"){
-			frm.set_value("company","TSL COMPANY - KSA")
-			frm.set_value("branch","Dammam - TSL-SA")
-			// frm.set_value("repair_warehouse","Dammam - Repair - TSL - KSA")
-		}
+		// if(frappe.session.user == "info@tsl-me.com"){
+		// 	frm.set_value("company","TSL COMPANY - Kuwait")
+		// }
 
-		if(frappe.session.user == "info-jed@tsl-me.com"){
-			frm.set_value("company","TSL COMPANY - KSA")
-			frm.set_value("branch","Jeddah - TSL-SA")
+		// if(frappe.session.user == "info-sa@tsl-me.com" || frappe.session.user == "lab-sa@tsl-me.com"){
+		// 	frm.set_value("company","TSL COMPANY - KSA")
+		// 	frm.set_value("branch","Riyadh - TSL- KSA")
+		// }
+
+		// // if(frappe.session.user == "info-dmm@tsl-me.com" || frappe.session.user == "info-jed@tsl-me.com" ){
+		// // 	frm.set_value("company","TSL COMPANY - KSA")
+		// // }
+
+		// if(frappe.session.user == "info-dmm@tsl-me.com"){
+		// 	frm.set_value("company","TSL COMPANY - KSA")
+		// 	frm.set_value("branch","Dammam - TSL-SA")
+		// 	// frm.set_value("repair_warehouse","Dammam - Repair - TSL - KSA")
+		// }
+
+		// if(frappe.session.user == "info-jed@tsl-me.com"){
+		// 	frm.set_value("company","TSL COMPANY - KSA")
+		// 	frm.set_value("branch","Jeddah - TSL-SA")
 			// frm.set_value("repair_warehouse","Jeddah - Repair - TSL - KSA")
-		}
+		// }
 		
-		if(frm.doc.company == "TSL COMPANY - Kuwait"){
-			frm.set_query('customer', function(doc) {
-				return {
-					filters: {
-						"territory": "Kuwait"
-					}
-				};
-			});
-		}
+		// if(frm.doc.company == "TSL COMPANY - Kuwait"){
+		// 	frm.set_query('customer', function(doc) {
+		// 		return {
+		// 			filters: {
+		// 				"territory": "Kuwait"
+		// 			}
+		// 		};
+		// 	});
+		// }
 
 		if(frm.doc.company == "TSL COMPANY - UAE"){
 			frm.set_query('customer', function(doc) {
@@ -118,36 +127,36 @@ frappe.ui.form.on('Create Work Order UAE', {
 			});
 		}
 
-		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Riyadh - TSL- KSA"){
-			frm.set_query('customer', function(doc) {
-				return {
-					filters: {
-						"territory": "Saudi Arabia"
-					}
-				};
-			});
-		}
+		// if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Riyadh - TSL- KSA"){
+		// 	frm.set_query('customer', function(doc) {
+		// 		return {
+		// 			filters: {
+		// 				"territory": "Saudi Arabia"
+		// 			}
+		// 		};
+		// 	});
+		// }
 
 
-		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Dammam - TSL-SA"){
-			frm.set_query('customer', function(doc) {
-				return {
-					filters: {
-						"territory": "Saudi Arabia"
-					}
-				};
-			});
-		}
+		// if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Dammam - TSL-SA"){
+		// 	frm.set_query('customer', function(doc) {
+		// 		return {
+		// 			filters: {
+		// 				"territory": "Saudi Arabia"
+		// 			}
+		// 		};
+		// 	});
+		// }
 
-		if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Jeddah - TSL-SA"){
-			frm.set_query('customer', function(doc) {
-				return {
-					filters: {
-						"territory": "Saudi Arabia"
-					}
-				};
-			});
-		}
+		// if(frm.doc.company == "TSL COMPANY - KSA" && frm.doc.branch == "Jeddah - TSL-SA"){
+		// 	frm.set_query('customer', function(doc) {
+		// 		return {
+		// 			filters: {
+		// 				"territory": "Saudi Arabia"
+		// 			}
+		// 		};
+		// 	});
+		// }
 	},
 	customer: function (frm) {
 		if (!frm.doc.customer) {
@@ -290,21 +299,21 @@ frappe.ui.form.on('Create Work Order UAE', {
 			};
 		}
 
-		if(frm.doc.company == "TSL COMPANY - UAE"){
-			frm.set_query('customer', function(doc) {
-				return {
-					filters: {
-						"territory": "Dubai"
-					}
-				};
-			});
-		}
+		
+		frm.set_query('customer', function(doc) {
+			return {
+				filters: {
+					"territory": "DUBAI"
+				}
+			};
+		});
+		
 
 	}
 
 
 });
-frappe.ui.form.on("Create Work Order", {
+frappe.ui.form.on("Create Work Order UAE", {
 	setup: function (frm) {
 		frm.set_query("address", function () {
 			return {
@@ -319,34 +328,34 @@ frappe.ui.form.on("Create Work Order", {
 	}
 });
 
-frappe.ui.form.on('Create Work Order', {
+frappe.ui.form.on('Create Work Order UAE', {
 	setup: function (frm) {
-		frm.set_query("branch", function () {
-			return {
-				filters: [
-					["Branch", "company", "=", frm.doc.company]
+		// frm.set_query("branch", function () {
+		// 	return {
+		// 		filters: [
+		// 			["Branch", "company", "=", frm.doc.company]
 
-				]
-			}
+		// 		]
+		// 	}
 
-		});
-		frm.set_query("repair_warehouse", function () {
-			return {
-				filters: [
-					["Warehouse", "company", "=", frm.doc.company],
-					// ["Warehouse","is_repair","=",1]
+		// });
+		// frm.set_query("repair_warehouse", function () {
+		// 	return {
+		// 		filters: [
+		// 			["Warehouse", "company", "=", frm.doc.company],
+		// 			// ["Warehouse","is_repair","=",1]
 
-				]
-			}
+		// 		]
+		// 	}
 
-		});
-		var d = {
-			"Kuwait - TSL": "Repair - Kuwait - TSL",
-			"Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
-			"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
-			"Riyadh - TSL- KSA": "Riyadh - Repair - TSL - KSA",
-			"Dubai - TSL": "Dubai - Repair - TSL-UAE"
-		}
-		frm.set_value("repair_warehouse", d[frm.doc.branch]);
+		// });
+		// var d = {
+		// 	"Kuwait - TSL": "Repair - Kuwait - TSL",
+		// 	"Dammam - TSL-SA": "Dammam - Repair - TSL - KSA",
+		// 	"Jeddah - TSL-SA": "Jeddah - Repair - TSL - KSA",
+		// 	"Riyadh - TSL- KSA": "Riyadh - Repair - TSL - KSA",
+		// 	"Dubai - TSL": "Dubai - Repair - TSL-UAE"
+		// }
+		// frm.set_value("repair_warehouse", d[frm.doc.branch]);
 	}
 });

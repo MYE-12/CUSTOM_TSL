@@ -70,18 +70,31 @@ def get_data(filters):
 	data = []
 	wr = []
 	
-	branch = frappe.get_value("Employee",{"user_id":frappe.session.user},["branch"])
+	if frappe.session.user == "keddar@tsl-me.com" or frappe.session.user == "Administrator":
+		if filters.from_date:
+			w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
+		if filters.to_date:
+			w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
+		if filters.from_date and filters.to_date:
+			w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
 	
-	if filters.from_date:
-		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
-	if filters.to_date:
-		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
-	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
-	
+	else:
+		branch = frappe.get_value("Employee",{"user_id":frappe.session.user},["branch"])
+		
+		if filters.from_date:
+			w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
+		if filters.to_date:
+			w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
+		if filters.from_date and filters.to_date:
+			w = frappe.get_all("Work Order Data",{"branch":branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+			wr = w
+		
+		
 	
 	for i in wr:
 
