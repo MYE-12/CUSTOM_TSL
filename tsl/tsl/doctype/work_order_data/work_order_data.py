@@ -481,6 +481,7 @@ def create_rn(wod):
             "amount":0, 
             "type":i.type,
             "serial_number":i.serial_no,
+            "serial_no":i.serial_no,
             "description":i.item_name,
             "qty":i.quantity,
             "wod_no":doc.name, 
@@ -488,7 +489,7 @@ def create_rn(wod):
             "stock_uom":"Nos",
             "conversion_factor":1,
             "cost_center":doc.department,
-            "income_account":"4101002 - Revenue from Service - TSL",
+            # "income_account":"4101002 - Revenue from Service - TSL",
             "warehouse":d[doc.branch]
 
             })

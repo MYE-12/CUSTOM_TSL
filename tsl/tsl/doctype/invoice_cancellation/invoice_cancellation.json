@@ -8,16 +8,23 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "note1",
+  "section_break_xdwg",
   "date",
   "company",
   "branch",
+  "note",
   "attachment",
   "column_break_ef9tw",
   "created_by",
   "creater",
+  "sales_person",
   "submitted_by",
+  "sales_email",
   "section_break_e4nvk",
-  "cancellation_list"
+  "cancellation_list",
+  "section_break_otvl",
+  "table_wknj"
  ],
  "fields": [
   {
@@ -30,6 +37,7 @@
   {
    "fieldname": "created_by",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Created By",
    "read_only": 1
   },
@@ -62,7 +70,8 @@
   {
    "fieldname": "creater",
    "fieldtype": "Data",
-   "label": "Name"
+   "label": "Name",
+   "read_only": 1
   },
   {
    "fieldname": "submitted_by",
@@ -74,11 +83,49 @@
    "fieldtype": "Attach",
    "label": "Attachment",
    "make_attachment_public": 1
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "label": "Sales Person",
+   "options": "Sales Person"
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "HTML",
+   "label": "Note",
+   "options": "<p style=\"color:green;\"><b>Note: Please Attach the Signed Cancellation form  </b></p>"
+  },
+  {
+   "fieldname": "note1",
+   "fieldtype": "HTML",
+   "label": "Note",
+   "options": "<p style=\"color:red;\"><b>Note: Please Download the Cancellation form. Once after fetching the Invoice No </b></p>"
+  },
+  {
+   "fieldname": "section_break_xdwg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_otvl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_wknj",
+   "fieldtype": "Table",
+   "label": "Cancellation List",
+   "options": "Cancellation Table"
+  },
+  {
+   "fetch_from": "sales_person.custom_user",
+   "fieldname": "sales_email",
+   "fieldtype": "Data",
+   "label": "Sales Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-12 12:44:12.375192",
+ "modified": "2025-06-22 11:08:08.346478",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Cancellation",
@@ -101,5 +148,8 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }

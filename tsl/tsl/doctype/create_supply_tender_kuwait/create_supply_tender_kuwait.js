@@ -4,7 +4,7 @@
 frappe.ui.form.on('Create Supply Tender Kuwait', {
 	refresh:function(frm){
 		frm.disable_save()
-		frm.add_custom_button(__("Create Supply Order"), function(){
+		frm.add_custom_button(__("Create Supply Tender"), function(){
 			frappe.call({
 				'method': 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_supply_tender_kuwait',
 				'freeze':true,

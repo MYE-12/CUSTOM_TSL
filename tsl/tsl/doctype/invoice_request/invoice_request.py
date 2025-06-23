@@ -54,7 +54,6 @@ class InvoiceRequest(Document):
                                 frappe.sendmail(
                                     sender= info,
                                     recipients=['finance-sa1@tsl-me.com',"finance@tsl-me.com"],
-                                    cc = ["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
                                     subject = "Invoice Request - %s"%(i.quotation),
                                     message = msg,
                                 
@@ -65,7 +64,6 @@ class InvoiceRequest(Document):
                                 frappe.sendmail(
                                     sender= info,
                                     recipients=['finance2@tsl-me.com',"finance-kw@tsl-me.com"],
-                                    cc = ["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
                                     subject = "Invoice Request - %s"%(i.quotation),
                                     message = msg,
                                 
@@ -106,6 +104,7 @@ class InvoiceRequest(Document):
 
             
     def on_submit(self):
+        frappe.db.set_value("Invoice Request",self.name,"submitted_by",frappe.session.user)
         if self.workflow_state == "Invoice Created":
             
             # self.submitted_by = frappe.session.user

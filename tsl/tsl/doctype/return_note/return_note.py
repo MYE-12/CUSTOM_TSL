@@ -11,18 +11,23 @@ class ReturnNote(Document):
             doc = frappe.get_doc("Work Order Data",wo.wod_no)
             if doc.status == "RNP-Return No Parts":
                 doc.status = "RNPC-Return No Parts Client"
+                doc.return_note = self.name
                 doc.save(ignore_permissions = 1)
             if doc.status == "RNA-Return Not Approved":
                 doc.status = "RNAC-Return Not Approved Client"
+                doc.return_note = self.name
                 doc.save(ignore_permissions = 1)
             if doc.status == "RNR-Return Not Repaired":
                 doc.status = "RNRC-Return Not Repaired Client"
+                doc.return_note = self.name
                 doc.save(ignore_permissions = 1)
             if doc.status == "RNF-Return No Fault":
                 doc.status = "RNFC-Return No Fault Client"
+                doc.return_note = self.name
                 doc.save(ignore_permissions = 1)
             if doc.status == "C-Comparison":
                 doc.status = "CC-Comparison Client"
+                doc.return_note = self.name
                 doc.save(ignore_permissions = 1)
 
             # doc = frappe.get_doc("Work Order Data",wo.wod_no)
@@ -50,6 +55,7 @@ class ReturnNote(Document):
                     'item_name':i.item_name,
                     'description':i.item_name,
                     'serial_no':i.serial_no,
+                    'use_serial_batch_fields':1,
                     'qty':i.quantity,
                     'uom':frappe.db.get_value("Item",i.item_code,'stock_uom') or "Nos",
                     'branch':doc.branch,

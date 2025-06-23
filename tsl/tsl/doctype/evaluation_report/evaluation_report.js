@@ -147,19 +147,26 @@ frappe.ui.form.on('Evaluation Report', {
 		// 	$(".btn.btn-xs.btn-danger.grid-remove-rows").hide()
 		// 	cur_frm.refresh_fields()
 		// }
+
 		if(!frm.doc.if_parts_required){
 			    // set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 				set_field_options("status", ["Installed and Completed/Repaired","Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 			}
 		if(frm.doc.if_parts_required && frm.doc.items.length>0){
+
 		if(frm.doc.items[frm.doc.items.length-1].part_sheet_no > 1 ){
 			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 			set_field_options("status", ["Installed and Completed/Repaired","Working","Extra Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 		}
+		
 		else if(frm.doc.items[(frm.doc.items.length)-1].part_sheet_no == 1){
 			// set_field_options("status", ["Installed and Completed/Repaired","Customer Testing","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
 			set_field_options("status", ["Installed and Completed/Repaired","Working","Spare Parts","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Supplier Quoted","Internal Extra Parts"])
-		}}
+		}
+
+		}
+
+
 		if(frm.doc.attach_image){
 			cur_frm.set_df_property("item_photo", "options","<img src="+frm.doc.attach_image+"></img>");
 			cur_frm.refresh_fields();
@@ -296,7 +303,7 @@ frappe.ui.form.on('Evaluation Report', {
 			}
 
 		 if(frappe.user.has_role("Technician") && (!frappe.user.has_role("Administrator"))){
-			set_field_options("status", ["Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Spare Parts",])
+			set_field_options("status", ["Working","Comparison","Return Not Repaired","Return No Fault","RNP-Return No Parts","Spare Parts","Internal Extra Parts"])
 			}
 	},
 	if_parts_required:function(frm){

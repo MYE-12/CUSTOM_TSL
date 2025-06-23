@@ -494,6 +494,7 @@ def get_work_orders(data):
 		if wo:
 			for j in wo:	
 				wods.append(j)
+	
 	return wods
 
 @frappe.whitelist()
@@ -1993,19 +1994,17 @@ def get_incentive(from_date,to_date,company,branch):
 	data += '<tr>'
 	data += '<td style="border-color:#000000;width:10%;padding:1px;font-size:14px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">TECHNICIAN</td>'
 
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total RS WO Count</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total RS Amount</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">Total Material Cost</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NET Amount</td>'
-
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">TOTAL RS WO COUNT</td>'
 	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER COUNT</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER % Against RS</td>'
-	
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION AMT</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION COMMISSION</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">AMT AFTER DEDUCTION</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">COMMISSION</td>'
-	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">AFTER DEDUCTION COMMISSION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER % AGAINST RS</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">TOTAL RS AMOUNT</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">TOTAL MATERIAL COST</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NET AMOUNT</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION AMOUNT</td>'
+	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">NER DEDUCTION COMMISSION</td>'
+	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">AMT AFTER DEDUCTION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">COMMISSION BEFORE NER DEDUCTION</td>'
+	data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:11px;background-color:#0e86d4;color:white;font-weight:bold;text-align:center;">COMMISSION AFTER NER DEDUCTION</td>'
 	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>TOTAL</b><center></td>'
 	# data += '<td style="border-color:#000000;width:7%;padding:1px;font-size:14px;font-size:12px;background-color:#0e86d4;color:white;"><center><b>SUB TOTAL</b><center></td>'
 	data += '</tr>'	
@@ -2026,8 +2025,8 @@ def get_incentive(from_date,to_date,company,branch):
 
 		ner = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
 			left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
-			where  `tabStatus Duration Details`.status = "NER-Need Evaluation Return"
-			and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,from_date,to_date) ,as_dict=1)
+			where  `tabStatus Duration Details`.status = "NER-Need Evaluation Return" and `tabWork Order Data`.mistaken_ner != 1
+			and `tabWork Order Data`.technician = "%s" and `tabWork Order Data`.status_cap_date between '%s' and '%s' """ %(i.user_id,from_date,to_date) ,as_dict=1)
 
 	
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs[0]["ct"])
@@ -2087,6 +2086,7 @@ def get_incentive(from_date,to_date,company,branch):
 			`tabQuotation Item`.unit_price as up,
 			`tabQuotation`.grand_total as gt,
 			`tabQuotation Item`.margin_amount as mar,
+			`tabQuotation Item`.net_amount as am,
 			`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
 			left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 			where `tabQuotation`.Workflow_state in ("Approved By Customer") and
@@ -2111,19 +2111,25 @@ def get_incentive(from_date,to_date,company,branch):
 							q_m = q_m + amt
 
 			else:
-				if q_amt:			
-					q_m = q_m + q_amt[0]["gt"]
-
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(c):,}") 
+				if q_amt:
+					d = frappe.get_doc("Quotation",q_amt[0]["q_name"])
+					if len(d.items) > 1:			
+						q_m = q_m + q_amt[0]["am"]
+					else:
+						q_m = q_m + q_amt[0]["gt"]
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 
 		if rs[0]["ct"] == 0:
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(rs[0]["ct"],"%")
 		else:
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s%s</b><center></td>' %(round((ner[0]["ct"]/rs[0]["ct"])*100),"%")
-		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
+
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %((f"{round(q_m - (round(s_total + inv_total))):,}") ) 
+		
+
+				# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 
 		nar = 0
 		if rs[0]["ct"] == 0:
@@ -2135,14 +2141,18 @@ def get_incentive(from_date,to_date,company,branch):
 		ner_deduct = (nar * to_rs)/100
 		net_amount =  round((q_m - (s_total + inv_total)),2)
 		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct*2/100):,}")
+		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(ner_deduct*2/100):,}")
+		
 		aad = round(net_amount - ner_deduct,2)
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad):,}")
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad*2/100):,}") 
+		# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(aad):,}")
+		# data +S= '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{rousnd(aad*2/100):,}") 
 
 		ner_d_com =  round(ner_deduct*2/100)
 		aad_d_com = round(aad*2/100)		
-		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{aad_d_com-ner_d_com:,}") 
+		
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(net_amount * 2/100):,}") 
+		cand = net_amount*(1-nar/100)*2/100
+		data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(cand):,}") 
 
 		# frappe.errprint(s_total)
 		# 	sales = frappe.db.sql(""" select `tabSales Invoice`.posting_date,`tabSales Invoice Item`.amount  from `tabSales Invoice`
@@ -2551,16 +2561,16 @@ def get_sales_table(name):
 						data+= '<td style = "text-align:center;">%s</td>' %(i.invoice_no)
 					else:
 						data+= '<td style = "text-align:center;">%s</td>' %("")
-					if idx == 0:
-						if k.wod_no or k.work_order_data:
-							data += '<td style="text-align:center;">%s</td>' % (k.wod_no or k.work_order_data)
-						if k.supply_order_data:
-							data += '<td style="text-align:center;">%s</td>' % (k.supply_order_data)
-					else:
-						if k.wod_no or k.work_order_data:
-							data += '<td style="text-align:center;">%s</td>' % ("")
-						if k.supply_order_data:
-							data += '<td style="text-align:center;">%s</td>' % ("")
+					# if idx == 0:
+					if k.wod_no or k.work_order_data:
+						data += '<td style="text-align:center;">%s</td>' % (k.wod_no or k.work_order_data)
+					if k.supply_order_data:
+						data += '<td style="text-align:center;">%s</td>' % (k.supply_order_data)
+					# else:
+					# 	if k.wod_no or k.work_order_data:
+					# 		data += '<td style="text-align:center;">%s</td>' % ("")
+					# 	if k.supply_order_data:
+					# 		data += '<td style="text-align:center;">%s</td>' % ("")
 
 					md = frappe.get_value("Item Model",k.model,"model")
 					data+= '<td style = "text-align:center;">%s</td>' %(md)
@@ -2753,10 +2763,15 @@ def get_documents(name):
 	dn = frappe.get_value("Work Order Data",{"name":name},["dn_no"])
 	si = frappe.get_value("Work Order Data",{"name":name},["invoice_no"])
 	per = frappe.get_value("Work Order Data",{"name":name},["payment_entry_reference"])
-	# frappe.errprint(dn)
+	rn = frappe.get_value("Work Order Data",{"name":name},["return_note"])
+	qn = frappe.db.sql(''' select `tabQuotation`.name from `tabQuotation` 
+		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+		where `tabQuotation`.Workflow_state in ("Approved By Customer") and `tabQuotation Item`.wod_no = %s  ''',name,as_dict=1)
+
+	
 	data = ""
 	data+= '<table class="table table-bordered">'
-	if dn or si or per: 
+	if dn or si or per or rn or qn: 
 		data+= '<tr><td colspan = 6 align = center ><b style= "color:blue;font-size:14px">Linked Documents</b></td></tr>'
 		if dn:  
 			data+= '<tr><td><b style = "color:blue;font-size:14px">Delivery Note</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/delivery-note/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(dn,dn)
@@ -2764,6 +2779,12 @@ def get_documents(name):
 			data+= '<tr><td ><b style = "color:blue;font-size:14px">Sales Invoice</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/sales-invoice/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(si,si)
 		if per:
 			data+= '<tr><td><b style = "color:blue;font-size:14px">Payment Entry</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/payment-entry/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(per,per)
+		if rn:
+			data+= '<tr><td><b style = "color:blue;font-size:14px">Return Note</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/return-note/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(rn,rn)
+		if qn:
+			data+= '<tr><td><b style = "color:blue;font-size:14px">Quotation</b></td><td style = "color:red;font-size:14px">%s</td><td><a style = "color:red;font-size:14px;" href="https://erp.tsl-me.com/app/quotation/%s" target="_blank" >VIEW</a><span>&#128065;</span></td></tr>' %(qn[0]["name"],qn[0]["name"])
+		
+		
 		data+= "</table>"
 	
 	return data
@@ -5670,6 +5691,16 @@ def invoice_request_2(qu):
 	
 	return sd
 
+
+@frappe.whitelist()
+def invoice_cancellation(wod):
+	si = frappe.db.sql(""" select  `tabSales Invoice`.name from `tabSales Invoice` 
+			left join `tabSales Invoice Item` on `tabSales Invoice Item`.parent = `tabSales Invoice`.name
+			where `tabSales Invoice Item`.wod_no = '%s' """ %(wod),as_dict = 1)
+	
+	if si:
+		return si
+
 @frappe.whitelist()
 def get_item_details(md):
 	it = frappe.db.exists("Item",{"model":md})
@@ -5683,10 +5714,12 @@ def get_item_details(md):
 def update_eval():
 	wo = frappe.db.sql(""" UPDATE `tabEvaluation Report` SET technician_id = 11 WHERE  technician = "marwin-uae@tsl-me.com" ; """)
 
+from hrms.payroll.doctype.payroll_entry.payroll_entry import get_employee_list
 @frappe.whitelist()
 def fill_employee_details(self):
+	filters = self.make_filters()
+	employees = get_employee_list(filters=filters, as_dict=True, ignore_match_conditions=True)
 	self.set("employees", [])
-	employees = self.get_emp_list()
 	if not employees:
 		error_msg = _(
 			"No employees found for the mentioned criteria:<br>Company: {0}<br> Currency: {1}<br>Payroll Payable Account: {2}"
@@ -5724,6 +5757,9 @@ def fill_employee_details(self):
 			"docstatus":1
 		},['name'])
 
+		leaves = check_leaves(d["employee"],self.start_date, self.end_date)
+		if leaves <= 0:
+			continue
 		# loan = frappe.db.sql("""
 		# 	SELECT l.name 
 		# 	FROM `tabLoan` l
@@ -5742,6 +5778,25 @@ def fill_employee_details(self):
 
 	self.number_of_employees = len(self.employees)
 	return self.get_employees_with_unmarked_attendance()
+
+@frappe.whitelist()
+def check_leaves(employee, start_date, end_date):
+	from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
+	# employee = 110
+	# start_date = "2025-06-01"
+	# end_date = "2025-06-30"
+	holiday_list = get_holiday_list_for_employee(employee)
+	no_of_days = date_diff(end_date, start_date) + 1
+	holiday_count = frappe.db.sql(
+		"""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+		where h1.parent = h2.name and h1.holiday_date between %s and %s
+		and h2.name = %s """,
+		(start_date, end_date, holiday_list),
+	)[0][0]
+
+	count = frappe.db.count("Attendance",{"docstatus":1,"employee":employee,"status": "On Leave", "attendance_date": ("between", [start_date, end_date])})
+	check = no_of_days - (count + holiday_count)
+	return check
 
 @frappe.whitelist()
 def check_ss():
@@ -6131,7 +6186,8 @@ def submit_dubai_wo():
 		WHERE `docstatus` = 0
 		AND `company` = 'TSL COMPANY - UAE';
 		""")
-		
+
+from hrms.hr.utils import get_exact_month_diff, get_holiday_dates_for_employee
 def get_payroll_period_days(start_date, end_date, employee, company=None):
 	if not company:
 		company = frappe.db.get_value("Employee", employee, "company")
@@ -7838,20 +7894,21 @@ def update_user_permissions(self):
 @frappe.whitelist()
 
 def test_email():
-# 	make(
-# 		sender = "info@tsl-me.com",
-# 		recipients="yousuf@tsl-me.com",
-# 		content= "TEST EMAIL",
-# 		subject="TEST",
-# 		send_mail=True,
-# 		cc="mohamedyousufesi46@gmail.com",
-# 
-	# )
-	sq = frappe.db.sql("""
-		UPDATE `tabSupply Order Data` 
-		SET branch = 'Dubai - TSL' 
-		WHERE company = 'TSL COMPANY - UAE'
-	""", as_dict=1)
+	make(sender = "info@tsl-me.com",
+	recipients=["yousuf@tsl-me.com"],
+	subject="TEST",
+	content="""Dear Info,<br><br>
+                                    I hope this email finds you well.<br><br>
+                                    The Invoice has been created as per your request for the Quotation<br><br>
+                                    Please find the attached Invoice for your reference.""",
+	cc=["mohamedyousufesi46@gmail.com", "karthick@tsl-me.com"],
+	send_email=1,
+	)
+	# sq = frappe.db.sql("""
+	# 	UPDATE `tabSupply Order Data` 
+	# 	SET branch = 'Dubai - TSL' 
+	# 	WHERE company = 'TSL COMPANY - UAE'
+	# """, as_dict=1)
 
 @frappe.whitelist()
 def get_item_number(item_details,company):
@@ -7953,27 +8010,93 @@ def create_replacement_item(customer,wod,items):
 		st.save(ignore_permissions = True)
 
 
+@frappe.whitelist()
+def create_cwdr(wdr):
+	frappe.delete_doc("Create Work Order Riyadh", "Create Work Order Riyadh")
+	return "yes"
+
+@frappe.whitelist()
+def create_cwdj(wdr):
+	frappe.delete_doc("Create Work Order Jeddah", "Create Work Order Jeddah")
+	return "yes"
+
+@frappe.whitelist()
+def create_cwdk(wdr):
+	frappe.delete_doc("Create Work Order Kuwait", "Create Work Order Kuwait")
+	return "yes"
+
+@frappe.whitelist()
+def create_cwdd(wdr):
+	frappe.delete_doc("Create Work Order Dammam", "Create Work Order Dammam")
+	return "yes"
+
+@frappe.whitelist()
+def create_cwddu(wdr):
+	frappe.delete_doc("Create Work Order UAE", "Create Work Order UAE")
+	return "yes"
+
+@frappe.whitelist()
+def get_advance(customer,cur):
+	data = ''
+	if customer:
+		data = ''
+		data += '<h5><center><b>Advance Details</b></center></h5>'
+		data += '<table class="table table-bordered">'
+		data += '<tr>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>Customer</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>Advance Amount</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>Currency</b><center></td>'
+		data += '</tr>'
+		
+
+		data += '<tr>'
+		data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(customer)
+		amt = frappe.db.sql("""
+			SELECT SUM(pe.paid_amount) as pa
+			FROM `tabPayment Entry` pe
+			LEFT JOIN `tabPayment Entry Reference` per ON per.parent = pe.name
+			WHERE per.name IS NULL and pe.party = "%s" and pe.docstatus = 1 """ %(customer) ,as_dict=1)
+		
+		if amt:
+			formatted_value = "{:,.2f}".format(amt[0]["pa"])
+			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(formatted_value)
+		else:
+			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %("0.00")
+		data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(cur)
+		data += '</tr>'
+		
+		
+		
+
+		data += '</table>'
+	return data
+
 # @frappe.whitelist()
 # def get_sales_person():
-	# s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
-	# for i in s:
-	# 	print(i[0])
-	# k = frappe.db.sql(""" UPDATE `tabQuotation`
- 	# 		SET workflow_state = "Approved By Management"
- 	# 		WHERE name = "SUP-QTN-INT-DU25-00174" """)
+# 	# s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
+# 	# for i in s:
+# 	# 	print(i[0])
+# 	k = frappe.db.sql(""" delete from `tabWork Order Data` where name = "WOD-D25-09238" """)
 
 
 # @frappe.whitelist()
 # def set_sales_person():
-# 	k = frappe.db.sql(""" UPDATE `tabQuotation`
-# 	SET sales_rep = "yehia@tsl-me.com"
-# 	WHERE custom_sales_person = 'Ahmed Yahia' """)
+	
 # 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
 # 	for i in s:
 		
-# 		user = frappe.get_value("Sales Person",{"custom_user":i[0]},["name"])
-# 		if user:
-# 			print(user)
+# 		if i:
+# 			# s= frappe.get_value("User",{"c":i[0]},["name"])
+# 			user = frappe.get_value("Sales Person",{"custom_user":i[0]},["name"])
+# 			if user:
+# 				print(user)
+			
+				
+# 				k = frappe.db.sql(""" UPDATE `tabSales Invoice`
+# 				SET custom_sales_person = '%s's
+# 				WHERE sales_rep = '%s' """ %(user,i[0]))
+
+		
 	
 
 

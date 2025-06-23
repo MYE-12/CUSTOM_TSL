@@ -231,7 +231,8 @@
   {
    "fieldname": "attach_image",
    "fieldtype": "Attach Image",
-   "label": "Attach Image"
+   "label": "Attach Image",
+   "make_attachment_public": 1
   },
   {
    "fieldname": "suggested_price",
@@ -306,12 +307,13 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-29 14:44:12.410022",
+ "modified": "2025-06-17 14:21:16.012010",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Received Equipment",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

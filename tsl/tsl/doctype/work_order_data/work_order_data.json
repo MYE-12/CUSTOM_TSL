@@ -44,6 +44,7 @@
   "technician",
   "department",
   "status",
+  "custom_status",
   "remarks",
   "po_no",
   "payment_terms",
@@ -52,6 +53,7 @@
   "dn_date",
   "invoice_no",
   "invoice_date",
+  "return_note",
   "automation",
   "project_1",
   "sec",
@@ -227,7 +229,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved\nTP-Third Party\nIP-Internal Extra Parts"
+   "options": "A-Approved\nAP-Available Parts\nC-Comparison\nCT-Customer Testing\nCC-Comparison Client\nEP-Extra Parts\nIQ-Internally Quoted\nNE-Need Evaluation\nNER-Need Evaluation Return\nNEA-Need Evaluation Approved\nP-Paid\nQ-Quoted\nRNA-Return Not Approved\nRNAC-Return Not Approved Client\nRNF-Return No Fault\nRNFC-Return No Fault Client\nRNP-Return No Parts\nRNPC-Return No Parts Client\nRNR-Return Not Repaired\nRNRC-Return Not Repaired Client\nRS-Repaired and Shipped\nRSC-Repaired and Shipped Client\nRSI-Repaired and Shipped Invoiced\nSP-Searching Parts\nTR-Technician Repair\nUE-Under Evaluation\nUTR-Under Technician Repair\nW-Working\nWP-Waiting Parts\nParts Priced\nPending Internal Approval\nRSI-Repaired and Shipped Invoiced\nNEA-Need Evaluation Approved\nTP-Third Party\nIP-Internal Extra Parts\nC-Cancelled"
   },
   {
    "default": "Repair - TSL",
@@ -629,6 +631,19 @@
    "fieldname": "quotation",
    "fieldtype": "Data",
    "label": "Quotation"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "return_note",
+   "fieldtype": "Data",
+   "label": "Return Note"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "custom_status",
+   "fieldtype": "Select",
+   "label": "Custom Status",
+   "options": "\nUE-Under Evaluation\nUTR-Under Technician Repair\nRNA-Return Not Approved"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -639,7 +654,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-06-10 20:07:44.855532",
+ "modified": "2025-06-17 15:04:08.826597",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

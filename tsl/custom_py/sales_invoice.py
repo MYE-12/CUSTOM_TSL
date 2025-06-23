@@ -65,7 +65,12 @@ def on_submit(self,method):
 		sod = i.supply_order_data
 		if wod:
 			doc = frappe.get_doc("Work Order Data",wod)
-			doc.status = 'RSI-Repaired and Shipped Invoiced'
+
+			if self.is_return:
+				doc.status = 'C-Cancelled'
+			else:
+				doc.status = 'RSI-Repaired and Shipped Invoiced'
+
 			doc.save(ignore_permissions = True)
 
 			doc = frappe.get_doc("Work Order Data",wod)

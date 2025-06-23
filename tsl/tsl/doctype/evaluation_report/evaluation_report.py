@@ -438,25 +438,28 @@ class EvaluationReport(Document):
 		
 				
 									
-				if int(self.items[-1].part_sheet_no) > int(1) and self.status in ["Extra Parts","Working"] and self.ner_field == "NER-Need Evaluation Return":
+				if int(self.items[-1].part_sheet_no) > int(1) and self.status in ["Extra Parts","Working",""] and self.ner_field == "NER-Need Evaluation Return":
 					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Extra Parts",self.name))
 
 					if self.status == "Extra Parts":
 						wd = frappe.get_doc("Work Order Data",self.work_order_data)
 						wd.status = "EP-Extra Parts"
 						wd.save(ignore_permissions = 1)
+
 					else:
 						if self.status == "Working":
 							wd = frappe.get_doc("Work Order Data",self.work_order_data)
 							wd.status = "W-Working"
 							wd.save(ignore_permissions = 1)
+
+
 				if int(self.items[-1].part_sheet_no) > int(1) and self.status in ["Spare Parts","Comparison","Extra Parts","Internal Extra Parts"]  and not self.ner_field == "NER-Need Evaluation Return":
 					
 					self.status = "Internal Extra Parts"
 					frappe.db.sql('''update `tabEvaluation Report` set status = %s where name = %s ''',("Internal Extra Parts",self.name))
 					if self.document_active_status == "Yes":
 						wd = frappe.get_doc("Work Order Data",self.work_order_data)
-						wd.status = "EP-Extra Parts"
+						wd.status = "IP-Internal Extra Parts"
 						wd.save(ignore_permissions = 1)
 
 					# if self.status == "Extra Parts":

@@ -56,6 +56,9 @@ frappe.listview_settings['Work Order Data'] = {
             else if (doc.status === "EP-Extra Parts") {
                         return [__("EP-Extra Parts"), "pink", "status,=,EP-Extra Parts"];
             }
+            else if (doc.status === "IP-Internal Extra Parts") {
+                  return [__("IP-Internal Extra Parts"), "pink", "status,=,IP-Internal Extra Parts"];
+      }
             else if (doc.status === "RNAC-Return Not Approved Client") {
                         return [__("RNAC-Return Not Approved Client"), "darkgrey", "status,=,RNAC-Return Not Approved Client"];
             }
@@ -105,7 +108,7 @@ frappe.listview_settings['Work Order Data'] = {
                   return [__("NE-Need Evaluation"), "blue", "status,=,NE-Need Evaluation"];
             }
             else if (doc.status === "RSI-Repaired and Shipped Invoiced") {
-            return[__("RSI-Repaired and Shipped Invoiced"),"red","status,=,RSI-Repaired and Shipped Invoiced"];
+            return[__("RSI-Repaired and Shipped Invoiced"),"pink","status,=,RSI-Repaired and Shipped Invoiced"];
             }
             else if (doc.status === "CT-Customer Testing") {
                   return[__("CT-Customer Testing"),"red","status,=,CT-Customer Testing"];
@@ -114,8 +117,11 @@ frappe.listview_settings['Work Order Data'] = {
                   return[__("NEA-Need Evaluation Approved"),"red","status,=,NEA-Need Evaluation Approved"];
                         }
 
-            else if (doc.status === "Third Party") {
-                  return[__("Third Party"),"blue","status,=,Third Party"];
+            else if (doc.status === "TP-Third Party") {
+                  return[__("TP-Third Party"),"blue","status,=,TP-Third Party"];
+                        }
+            else if (doc.status === "C-Cancelled") {
+                  return[__("C-Cancelled"),"red","status,=,C-Cancelled"];
                         }
           
       },

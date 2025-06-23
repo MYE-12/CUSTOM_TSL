@@ -73,7 +73,7 @@ def get_sales(company):
     sp = frappe.get_all("Sales Person",{"company":company},["*"])
     for i in sp:
         # if company == "TSL COMPANY - UAE":
-        if i.name in ["Nidhin","EHAB","Mr. Yousef","Mohannad","Ahmed Yahia"]:
+        if i.name in ["Nidhin","EHAB","Mr. Yousef","Mohannad","Ahmed Yahia","Ahmad","Vazeem","Maaz"]:
         
         # if i.name == "Ahmad" or i.name == "Vazeem" or i.name == "Maaz" or i.name == "Nidhin" or i.name == "EHAB" or i.name == "Mr. Yousef" or i.name == "Mohannad" or i.name == "Karoline" or i.name == "Ahmed Yahia":                              
             sl = frappe.get_value("Sales Person",{"name":i.name},["custom_user"])

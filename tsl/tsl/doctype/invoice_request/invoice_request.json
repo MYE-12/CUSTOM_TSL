@@ -17,6 +17,7 @@
   "column_break_rkfva",
   "requested_by",
   "email_sent",
+  "sales",
   "submitted_by",
   "amended_from",
   "section_break_nc32n",
@@ -89,7 +90,7 @@
   {
    "fieldname": "requested_by",
    "fieldtype": "Data",
-   "label": "Requested By"
+   "label": "Initiated by"
   },
   {
    "fieldname": "submitted_by",
@@ -109,12 +110,20 @@
    "fieldname": "email_sent",
    "fieldtype": "Check",
    "label": "Email Sent"
+  },
+  {
+   "fieldname": "sales",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Requested Sales",
+   "options": "Sales Person",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-19 14:02:40.838204",
+ "modified": "2025-06-17 13:50:36.747203",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",
@@ -138,6 +147,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -37,11 +37,13 @@ def get_columns(filters):
 		_("Contact Number") + ":Data:150",
 		_("Technician") + ":Data:150",
 		_("Quoted Price") + ":Currency:150",
+
 		# _("Old Quoted Amount") + ":Data:150",
 		# _("Old VAT") + ":Data:100",
 		# _("Old Total Amount") + ":Data:100",
 		_("Quoted Date") + ":Date:150",
-		# _("Po No") + ":Data:150",
+		_("Approval Type") + ":Data:150",
+		_("Po No") + ":Data:150",
 		_("Payment Ref") + ":Link/Payment Entry:140",
 		_("Payment Date") + ":Date:150",
 		_("Delivery Note") +  ":Link/Delivery Note:140",
@@ -148,6 +150,7 @@ def get_data(filters):
 		`tabQuotation`.purchase_order_no as po_no,
 		`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,
 		`tabQuotation`.approval_date as a_date,
+		`tabQuotation`.type_of_approval as type,
 		`tabQuotation`.transaction_date as qd,
 		`tabQuotation`.is_multiple_quotation as is_m,
 		`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
@@ -163,8 +166,10 @@ def get_data(filters):
 		quoted_date = ''
 		po = ''
 		vat = 0
+		typ = ''
 		vat_amt = 0
 		if q_amt:
+			typ = q_amt[0]["type"]
 			quoted_date = q_amt[0]["qd"]
 			ap_date = q_amt[0]["a_date"]
 			qu_name =  q_amt[0]["q_name"]
@@ -188,6 +193,8 @@ def get_data(filters):
 		# i.old_wo_vat,
 		# i.old_wo_total_amt,
 		quoted_date,
+		typ,
+		i.po_no,
 		i.payment_reference_number,
 		i.payment_date,
 		i.dn_no,

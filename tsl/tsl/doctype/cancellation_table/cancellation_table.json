@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-18 12:20:27.611213",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "work_order_data",
+  "sales_invoice"
+ ],
+ "fields": [
+  {
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Work Order Data",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-06-18 12:22:19.025546",
+ "modified_by": "Administrator",
+ "module": "Tsl",
+ "name": "Cancellation Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

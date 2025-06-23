@@ -36,6 +36,7 @@ class IncentiveReport(Document):
 		
 		sp = frappe.get_all("Employee",{"designation": ["in", ["Technician",'Senior Technician',"Automation Technician"]],"company":self.company,"status":"Active","branch":self.branch,},["*"])
 		# wd = frappe.get_all("Work Order Data",{"status":"RSI-Repaired and Shipped Invoiced","posting_date": ["between", (self.from_date,self.to_date)]},["*"])
+		
 		for i in sp:
 			data += '<tr>'
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(i.employee_name)
@@ -43,9 +44,28 @@ class IncentiveReport(Document):
 
 			rs = frappe.db.sql(""" select count(DISTINCT `tabWork Order Data` .name) as ct from `tabWork Order Data` 
 				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
-				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"  and `tabWork Order Data`.status_cap IS NULL
+				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
 				and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
 
+			
+			rss = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct , DATE(`tabStatus Duration Details`.date) as d from `tabWork Order Data` 
+				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
+				and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
+			
+
+			rs_count = 0
+			for s in rss:
+				r = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct , DATE(`tabStatus Duration Details`.date) as d from `tabWork Order Data` 
+				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
+				and `tabWork Order Data`.name = "%s" and DATE(`tabStatus Duration Details`.date) < '%s' """ %(s['ct'],self.from_date) ,as_dict=1)
+				
+				if not r:
+					frappe.errprint(s['ct'])
+					rs_count = rs_count + 1
+
+					
 			ner = frappe.db.sql("""
 			SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS ct 
 			FROM `tabWork Order Data`
@@ -57,7 +77,7 @@ class IncentiveReport(Document):
 			""", (i.user_id, self.from_date, self.to_date), as_dict=1)
 
 			
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs[0]["ct"])
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs_count)
 			
 			# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
 

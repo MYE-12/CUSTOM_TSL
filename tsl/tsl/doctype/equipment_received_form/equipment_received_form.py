@@ -641,7 +641,7 @@ def create_workorder_data_uae(order_no, f):
                     
                     if eval:
                         frappe.db.set_value("Evaluation Report", eval, "ner_field", "NER-Need Evaluation Return")
-                    frappe.errprint(date)
+                   
                     wd = frappe.get_doc("Work Order Data",doc.work_order_data)
                     wd.status = "NER-Need Evaluation Return"
                     if i["no_power"]:

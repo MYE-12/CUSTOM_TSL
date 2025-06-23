@@ -10,7 +10,8 @@ def on_submit(self,method):
         doc.status = "P-Paid"
         doc.save(ignore_permissions = True)
     
-    if self.work_orders:
+    
+    if self.work_orders and self.payment_type == 'Receive':
         for i in self.work_orders:
             if i.work_order_data:
                 frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "P-Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.work_order_data))

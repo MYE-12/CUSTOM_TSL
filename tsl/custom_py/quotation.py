@@ -297,7 +297,7 @@ def show_details(self,method):
 		
 		for i in self.get("items"):
 			total_qtn_rate = 0
-			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 order by creation desc''',i.wod_no,as_dict=1)
+			part_sheet = frappe.db.sql('''select name from `tabEvaluation Report` where work_order_data = %s and docstatus = 1 AND status NOT IN ('Return No Fault', 'Return Not Repaired')  order by creation desc''',i.wod_no,as_dict=1)
 			for j in  part_sheet:
 				doc = frappe.get_doc("Evaluation Report",j['name']) 
 				total = 0
@@ -330,9 +330,15 @@ def show_details(self,method):
 
 		for i in self.get("items"):
 			
-			eval =frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
+			# eval =frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
+			eval = frappe.db.sql("""
+			SELECT name FROM `tabEvaluation Report`
+			WHERE work_order_data = %s
+			AND status NOT IN ('Return No Fault', 'Return Not Repaired') """, (i.wod_no,), as_dict=1)
+			
 			if eval:
-				doc = frappe.get_doc("Evaluation Report",{"name":eval}) 
+				doc = frappe.get_doc("Evaluation Report",{"name":eval[0]["name"]}) 
+				frappe.errprint(doc.name)
 				if doc:
 					for k in doc.get("items"):
 						item_model = frappe.get_value("Item Model",{"name":k.model},"model")
@@ -461,7 +467,7 @@ def show_details(self,method):
 
 							})
 						else:
-							frappe.errprint("439hfid")
+							
 							price = k.price_ea
 							price1 = k.total
 							
@@ -998,14 +1004,13 @@ def get_quotation_history(source,type = None):
 					disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
 					unit_disc = disc
 					ic.rate = doc.after_discount_cost
-					# ic.rate = ic.rate
 				
 				if ic.item_code:
 					ic.rate = ic.rate
 
 	if doc.company == "TSL COMPANY - UAE" or doc.company == "TSL COMPANY - KSA":
-
-		# if not doc.quotation_type == "Internal Quotation - Supply":
+		frappe.errprint(doc.currency)
+		frappe.errprint(target_doc.currency)
 		if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
 			if doc.without_discount == 1:
 				for ic in doclist.get('items'):
@@ -1016,53 +1021,8 @@ def get_quotation_history(source,type = None):
 		else:
 			for ic in doclist.get('items'):
 				ic.rate = ic.margin_amount
-			# if not doc.is_multiple_quotation:
-			# 	if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-			# 		disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-			# 		unit_disc = disc
-
-			# 		ic.rate = doc.unit_rate_price
-			# 		ic.item_price =  doc.unit_rate_price
-			# 		ic.price_list_rate = doc.unit_rate_price
-			# 	else:
-			# 		disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-			# 		ic.rate = doc.after_discount_cost
-			# 		ic.item_price = doc.after_discount_cost
-				
-			# if doc.is_multiple_quotation:
-			# 	if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
-			# 		ic.rate = ic.unit_price
-			# 		ic.item_price = ic.unit_price
-			# 		ic.price_list_rate = ic.unit_price
-			# 	else:
-			# 		ic.rate = ic.margin_amount
-			# 		ic.item_price = ic.margin_amount
-
-					
-			
-		# if doc.company == "TSL COMPANY - KSA":
-		# 	for ic in doclist.get('items'):
 		
-		# 		if not ic.margin_amount:
-		# 			disc = (doclist.after_discount_cost * doclist.default_discount_percentage)/100
-		# 			unit_disc = disc
-		# 			ic.rate = doc.after_discount_cost
-		# 			ic.item_price = doc.after_discount_cost
-		# 			# ic.rate = ic.rate
-				
-		# 		else:
-		# 			ic.rate = ic.margin_amount
-		# 			ic.item_price = ic.margin_amount
 
-		
-	# for i in doc.items:
-	# 	rate = i.margin_amount
-	# 	if rate:
-	# 		for i in range(len(doclist.items)):
-	# 			doclist.items[i].rate = (rate)
-	# 			doclist.after_discount_cost = doc.actual_price
-					
-				
 	return doclist
 
 
@@ -1122,6 +1082,9 @@ def create_sal_inv(source):
 					i.project_data = mg.project
 				# else:
 				# 	i.rate= doc.after_discount_cost
+
+	elif doc.company == "TSL COMPANY - KSA":
+		target_doc.selling_price_list = "Standard Selling - KSA"
 
 	return doclist
 
