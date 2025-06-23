@@ -20,18 +20,18 @@ def wod():
         # frappe.errprint(country)
 
 
-    today = date.today()
-    date_obj = datetime.strptime(str(today), "%Y-%m-%d")
+        today = date.today()
+        date_obj = datetime.strptime(str(today), "%Y-%m-%d")
 
-    # Format the datetime object to the desired string format
-    formatted_date = date_obj.strftime("%d-%m-%Y")
-    obj = datetime.strptime(str(formatted_date), "%d-%m-%Y")
-    formatted= obj.strftime("%-d %b %Y")
-    now = datetime.now()
-    # frappe.errprint(datetime.now())
-    current_hour = now.hour
-    current_minute = now.minute
-    time = str(current_hour) + ":" + str(current_minute)
+        # Format the datetime object to the desired string format
+        formatted_date = date_obj.strftime("%d-%m-%Y")
+        obj = datetime.strptime(str(formatted_date), "%d-%m-%Y")
+        formatted= obj.strftime("%-d %b %Y")
+        now = datetime.now()
+        # frappe.errprint(datetime.now())
+        current_hour = now.hour
+        current_minute = now.minute
+        time = str(current_hour) + ":" + str(current_minute)
 
     data = {}
     wd = frappe.db.sql(""" select `tabUser`.full_name,`tabMaterial List`.item_name,`tabWork Order Data`.name,
