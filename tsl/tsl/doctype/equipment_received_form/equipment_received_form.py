@@ -207,7 +207,7 @@ def create_workorder_data(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer']}, "name")
             
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
@@ -551,7 +551,7 @@ def create_workorder_data_uae(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer']}, "name")
             
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
@@ -896,7 +896,7 @@ def create_workorder_data_kuwait(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer']}, "name")
             
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item
@@ -1131,6 +1131,7 @@ def create_workorder_data_kuwait(order_no, f):
             frappe.db.sql('''update `tabFile` set attached_to_name = %s where file_url = %s ''',(new_doc.name,i["attach_image"]))
         new_doc.submit()
         if i['item_code']:
+            frappe.errprint(sn_no)
             se_doc = frappe.new_doc("Stock Entry")
             se_doc.stock_entry_type = "Material Receipt"
             se_doc.company = doc.company
@@ -1240,7 +1241,7 @@ def create_workorder_data_ksa(order_no, f):
             
     for i in doc.get("received_equipment"):
         if not 'item_code' in i:
-            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer'], "type": i['type']}, "name")
+            item = frappe.db.get_value("Item", {"model": i['model'], "mfg": i['manufacturer']}, "name")
             
             if item and 'serial_no' in i and i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No", {"item_code": item}, as_list=1)]:
                 i['item_code'] = item

@@ -67,6 +67,7 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee"
   },
@@ -308,6 +309,7 @@
    "fetch_from": "leave_application.company",
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Company",
    "options": "Company"
   },
@@ -391,7 +393,7 @@
    "link_fieldname": "leave_salary_reference"
   }
  ],
- "modified": "2025-05-21 22:45:10.875249",
+ "modified": "2025-06-30 08:23:18.147596",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Salary",
@@ -411,6 +413,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

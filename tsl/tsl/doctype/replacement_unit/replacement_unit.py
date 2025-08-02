@@ -74,3 +74,41 @@ class ReplacementUnit(Document):
 				"status":self.status,
 				"date":now,
 			})
+
+
+@frappe.whitelist()
+def create_rfq(docname):
+	doc = frappe.get_doc("Replacement Unit",docname)
+	new_doc = frappe.new_doc("Request for Quotation")
+	new_doc.company = doc.company
+	new_doc.branch = doc.branch
+	new_doc.schedule_date = today()
+	new_doc.custom_replacement_unit = docname
+	new_doc.department = doc.department
+	new_doc.items=[]
+	if doc.company == "TSL COMPANY - KSA":
+		new_doc.naming_series = "RFQ-SA-.YY.-"
+	warehouse = new_doc.branch
+	if new_doc.branch == "Dammam - TSL-SA":
+		warehouse = "Dammam - TSL - KSA"
+	if new_doc.branch == "Jeddah - TSL-SA":
+		warehouse = "Jeddah - TSL - KSA"
+	if new_doc.branch == "Riyadh - TSL- KSA":
+		warehouse = "Riyadh - TSL - KSA"
+		
+	for i in doc.get("material_list"):
+		new_doc.append("items",{
+			"item_code":i.item_code,
+			'model':i.model_no,
+			"uom":"Nos",
+			"stock_uom":"Nos",
+			"conversion_factor":1,
+			"stock_qty":1,
+			"qty":1,
+			# "schedule_date":add_to_date(new_doc.transaction_date,days = 2),
+			"schedule_date":today(),
+			"warehouse":warehouse,
+			"branch":new_doc.branch,
+			"department":doc.department        
+		})
+	return new_doc

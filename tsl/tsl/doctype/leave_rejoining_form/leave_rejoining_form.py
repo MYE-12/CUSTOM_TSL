@@ -28,15 +28,36 @@ class LeaveRejoiningForm(Document):
 
 	def on_submit(self):
 		if self.leave_type:
-			l_ap = frappe.new_doc("Leave Application")
-			l_ap.rejoining = self.name
-			l_ap.employee = self.emp_no
-			l_ap.leave_type = self.leave_type
-			l_ap.from_date = self.rejoining_date
-			l_ap.to_date = self.actual_rejoining_date
-			l_ap.status = "Approved"
-			l_ap.save()
-			l_ap.submit()
+			if self.unpaid_start_date and self.unpaid_end_date:
+				lwp = frappe.new_doc("Leave Application")
+				lwp.rejoining = self.name
+				lwp.employee = self.emp_no
+				lwp.leave_type = "Leave Without Pay"
+				lwp.from_date = self.unpaid_start_date
+				lwp.to_date = add_days(self.unpaid_end_date,-1)
+				lwp.status = "Approved"
+				lwp.save()
+				lwp.submit()
+				
+				l_ap = frappe.new_doc("Leave Application")
+				l_ap.rejoining = self.name
+				l_ap.employee = self.emp_no
+				l_ap.leave_type = self.leave_type
+				l_ap.from_date = self.rejoining_date
+				l_ap.to_date = add_days(self.unpaid_start_date,-1)
+				l_ap.status = "Approved"
+				l_ap.save()
+				l_ap.submit()
+			else:
+				l_ap = frappe.new_doc("Leave Application")
+				l_ap.rejoining = self.name
+				l_ap.employee = self.emp_no
+				l_ap.leave_type = self.leave_type
+				l_ap.from_date = self.rejoining_date
+				l_ap.to_date = add_days(self.actual_rejoining_date,-1) 
+				l_ap.status = "Approved"
+				l_ap.save()
+				l_ap.submit()
 
 
 from hrms.hr.doctype.leave_application.leave_application import get_holidays

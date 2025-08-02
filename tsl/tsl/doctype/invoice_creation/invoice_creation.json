@@ -52,18 +52,21 @@
    "fieldname": "attach_invoice",
    "fieldtype": "Attach",
    "in_list_view": 1,
-   "label": "Attach Invoice"
+   "label": "Attach Invoice",
+   "make_attachment_public": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-24 11:39:35.262028",
+ "modified": "2025-07-17 09:26:40.594298",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Creation",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

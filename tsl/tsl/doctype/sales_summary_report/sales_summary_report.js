@@ -50,6 +50,18 @@ frappe.ui.form.on('Sales Summary Report', {
 		frm.trigger("get_data");
 	},
 
+	company(frm){
+		frm.trigger("get_data");
+	},
+
+	work_order_data(frm){
+		frm.trigger("get_data");
+	},
+
+	customer(frm){
+		frm.trigger("get_data");
+	},
+
 	// report(frm) {
 	// 	if(frm.doc.report){
 	// 	frm.call('get_work_orders').then(r=>{

@@ -11,6 +11,7 @@
   "company",
   "column_break_hytar",
   "download",
+  "period",
   "section_break_ktl4m",
   "html"
  ],
@@ -45,13 +46,20 @@
    "fieldtype": "Select",
    "label": "Company",
    "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - UAE"
+  },
+  {
+   "fieldname": "period",
+   "fieldtype": "Select",
+   "label": "Overall Achievement",
+   "options": "\nMonthly\nQuarterly"
   }
  ],
+ "grid_page_length": 50,
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-07 07:24:50.763351",
+ "modified": "2025-07-13 20:11:29.937477",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Purchase Report",
@@ -68,6 +76,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

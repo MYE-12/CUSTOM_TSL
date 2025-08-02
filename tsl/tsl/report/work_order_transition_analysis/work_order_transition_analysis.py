@@ -17,10 +17,12 @@ def get_columns(filters):
 
 	columns = [
         _("Work Order Data") + ":Link/Work Order Data:150",
-        _("Received Date") + ":Data:130",
+        _("Received Date") + ":Date:130",
+		_("Technician") + ":Data:130",
 		_("Quoted Amount") + ":Data:130",
-        _("RS Date") + ":Data:130",
-        _("RSC Date") + ":Data:130",
+        _("RS Date") + ":Date:130",
+        _("RSC Date") + ":Date:130",
+		_("RNR Date") + ":Date:130",
 		_("Delivery Note") + ":Data:130",
 		_("Return Issued") + ":Check:130",
         _("RSI Date") + ":Data:130",
@@ -57,6 +59,7 @@ def get_data(filters):
 		)
 	
 	else:
+
 		w = frappe.get_all(
 			"Work Order Data",
 			filters={
@@ -69,6 +72,27 @@ def get_data(filters):
 	# Process and add work order data to the result
 	
 	for i in w:
+		tec = ""
+		tech = frappe.get_value("Work Order Data",i.name,"technician")
+		emp = frappe.get_value("Employee",{"user_id":tech},"employee_name")
+		if emp:
+			tec = emp
+
+		rnr = frappe.db.sql("""
+		SELECT `tabStatus Duration Details`.date AS d
+		FROM `tabWork Order Data`
+		LEFT JOIN `tabStatus Duration Details`
+		ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		WHERE `tabStatus Duration Details`.status = "RNR-Return Not Repaired"
+		AND `tabWork Order Data`.name = %s
+		ORDER BY `tabStatus Duration Details`.date ASC
+		LIMIT 1
+		""", (i.name,), as_dict=1)
+		rnr_d = ""
+		if rnr:
+			rnr_d = rnr[0]["d"].date()
+
+
 		rs = frappe.db.sql("""
 		SELECT `tabStatus Duration Details`.date AS d
 		FROM `tabWork Order Data`
@@ -92,6 +116,7 @@ def get_data(filters):
 		# ORDER BY `tabStatus Duration Details`.date DESC
 		
 		# """, (i.name,), as_dict=1)
+
 		dn = frappe.get_value("Work Order Data",{"name":i.name},["dn_no"])
 
 		rsc = frappe.get_value("Work Order Data",{"name":i.name},["dn_date"])
@@ -197,7 +222,7 @@ def get_data(filters):
 					# frappe.errprint(k.adc)
 					q_m = k.adc
 
-		row = [i.name,i.posting_date,q_m,rs_d,rsc_d,dn,check_re,rsi_d,si,ss,dd]
+		row = [i.name,i.posting_date,tec,q_m,rs_d,rsc_d,rnr_d,dn,check_re,rsi_d,si,ss,dd]
 		data.append(row)
 	return data
 

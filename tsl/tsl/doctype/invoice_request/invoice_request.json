@@ -20,6 +20,7 @@
   "sales",
   "submitted_by",
   "amended_from",
+  "sales_email",
   "section_break_nc32n",
   "invoice_list",
   "sod_quotation"
@@ -118,12 +119,18 @@
    "label": "Requested Sales",
    "options": "Sales Person",
    "reqd": 1
+  },
+  {
+   "fetch_from": "sales.custom_user",
+   "fieldname": "sales_email",
+   "fieldtype": "Data",
+   "label": "Sales Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-17 13:50:36.747203",
+ "modified": "2025-07-07 09:32:02.262908",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Request",

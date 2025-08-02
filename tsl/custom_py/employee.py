@@ -180,13 +180,18 @@ def civil_id_expiry():
 			subject=('Civil ID is Expiring within 15 days !!!'),
 			message=msg+fifteen
 		)
-
+		
 @frappe.whitelist()
-def employee_series():
-	last_number = frappe.db.get_single_value("HR Settings","last_number_in_series")
-	next_in_series = int(last_number)+1
-	next_in_series = check_for_employee(next_in_series)
-	return str(next_in_series)
+def employee_series(cyrix_employee):
+	last_number = frappe.db.get_value("HR Settings","HR Settings",["last_number_in_series","custom_last_number"],as_dict = 1)
+	if cyrix_employee == '0':
+		next_in_series = int(last_number.last_number_in_series)+1
+		next_in_series = check_for_employee(next_in_series)
+		return str(next_in_series)
+	if cyrix_employee == '1':
+		next_in_series = int(last_number.custom_last_number)+1
+		next_in_series = check_for_employee(next_in_series)
+		return str(next_in_series)
 
 def check_for_employee(name):
 	# Loop until a unique employee number is found
@@ -195,4 +200,12 @@ def check_for_employee(name):
 	return name
 
 def update_last_employee_number(doc,method):
-	frappe.db.set_value("HR Settings","HR Settings","last_number_in_series",doc.name)
+	if doc.cyrix_employee_ == 0:
+		frappe.db.set_value("HR Settings","HR Settings","last_number_in_series",doc.name)
+
+	if doc.cyrix_employee_ == 1:
+		frappe.db.set_value("HR Settings","HR Settings","custom_last_number",doc.name)
+
+
+def rename_user():
+	frappe.rename_doc("User","maari@tsl-me.com", "marimithran2018@gmail.com")

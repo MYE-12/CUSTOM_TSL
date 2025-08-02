@@ -658,7 +658,7 @@ def create_material_issue_from_ini_eval(name):
 
 		for i in ini.items:
 			
-			if i.released == 0 and i.parts_availability == "Yes":
+			if i.released == 0 and i.parts_availability == "Yes" and  i.from_scrap != 1:
 				uom = frappe.db.get_value("Item",i.part,'stock_uom')
 				serial_no = frappe.db.get_value("Serial No",{"item_code":i.part},"name")
 				new_doc.append("items",{

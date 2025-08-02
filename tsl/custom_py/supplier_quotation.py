@@ -124,100 +124,90 @@ def validate(self,method):
         
 
 def on_submit(self,method):
+    
     if self.project_data:
         pd = frappe.get_doc("Project Data",self.project_data)
         pd.status = "Parts Priced"
         pd.save()
 
-    # if self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
-    #     if self.work_order_data:
-    #         ev = frappe.db.sql(""" select `tabPart Sheet Item`.part as p, `tabPart Sheet Item`.parts_availability as pa from `tabEvaluation Report` left join
-    #         `tabPart Sheet Item` on  `tabEvaluation Report`.name =  `tabPart Sheet Item`.parent 
-    #         where `tabEvaluation Report`.work_order_data = '%s' """%(self.work_order_data),as_dict=1)
-    #         ev_list = []
-    #         for e in ev:
-    #             if e['pa'] == "No":
-    #                 ev_list.append(e['p'])
-
-    #         count = 0
-
-    #         sq = frappe.get_all("Supplier Quotation",{"work_order_data":self.work_order_data,"workflow_state":"Approved by Management"})
-    #         if sq:
-                
-    #             for d in sq:
-    #                 sup = frappe.db.sql(""" select `tabSupplier Quotation Item`.item_code as ic from `tabSupplier Quotation` left join
-    #                 `tabSupplier Quotation Item` on  `tabSupplier Quotation`.name =  `tabSupplier Quotation Item`.parent 
-    #                 where `tabSupplier Quotation`.name = '%s' """%(d["name"]),as_dict=1)
-    #                 for k in sup:
-    #                     if k["ic"] in ev_list:
-    #                         count = count + 1
-
-    #         for j in self.items:
-    #             if j.item_code in ev_list:
-    #                 count = count + 1
+    if not self.department == "Supply Tender - TSL":
+        for i in self.items:
+            if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
+                if i.work_order_data:
+                    doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
+                    for d in doc:
+                        ev = frappe.get_doc("Work Order Data",d.name)
                         
-    #         if count == len(ev_list):
-    #             # doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(self.work_order_data),as_dict=1)
-    #             # for d in doc:
-    #             frappe.errprint("yesss")
-    #             ev = frappe.get_doc("Work Order Data",self.work_order_data)
-    #             ev.status = "Parts Priced"
-    #             ev.save(ignore_permissions =1)
-    #             frappe.errprint("No")
-
-    
-    
-    for i in self.items:
-        if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
-            if i.work_order_data:
-                doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
-                for d in doc:
-                    ev = frappe.get_doc("Work Order Data",d.name)
-                    if not ev.quotation:
                         ev.status = "Parts Priced"
+                        ev.save(ignore_permissions =1)
+            
+            
+            if i.supply_order_data or self.supply_order_data:
+                doc = frappe.db.sql("""select name from `tabSupply Order Data` where name = '%s' """%(i.supply_order_data or self.supply_order_data),as_dict=1)
+                for d in doc:
+                    ev = frappe.get_doc("Supply Order Data",d.name)
+                    ev.status = "Parts Priced"
                     ev.save(ignore_permissions =1)
-        
-        
-        if i.supply_order_data or self.supply_order_data:
-            doc = frappe.db.sql("""select name from `tabSupply Order Data` where name = '%s' """%(i.supply_order_data or self.supply_order_data),as_dict=1)
-            for d in doc:
-                ev = frappe.get_doc("Supply Order Data",d.name)
-                ev.status = "Parts Priced"
-                ev.save(ignore_permissions =1)
-        
+            
 
 
-    if (self.part_sheet and self.initial_evaluation):
-        items = self.get("items")
-        for it in items:
-            ie = frappe.get_doc("Initial Evaluation",it.initial_evaluation)
-            for i in self.get('items'):
-                url = "https://api.exchangerate.host/%s"%(self.currency)
-                payload = {}
-                headers = {}
-                response = requests.request("GET", url, headers=headers, data=payload)
-                data = response.json()
-                rate_kw = data['rates']['KWD']
-                conv_rate = i.rate * rate_kw
-                for j in ie.get("items"):
-                    if j.part == i.item_code:
-                        j.price_ea = conv_rate
-                        j.total = conv_rate * j.qty
-            add = 0
-            for i in ie.items:
-                add += j.total
-            ie.total_amount = add
+        if (self.part_sheet and self.initial_evaluation):
+            items = self.get("items")
+            for it in items:
+                ie = frappe.get_doc("Initial Evaluation",it.initial_evaluation)
+                for i in self.get('items'):
+                    url = "https://api.exchangerate.host/%s"%(self.currency)
+                    payload = {}
+                    headers = {}
+                    response = requests.request("GET", url, headers=headers, data=payload)
+                    data = response.json()
+                    rate_kw = data['rates']['KWD']
+                    conv_rate = i.rate * rate_kw
+                    for j in ie.get("items"):
+                        if j.part == i.item_code:
+                            j.price_ea = conv_rate
+                            j.total = conv_rate * j.qty
+                add = 0
+                for i in ie.items:
+                    add += j.total
+                ie.total_amount = add
 
-            ie.save(ignore_permissions=True)
+                ie.save(ignore_permissions=True)
 
 
-    if self.work_order_data:
-        evl = frappe.get_value("Evaluation Report",{"Work_order_data":self.work_order_data})
-        frappe.errprint(evl)
-        if evl:
-            doc = frappe.get_doc("Evaluation Report",evl)
+        if self.work_order_data:
+            evl = frappe.get_value("Evaluation Report",{"Work_order_data":self.work_order_data})
+            frappe.errprint(evl)
+            if evl:
+                doc = frappe.get_doc("Evaluation Report",evl)
+                for i in self.get("items"):
+                    # url = "https://api.exchangerate.host/%s"%(self.currency)
+                    url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+
+                    payload = {}
+                    headers = {}
+                    response = requests.request("GET", url, headers=headers, data=payload)
+                    data = response.json()
+                    com_cur = frappe.get_value("Company",self.company,"default_currency")
+                    rate_kw = data['rates'][com_cur]
+                    conv_rate = i.rate * rate_kw
+                    for j in doc.get("items"):
+                        if j.part == i.item_code:
+                            j.price_ea = conv_rate
+                            j.total = conv_rate * j.qty
+                add = 0
+                for i in doc.items:
+                    add += j.total
+                doc.total_amount = add
+
+                doc.save(ignore_permissions=True)
+        if not self.work_order_data and not self.supply_order_data:
             for i in self.get("items"):
-                # url = "https://api.exchangerate.host/%s"%(self.currency)
+                wod = i.work_order_data
+
+                evl = frappe.get_value("Evaluation Report",{"Work_order_data":wod})
+
+                doc = frappe.get_doc("Evaluation Report",evl)
                 url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
 
                 payload = {}
@@ -231,101 +221,76 @@ def on_submit(self,method):
                     if j.part == i.item_code:
                         j.price_ea = conv_rate
                         j.total = conv_rate * j.qty
+                add = 0
+                for i in doc.items:
+                    add += j.total
+                doc.total_amount = add
+
+                doc.save(ignore_permissions=True)
+
+        elif self.initial_evaluation:
+            doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
+            
+            for i in self.get("items"):
+                url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+                payload = {}
+                headers = {}
+                response = requests.request("GET", url, headers=headers, data=payload)
+                data = response.json()
+                frappe.errprint(data)
+                rate_kw = data['rates']['KWD']
+                conv_rate = i.rate * rate_kw
+                for j in doc.get("items"):
+                    if j.part == i.item_code:
+                        j.price_ea = conv_rate
+                        j.total = conv_rate * j.qty
             add = 0
             for i in doc.items:
                 add += j.total
             doc.total_amount = add
 
             doc.save(ignore_permissions=True)
-    if not self.work_order_data and not self.supply_order_data:
-        for i in self.get("items"):
-            wod = i.work_order_data
 
-            evl = frappe.get_value("Evaluation Report",{"Work_order_data":wod})
+    #Supplier quotation supply order rate conversion
 
-            doc = frappe.get_doc("Evaluation Report",evl)
-            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
-
-            payload = {}
-            headers = {}
-            response = requests.request("GET", url, headers=headers, data=payload)
-            data = response.json()
-            com_cur = frappe.get_value("Company",self.company,"default_currency")
-            rate_kw = data['rates'][com_cur]
-            conv_rate = i.rate * rate_kw
-            for j in doc.get("items"):
-                if j.part == i.item_code:
-                    j.price_ea = conv_rate
-                    j.total = conv_rate * j.qty
-            add = 0
-            for i in doc.items:
-                add += j.total
-            doc.total_amount = add
-
+        if self.supply_order_data and self.company == "TSL COMPANY - UAE":
+            doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
+            for i in self.get('items'):
+                for j in doc.get("in_stock"):
+                    if i.item_code == j.part:
+                        j.price_ea = i.rate
+                        j.total = i.rate * j.qty
+                        j.supplier_quotation = self.name
+                for j in doc.get('material_list'):
+                    if j.item_code == i.item_code:
+                        # rate_kw = data['rates']['KWD']
+                        # conv_rate = i.rate * rate_kw
+                        j.price = i.rate     
+                        j.amount = i.rate * float(j.quantity)
+                        j.supplier_quotation = self.name
             doc.save(ignore_permissions=True)
-    elif self.initial_evaluation:
-        doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
         
-        for i in self.get("items"):
-            url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
-            payload = {}
-            headers = {}
-            response = requests.request("GET", url, headers=headers, data=payload)
-            data = response.json()
-            frappe.errprint(data)
-            rate_kw = data['rates']['KWD']
-            conv_rate = i.rate * rate_kw
-            for j in doc.get("items"):
-                if j.part == i.item_code:
-                    j.price_ea = conv_rate
-                    j.total = conv_rate * j.qty
-        add = 0
-        for i in doc.items:
-            add += j.total
-        doc.total_amount = add
-
-        doc.save(ignore_permissions=True)
-
-#Supplier quotation supply order rate conversion
-
-    if self.supply_order_data and self.company == "TSL COMPANY - UAE":
-        doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
-        for i in self.get('items'):
-            for j in doc.get("in_stock"):
-                if i.item_code == j.part:
-                    j.price_ea = i.rate
-                    j.total = i.rate * j.qty
-                    j.supplier_quotation = self.name
-            for j in doc.get('material_list'):
-                if j.item_code == i.item_code:
-                    # rate_kw = data['rates']['KWD']
-                    # conv_rate = i.rate * rate_kw
-                    j.price = i.rate     
-                    j.amount = i.rate * float(j.quantity)
-                    j.supplier_quotation = self.name
-        doc.save(ignore_permissions=True)
-    
-    if self.supply_order_data and self.company == "TSL COMPANY - Kuwait":
-        doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
-        for i in self.get('items'):
-            for j in doc.get("in_stock"):
-                if i.item_code == j.part:
-                    j.price_ea = i.rate
-                    j.total = i.rate * j.qty
-                    j.supplier_quotation = self.name
-            for j in doc.get('material_list'):
-                if j.item_code == i.item_code:
-                    url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
-                    payload = {}
-                    headers = {}
-                    response = requests.request("GET", url, headers=headers, data=payload)
-                    data = response.json()
-                
-                    rate_kw = data['rates']['KWD']
-                    conv_rate = i.rate * rate_kw
-                    j.price = conv_rate      
-                    j.amount = conv_rate * float(j.quantity)
-                    j.supplier_quotation = self.name
-        doc.save(ignore_permissions=True)
+        if self.supply_order_data and self.company == "TSL COMPANY - Kuwait":
+            doc = frappe.get_doc("Supply Order Data",self.supply_order_data)
+            for i in self.get('items'):
+                for j in doc.get("in_stock"):
+                    if i.item_code == j.part:
+                        j.price_ea = i.rate
+                        j.total = i.rate * j.qty
+                        j.supplier_quotation = self.name
+                for j in doc.get('material_list'):
+                    if j.item_code == i.item_code:
+                        url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+                        payload = {}
+                        headers = {}
+                        response = requests.request("GET", url, headers=headers, data=payload)
+                        data = response.json()
+                    
+                        rate_kw = data['rates']['KWD']
+                        conv_rate = i.rate * rate_kw
+                        j.price = conv_rate      
+                        j.amount = conv_rate * float(j.quantity)
+                        j.supplier_quotation = self.name
+            doc.save(ignore_permissions=True)
 
 

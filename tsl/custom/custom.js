@@ -29,7 +29,7 @@ frappe.ui.form.on('Quotation', {
 					});
 			}
 		}
-		
+	
 	},
 
 	
@@ -277,10 +277,19 @@ frappe.ui.form.on('Quotation', {
 			cur_frm.refresh_fields("parts_price_list_");
 		
 		}
+		if(frm.doc.__islocal){
+			if (frappe.route_options.currency) {
+				frm.set_value("currency", frappe.route_options.currency);
+			}
+			if (frappe.route_options.conversion_rate) {
+				frm.set_value("conversion_rate", frappe.route_options.conversion_rate);
+			}
+		}
 	},
     refresh:function(frm){
 		if(frm.doc.docstatus == 1 && frm.doc.quotation_type == "Customer Quotation - Repair" || frm.doc.docstatus == 1 && frm.doc.quotation_type == "Revised Quotation - Repair")
-		frappe.call({
+		
+			frappe.call({
 			method: "tsl.custom_py.quotation.get_invoice",
 			args: {
 				"item":frm.doc.items,
@@ -288,8 +297,36 @@ frappe.ui.form.on('Quotation', {
 			callback: function(r) {
 				if(r.message) {
 				
-					console.log(r.message[0].name)
 					frm.add_custom_button(__('Sales Invoice'), function(){
+						frappe.route_options = {
+							currency: frm.doc.currency,
+							conversion_rate: frm.doc.conversion_rate
+						};
+						frappe.set_route("Form", "Sales Invoice",r.message[0].name);
+
+					})
+					
+				}
+			}
+		});
+
+
+		if(frm.doc.docstatus == 1 && frm.doc.quotation_type == "Revised Quotation - Supply" || frm.doc.docstatus == 1 && frm.doc.quotation_type == "Customer Quotation - Supply")
+		
+			frappe.call({
+			method: "tsl.custom_py.quotation.get_invoice_sod",
+			args: {
+				"item":frm.doc.items,
+			},
+			callback: function(r) {
+				if(r.message) {
+				
+					
+					frm.add_custom_button(__('Sales Invoice'), function(){
+						frappe.route_options = {
+							currency: frm.doc.currency,
+							conversion_rate: frm.doc.conversion_rate
+						};
 						frappe.set_route("Form", "Sales Invoice",r.message[0].name);
 
 					})
@@ -491,6 +528,10 @@ frappe.ui.form.on('Quotation', {
 						callback: function(r) {
 							if(r.message) {
 								var doc = frappe.model.sync(r.message);
+								frappe.route_options = {
+									currency: r.message.currency,
+									conversion_rate: r.message.conversion_rate
+								};
 								frappe.set_route("Form", doc[0].doctype, doc[0].name);
 	
 							}
@@ -545,6 +586,10 @@ frappe.ui.form.on('Quotation', {
 						callback: function(r) {
 							if(r.message) {
 								var doc = frappe.model.sync(r.message);
+								frappe.route_options = {
+									currency: r.message.currency,
+									conversion_rate: r.message.conversion_rate
+								};
 								frappe.set_route("Form", doc[0].doctype, doc[0].name);
 	
 							}
@@ -634,6 +679,10 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
+							frappe.route_options = {
+								currency: frm.doc.currency,
+								conversion_rate: frm.doc.conversion_rate
+							};
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 	
 						}
@@ -676,6 +725,10 @@ frappe.ui.form.on('Quotation', {
 									callback: function(r) {
 										if(r.message) {
 											var doc = frappe.model.sync(r.message);
+											frappe.route_options = {
+												currency: frm.doc.currency,
+												conversion_rate: frm.doc.conversion_rate
+											}
 											frappe.set_route("Form", doc[0].doctype, doc[0].name);
 					
 										}
@@ -714,7 +767,7 @@ frappe.ui.form.on('Quotation', {
 								
 								var doc = frappe.model.sync(r.message);
 								frappe.db.get_value('Customer', {'name':frm.doc.customer}, ['customer_type'], (r) => {
-									console.log(r.customer_type)
+									// console.log(r.customer_type)
 									if(r.customer_type == "Company"){
 										if(!frm.doc.customer_address){
 									 frappe.throw("Please ensure the customer address is filled in; otherwise, the quotation will not be created. 😞 ")
@@ -747,6 +800,10 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
+							frappe.route_options = {
+								currency: frm.doc.currency,
+								conversion_rate: frm.doc.conversion_rate
+							};
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 	
 						}
@@ -797,6 +854,10 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
+							frappe.route_options = {
+								currency: r.message.currency,
+								conversion_rate: r.message.conversion_rate
+							};
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 							
 							
@@ -841,6 +902,10 @@ frappe.ui.form.on('Quotation', {
 					callback: function(r) {
 						if(r.message) {
 							var doc = frappe.model.sync(r.message);
+							frappe.route_options = {
+								currency: r.message.currency,
+								conversion_rate: r.message.conversion_rate
+							};
 							frappe.set_route("Form", doc[0].doctype, doc[0].name);
 						}
 					}
@@ -1083,7 +1148,7 @@ frappe.ui.form.on('Quotation', {
 								},
 								callback: function(r) {
 									if(r.message) {
-										console.log(r.message)
+										// console.log(r.message)
 										cur_frm.clear_table("items");
 										var tot_amt = 0;
 										var tot_qty=0;
@@ -1248,84 +1313,77 @@ frappe.ui.form.on('Quotation', {
 frappe.ui.form.on("Quotation Item",{ 
 	
 	   qty : function(frm,cdt,cdn){
-			var item = locals[cdt][cdn];
-			if(item.qty){
-				item.amount = item.qty * item.rate;
-				item.margin_amount = item.qty * item.margin_amount;
-				item.final_approved_price = item.amount;
-				var tot_amt = 0;
-				var tot_qty=0;
-				for(var i=0 ;i< frm.doc.items.length;i++){
-					tot_amt += frm.doc.items[i]["amount"];
-					tot_qty += frm.doc.items[i]["qty"];
+		var item = locals[cdt][cdn];
+		if(item.qty){
+			item.amount = item.qty * item.rate;
+			item.margin_amount = item.qty * item.margin_amount;
+			item.final_approved_price = item.amount;
+			
+			var tot_amt = 0;
+			var tot_qty=0;
+			
+			for(var i=0 ;i< frm.doc.items.length;i++){
+				tot_amt += frm.doc.items[i]["amount"];
+				tot_qty += frm.doc.items[i]["qty"];
 
-				}
-				frm.doc.total = tot_amt;
-				frm.doc.total_qty = tot_qty;
-				frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
-				frm.doc.rounded_total = frm.doc.grand_total;
-				frm.doc.actual_price = frm.doc.rounded_total;
-				if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
+			}
+
+			frm.doc.total = tot_amt;
+			frm.doc.total_qty = tot_qty;
+			frm.doc.grand_total = tot_amt+frm.doc.total_taxes_and_charges;
+			frm.doc.rounded_total = frm.doc.grand_total;
+			frm.doc.actual_price = frm.doc.rounded_total;
+			if(frm.doc.technician_hours_spent.length > 0 && frm.doc.technician_hours_spent[0].value){
 //					frm.doc.actual_price = frm.doc.rounded_total +(frm.doc.technician_hours_spent[0].value *frm.doc.technician_hours_spent[0].total_hours_spent);
 
-				}
-				var act = frm.doc.actual_price
-			
-				frm.set_value("final_approved_price",item.margin_amount);
-				cur_frm.refresh_fields();
-
-				
 			}
-		   
+			var act = frm.doc.actual_price
+		
+			frm.set_value("final_approved_price",item.margin_amount);
+			cur_frm.refresh_fields();
+
+			
+		}
+		
 	   },
+	   
 	   margin_amount:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];
 		var margin_amount = item.margin_amount
-		
+		// console.log(margin_amount)
+
 		var disc_per = 5
 		var disc_val = (margin_amount/100)*disc_per
 		frappe.model.set_value(cdt, cdn, "margin_amount_value",disc_val);
 		var dic_val = item.margin_amount_value + margin_amount
 		frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
-		
 	
-		console.log(dic_val)
+
 		frappe.db.get_value('Item', {'name':item.item_code}, ['is_stock_item'], (r) => {
 			
-			if(r.is_stock_item == 1 && !item.no_discount){
+			if(r.is_stock_item == 1){
 			
 				frappe.model.set_value(cdt, cdn, "unit_price",dic_val);
-				
 			}
 
-
-			if(r.is_stock_item == 1 && item.no_discount == 1){
+			else{
 			
-				
 				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
-				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
-				frappe.model.set_value(cdt, cdn, "margin_amount_value",0);
-				
-			}
-
-			
-
-			if(r.is_stock_item == 0 && !item.no_discount){
-				
-				frappe.model.set_value(cdt, cdn, "unit_price",margin_amount );
-				frappe.model.set_value(cdt, cdn, "rate",margin_amount);
-				frappe.model.set_value(cdt, cdn, "margin_amount_value",0);
-				
 			}
 		
 			});
+		// frappe.model.set_value(cdt, cdn, "rate",margin_amount);
+		// item.margin_amount_value = disc_val
 		
 	   },
+
 	   rate:function(frm,cdt,cdn){
+			// console.log("d")
 		   frm.script_manager.trigger("qty",cdt,cdn);
 	   }
 		
 	});
+
 frappe.ui.form.on("Technician Hours Spent",{ 
 	value:function(frm,cdt,cdn){
 		var item = locals[cdt][cdn];

@@ -21,10 +21,15 @@
   "sales_person",
   "submitted_by",
   "sales_email",
+  "reason_for_cancellation",
+  "section_break_wzpw",
+  "type",
   "section_break_e4nvk",
+  "column_break_rfcy",
   "cancellation_list",
   "section_break_otvl",
-  "table_wknj"
+  "table_wknj",
+  "amended_from"
  ],
  "fields": [
   {
@@ -50,6 +55,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.type == \"Multiple\"",
    "fieldname": "cancellation_list",
    "fieldtype": "Table",
    "label": "Cancellation list",
@@ -107,10 +113,12 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.type == \"Single\"",
    "fieldname": "section_break_otvl",
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.type == \"Single\"",
    "fieldname": "table_wknj",
    "fieldtype": "Table",
    "label": "Cancellation List",
@@ -121,11 +129,44 @@
    "fieldname": "sales_email",
    "fieldtype": "Data",
    "label": "Sales Email"
+  },
+  {
+   "fieldname": "reason_for_cancellation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reason for Cancellation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_rfcy",
+   "fieldtype": "Column Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "\nSingle\nMultiple"
+  },
+  {
+   "fieldname": "section_break_wzpw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Invoice Cancellation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-06-22 11:08:08.346478",
+ "modified": "2025-07-14 13:27:24.255475",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Invoice Cancellation",

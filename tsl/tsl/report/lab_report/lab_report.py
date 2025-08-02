@@ -54,7 +54,7 @@ def get_data(filters):
 		sales= frappe.get_value("Work Order Data",{"name":i.work_order_data},["sales_rep"])
 
 
-		psi = frappe.db.sql(""" select `tabEvaluation Report`.comment as com,`tabEvaluation Report`.test_result as ts,`tabPart Sheet Item`.model  from `tabEvaluation Report` 
+		psi = frappe.db.sql(""" select `tabEvaluation Report`.work_order_data as wod,`tabEvaluation Report`.comment as com,`tabEvaluation Report`.test_result as ts,`tabPart Sheet Item`.model  from `tabEvaluation Report` 
 		left join `tabPart Sheet Item` on `tabEvaluation Report`.name = `tabPart Sheet Item`.parent
 		where `tabEvaluation Report`.name = %s 
 		""",i.name,as_dict=1)
@@ -66,7 +66,9 @@ def get_data(filters):
 				po = ""
 				p_order = frappe.db.sql(""" select `tabPurchase Order`.name as po from `tabPurchase Order` 
 				left join `tabPurchase Order Item` on `tabPurchase Order`.name = `tabPurchase Order Item`.parent 
-				where `tabPurchase Order Item`.model = '%s' and `tabPurchase Order`.status != 'Cancelled' """ %(j["model"]),as_dict =1)
+				where `tabPurchase Order Item`.model = '%s' 
+				and `tabPurchase Order Item`.work_order_data = '%s' 
+				and `tabPurchase Order`.status != 'Cancelled' """ %(j["model"],j["wod"]),as_dict =1)
 				if p_order:
 					po = p_order[0]["po"]
 			
@@ -75,7 +77,9 @@ def get_data(filters):
 						
 				p_inv = frappe.db.sql(""" select `tabPurchase Invoice`.tracking_id as td,`tabPurchase Invoice`.name as pi from `tabPurchase Invoice` 
 				left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
-				where `tabPurchase Invoice Item`.model = '%s'  and `tabPurchase Invoice`.status != 'Cancelled'""" %(j["model"]),as_dict =1)
+				where `tabPurchase Invoice Item`.model = '%s'  
+				and `tabPurchase Invoice Item`.work_order_data = '%s' 
+				and `tabPurchase Invoice`.status != 'Cancelled'""" %(j["model"],j["wod"]),as_dict =1)
 				if p_inv:
 					pi = p_inv[0]["pi"]
 					tr_id = p_inv[0]["td"]

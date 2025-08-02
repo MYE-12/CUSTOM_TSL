@@ -41,6 +41,11 @@ frappe.ui.form.on('Report Dashboard', {
 		
 
 		frm.trigger("get_data");
+		if (frm.doc.reports == "Work Order Data"){
+			const currentYear = new Date().getFullYear();
+			frm.set_value("from_date", new Date(currentYear, 0, 1));
+			frm.set_value("to_date", new Date(currentYear, 11, 31));
+		}
 
 	},
 
@@ -152,6 +157,20 @@ frappe.ui.form.on('Report Dashboard', {
 				});
 			}
 			
+			if(frm.doc.reports == "Work Order Data"){
+				var path = "tsl.tsl.doctype.report_dashboard.report_dashboard.download_work_order_with_operations_excel"
+				var args = 'from_date=%(from_date)s&to_date=%(to_date)s&company=%(company)s'
+			}
+
+			if (path) {
+				window.location.href = repl(frappe.request.url +'?cmd=%(cmd)s&%(args)s', {
+					cmd: path,
+					args: args,
+					from_date : frm.doc.from_date,
+					to_date : frm.doc.to_date,	
+					company : frm.doc.company
+				});
+			}
 		
 		}
 	

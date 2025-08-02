@@ -15,7 +15,9 @@
   "quoted_price",
   "quotation_no",
   "supply_order_data",
+  "so_no",
   "work_order_data",
+  "wo_no",
   "wo_status"
  ],
  "fields": [
@@ -88,7 +90,7 @@
   {
    "columns": 1,
    "fieldname": "work_order_data",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Work Order Data",
    "options": "Work Order Data"
@@ -99,17 +101,30 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Wo status"
+  },
+  {
+   "fieldname": "so_no",
+   "fieldtype": "Data",
+   "label": "So No"
+  },
+  {
+   "fieldname": "wo_no",
+   "fieldtype": "Data",
+   "label": "Wo No"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-04-02 12:53:03.933219",
+ "modified": "2025-07-29 14:35:03.889604",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Similar Item Repair",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

@@ -53,6 +53,9 @@ def get_columns(filters):
 		_("Return Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
 		_("RS Date") + ":Date:150",
+		_("RNR Date") + ":Date:150",
+		_("RNF Date") + ":Date:150",
+		_("RNP Date") + ":Date:150",
 		_("Quoted Amount") + ":currency:120",
 		_("Cost") + ":currency:120",
 		# _("Total Amount") + ":currency:120",
@@ -72,7 +75,7 @@ def get_data(filters):
 	data = []
 	wr = []
 	
-	if frappe.session.user == "keddar@tsl-me.com" or frappe.session.user == "Administrator":
+	if frappe.session.user == "keddar@tsl-me.com" or frappe.session.user == "Administrator" or frappe.session.user == "finance@tsl-me.com" or frappe.session.user == "finance-sa1@tsl-me.com":
 		if filters.from_date:
 			w = frappe.get_all("Work Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 			wr = w
@@ -107,9 +110,39 @@ def get_data(filters):
 		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
 		
 		if rs:
-			frappe.errprint(rs[0]["date"])
+			
 			rs_date = rs[0]["date"]
+
+		rnr_date = ""
+		rnr = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNR-Return Not Repaired"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
 		
+		if rnr:
+			rnr_date = rnr[0]["date"]
+		
+		rnf_date = ""
+		rnf = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNF-Return No Fault"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rnf:
+			
+			rnf_date = rnf[0]["date"]
+
+		rnp_date = ""
+		rnp = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNP-Return No Parts"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rnp:
+			
+			rnp_date = rnp[0]["date"]
+		
+
 		it = frappe.db.sql('''select type,mfg,model_no,serial_no,quantity,item_name from `tabMaterial List` where parent = %s ''',i.name,as_dict=1)
 		mod = frappe.db.get_value("Item Model",it[0]["model_no"],"model")
 
@@ -204,6 +237,9 @@ def get_data(filters):
 		i.returned_date,
 		ap_date,
 		rs_date,
+		rnr_date,
+		rnf_date,
+		rnp_date,
 		q_m,
 		s_total + inv_total,
 		vat_amt,

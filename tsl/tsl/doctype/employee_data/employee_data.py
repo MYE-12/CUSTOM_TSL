@@ -14,6 +14,7 @@ class EmployeeData(Document):
 			for field in fields:
 				if field not in ["amended_from"]:
 					setattr(emp, field, getattr(self, field))
-			emp.employee_number = employee_series()
+			emp.cyrix_employee_ = getattr(self, "cyrix_employee")
+			emp.employee_number = employee_series(str(getattr(self, "cyrix_employee")))
 			frappe.msgprint("Please fill the Salary Details")
 			emp.save(ignore_permissions=True)

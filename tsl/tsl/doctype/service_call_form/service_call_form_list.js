@@ -34,6 +34,10 @@ frappe.listview_settings['Service Call Form'] = {
 		else if (doc.status === "Not Succeed") {
             return [__("Not Succeed"), "red", "status,=,Not Succeed"];
     	}
+
+		else if (doc.status === "Cancelled") {
+            return [__("Cancelled"), "red", "status,=,Cancelled"];
+    	}
 		
             
           

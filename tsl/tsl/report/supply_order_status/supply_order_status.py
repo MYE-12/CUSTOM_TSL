@@ -25,6 +25,7 @@ def get_columns(filters):
 		_("Serial No") + ":Data:150",
 		_("Quantity") + ":Data:150",
 		_("Customer") + ":Data:150",
+		_("Customer Rep") + ":Data:150",
 		_("Customer_ref") + ":Data:150",
 		_("Technician") + ":Data:150",
 		_("Quoted Price") + ":Currency:150",
@@ -122,7 +123,6 @@ def get_data(filters):
 
 				row = [k.sod,
 		   		i.posting_date,
-			
 				i.sales_rep,
 				i.company,
 				i.branch,
@@ -133,6 +133,7 @@ def get_data(filters):
 				s_n,
 				qty,
 				i.customer,
+				i.incharge,
 				i.customer_reference_number,
 				i.technician,
 				i.quoted_price,
@@ -167,6 +168,7 @@ def get_data(filters):
 			s_n,
 			qty,
 			i.customer,
+			i.incharge,
 			i.customer_reference_number,
 			i.technician,
 			i.quoted_price,

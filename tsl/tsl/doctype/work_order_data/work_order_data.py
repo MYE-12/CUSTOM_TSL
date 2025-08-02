@@ -38,11 +38,14 @@ def create_quotation(wod):
     new_doc.party_name = doc.customer
     new_doc.plant = doc.plant
     new_doc.custom_sales_person = doc.sales_rep
+
     if doc.branch == "Riyadh - TSL- KSA":
         new_doc.without_discount = 1
-    s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")
+
+    s_user = frappe.get_value("Sales Person",doc.sales_rep,"custom_user")
     if s_user:
         new_doc.sales_rep = s_user
+
     if doc.company == "TSL COMPANY - UAE":
         new_doc.selling_price_list = "Standard Selling - UAE"
     elif doc.company == "TSL COMPANY - KSA":
@@ -580,7 +583,7 @@ def create_dn(wod):
     new_doc.customer_address = doc.address
     new_doc.contact_person = doc.incharge
     new_doc.work_order_data = wod
-    new_doc.sales_rep = frappe.get_value("Sales Person",doc.sales_rep,"user")
+    new_doc.sales_rep = frappe.get_value("Sales Person",doc.sales_rep,"custom_user")
 
     d = {}
     d['Kuwait - TSL'] = "Repair - Kuwait - TSL"

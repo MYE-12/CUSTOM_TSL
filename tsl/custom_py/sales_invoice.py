@@ -65,19 +65,15 @@ def on_submit(self,method):
 		sod = i.supply_order_data
 		if wod:
 			doc = frappe.get_doc("Work Order Data",wod)
-
-			if self.is_return:
-				doc.status = 'C-Cancelled'
-			else:
+			if doc.quotation:
 				doc.status = 'RSI-Repaired and Shipped Invoiced'
-
-			doc.save(ignore_permissions = True)
-
+				doc.save(ignore_permissions = True)
+				
 			doc = frappe.get_doc("Work Order Data",wod)
-			if doc.quotation and not doc.dn_no:
-				doc.status = 'A-Approved'
-			doc.save(ignore_permissions = True)
-			
+			if doc.quotation and doc.invoice_no:
+				if self.is_return:
+					doc.status = 'C-Cancelled'
+				
 
 			frappe.db.set_value("Work Order Data",wod,"invoice_no",self.name)
 			frappe.db.set_value("Work Order Data",wod,"invoice_date",self.posting_date)

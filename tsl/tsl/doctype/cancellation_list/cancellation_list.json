@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "invoice_no",
+  "work_order_data",
   "reason"
  ],
  "fields": [
@@ -22,15 +23,21 @@
    "fieldname": "reason",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Reason",
-   "reqd": 1
+   "label": "Reason"
+  },
+  {
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Work Order Data",
+   "options": "Work Order Data"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-12 12:28:21.319944",
+ "modified": "2025-07-08 11:04:03.872912",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Cancellation list",

@@ -8,17 +8,17 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "date",
-  "company",
+  "customer",
+  "customer_name",
+  "salesman_name",
+  "salesman_name1",
   "document_type",
   "related_doc",
   "branch",
   "department",
-  "customer",
-  "customer_name",
   "column_break_6",
-  "salesman_name",
-  "salesman_name1",
+  "date",
+  "company",
   "technician_name",
   "reason",
   "status",
@@ -81,6 +81,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "reason",
    "fieldtype": "Small Text",
    "label": "Job Description"
@@ -104,7 +105,7 @@
   },
   {
    "fieldname": "schedule_visit_section",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Schedule Visit"
   },
   {
@@ -128,7 +129,7 @@
   },
   {
    "fieldname": "section_break_15",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Documents Linked"
   },
   {
@@ -217,7 +218,7 @@
    "link_fieldname": "service_call_form"
   }
  ],
- "modified": "2025-06-16 14:33:14.527606",
+ "modified": "2025-07-23 11:45:20.610094",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Service Call Form",

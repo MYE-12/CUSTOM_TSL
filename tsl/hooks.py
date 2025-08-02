@@ -22,8 +22,11 @@ jinja = {
         "tsl.custom_py.utils.get_pi",
         "tsl.custom_py.utils.get_q",
         "tsl.custom_py.utils.get_sales_table",
+        "tsl.custom_py.utils.get_sales_table2",
+        "tsl.custom_py.utils.get_sales_table3",
 		"tsl.custom_py.utils.get_mc",
         "tsl.custom_py.utils.get_mc_2",
+		"tsl.custom_py.utils.get_image_wo",
         "tsl.custom_py.utils.purchase_report",
         "tsl.custom_py.utils.daily_lab_report",
 		"tsl.custom_py.utils.daily_lab_report_uae",
@@ -39,7 +42,7 @@ jinja = {
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/tsl/css/tsl.css"
-# app_include_js = "/assets/tsl/js/tsl.js"
+# app_include_js = "tsl/asset/js/login_check.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/tsl/css/tsl.css"
@@ -101,6 +104,7 @@ after_migrate = [
 	"tsl.custom_py.leave_application.schedule_create_leave_rejoining",
 	"tsl.custom_py.leave_allocation.schedule_update_leave_allocation",
 	"tsl.custom_py.utils.schedule_allocate_leave_on_anniversary",
+	"tsl.custom_py.birthday_reminder.schedule_birthday_reminder"
 ]
 # Desk Notifications
 # ------------------
@@ -298,9 +302,9 @@ scheduler_events = {
 		"tsl.tsl.doctype.official_document.official_document.trigger_mail_notification",
 		"tsl.custom_py.employee.update_ticket_count"
 	],
-	"weekly": [
-		"tsl.custom_py.quotation.send_qtn_reminder_mail"
-	],
+	# "weekly": [
+	# 	"tsl.custom_py.quotation.send_qtn_reminder_mail"
+	# ],
     # "cron": {
 	# 	"30 19 * * *": [
 	# 		"tsl.custom_py.utils.send_sales_reminder",

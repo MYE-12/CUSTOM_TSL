@@ -12,6 +12,7 @@
   "report",
   "download",
   "column_break_n9f6e",
+  "company",
   "customer",
   "work_order_data",
   "sales_person",
@@ -51,6 +52,7 @@
   {
    "fieldname": "work_order_data",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Work Order Data",
    "options": "Work Order Data"
   },
@@ -74,13 +76,20 @@
    "fieldname": "download",
    "fieldtype": "Button",
    "label": "Download"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
+ "grid_page_length": 50,
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-07 10:58:45.519150",
+ "modified": "2025-07-21 15:43:07.544735",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Sales Summary Report",
@@ -97,6 +106,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

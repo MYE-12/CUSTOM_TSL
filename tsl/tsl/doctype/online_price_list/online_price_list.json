@@ -10,7 +10,12 @@
   "price_type",
   "price",
   "website",
-  "comments"
+  "comments",
+  "currency",
+  "work_order_data",
+  "wo_no",
+  "supply_order_data",
+  "so_no"
  ],
  "fields": [
   {
@@ -51,17 +56,49 @@
    "in_list_view": 1,
    "label": "SKU",
    "options": "Item"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "work_order_data",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Work Order data",
+   "options": "Work Order Data"
+  },
+  {
+   "fieldname": "supply_order_data",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Supply Order data",
+   "options": "Supply Order Data"
+  },
+  {
+   "fieldname": "wo_no",
+   "fieldtype": "Data",
+   "label": "WO"
+  },
+  {
+   "fieldname": "so_no",
+   "fieldtype": "Data",
+   "label": "SO"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-05-05 10:04:01.466917",
+ "modified": "2025-07-17 13:44:01.014565",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Online Price List",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

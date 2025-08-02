@@ -14,10 +14,20 @@ def on_submit(self,method):
     if self.work_orders and self.payment_type == 'Receive':
         for i in self.work_orders:
             if i.work_order_data:
-                frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "P-Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.work_order_data))
-            if i.supply_order_data:
-                frappe.db.sql('''update `tabSupply Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.supply_order_data))
+                w = frappe.get_doc("Work Order Data",i.work_order_data)
                 
+                if w.dn_no:
+                    frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "P-Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.work_order_data))
+                else:
+                    frappe.db.sql('''update `tabWork Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s where name = %s''',(self.name,self.paid_amount,self.posting_date,i.work_order_data))
+            
+            if i.supply_order_data:
+                s = frappe.get_doc("Supply Order Data",i.supply_order_data)
+                if s.dn_no:
+                    frappe.db.sql('''update `tabSupply Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s,status = "Paid" where name = %s''',(self.name,self.paid_amount,self.posting_date,i.supply_order_data))
+                else:
+                    frappe.db.sql('''update `tabSupply Order Data` set payment_entry_reference = %s,advance_payment_amount=%s,advance_paid_date=%s where name = %s''',(self.name,self.paid_amount,self.posting_date,i.supply_order_data))
+
 
     # if not self.work_order_data and len(self.references)>0 and self.payment_type == 'Receive' and len(self.work_orders)>0:
     #     for i in self.work_orders:

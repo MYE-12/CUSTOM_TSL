@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from datetime import datetime
+from frappe.core.doctype.communication.email import make
 
 class InvoiceRequest(Document):
     @frappe.whitelist()
@@ -49,27 +50,40 @@ class InvoiceRequest(Document):
                         msg = '''Dear Finance,<br><br> Quotation <b>%s</b> has been approved.<br>Customer Name : <b>%s</b>.<br><br>Please take action to make invoice. <br><br><a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>'''%(i.quotation,cus,self.name)
                     
                         if self.workflow_state == "Pending with Finance":
-                            if self.branch != "Kuwait - TSL":
-                            
-                                frappe.sendmail(
-                                    sender= info,
-                                    recipients=['finance-sa1@tsl-me.com',"finance@tsl-me.com"],
-                                    subject = "Invoice Request - %s"%(i.quotation),
-                                    message = msg,
-                                
+                            if self.branch == "Riyadh - TSL- KSA":
+
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email],
+                                    send_email=1,
                                     )
-                                # frappe.db.set_value("Invoice Request",self.name,"email_sent",1)
-                                self.email_sent = 1
+                            elif self.branch == "Jeddah - TSL-SA":
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email],
+                                    send_email=1,
+                                    )
+                            elif self.branch == "Dammam - TSL-SA":
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email],
+                                    send_email=1,
+                                    )
                             else:
-                                frappe.sendmail(
-                                    sender= info,
-                                    recipients=['finance2@tsl-me.com',"finance-kw@tsl-me.com"],
-                                    subject = "Invoice Request - %s"%(i.quotation),
-                                    message = msg,
-                                
+                                make(sender = info,
+                                    recipients=["finance2@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email],
+
+                                    send_email=1,
                                     )
-                                # frappe.db.set_value("Invoice Request",self.name,"email_sent",1)
-                                self.email_sent = 1
                                 
             if self.sod_quotation:
                 for i in self.sod_quotation:
@@ -78,31 +92,41 @@ class InvoiceRequest(Document):
                         msg = '''Dear Finance,<br><br> Quotation <b>%s</b> has been approved.<br>Customer Name : <b>%s</b>.<br><br>Please take action to make invoice. <br><br><a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>'''%(i.quotation,cus,self.name)
                     
                         if self.workflow_state == "Pending with Finance":
-                            if self.branch != "Kuwait - TSL":
-                            
-                                frappe.sendmail(
-                                    sender= info,
-                                    recipients=['finance-sa1@tsl-me.com',"finance@tsl-me.com"],
-                                    cc = ["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
-                                    subject = "Invoice Request - %s"%(i.quotation),
-                                    message = msg,
-                                
-                                    )
-                                # frappe.db.set_value("Invoice Request",self.name,"email_sent",1)
-                                self.email_sent = 1
-                            else:
-                                frappe.sendmail(
-                                    sender= info,
-                                    recipients=['finance2@tsl-me.com',"finance-kw@tsl-me.com"],
-                                    cc = ["karthiksrinivasan1996.ks@gmail.com","yousuf@tsl-me.com"],
-                                    subject = "Invoice Request - %s"%(i.quotation),
-                                    message = msg,
-                                
-                                    )
-                                # frappe.db.set_value("Invoice Request",self.name,"email_sent",1)
-                                self.email_sent = 1
+                            if self.branch == "Riyadh - TSL- KSA":
 
-            
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email],
+                                    send_email=1,
+                                    )
+                            elif self.branch == "Jeddah - TSL-SA":
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email],
+                                    send_email=1,
+                                    )
+                            elif self.branch == "Dammam - TSL-SA":
+                                make(sender = info,
+                                    recipients=["finance-sa1@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email],
+                                    send_email=1,
+                                    )
+                            else:
+                                make(sender = info,
+                                    recipients=["finance2@tsl-me.com"],
+                                    subject="Invoice Request - %s"%(i.quotation),
+                                    content=msg,
+                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email],
+
+                                    send_email=1,
+                                    )
+                
     def on_submit(self):
         frappe.db.set_value("Invoice Request",self.name,"submitted_by",frappe.session.user)
         if self.workflow_state == "Invoice Created":
@@ -120,7 +144,7 @@ class InvoiceRequest(Document):
                                     Please find the attached Invoice for your reference.<a href="https://erp.tsl-me.com/app/invoice-request/%s" target="_blank">Click Here</a>"""%(i.quotation,self.name)
                         frappe.sendmail(
                             sender= self.submitted_by,
-                            recipients=["yousuf@tsl-me.com",self.requested_by],
+                            recipients=[self.requested_by],
                             subject = "Invoice Created for - %s"%(i.quotation),
                             message = msg,
                         

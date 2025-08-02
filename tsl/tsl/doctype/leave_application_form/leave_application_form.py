@@ -108,6 +108,7 @@ class LeaveApplicationForm(Document):
 			for field in fields:
 				setattr(pl, field, getattr(self, field))
 			pl.reference = self.name
+			pl.status = "Approved"
 			pl.save(ignore_permissions=1)
 
 

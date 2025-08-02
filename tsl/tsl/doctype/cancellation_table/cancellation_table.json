@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "work_order_data",
-  "sales_invoice"
+  "sales_invoice",
+  "remarks"
  ],
  "fields": [
   {
@@ -23,13 +24,19 @@
    "in_list_view": 1,
    "label": "Sales Invoice",
    "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Note (if any)"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-06-18 12:22:19.025546",
+ "modified": "2025-07-03 14:06:45.878827",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Cancellation Table",

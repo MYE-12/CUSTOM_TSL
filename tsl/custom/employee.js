@@ -12,11 +12,16 @@ frappe.ui.form.on('Employee', {
         refresh(frm){
                 frm.trigger("company")
         },
-       
+        cyrix_employee_(frm){
+                frm.trigger("company")
+        },
         company(frm){
                 if(frm.doc.__islocal){
                         frappe.call({
                                 method:"tsl.custom_py.employee.employee_series",
+                                args:{
+                                        "cyrix_employee":frm.doc.cyrix_employee_ || 0
+                                },
                                 callback(r){
                                         if(r.message){
                                                 frm.set_value("employee_number",r.message)

@@ -4,24 +4,39 @@
 frappe.ui.form.on('Leave Rejoining Form', {
 	actual_rejoining_date(frm) {
 		frappe.call({
-		    method:"tsl.tsl.doctype.leave_rejoining_form.leave_rejoining_form.get_number_of_leave_days",
-		    args:{
-		        employee:frm.doc.emp_no,
-		        
-		        to_date:frm.doc.actual_rejoining_date || '',
-		        from_date:frm.doc.rejoining_date ||''
-		    },
-		    callback(r){
-		        if(r.message>0){
-		            frm.set_value("late_days",r.message -1)
-		        }
-		        else{
-		            frm.set_value("late_days",0)
-		        }
-		    }
-		})
+			method: "hrms.hr.doctype.leave_application.leave_application.get_number_of_leave_days",
+			args: {
+				employee: frm.doc.emp_no,
+				leave_type: frm.doc.leave_type || null,
+				from_date: frm.doc.rejoining_date,
+				to_date: frappe.datetime.add_days(frm.doc.actual_rejoining_date, 0),
+			},
+			callback: function (r) {						
+				frm.fields_dict.unpaid_start_date.datepicker.update({
+					minDate: new Date(frm.doc.rejoining_date),
+					maxDate: new Date(frappe.datetime.add_days(frm.doc.actual_rejoining_date, -1)),
+				});					
+				frm.fields_dict.unpaid_end_date.datepicker.update({
+					minDate: new Date(frm.doc.rejoining_date),
+					maxDate: new Date(frappe.datetime.add_days(frm.doc.actual_rejoining_date, -1)),
+				});
+				if (r && r.message) {
+					var late_days = r.message - 1
+					frm.set_value("late_days", late_days);
+					if(late_days > frm.doc.eligible_days){
+						frm.set_value("unpaid_start_date",null)
+						frm.set_value("unpaid_end_date",frm.doc.actual_rejoining_date)
+					}	
+				}
+				else{
+					frm.set_value("late_days", 0);
+					frm.set_value("unpaid_start_date",null)
+					frm.set_value("unpaid_end_date",null)
+				}
+			},
+		});
 	},
-	refresh(frm){
+	emp_no(frm){
 		if(frm.doc.emp_no){
 			let today = new Date().toISOString().split('T')[0];
 			frappe.call({
@@ -34,7 +49,7 @@ frappe.ui.form.on('Leave Rejoining Form', {
 				callback: function (r) {
 					let leave_details = r.message["leave_allocation"];
 					let lwps = r.message["lwps"];
-					frm.get_field("leave_balance").$wrapper.html(renderLeaveDetailsTable(leave_details))
+					frm.get_field("leave_balance").$wrapper.html(renderLeaveDetailsTable(leave_details,frm))
 					
 					let allowed_leave_types = Object.keys(leave_details);
 					allowed_leave_types = allowed_leave_types.concat(lwps);
@@ -45,13 +60,28 @@ frappe.ui.form.on('Leave Rejoining Form', {
 					});
 				},
 			});
-		}	    
+		}	
+	},
+	leave_type(frm){
+		frm.trigger("emp_no")
+		frm.trigger("actual_rejoining_date")
+	},
+	refresh(frm){	
+		frm.trigger("emp_no")				
+		frm.fields_dict.unpaid_start_date.datepicker.update({
+			minDate: new Date(frm.doc.rejoining_date),
+			maxDate: new Date(frm.doc.actual_rejoining_date),
+		});					
+		frm.fields_dict.unpaid_end_date.datepicker.update({
+			minDate: new Date(frm.doc.rejoining_date),
+			maxDate: new Date(frm.doc.actual_rejoining_date),
+		});    
 	}
 })
 
 
 
-function renderLeaveDetailsTable(data) {
+function renderLeaveDetailsTable(data, frm) {
     if (jQuery.isEmptyObject(data)) {
         return `<p style="margin-top: 30px;">${__("No leaves have been allocated.")}</p>`;
     }
@@ -82,7 +112,10 @@ function renderLeaveDetailsTable(data) {
                 <td class="text-right">${value["leaves_pending_approval"]}</td>
                 <td class="text-right" style="color: ${color}">${value["remaining_leaves"]}</td>
             </tr>
-        `;
+        `
+		if(key == frm.doc.leave_type){
+			frm.set_value("eligible_days",parseInt((value["remaining_leaves"]),10))
+		}
     }
 
     tableHTML += `

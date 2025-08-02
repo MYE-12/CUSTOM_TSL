@@ -27,6 +27,7 @@ def get_columns(filters):
 		_("Serial No") + ":Data:150",
 		_("Quantity") + ":Data:150",
 		_("Customer") + ":Data:150",
+		_("Customer Rep") + ":Data:150",
 		_("Customer_ref") + ":Data:150",
 		_("Contact Person") + ":Data:150",
 		_("Contact Email") + ":Data:150",
@@ -37,6 +38,7 @@ def get_columns(filters):
 		_("Old VAT") + ":Data:100",
 		_("Old Total Amount") + ":Data:100",
 		_("Quoted Date") + ":Date:150",
+		_("Approval Type") + ":Data:150",
 		_("Po No") + ":Data:150",
 		_("Payment Ref") + ":Link/Payment Entry:140",
 		_("Payment Date") + ":Date:150",
@@ -47,6 +49,9 @@ def get_columns(filters):
 		_("Return Date") + ":Date:150",
 		_("Approval Date") + ":Date:150",
 		_("RS Date") + ":Date:150",
+		_("RNR Date") + ":Date:150",
+		_("RNF Date") + ":Date:150",
+		_("RNP Date") + ":Date:150",
 		_("Quoted Amount") + ":currency:120",
 		_("Cost") + ":currency:120",
 		_("VAT%") + ":float:120",
@@ -120,7 +125,9 @@ def get_data(filters):
 		`tabQuotation`.name as q_name,`tabQuotation`.default_discount_percentage as dis,
 		`tabQuotation`.approval_date as a_date,
 		`tabQuotation`.transaction_date as t_date,
+		`tabQuotation`.type_of_approval as type,
 		`tabQuotation`.is_multiple_quotation as is_m,
+		`tabQuotation`.type_of_approval as type,
 		`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
 		`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma,
 		`tabQuotation Item`.amount as amount_t
@@ -132,6 +139,7 @@ def get_data(filters):
 		ap_date = ''
 		qu_name = ''
 		po = ''
+		typ = ''
 		vat = 0
 		vat_amt = 0
 		if q_amt:
@@ -140,6 +148,7 @@ def get_data(filters):
 				ap_date = q_amt[0]["a_date"]
 				qu_name =  q_amt[0]["q_name"]
 				po =  q_amt[0]["po_no"]
+				typ =  q_amt[0]["type"]
 				if q_amt[0]["is_m"] == 1:
 					per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
 					q_m = q_amt[0]["up"] - per
@@ -157,6 +166,7 @@ def get_data(filters):
 					ap_date = q_amt[0]["a_date"]
 					qu_name =  q_amt[0]["q_name"]
 					po =  q_amt[0]["po_no"]
+					typ =  q_amt[0]["type"]
 					if q_amt[0]["is_m"] == 1:
 						# per = (q_amt[0]["up"] * q_amt[0]["dis"])/100
 						# q_m = q_amt[0]["up"] - per
@@ -270,6 +280,36 @@ def get_data(filters):
 			frappe.errprint(rs[0]["date"])
 			rs_date = rs[0]["date"]
 
+		rnr_date = ""
+		rnr = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNR-Return Not Repaired"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rnr:
+			
+			rnr_date = rnr[0]["date"]
+
+		rnf_date = ""
+		rnf = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNF-Return No Fault"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rnf:
+			
+			rnf_date = rnf[0]["date"]
+
+		rnp_date = ""
+		rnp = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
+		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+		where  `tabStatus Duration Details`.status = "RNP-Return No Parts"
+		and `tabWork Order Data`.name = "%s" ORDER BY `tabStatus Duration Details`.date ASC LIMIT 1 """ %(i.name) ,as_dict=1)
+		
+		if rnp:
+			
+			rnp_date = rnp[0]["date"]
+
 		row = [i.posting_date,
 		i.name,
 		i.old_wo_no,
@@ -283,6 +323,7 @@ def get_data(filters):
 		it[0]["serial_no"],
 		it[0]["quantity"],
 		i.customer,
+		i.customer_rep,
 		i.customer_reference_number,
 		cont,
 		email,
@@ -293,7 +334,8 @@ def get_data(filters):
 		i.old_wo_vat,
 		i.old_wo_total_amt,
 		i.quoted_date,
-		po,
+		typ or "",
+		po or i.po_no,
 		i.payment_reference_number,
 		i.payment_date,
 		i.dn_no,
@@ -303,6 +345,9 @@ def get_data(filters):
 		i.returned_date,
 		ap_date,
 		rs_date,
+		rnr_date,
+		rnf_date,
+		rnp_date,
 		q_m,
 		s_total + inv_total,
 		vat,

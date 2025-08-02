@@ -201,6 +201,7 @@ def create_dn(sod):
 	new_doc.branch = doc.branch
 	new_doc.department = doc.department
 	new_doc.cost_center = doc.department
+	new_doc.purchase_order_no = doc.po_no
 	new_doc.supply_order_data = doc.name
 	new_doc.custom_sales_person = doc.sales_rep
 	s_user = frappe.get_value("Sales Person",doc.sales_rep,"user")

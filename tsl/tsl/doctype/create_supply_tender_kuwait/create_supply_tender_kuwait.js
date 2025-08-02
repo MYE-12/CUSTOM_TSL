@@ -2,26 +2,27 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Create Supply Tender Kuwait', {
-	refresh:function(frm){
-		frm.disable_save()
-		frm.add_custom_button(__("Create Supply Tender"), function(){
+	refresh: function(frm) {
+		// Disable Save button
+		frm.disable_save();
+	
+		// Add custom button to create supply tender
+		frm.add_custom_button(__("Create Supply Tender"), function() {
 			frappe.call({
-				'method': 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_supply_tender_kuwait',
-				'freeze':true,
-				'args':{
-				'order_no':cur_frm.doc
+				method: 'tsl.tsl.doctype.supply_order_form.supply_order_form.create_supply_tender_kuwait',
+				freeze: true,
+				args: {
+					order_no: frm.doc
 				},
-				'callback':function(res){
-					if(res.message){
-						cur_frm.reload_doc();
-
+				callback: function(res) {
+					if (res.message) {
+						frm.reload_doc();
 					}
 				}
-
-
-			})
+			});
 		});
 	},
+	
 
 	branch:function(frm){
 		if(frm.doc.company && frm.doc.branch){

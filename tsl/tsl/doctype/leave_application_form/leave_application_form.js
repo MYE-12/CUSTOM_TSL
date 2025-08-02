@@ -152,7 +152,7 @@ frappe.ui.form.on('Leave Application Form', {
 									frm.set_value("lop_start_date",null)
 									frm.set_value("lop_end_date",null)
 								}
-								if(k.message > frm.doc.leave_balance){
+								if(k.message > frm.doc.leave_balance && frm.doc.leave_type != "Leave Without Pay"){
 									frappe.msgprint("Kindly fill the Unpaid Start and End Date")
 								}
 								if(frm.doc.leave_balance + 13 <k.message && frm.doc.is_special_permission == 0){
@@ -238,7 +238,7 @@ frappe.ui.form.on('Leave Application Form', {
 		frm.trigger("to_date")
 	},
 	employee(frm){
-		if (frm.doc.employee) {
+		if (frm.doc.employee && frm.doc.docstatus != 1) {
 			frappe.call({
 				method:"tsl.tsl.doctype.leave_application_form.leave_application_form.return_last_rejoined_date",
 				args:{

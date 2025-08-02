@@ -53,39 +53,88 @@ class IncentiveReport(Document):
 				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
 				and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
 			
+			q_m = 0
+			m_cost = 0
+			s_total = 0
+			inv_total = 0
+			total_shipping_cost = 0
 
 			rs_count = 0
+
+			seen = set()
+			unique_rss = []
 			for s in rss:
 				r = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct , DATE(`tabStatus Duration Details`.date) as d from `tabWork Order Data` 
 				left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
 				where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped" 
-				and `tabWork Order Data`.name = "%s" and DATE(`tabStatus Duration Details`.date) < '%s' """ %(s['ct'],self.from_date) ,as_dict=1)
+				and `tabWork Order Data`.name = "%s" and DATE(`tabStatus Duration Details`.date) < '%s' LIMIT 1 """ %(s['ct'],self.from_date) ,as_dict=1)
 				
 				if not r:
-					frappe.errprint(s['ct'])
-					rs_count = rs_count + 1
+					if s['ct'] not in seen:
+					# if i.user_id == "sampath@tsl-me.com":
+					# 	frappe.errprint(s['ct'])
+						seen.add(s['ct'])
+						unique_rss.append(s['ct'])
+						rs_count = rs_count + 1
 
-					
-			ner = frappe.db.sql("""
-			SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS ct 
-			FROM `tabWork Order Data`
-			LEFT JOIN `tabStatus Duration Details` 
-				ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
-			WHERE `tabStatus Duration Details`.status = "NER-Need Evaluation Return" 
-			AND `tabWork Order Data`.technician = %s 
-			AND DATE(`tabStatus Duration Details`.date)BETWEEN %s AND %s
-			""", (i.user_id, self.from_date, self.to_date), as_dict=1)
+			if self.company == "TSL COMPANY - Kuwait":
+				for j in unique_rss:
+					q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
+					`tabQuotation`.default_discount_percentage as dis,
+					`tabQuotation`.is_multiple_quotation as is_m,
+					`tabQuotation`.after_discount_cost as adc,
+					`tabQuotation`.Workflow_state,
+					`tabQuotation Item`.unit_price as up,
+					`tabQuotation Item`.margin_amount as mar,
+					`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state in ("Approved By Customer") and
+					`tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
+					and `tabQuotation Item`.wod_no = '%s' ''' %(j) ,as_dict=1)
+
+					if q_amt:
+						
+						for k in q_amt:
+							if k.is_m == 1:
+								
+								per = (k.up * k.dis)/100
+								amt = k.up - per
+								if i.user_id == "sami@tsl-me.com":
+									frappe.errprint(j)
+									frappe.errprint(amt)
+								q_m = q_m + amt
+								
+
+
+							else:
+								amt = k.adc
+								if i.user_id == "sami@tsl-me.com":
+									frappe.errprint(j)
+									frappe.errprint(amt)
+									
+								q_m = q_m + amt
+								
 
 			
-			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs_count)
-			
-			# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
+			if self.company == "TSL COMPANY - KSA" or self.company == "TSL COMPANY - UAE":
+				for j in unique_rss:
+					q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
+					`tabQuotation`.default_discount_percentage as dis,
+					`tabQuotation`.is_multiple_quotation as is_m,
+					`tabQuotation`.after_discount_cost as adc,
+					`tabQuotation`.Workflow_state,
+					`tabQuotation`.grand_total as gt,
+					`tabQuotation Item`.unit_price as up,
+					`tabQuotation Item`.margin_amount as mar,
+					`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
+					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
+					where `tabQuotation`.Workflow_state in ("Approved By Customer") and
+					`tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
+					and `tabQuotation Item`.wod_no = '%s' ''' %(j) ,as_dict=1)
 
-		
-			count_a = 0
-			count_b = 0
-			count_c = 0
-			count_d = 0
+					if q_amt:
+						q_m = q_m + q_amt[0]["gt"]
+
 
 			wd = frappe.db.sql(""" select DISTINCT `tabWork Order Data` .name as ct from `tabWork Order Data` 
 			left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent
@@ -98,11 +147,7 @@ class IncentiveReport(Document):
 			where  `tabStatus Duration Details`.status = "RS-Repaired and Shipped"
 			and `tabWork Order Data`.technician = "%s" and DATE(`tabStatus Duration Details`.date) between '%s' and '%s' """ %(i.user_id,self.from_date,self.to_date) ,as_dict=1)
 			
-			q_m = 0
-			m_cost = 0
-			s_total = 0
-			inv_total = 0
-			total_shipping_cost = 0
+			
 			for j in wds:
 				ev = frappe.db.sql(""" select  `tabPart Sheet Item`.total as t from `tabEvaluation Report` 
 				left join `tabPart Sheet Item` on `tabEvaluation Report`.name = `tabPart Sheet Item`.parent
@@ -125,60 +170,34 @@ class IncentiveReport(Document):
 							s_total = s_total + (s.shipping_cost * exr)
 					# s_total = s_total + s_amt[0]["b_am"]
 
+
 			
-			if self.company == "TSL COMPANY - Kuwait":
-				for j in wd:
-					q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
-					`tabQuotation`.default_discount_percentage as dis,
-					`tabQuotation`.is_multiple_quotation as is_m,
-					`tabQuotation`.after_discount_cost as adc,
-					`tabQuotation`.Workflow_state,
-					`tabQuotation Item`.unit_price as up,
-					`tabQuotation Item`.margin_amount as mar,
-					`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
-					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-					where `tabQuotation`.Workflow_state in ("Approved By Customer") and
-					`tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
-					and `tabQuotation Item`.wod_no = '%s' ''' %(j.ct) ,as_dict=1)
-
-					if q_amt:
-						
-						for k in q_amt:
-							if k.is_m == 1:
-								
-								per = (k.up * k.dis)/100
-								amt = k.up - per
-								
-								q_m = q_m + amt
-
-
-							else:
-								amt = k.adc
-							
-								q_m = q_m + amt
-			
-			if self.company == "TSL COMPANY - KSA" or self.company == "TSL COMPANY - UAE":
-				for j in wd:
-					q_amt= frappe.db.sql(''' select `tabQuotation`.name as q_name,
-					`tabQuotation`.default_discount_percentage as dis,
-					`tabQuotation`.is_multiple_quotation as is_m,
-					`tabQuotation`.after_discount_cost as adc,
-					`tabQuotation`.Workflow_state,
-					`tabQuotation`.grand_total as gt,
-					`tabQuotation Item`.unit_price as up,
-					`tabQuotation Item`.margin_amount as mar,
-					`tabQuotation Item`.margin_amount as ma from `tabQuotation` 
-					left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
-					where `tabQuotation`.Workflow_state in ("Approved By Customer") and
-					`tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair")
-					and `tabQuotation Item`.wod_no = '%s' ''' %(j.ct) ,as_dict=1)
-
-					if q_amt:
-						q_m = q_m + q_amt[0]["gt"]
 
 
 							
 
+			ner = frappe.db.sql("""
+			SELECT COUNT(DISTINCT `tabWork Order Data`.name) AS ct 
+			FROM `tabWork Order Data`
+			LEFT JOIN `tabStatus Duration Details` 
+				ON `tabWork Order Data`.name = `tabStatus Duration Details`.parent
+			WHERE `tabStatus Duration Details`.status = "NER-Need Evaluation Return" 
+			AND `tabWork Order Data`.technician = %s 
+			AND DATE(`tabStatus Duration Details`.date)BETWEEN %s AND %s
+			""", (i.user_id, self.from_date, self.to_date), as_dict=1)
+
+			
+			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(rs_count)
+			
+			# data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(ner[0]["ct"])
+
+		
+			count_a = 0
+			count_b = 0
+			count_c = 0
+			count_d = 0
+
+			
 			
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(q_m):,}")
 			data += '<td style="border-color:#000000;padding:1px;font-size:14px;font-size:12px;"><center><b>%s</b><center></td>' %(f"{round(s_total + inv_total):,}")

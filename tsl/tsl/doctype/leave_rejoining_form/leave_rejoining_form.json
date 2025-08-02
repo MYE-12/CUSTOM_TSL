@@ -29,7 +29,12 @@
   "column_break_14",
   "late_days",
   "leave_type",
-  "amended_from"
+  "leave_application_details_section",
+  "eligible_days",
+  "amended_from",
+  "column_break_etrx",
+  "unpaid_start_date",
+  "unpaid_end_date"
  ],
  "fields": [
   {
@@ -87,6 +92,7 @@
    "fieldname": "company",
    "fieldtype": "Read Only",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Company",
    "read_only": 1
   },
@@ -160,6 +166,35 @@
    "fieldtype": "Date",
    "label": "To Date",
    "read_only": 1
+  },
+  {
+   "fieldname": "leave_application_details_section",
+   "fieldtype": "Section Break",
+   "label": "Leave Application Details"
+  },
+  {
+   "fieldname": "eligible_days",
+   "fieldtype": "Int",
+   "label": "Eligible Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_etrx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.late_days > doc.eligible_days",
+   "fieldname": "unpaid_start_date",
+   "fieldtype": "Date",
+   "label": "Unpaid Start Date",
+   "mandatory_depends_on": "eval:doc.late_days > doc.eligible_days"
+  },
+  {
+   "depends_on": "eval:doc.late_days > doc.eligible_days",
+   "fieldname": "unpaid_end_date",
+   "fieldtype": "Date",
+   "label": "Unpaid End Date",
+   "mandatory_depends_on": "eval:doc.late_days > doc.eligible_days"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -170,7 +205,7 @@
    "link_fieldname": "rejoining"
   }
  ],
- "modified": "2025-05-19 19:34:32.911247",
+ "modified": "2025-07-30 11:07:22.105807",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Rejoining Form",
@@ -190,6 +225,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

@@ -305,11 +305,39 @@ def create_supply_order_data_uae(order_no):
 					frappe.throw("Model, Manufacturer , Type and Item Name are Mandatory")
 				if not 'item_code' in i:
 					item = frappe.db.get_value("Item",{"model":i['model'],"mfg":i['manufacturer'],"type":i['type'],"item_name":i['item_name']},"name")
-					if item:
-						if i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
-							i['item_code'] = item
-						elif i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
-							i['item_code'] = item
+					# if item:
+					# 	if i['serial_no'] in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+					# 		i['item_code'] = item
+					# 	elif i['serial_no'] not in [i[0] for i in frappe.db.get_list("Serial No",{"item_code":item},as_list=1)]:
+					# 		i['item_code'] = item
+					# 		sn_no = ""
+					# 		sn_doc = frappe.new_doc("Serial No")
+					# 		sn_doc.serial_no = i['serial_no']
+					# 		sn_doc.item_code = i['item_code']
+					# 		sn_doc.save(ignore_permissions = True)
+					# 		if sn_doc.name:
+					# 			sn_no = sn_doc.name
+					# else:
+					frappe.errprint("donee")
+					i_doc = frappe.new_doc('Item')
+					i_doc.naming_series = '.######'
+					i_doc.item_name = i['item_name']
+					i_doc.item_group = "Equipments"
+					i_doc.item_name = i['item_name'] 
+					i_doc.description = i['item_name']
+					i_doc.model = i['model']
+					# i_doc.item_number = i['item_number'] or ""
+					i_doc.is_stock_item = 1
+					i_doc.mfg = i['manufacturer']
+					i_doc.type = i['type']
+					if 'has_serial_no' in i and i['has_serial_no']:
+						i_doc.has_serial_no = 1
+					i_doc.save(ignore_permissions = True)
+					frappe.errprint("donee")
+					
+					if i_doc.name:
+						i['item_code'] = i_doc.name
+						if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
 							sn_no = ""
 							sn_doc = frappe.new_doc("Serial No")
 							sn_doc.serial_no = i['serial_no']
@@ -317,34 +345,6 @@ def create_supply_order_data_uae(order_no):
 							sn_doc.save(ignore_permissions = True)
 							if sn_doc.name:
 								sn_no = sn_doc.name
-					else:
-						frappe.errprint("donee")
-						i_doc = frappe.new_doc('Item')
-						i_doc.naming_series = '.######'
-						i_doc.item_name = i['item_name']
-						i_doc.item_group = "Equipments"
-						i_doc.item_name = i['item_name'] 
-						i_doc.description = i['item_name']
-						i_doc.model = i['model']
-						# i_doc.item_number = i['item_number'] or ""
-						i_doc.is_stock_item = 1
-						i_doc.mfg = i['manufacturer']
-						i_doc.type = i['type']
-						if 'has_serial_no' in i and i['has_serial_no']:
-							i_doc.has_serial_no = 1
-						i_doc.save(ignore_permissions = True)
-						frappe.errprint("donee")
-						
-						if i_doc.name:
-							i['item_code'] = i_doc.name
-							if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
-								sn_no = ""
-								sn_doc = frappe.new_doc("Serial No")
-								sn_doc.serial_no = i['serial_no']
-								sn_doc.item_code = i['item_code']
-								sn_doc.save(ignore_permissions = True)
-								if sn_doc.name:
-									sn_no = sn_doc.name
 				# else:
 				# 	if frappe.db.get_value("Item",i['item_code'],"has_serial_no") and not i['has_serial_no']:
 				# 		frappe.throw("Item {0} in Row -{1} has serial number ".format(i['item_code'],i['idx']))
@@ -354,7 +354,7 @@ def create_supply_order_data_uae(order_no):
 					"type":i['type'],
 					"model_no":i['model'],
 					"mfg":i['manufacturer'],
-					"serial_no":sn_no,
+					# "serial_no":sn_no,
 					"quantity":i['qty'],
 				})
 	else:
@@ -484,7 +484,7 @@ def create_supply_order_data_uae(order_no):
 	new_doc.submit()
 	l.append(new_doc.name)
 	if l:
-		frappe.delete_doc("Create Supply Order","Create Supply Order")
+		frappe.delete_doc("Create Supply Order UAE","Create Supply Order UAE")
 		link = []
 		for i in l:
 			link.append(""" <a href='/app/supply-order-data/{0}'>{0}</a> """.format(i))
@@ -563,7 +563,7 @@ def create_supply_tender_kuwait(order_no):
 							if sn_doc.name:
 								sn_no = sn_doc.name
 					else:
-						frappe.errprint("donee")
+						
 						i_doc = frappe.new_doc('Item')
 						i_doc.naming_series = '.######'
 						i_doc.item_name = i['item_name']
@@ -571,6 +571,7 @@ def create_supply_tender_kuwait(order_no):
 						i_doc.item_name = i['item_name'] 
 						i_doc.description = i['item_name']
 						i_doc.model = i['model']
+						i_doc.stock_uom = i['uom']
 						# i_doc.item_number = i['item_number'] or ""
 						i_doc.is_stock_item = 1
 						i_doc.mfg = i['manufacturer']
@@ -599,67 +600,54 @@ def create_supply_tender_kuwait(order_no):
 					"type":i['type'],
 					"model_no":i['model'],
 					"mfg":i['manufacturer'],
+					"unit":i['uom'],
 					"serial_no":sn_no,
 					"quantity":i['qty'],
 				})
 	else:
 		for i in doc.get("received_equipment"):
-			
-			if not 'item_code' in i:
-				item = frappe.db.exists("Item",{"item_number":i['item_number'],"item_group": ["not in", ["Components", "Equipment"]]})
+			# Check if item_code is not present
+			if not i.get('item_code'):
+				# Try to find existing item by item_number
+				item = frappe.db.get_value("Item", {"item_number": i['item_number']}, "name")
+				
 				if not item:
-					frappe.errprint("ji")
-					i_doc = frappe.new_doc('Item')
-					i_doc.naming_series = '.######'
-					i_doc.description = i['description']
-					i_doc.item_number = i['item_number']
-					i_doc.item_name = i['item_name']
-					i_doc.stock_uom = i['uom']
-					if i['item_group']:
-						i_doc.item_group = i['item_group']
-					else:
-						i_doc.item_group = "Equipments"
-					i_doc.is_stock_item = 0
-					if 'has_serial_no' in i and i['has_serial_no']:
-						i_doc.has_serial_no = 1
-					i_doc.save(ignore_permissions = True)
-					
-					if i_doc.name:
-						i['item_code'] = i_doc.name
-						if 'has_serial_no' in i and i['has_serial_no'] and i['serial_no']:
-							sn_no = ""
-							sn_doc = frappe.new_doc("Serial No")
-							sn_doc.serial_no = i['serial_no']
-							sn_doc.item_code = i['item_code']
-							sn_doc.save(ignore_permissions = True)
-							if sn_doc.name:
-								sn_no = sn_doc.name
-								
-						new_doc.append("material_list",{
-						"item_code": i['item_code'],
-						# "model_no": i['model'],
-						# "mfg": i['manufracturer'],
-						"description":i['description'],
-						"item_name":i['item_name'],	
-						"unit":i['uom'],
-						"item_group": i['item_group'],
-						"item_number":i['item_number'],
-						"quantity":i['qty'],
-						})
-						
+					# Create a new Item
+					new_item = frappe.new_doc('Item')
+					new_item.naming_series = '.######'
+					new_item.description = i.get('description')
+					new_item.item_number = i.get('item_number')
+					new_item.item_name = i.get('item_name')
+					new_item.item_group = i.get('item_group') or "Equipments"
+					new_item.is_stock_item = 0
+					new_item.stock_uom = i['uom']
+					new_item.has_serial_no = 1 if i.get('has_serial_no') else 0
+					new_item.save(ignore_permissions=True)
+
+					# Set item_code in row
+					i['item_code'] = new_item.name
+
+					# Create Serial No if required
+					if i.get('has_serial_no') and i.get('serial_no'):
+						sn_doc = frappe.new_doc("Serial No")
+						sn_doc.serial_no = i['serial_no']
+						sn_doc.item_code = i['item_code']
+						sn_doc.save(ignore_permissions=True)
 				else:
-					if item:
-						new_doc.append("material_list",{
-						"item_code": item,
-						# "model_no": i['model'],
-						# "mfg": i['manufracturer'],
-						"description":i['description'],
-						"item_name":i['item_name'],	
-						"unit":i['uom'],
-						"item_group": i['item_group'],
-						"item_number":i['item_number'],
-						"quantity":i['qty'],
-					})
+					# Assign existing item if found
+					i['item_code'] = item
+
+			# Append to material list
+			new_doc.append("material_list", {
+				"item_code": i['item_code'],
+				"description": i.get('description'),
+				"item_name": i.get('item_name'),
+				"unit": i['uom'],
+				"item_group": i.get('item_group'),
+				"item_number": i.get('item_number'),
+				"quantity": i.get('qty'),
+			})
+
 				
 		
 			
@@ -729,11 +717,11 @@ def create_supply_tender_kuwait(order_no):
 	new_doc.submit()
 	l.append(new_doc.name)
 	if l:
-		frappe.delete_doc("Create Supply Order","Create Supply Order")
+		frappe.delete_doc("Create Supply Tender Kuwait","Create Supply Tender Kuwait")
 		link = []
 		for i in l:
 			link.append(""" <a href='/app/supply-order-data/{0}'>{0}</a> """.format(i))
-		frappe.msgprint("Supply Order created: "+', '.join(link))
+		frappe.msgprint("Supply Tender created: "+', '.join(link))
 		return True
 	
 	return False

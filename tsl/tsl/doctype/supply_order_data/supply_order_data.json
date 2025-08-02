@@ -42,6 +42,7 @@
   "status",
   "reason",
   "payment_terms",
+  "po_no",
   "purchase_order_no",
   "dn_no",
   "dn_date",
@@ -472,12 +473,18 @@
    "fieldtype": "Link",
    "label": "Incharge",
    "options": "Contact"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "po_no",
+   "fieldtype": "Data",
+   "label": "Po No"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-12 15:54:44.091855",
+ "modified": "2025-07-09 11:00:57.060722",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Supply Order Data",
