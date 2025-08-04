@@ -1,7 +1,7 @@
 
 __version__ = '0.0.1'
-import frappe
-from frappe.model.mapper import get_mapped_doc
+# import frappe
+# from frappe.model.mapper import get_mapped_doc
 
 # @frappe.whitelist()
 # def get_revised_po(source):
