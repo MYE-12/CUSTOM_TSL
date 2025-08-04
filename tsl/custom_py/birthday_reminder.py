@@ -21,8 +21,8 @@ def send_birthday_reminder():
 	today_month_day = getdate(today_date).strftime("%m-%d")
 	is_leap_year = calendar.isleap(datetime.now().year)
 	branch_and_mail_id = [
-		{"name": "Jeddah - TSL-SA", "sender":"info-jed@tsl-me.com" ,"recipient": "admin@tsl-me.com" ,"cc":None},
-		{"name": "Dammam - TSL-SA", "sender":"info-dmm@tsl-me.com" ,"recipient": "admin@tsl-me.com" ,"cc":None},
+		{"name": "Jeddah - TSL-SA", "sender":"info-jed@tsl-me.com" ,"recipient": "admin@tsl-me.com" ,"cc":"info-jed@tsl-me.com"},
+		{"name": "Dammam - TSL-SA", "sender":"info-dmm@tsl-me.com" ,"recipient": "admin@tsl-me.com" ,"cc":"info-dmm@tsl-me.com"},
 		{"name": "Dubai - TSL", "sender":"info@tsl-me.com" ,"recipient": "info-uae@tsl-me.com" ,"cc":None},
 		{"name": "Riyadh - TSL- KSA", "sender":"info-sa@tsl-me.com" ,"recipient": "admin@tsl-me.com" ,"cc":None},
 		{"name": "Kuwait - TSL", "sender":"info@tsl-me.com" ,"recipient": "admin1@tsl-me.com" ,"cc":"info@tsl-me.com"}

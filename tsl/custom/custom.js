@@ -1348,6 +1348,7 @@ frappe.ui.form.on("Quotation Item",{
 	   },
 	   
 	   margin_amount:function(frm,cdt,cdn){
+		if(frm.doc.company == "TSL COMPANY - Kuwait" || frm.doc.company == "TSL COMPANY - KSA"){
 		var item = locals[cdt][cdn];
 		var margin_amount = item.margin_amount
 		// console.log(margin_amount)
@@ -1372,6 +1373,7 @@ frappe.ui.form.on("Quotation Item",{
 			}
 		
 			});
+		}
 		// frappe.model.set_value(cdt, cdn, "rate",margin_amount);
 		// item.margin_amount_value = disc_val
 		

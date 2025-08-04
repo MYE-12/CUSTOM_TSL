@@ -380,7 +380,7 @@ def show_details(self,method):
 			eval = frappe.db.sql("""
 			SELECT name FROM `tabEvaluation Report`
 			WHERE work_order_data = %s
-			AND status NOT IN ('Return No Fault','Return Not Repaired',"Comparison") """, (i.wod_no,), as_dict=1)
+			AND status NOT IN ('Return No Fault','Return Not Repaired',"Comparison") and document_active_status = "Yes" """, (i.wod_no,), as_dict=1)
 			
 			if eval:
 				doc = frappe.get_doc("Evaluation Report",{"name":eval[0]["name"]}) 
@@ -1061,7 +1061,7 @@ def get_quotation_history(source,type = None):
 					ic.rate = ic.rate
 
 
-	if doc.company == "TSL COMPANY - UAE" or doc.company == "TSL COMPANY - KSA":
+	if doc.company == "TSL COMPANY - KSA":
 		
 		if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
 			if doc.without_discount == 1:
@@ -1070,6 +1070,19 @@ def get_quotation_history(source,type = None):
 			else:
 				for ic in doclist.get('items'):
 					ic.rate = ic.unit_price
+		else:
+			for ic in doclist.get('items'):
+				ic.rate = ic.margin_amount
+
+	if doc.company == "TSL COMPANY - UAE":
+		
+		if type  == "Revised Quotation - Supply" or type  == "Revised Quotation - Repair":
+			if doc.without_discount == 1:
+				for ic in doclist.get('items'):
+					ic.rate = ic.rate
+			else:
+				for ic in doclist.get('items'):
+					ic.rate = ic.rate
 		else:
 			for ic in doclist.get('items'):
 				ic.rate = ic.margin_amount

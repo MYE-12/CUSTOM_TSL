@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "html_aawb",
   "from_date",
   "to_date",
   "report",
@@ -16,6 +17,7 @@
   "customer",
   "work_order_data",
   "sales_person",
+  "sales",
   "section_break_6g2tw",
   "html"
  ],
@@ -38,7 +40,7 @@
    "fieldname": "report",
    "fieldtype": "Select",
    "label": "Report",
-   "options": "\nRSI-Repaired and Shipped Invoiced\nRSC-Repaired and Shipped Client\nQ-Quoted"
+   "options": "\nRSI-Repaired and Shipped Invoiced\nRSC-Repaired and Shipped Client\nQ-Quoted\nRS-Repaired and Shipped"
   },
   {
    "fieldname": "html",
@@ -79,9 +81,19 @@
   },
   {
    "fieldname": "company",
-   "fieldtype": "Link",
+   "fieldtype": "Select",
    "label": "Company",
-   "options": "Company"
+   "options": "\nTSL COMPANY - Kuwait\nTSL COMPANY - KSA\nTSL COMPANY - UAE"
+  },
+  {
+   "fieldname": "sales",
+   "fieldtype": "Data",
+   "label": "Sales Person"
+  },
+  {
+   "fieldname": "html_aawb",
+   "fieldtype": "HTML",
+   "options": "`<div style=\"padding: 10px; background-color: #e8f4fd; border-left: 5px solid #1d8ff2;\">\n            <strong>Please note:</strong> The <b>From Date</b> and <b>To Date</b> fields are editable. \n            You may modify them according to your requirements.\n        </div>`"
   }
  ],
  "grid_page_length": 50,
@@ -89,7 +101,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-21 15:43:07.544735",
+ "modified": "2025-08-02 14:34:51.537779",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Sales Summary Report",

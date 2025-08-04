@@ -102,7 +102,6 @@ def get_data(filters):
 		
 	
 	for i in wr:
-
 		rs_date = ""
 		rs = frappe.db.sql(""" select DATE(`tabStatus Duration Details`.date) AS date from `tabWork Order Data` 
 		left join `tabStatus Duration Details` on `tabWork Order Data`.name = `tabStatus Duration Details`.parent

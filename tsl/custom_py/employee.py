@@ -208,4 +208,4 @@ def update_last_employee_number(doc,method):
 
 
 def rename_user():
-	frappe.rename_doc("User","maari@tsl-me.com", "marimithran2018@gmail.com")
+	frappe.rename_doc("User","ahmed@tsl-me.com", "ahmad@tsl-me.com")

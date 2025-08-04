@@ -5,6 +5,8 @@ frappe.ui.form.on('Sales Summary Report', {
 	// refresh: function(frm) {
 
 	// }
+
+
 	download:function(frm){
 		
 			var print_format ="Sales Summary";
@@ -35,10 +37,38 @@ frappe.ui.form.on('Sales Summary Report', {
 	},
 
 	report(frm){
+		if(frm.doc.report == "RS-Repaired and Shipped"){
+			
+				let today = frappe.datetime.get_today();
+			// 	console.log(today)
+			
+				frm.set_value("from_date",today)
+				frm.set_value("to_date",today)
+			}
 		frm.trigger("get_data");
 	},
 
 	onload(frm){
+		if (frappe.user.has_role("Sales user")) {
+            frm.set_df_property('sales_person', 'hidden', 1);
+        }
+		
+		if (frappe.user.has_role("Sales Manager")) {
+            frm.set_df_property('sales','hidden', 1);
+        }
+		
+		if(!frappe.session.user == "Administrator"){
+			console.log(frappe.session.user)
+			frappe.db.get_value('Sales Person', {'custom_user':frappe.session.user}, ['name','company'], (r) => {
+      	    
+				if(r){
+					frm.set_value("sales",r.name)
+					frm.set_value("company",r.company)
+				}
+			   
+				
+	  });
+		}
 		frm.trigger("get_data");
 	},
 

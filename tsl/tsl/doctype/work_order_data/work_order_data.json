@@ -97,7 +97,6 @@
    "allow_on_submit": 1,
    "fieldname": "sales_rep",
    "fieldtype": "Link",
-   "ignore_user_permissions": 1,
    "in_standard_filter": 1,
    "label": "Sales Rep",
    "options": "Sales Person"
@@ -199,6 +198,7 @@
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
@@ -655,7 +655,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-07-30 08:41:04.772996",
+ "modified": "2025-08-02 22:42:50.582569",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

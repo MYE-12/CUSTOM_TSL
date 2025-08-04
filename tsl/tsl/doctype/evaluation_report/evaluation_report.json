@@ -68,6 +68,7 @@
   "purchaser_comment",
   "send",
   "test_result",
+  "lab_comment",
   "technician_on_work_section",
   "technician_details",
   "section_break_17",
@@ -551,12 +552,18 @@
    "fieldtype": "Table",
    "label": "Replacement Unit",
    "options": "Evaluation Item"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "lab_comment",
+   "fieldtype": "Small Text",
+   "label": "Lab Comment"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 11:15:29.401036",
+ "modified": "2025-08-03 14:34:48.666059",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

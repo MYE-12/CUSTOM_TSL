@@ -9270,8 +9270,8 @@ def test_po():
 # 	k = frappe.db.sql(""" delete from `tabWork Order Data` where name = "WOD-D25-09238" """)
 
 
-# @frappe.whitelist()
-# def set_sales_person():
+@frappe.whitelist()
+def set_sales_person():
 	
 # 	s = frappe.db.sql(""" select distinct sales_rep from `tabSales Invoice` """)
 # 	for i in s:
@@ -9283,9 +9283,12 @@ def test_po():
 # 				print(user)
 			
 				
-	# k = frappe.db.sql(""" UPDATE `tabItem`
-	# SET has_serial_no = 1
-	# WHERE name = '%s' """ %("006391"))
+	k = frappe.db.sql(""" UPDATE `tabItem Type`
+	SET name = "DISPLAY CONTROLLER"
+	WHERE name = '%s' """ %("DISPLAY CONTROLER"))
+	#  k = frappe.db.sql(""" INSERT INTO Item Type (''DISPLAY CONTROLER) VALUES ('DISPLAY CONTROLLER');""" )
+	
+
 
 		
 
