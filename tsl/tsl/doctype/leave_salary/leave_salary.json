@@ -29,6 +29,7 @@
   "hra_salary",
   "mobile_allowance",
   "transport_allowance",
+  "is_leaves_encashed",
   "leave_salary_section",
   "from_date",
   "to_date",
@@ -47,6 +48,13 @@
   "column_break_zncg4",
   "total_salary",
   "leave_balance",
+  "encashment_details_section",
+  "encashable_days",
+  "column_break_luqd",
+  "encashment_days",
+  "column_break_7dy7",
+  "leave_encashment",
+  "encashment_amount",
   "others_section",
   "payment",
   "deduction",
@@ -383,6 +391,52 @@
    "fieldtype": "Int",
    "label": "Special Holidays",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_leaves_encashed",
+   "fieldtype": "Check",
+   "label": "Encash Leaves"
+  },
+  {
+   "depends_on": "is_leaves_encashed",
+   "fieldname": "encashment_details_section",
+   "fieldtype": "Section Break",
+   "label": "Encashment Details"
+  },
+  {
+   "fieldname": "encashable_days",
+   "fieldtype": "Float",
+   "label": "Encashable Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "encashment_days",
+   "fieldtype": "Float",
+   "label": "Encashment Days"
+  },
+  {
+   "fieldname": "leave_encashment",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Leave Encashment",
+   "options": "Leave Encashment Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "encashment_amount",
+   "fieldtype": "Currency",
+   "label": "Encashment Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_luqd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_7dy7",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -391,9 +445,13 @@
   {
    "link_doctype": "Leave Application Form",
    "link_fieldname": "leave_salary_reference"
+  },
+  {
+   "link_doctype": "Leave Encashment Data",
+   "link_fieldname": "leave_salary"
   }
  ],
- "modified": "2025-06-30 08:23:18.147596",
+ "modified": "2025-08-17 17:18:29.013590",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Salary",

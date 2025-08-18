@@ -655,7 +655,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-05-21 12:08:41.719223",
+ "modified": "2025-08-04 14:49:35.459632",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Replacement Unit",
@@ -675,6 +675,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "sales_rep,customer",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,

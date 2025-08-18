@@ -76,9 +76,9 @@ def get_data(filters):
 	if filters.from_date and filters.to_date:
 		w = frappe.get_all("Supply Order Data",{"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
 		wr = w
-	if filters.from_date and filters.to_date:
-		w = frappe.get_all("Supply Order Data",{"branch":filters.branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
-		wr = w
+	# if filters.from_date and filters.to_date:
+	# 	w = frappe.get_all("Supply Order Data",{"branch":filters.branch,"company":"TSL COMPANY - KSA","posting_date":["between",(filters.from_date,filters.to_date)]},["*"])
+	# 	wr = w
 	for i in wr:
 		it = frappe.db.sql(''' select type,mfg,model_no,serial_no,quantity,description from `tabSupply Order Table` where parent = %s ''' ,i.name,as_dict=1)
 		

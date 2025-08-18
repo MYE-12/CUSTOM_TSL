@@ -32,6 +32,7 @@ jinja = {
 		"tsl.custom_py.utils.daily_lab_report_uae",
         "tsl.custom_py.utils.weekly_lab_report",
         "tsl.custom_py.sales_person_html.get_sales",
+		"tsl.custom_py.utils.get_lab",
         # "tsl.custom_py.so_approval_html.get_sales",
         # "tsl.custom_py.incentive_report_pdf.get_incentive",
         # "tsl.tsl.doctype.sales_summary_reprt.sales_summary_report.get_work_orders"

@@ -54,33 +54,37 @@ class InvoiceRequest(Document):
 
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             elif self.branch == "Jeddah - TSL-SA":
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             elif self.branch == "Dammam - TSL-SA":
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             else:
                                 make(sender = info,
                                     recipients=["finance2@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email],
+                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
 
                                     send_email=1,
                                     )
@@ -96,33 +100,37 @@ class InvoiceRequest(Document):
 
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","alhassan@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             elif self.branch == "Jeddah - TSL-SA":
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","omar.m@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             elif self.branch == "Dammam - TSL-SA":
                                 make(sender = info,
                                     recipients=["finance-sa1@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email],
+                                    cc=[ "finance@tsl-me.com","abdelrahman@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
                                     send_email=1,
                                     )
                             else:
                                 make(sender = info,
                                     recipients=["finance2@tsl-me.com"],
+                                    reply_to = info,
                                     subject="Invoice Request - %s"%(i.quotation),
                                     content=msg,
-                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email],
+                                    cc=[ "finance-kw@tsl-me.com","omar@tsl-me.com",self.sales_email,"yousuf@tsl-me.com"],
 
                                     send_email=1,
                                     )
@@ -131,7 +139,7 @@ class InvoiceRequest(Document):
         frappe.db.set_value("Invoice Request",self.name,"submitted_by",frappe.session.user)
         if self.workflow_state == "Invoice Created":
             
-            # self.submitted_by = frappe.session.user
+            self.submitted_by = frappe.session.user
             frappe.db.set_value("Invoice Request",self.name,"submitted_by",frappe.session.user)
             if self.invoice_list:
                 for i in self.invoice_list:

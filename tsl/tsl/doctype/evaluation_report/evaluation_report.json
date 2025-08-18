@@ -54,6 +54,7 @@
   "total_amount",
   "actions_section",
   "status",
+  "custom_status",
   "section_break_25",
   "evaluation_time",
   "extra_repair_time",
@@ -69,6 +70,7 @@
   "send",
   "test_result",
   "lab_comment",
+  "servo",
   "technician_on_work_section",
   "technician_details",
   "section_break_17",
@@ -493,7 +495,7 @@
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Repaired Time",
-   "mandatory_depends_on": "eval:doc.received == 1 && frappe.user.has_role(\"Technician\") && !frappe.user.has_role(\"Administrator\")"
+   "mandatory_depends_on": "eval:(doc.received == 1 && frappe.user.has_role(\"Technician\") && !frappe.user.has_role(\"Administrator\"))|| doc.status == \"Working\""
   },
   {
    "fieldname": "column_break_akgum",
@@ -538,7 +540,7 @@
   {
    "allow_on_submit": 1,
    "fieldname": "info_comment",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Small Text",
    "label": "Info Comment"
   },
   {
@@ -558,12 +560,26 @@
    "fieldname": "lab_comment",
    "fieldtype": "Small Text",
    "label": "Lab Comment"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "custom_status",
+   "fieldtype": "Select",
+   "label": "Custom Status",
+   "options": "\nUnder Lab"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "servo",
+   "fieldtype": "Check",
+   "label": "Servo"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-03 14:34:48.666059",
+ "modified": "2025-08-17 09:19:44.215833",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Evaluation Report",

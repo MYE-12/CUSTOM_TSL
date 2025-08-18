@@ -130,7 +130,8 @@ def get_data(filters):
 		`tabQuotation`.type_of_approval as type,
 		`tabQuotation`.after_discount_cost as adc,`tabQuotation`.Workflow_state,
 		`tabQuotation Item`.unit_price as up,`tabQuotation Item`.margin_amount as ma,
-		`tabQuotation Item`.amount as amount_t
+		`tabQuotation Item`.amount as amount_t,
+		`tabQuotation Item`.net_amount as nm
 		 from `tabQuotation` 
 		left join `tabQuotation Item` on  `tabQuotation`.name = `tabQuotation Item`.parent
 		where  `tabQuotation`.Workflow_state in ("Approved By Customer") and `tabQuotation Item`.wod_no = %s ''',i.name,as_dict=1)

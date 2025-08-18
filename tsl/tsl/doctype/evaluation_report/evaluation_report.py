@@ -559,6 +559,7 @@ class EvaluationReport(Document):
 					item_doc.item_group = "Components"
 					if frappe.session.user == "purchase@tsl-me.com" or frappe.session.user == "purchase-sa1@tsl-me.com" :
 						item_doc.save(ignore_permissions = True)
+			
 		
 	# def before_submit(self):
 	#     frappe.errprint("jiy")
@@ -671,6 +672,7 @@ def create_material_issue_from_ini_eval(name):
 					'cost_center':cc,
 					'work_order_data':ini.work_order_data,
 					'conversion_factor':1,
+					'allow_zero_valuation_rate':1
 				})
 		new_doc.save(ignore_permissions = True)
 		new_doc.submit()

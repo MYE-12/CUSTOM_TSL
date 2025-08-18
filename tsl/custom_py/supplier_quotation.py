@@ -124,6 +124,8 @@ def validate(self,method):
         
 
 def on_submit(self,method):
+    if self.get("custom_replacement_unit"):
+        frappe.db.set_value("Replacement Unit",self.get("custom_replacement_unit"),"status", "Parts Priced", update_modified = False)
     
     if self.project_data:
         pd = frappe.get_doc("Project Data",self.project_data)
@@ -133,7 +135,7 @@ def on_submit(self,method):
     if not self.department == "Supply Tender - TSL":
         for i in self.items:
             if self.company == "TSL COMPANY - UAE" or self.company == "TSL COMPANY - Kuwait" or self.company == "TSL COMPANY - KSA":
-                if i.work_order_data:
+                if i.work_order_data and not self.get("custom_replacement_unit"):
                     doc = frappe.db.sql("""select name from `tabWork Order Data` where name = '%s' """%(i.work_order_data),as_dict=1)
                     for d in doc:
                         ev = frappe.get_doc("Work Order Data",d.name)
@@ -228,6 +230,24 @@ def on_submit(self,method):
 
                 doc.save(ignore_permissions=True)
 
+            for i in self.get("items"):
+                if self.custom_replacement_unit:
+                    doc = frappe.get_doc("Work Order Data",wod)
+                    url = "https://api.exchangerate-api.com/v4/latest/%s"%(self.currency)
+
+                    payload = {}
+                    headers = {}
+                    response = requests.request("GET", url, headers=headers, data=payload)
+                    data = response.json()
+                    com_cur = frappe.get_value("Company",self.company,"default_currency")
+                    rate_kw = data['rates'][com_cur]
+                    conv_rate = i.rate * rate_kw
+                    for j in doc.get("material_list"):
+                        if j.item_code == i.item_code:
+                            j.price = float(conv_rate)
+                            j.amount = float(conv_rate) * float(j.quantity)
+                    doc.save(ignore_permissions=True)
+                    
         elif self.initial_evaluation:
             doc = frappe.get_doc("Initial Evaluation",self.initial_evaluation)
             

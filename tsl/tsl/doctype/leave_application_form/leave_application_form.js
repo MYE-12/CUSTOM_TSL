@@ -346,18 +346,20 @@ frappe.ui.form.on('Leave Application Form', {
 		}
 		
 		if (frm.doc.leave_type == 'Annual Leave') {
-			frm.add_custom_button(__('Leave Salary'), function () {
-				frappe.db.get_value('Leave Salary', { 'employee': frm.doc.employee }, 'name')
-				.then(r => {
-					if (r.message && Object.entries(r.message).length === 0) {
-						frappe.route_options = { 'employee': frm.doc.employee, 'employee_name': frm.doc.employee_name ,'leave_application':frm.doc.name};
-						frappe.set_route('Form', 'Leave Salary', 'new-leave-salary-1');
-					}
-					else {
-						frappe.set_route('Form', 'Leave Salary', r.message.name);
-					}
+			if(frappe.session.user == "Administrator" || frm.doc.docstatus == 1){
+				frm.add_custom_button(__('Leave Salary'), function () {
+					frappe.db.get_value('Leave Salary', { 'employee': frm.doc.employee }, 'name')
+					.then(r => {
+						if (r.message && Object.entries(r.message).length === 0) {
+							frappe.route_options = { 'employee': frm.doc.employee, 'employee_name': frm.doc.employee_name ,'leave_application':frm.doc.name};
+							frappe.set_route('Form', 'Leave Salary', 'new-leave-salary-1');
+						}
+						else {
+							frappe.set_route('Form', 'Leave Salary', r.message.name);
+						}
+					});
 				});
-			});
+			}
 			frm.add_custom_button(__('Employee Clearance'), function () {
 				frappe.db.get_value('Employee Clearance', { 'emp_no': frm.doc.employee }, 'emp_no')
 					.then(r => {

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"Eka9QZU0gM\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Q</b> - Quotation / <b>W</b> - Work Order Data / <b>I</b> - Invoice\",\"col\":12}},{\"id\":\"-Yle2-FEVZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">FORMS</span>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"dkcF8BlkNU\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"rUGAQQOkd8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Evaluation\",\"col\":3}},{\"id\":\"bVOEzEPVK_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Eval Approved\",\"col\":3}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Technician Repair\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"91PitxKuom\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return No Fault\",\"col\":3}},{\"id\":\"7Z3QygGSdj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return Not Repaired\",\"col\":3}},{\"id\":\"5d5WUZnC18\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"TR-Technician Repair\",\"col\":3}},{\"id\":\"DdNv31YL3L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Evaluation\",\"col\":3}},{\"id\":\"Z0tOP76vtG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Tech Repair\",\"col\":3}},{\"id\":\"eP9A8oNTVR\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>&nbsp;Report Master</b>\",\"col\":12}},{\"id\":\"iq_zm4afiB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Ledger Report\",\"col\":3}},{\"id\":\"XS7RX-D31Z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}}]",
+ "content": "[{\"id\":\"Eka9QZU0gM\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Q</b> - Quotation / <b>W</b> - Work Order Data / <b>I</b> - Invoice\",\"col\":12}},{\"id\":\"-Yle2-FEVZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">FORMS</span>\",\"col\":12}},{\"id\":\"SqzJuaaRMs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"fKBM1wnQDq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"EPD3H9BAWS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"qwAqATHUNm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data Lookup\",\"col\":3}},{\"id\":\"dkcF8BlkNU\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h2\\\">Work Order Data</span>\",\"col\":12}},{\"id\":\"rUGAQQOkd8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Evaluation\",\"col\":3}},{\"id\":\"bVOEzEPVK_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Need Eval Approved\",\"col\":3}},{\"id\":\"uM9HhIDiLN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Technician Repair\",\"col\":3}},{\"id\":\"jn0VcITTOD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W -Need Evaluation Return\",\"col\":3}},{\"id\":\"91PitxKuom\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return No Fault\",\"col\":3}},{\"id\":\"7Z3QygGSdj\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Return Not Repaired\",\"col\":3}},{\"id\":\"5d5WUZnC18\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"TR-Technician Repair\",\"col\":3}},{\"id\":\"DdNv31YL3L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Evaluation\",\"col\":3}},{\"id\":\"Z0tOP76vtG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"W - Under Tech Repair\",\"col\":3}},{\"id\":\"eP9A8oNTVR\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>&nbsp;Report Master</b>\",\"col\":12}},{\"id\":\"iq_zm4afiB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Stock Ledger Report\",\"col\":3}},{\"id\":\"XS7RX-D31Z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}}]",
  "creation": "2023-09-04 11:57:22.765651",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "TSL TECH",
  "links": [],
- "modified": "2025-06-08 12:46:22.739879",
+ "modified": "2025-08-17 12:31:04.385442",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL TECH",
@@ -37,6 +37,13 @@
    "label": "W - Return Not Repaired",
    "link_to": "Work Order Data",
    "stats_filter": "{\"status\":[\"=\",\"RNR-Return Not Repaired\"]}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Work Order Data Lookup",
+   "link_to": "Work Order Data Lookup",
    "type": "DocType"
   },
   {

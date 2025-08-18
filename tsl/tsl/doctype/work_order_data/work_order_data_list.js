@@ -123,6 +123,11 @@ frappe.listview_settings['Work Order Data'] = {
             else if (doc.status === "C-Cancelled") {
                   return[__("C-Cancelled"),"red","status,=,C-Cancelled"];
                         }
-          
+            
+
+            else if (doc.custom_status === "Under Lab") {
+                  return[__("Under Lab"),"red","status,=,Under Lab"];
+                        }
+                      
       },
 };

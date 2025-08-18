@@ -74,9 +74,15 @@ class PlannedLeaves(Document):
 @frappe.whitelist()
 def create_planned_leaves():
 	current_time = datetime.today().date()
-	doc = frappe.db.sql(""" select name from `tabPlanned Leaves` where from_date = '%s' """%(current_time),as_dict = 1)
-	if doc:
-		for k in doc:
+	start_date = frappe.db.sql(""" select name from `tabPlanned Leaves` where from_date = '%s' """%(current_time),as_dict = 1)
+	if start_date:
+		for k in start_date:
+			pl = frappe.get_doc("Planned Leaves", k.name)
+			pl.submit()
+
+	end_date = frappe.db.sql(""" select name from `tabPlanned Leaves` where to_date = '%s' """%(current_time),as_dict = 1)
+	if end_date:
+		for k in end_date:
 			pl = frappe.get_doc("Planned Leaves", k.name)
 			pl.submit()
 

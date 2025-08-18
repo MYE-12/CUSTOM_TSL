@@ -109,6 +109,7 @@ class WOApproval(Document):
                     `tabQuotation`.quotation_type in ("Customer Quotation - Repair","Revised Quotation - Repair") 
                     and transaction_date between '%s' and '%s' ''' %(sl,from_date,to_date),as_dict=1)
                    
+                   
                     q_m = 0
                     q_m_2 = 0
                     if wod:

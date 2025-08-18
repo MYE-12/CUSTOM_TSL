@@ -1230,9 +1230,10 @@ frappe.ui.form.on('Quotation', {
             frm.set_df_property("final_approved_price", "read_only", 1)
         }
         },
-	approval_date:function(frm){
-		frm.save_or_update();
-	},
+	// approval_date:function(frm){
+	// 	frm.save_or_update();
+	// },
+	
 	branch_name:function(frm){
 		if(frm.doc.quotation_type && frm.doc.branch_name){
 			var d = {

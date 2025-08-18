@@ -53,7 +53,7 @@ frappe.query_reports["Work Order Status"] = {
 	
 	after_datatable_render: table_instance => {
 		let data = table_instance.datamanager.data;
-		let col =40;
+		let col =47;
 		for (let row = 0; row < data.length; ++row) {
 			if (data[row]['status'] == 'NE-Need Evaluation') {
 			table_instance.style.setStyle(`.dt-cell--${col}-${row}`, {backgroundColor: '#f04864'});

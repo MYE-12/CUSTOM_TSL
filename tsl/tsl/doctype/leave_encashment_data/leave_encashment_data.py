@@ -10,7 +10,7 @@ from frappe.utils import (
 	cstr,
 	date_diff,
 	flt,
-	formatdate,
+	format_date,
 	get_fullname,
 	get_link_to_form,
 	getdate,
@@ -36,8 +36,19 @@ class LeaveEncashmentData(Document):
 		self.get_leave_details_for_encashment()
 		self.set_status()
 
-		if not self.pay_via_payment_entry:
-			self.set_salary_structure()
+		# if not self.pay_via_payment_entry:
+		# 	self.set_salary_structure()
+		self.set_encashment_amount()
+
+	def set_encashment_amount(self):
+		ctc = frappe.db.get_value("Employee",self.employee,'ctc')
+		company = frappe.db.get_value("Employee",self.employee,'company')
+		working_days = frappe.db.get_value("Company Wise Payroll Days",{"company": company},"total_working_days")
+		if ctc and ctc > 0:
+			perday = ctc / working_days
+		else:
+			perday = 0
+		self.encashment_amount = float(perday) * float(self.encashment_days)
 
 	def set_salary_structure(self):
 		self._salary_structure = get_assigned_salary_structure(self.employee, self.encashment_date)
@@ -334,11 +345,11 @@ class LeaveEncashmentData(Document):
 
 @frappe.whitelist()
 def per_day_salary(employee):
-	basic = frappe.db.get_value("Employee",employee,'ctc')
+	ctc = frappe.db.get_value("Employee",employee,'ctc')
 	company = frappe.db.get_value("Employee",employee,'company')
 	working_days = frappe.db.get_value("Company Wise Payroll Days",{"company": company},"total_working_days")
-	if basic and basic > 0:
-		perday = basic / working_days
+	if ctc and ctc > 0:
+		perday = ctc / working_days
 	else:
 		perday = 0
 	return perday

@@ -36,7 +36,7 @@ frappe.query_reports["Supply Order Report"] = {
 			"fieldtype": "Link",
 			"options": "Branch",
 			"width": "80",
-			"reqd": 1,
+			// "reqd": 1,
 		}
 
 	]

@@ -123,10 +123,12 @@ def on_submit(doc,method):
 			
 @frappe.whitelist()
 def on_update_after_submit(doc,method):
-	d = datetime.now().date()
+	# d = datetime.now().date()
 	if doc.quotation_type in ["Customer Quotation - Repair","Customer Quotation - Supply","Revised Quotation - Repair","Revised Quotation - Supply"]:
-		doc.approval_date = d
-		frappe.db.set_value("Quotation",doc.name,"approval_date",d)
+		d = doc.approval_date
+		# frappe.errprint(d)
+		# if not doc.purchase_order_no:
+		# 	frappe.db.set_value("Quotation",doc.name,"approval_date",d)
 		
 		for i in doc.items:
 			if i.wod_no:
@@ -375,7 +377,48 @@ def show_details(self,method):
 
 
 		for i in self.get("items"):
-			
+			if frappe.db.exists("Replacement Unit",{"name":i.wod_no,"docstatus":1}):
+				doc = frappe.get_doc("Work Order Data",i.wod_no) 
+				if doc:
+					for k in doc.get("material_list"):
+						item_model = frappe.get_value("Item Model",{"name":k.model_no},"model")
+						k.model = item_model
+						sq_no = frappe.db.sql('''select sq.name as sq, sum(sq.shipping_cost) as spc, sq.currency as currency from `tabSupplier Quotation` as sq inner join `tabSupplier Quotation Item` as sqi on sqi.parent = sq.name 
+													where sq.docstatus = 1 and sqi.work_order_data = %s and sqi.item_code = %s and sq.workflow_state = "Approved By Management" 
+								order by sq.modified desc limit 1''',(i.wod_no,k.item_code),as_dict=1)	
+						for sq in sq_no:
+							self.append("item_price_details",{
+								"item":k.item_code,
+								"item_source":"Supplier",
+								"model":k.model,
+								"price":k.price,
+								"amount":k.amount,
+								"supplier_quotation":sq["sq"],
+								"work_order_data":i.wod_no
+
+							})
+							url = "https://api.exchangerate-api.com/v4/latest/%s"%(sq.currency)
+
+							payload = {}
+							headers = {}
+
+							response = requests.request("GET", url, headers=headers, data=payload)
+							data = response.json()
+							
+							# rates_kw = data['rates']['KWD']
+							# rates_kw = get_exchange_rate("USD","KWD")
+							rates_kw = get_exchange_rate("USD",sq.currency)
+							
+							if sq.spc:
+								conv_rate = sq.spc * rates_kw
+								self.shipping_cost = conv_rate
+
+							
+						if len(sq_no):
+							sq_no = sq_no[0]["sq"]
+						else:
+							sq_no =  ""
+
 			# eval =frappe.db.exists("Evaluation Report",{"work_order_data":i.wod_no})
 			eval = frappe.db.sql("""
 			SELECT name FROM `tabEvaluation Report`

@@ -105,6 +105,7 @@ def create_rfq(docname):
 			"conversion_factor":1,
 			"stock_qty":1,
 			"qty":1,
+			"work_order_data":docname,
 			# "schedule_date":add_to_date(new_doc.transaction_date,days = 2),
 			"schedule_date":today(),
 			"warehouse":warehouse,

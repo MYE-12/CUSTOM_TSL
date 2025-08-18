@@ -16,6 +16,7 @@
   "leave_type",
   "leave_allocation",
   "leave_balance",
+  "leave_salary",
   "column_break_cevy",
   "actual_encashable_days",
   "encashment_days",
@@ -231,16 +232,6 @@
    "label": "More Info"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Leave Encashment Data",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
@@ -256,11 +247,17 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "leave_salary",
+   "fieldtype": "Data",
+   "label": "Leave Salary",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-29 09:09:13.237335",
+ "modified": "2025-08-17 17:19:22.535354",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Leave Encashment Data",
