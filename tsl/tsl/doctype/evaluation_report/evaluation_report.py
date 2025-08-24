@@ -297,7 +297,7 @@ class EvaluationReport(Document):
 		if self.status in ("Return No Fault","Return Not Repaired","Comparison"):
 			pass
 		else:
-			if not self.evaluation_time or not self.estimated_repair_time:
+			if (not self.evaluation_time or not self.estimated_repair_time) and self.status != "Working":
 				frappe.throw("Note: Evaluation Time and Estimated Repair Time is not given.")
 		for pm in self.get("items"):
 			model = pm.model

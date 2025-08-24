@@ -347,7 +347,10 @@ class LeaveEncashmentData(Document):
 def per_day_salary(employee):
 	ctc = frappe.db.get_value("Employee",employee,'ctc')
 	company = frappe.db.get_value("Employee",employee,'company')
-	working_days = frappe.db.get_value("Company Wise Payroll Days",{"company": company},"total_working_days")
+	if company == "TSL COMPANY - Kuwait":
+		working_days = 26
+	else:
+		working_days = 30
 	if ctc and ctc > 0:
 		perday = ctc / working_days
 	else:

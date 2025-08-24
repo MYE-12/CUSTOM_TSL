@@ -71,9 +71,9 @@
   "leave_gratuity_total",
   "section_break_26",
   "net_pay",
-  "amended_from",
   "column_break_56",
-  "remark"
+  "remark",
+  "amended_from"
  ],
  "fields": [
   {
@@ -503,10 +503,10 @@
    "options": "currency"
   },
   {
+   "default": "Today",
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date",
-   "options": "today()"
+   "label": "Date"
   },
   {
    "fetch_from": "employee.civil_id_no",
@@ -515,10 +515,11 @@
    "label": "Civil ID No"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-28 11:10:23.441315",
+ "modified": "2025-08-24 08:53:02.956190",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Full and Final Settlement",
@@ -539,6 +540,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -2550,7 +2550,7 @@ def make_xlsx2(data, sheet_name=None, wb=None, column_widths=None):
 
 
 @frappe.whitelist()
-def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references,remarks ):
+def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currency_paid,cost_center,references,remarks,company):
 	data = ""
 	data+= '<table class="table table-bordered" style="border:1px solid black;" >'
 	data+= '<tr><td colspan = 6><center><b style = "color:blue;font-size:15px">TSL COMPANY</b></center></td></tr>'
@@ -2568,7 +2568,13 @@ def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currenc
 			pi = frappe.db.sql(""" select DISTINCT `tabPurchase Invoice`.name as p,`tabPurchase Invoice Item`.work_order_data as wo,`tabPurchase Invoice Item`.supply_order_data as so from `tabPurchase Invoice` 
 			left join `tabPurchase Invoice Item` on `tabPurchase Invoice`.name = `tabPurchase Invoice Item`.parent 
 			where `tabPurchase Invoice`.name = '%s' """ %(i.reference_name),as_dict =1)
-			data+='<tr><td>Attached With Supporting Document</td><td><b>%s - (Outstanding - %s)</b>/<a href="%s" target="_blank" ><u><b style = "color:red"><br>Supplier Invoice Link</b></u></a></td><br>'%(i.reference_name,i.outstanding_amount,pat)
+			conv_amt = 0
+			if i.outstanding_amount > 0 and company == "TSL COMPANY - KSA":
+				exr = get_exchange_rate("SAR",currency_paid)
+				conv_amt = i.outstanding_amount * exr
+				data+='<tr><td>Attached With Supporting Document</td><td><b>%s - (Outstanding - %s)</b>/<a href="%s" target="_blank" ><u><b style = "color:red"><br>Supplier Invoice Link</b></u></a></td>'%(i.reference_name,f"{round(conv_amt,2):,.2f}",pat)
+			else:
+				data+='<tr><td>Attached With Supporting Document</td><td><b>%s - (Outstanding - %s)</b>/<a href="%s" target="_blank" ><u><b style = "color:red"><br>Supplier Invoice Link</b></u></a></td>'%(i.reference_name,f"{round(i.outstanding_amount,2):,.2f}",pat)
 			wo_so_links = []
 
 			for j in pi:
@@ -2584,7 +2590,7 @@ def get_pi(posting_date,name,party_name,amount_in,total_allocated_amount,currenc
 					wo_so_links.append(j["so"])
 					
 			data += "<tr><td></td><td>%s</td></tr>" % ", ".join(wo_so_links)
-			data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a></td></tr>' %(j["so"],j["so"])
+			# data+='<tr><td></td><td><a href="https://erp.tsl-me.com/app/supply-order-data/%s">%s</a></td></tr>' %(j["so"],j["so"])
 
 
 
@@ -8793,20 +8799,30 @@ def get_item_number(item_details,company):
 		data += '<h5><center><b>PART DETAILS</b></center></h5>'
 		data += '<table class="table table-bordered">'
 		data += '<tr>'
-		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>ITEM NUMBER</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>Sr</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>MODEL</b><center></td>'
 		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>SKU</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>MFG</b><center></td>'
+		data += '<td style="width:07%;padding:1px;font-size:14px;font-size:12px;background-color:#3333ff;color:white;"><center><b>TYPE</b><center></td>'
 		data += '</tr>'
-		for j in item_details:
-			data += '<tr>'
-			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(j["item_number"])
-			s = ""
-			sku = frappe.get_value("Item",{"item_number":j["item_number"]},["name"])
-			if sku:
-				s = sku
-			else:
-				s = "NA"
-			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(s)
-			data += '</tr>'
+		# for j in item_details:
+		# 	if j["model"] and not j["mfg"]:
+		# 	items = frappe.get_all("Item",{"model":j["model"]},["*"])
+		# 	if items:
+		# 		c = 0
+		# 		for i in items:
+		# 			frappe.errprint(i.name)
+		# 			md = frappe.get_value("Item Model",j["model"],"model")
+					
+		# 			c = c+ 1
+		# 			data += '<tr>'
+		# 			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(c)
+		# 			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(md)
+		# 			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(i.name)
+		# 			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(i.manufacturing)
+		# 			data += '<td style="font-size:12px;"><center><b>%s</b><center></td>' %(i.type)
+		# 			data += '</tr>'
+					
 
 		data += '</table>'
 		return data 
@@ -10984,4 +11000,7 @@ def get_lab(company):
 
 
 
+def update_doc_user():
+	frappe.rename_doc("User","giftdavid81@gmail.com","dubaigiftdavid@gmail.com",force=1)
+	print("yrs")
 

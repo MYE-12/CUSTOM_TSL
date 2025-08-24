@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"vb3UlN9d0e\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"bMGD0Bsh-d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"2QVuui2A2M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Data Lookup\",\"col\":3}},{\"id\":\"dhbPvrma4f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"NcY3Sedvjd\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"wrn5J-UsZM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rLmSDyNW9L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"vA1pNXkGNF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"ydRB1yCt7D\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Report\",\"col\":3}},{\"id\":\"tFktdWLdzG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"DGSJawAAyr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"K28cfJKuxp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":3}},{\"id\":\"Nw7M4F_GnZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"cvtQzKkQQ9\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"uA3Df3dTMt\",\"type\":\"card\",\"data\":{\"card_name\":\"Repair Order\",\"col\":4}},{\"id\":\"hnvmPKA0UI\",\"type\":\"card\",\"data\":{\"card_name\":\"Supply Order\",\"col\":4}},{\"id\":\"WKib8fTcjq\",\"type\":\"card\",\"data\":{\"card_name\":\"Procurement\",\"col\":4}},{\"id\":\"H45uyyaK6b\",\"type\":\"card\",\"data\":{\"card_name\":\"Item Master\",\"col\":4}},{\"id\":\"WGc4KPITxQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Report\",\"col\":4}}]",
+ "content": "[{\"id\":\"vb3UlN9d0e\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Create Work Order\",\"col\":3}},{\"id\":\"bMGD0Bsh-d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order Data\",\"col\":3}},{\"id\":\"2QVuui2A2M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Data Lookup\",\"col\":3}},{\"id\":\"dhbPvrma4f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Initial Evaluation\",\"col\":3}},{\"id\":\"NcY3Sedvjd\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Evaluation Report\",\"col\":3}},{\"id\":\"wrn5J-UsZM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quotation\",\"col\":3}},{\"id\":\"rLmSDyNW9L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"vA1pNXkGNF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Note\",\"col\":3}},{\"id\":\"ydRB1yCt7D\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Report\",\"col\":3}},{\"id\":\"tFktdWLdzG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"DGSJawAAyr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Receipt\",\"col\":3}},{\"id\":\"K28cfJKuxp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Invoice\",\"col\":3}},{\"id\":\"Nw7M4F_GnZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"r5vRn9_nX4\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Work Order data\",\"col\":3}},{\"id\":\"cvtQzKkQQ9\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"uA3Df3dTMt\",\"type\":\"card\",\"data\":{\"card_name\":\"Repair Order\",\"col\":4}},{\"id\":\"hnvmPKA0UI\",\"type\":\"card\",\"data\":{\"card_name\":\"Supply Order\",\"col\":4}},{\"id\":\"WKib8fTcjq\",\"type\":\"card\",\"data\":{\"card_name\":\"Procurement\",\"col\":4}},{\"id\":\"H45uyyaK6b\",\"type\":\"card\",\"data\":{\"card_name\":\"Item Master\",\"col\":4}},{\"id\":\"WGc4KPITxQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Report\",\"col\":4}}]",
  "creation": "2023-07-09 18:51:47.987487",
  "custom_blocks": [],
  "docstatus": 0,
@@ -296,11 +296,16 @@
    "type": "Link"
   }
  ],
- "modified": "2025-06-08 12:46:22.359084",
+ "modified": "2025-08-22 17:18:00.559280",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "TSL KW",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Work Order data",
+   "number_card_name": "Work Order data"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,

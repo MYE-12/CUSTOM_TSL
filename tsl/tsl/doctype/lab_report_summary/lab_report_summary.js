@@ -4,7 +4,7 @@
 frappe.ui.form.on("Lab Report Summary", {
 	get_data:function (frm){
         frappe.show_alert({
-            message: "Please Wait,Data processing takes time arount 5 minutes",
+            message: "Please Wait,Data processing takes time around 5 minutes",
             indicator: 'blue'
         }, 50);  // 5 seconds
 

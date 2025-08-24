@@ -319,7 +319,8 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_zncg4",
@@ -451,8 +452,8 @@
    "link_fieldname": "leave_salary"
   }
  ],
- "modified": "2025-08-17 17:18:29.013590",
- "modified_by": "Administrator",
+ "modified": "2025-08-19 13:58:34.810662",
+ "modified_by": "shajith@tsl-me.com",
  "module": "Tsl",
  "name": "Leave Salary",
  "naming_rule": "Expression (old style)",

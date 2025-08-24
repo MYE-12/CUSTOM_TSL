@@ -344,8 +344,7 @@ frappe.ui.form.on('Leave Application Form', {
 				));
 			}); 
 		}
-		
-		if (frm.doc.leave_type == 'Annual Leave') {
+		if(["Annual Leave","Maternity Leave"].includes(frm.doc.leave_type)){			
 			if(frappe.session.user == "Administrator" || frm.doc.docstatus == 1){
 				frm.add_custom_button(__('Leave Salary'), function () {
 					frappe.db.get_value('Leave Salary', { 'employee': frm.doc.employee }, 'name')
@@ -360,6 +359,8 @@ frappe.ui.form.on('Leave Application Form', {
 					});
 				});
 			}
+		}
+		if (frm.doc.leave_type == 'Annual Leave') {
 			frm.add_custom_button(__('Employee Clearance'), function () {
 				frappe.db.get_value('Employee Clearance', { 'emp_no': frm.doc.employee }, 'emp_no')
 					.then(r => {

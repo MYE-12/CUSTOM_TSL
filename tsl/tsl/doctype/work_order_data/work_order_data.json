@@ -234,7 +234,7 @@
   },
   {
    "default": "Repair - TSL",
-   "fieldname": "department", 
+   "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
    "options": "Cost Center",
@@ -329,6 +329,7 @@
    "options": "Address"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "incharge",
    "fieldtype": "Link",
    "label": "Incharge",
@@ -655,7 +656,7 @@
    "link_fieldname": "name"
   }
  ],
- "modified": "2025-08-05 10:24:57.407338",
+ "modified": "2025-08-23 13:10:32.573388",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Work Order Data",

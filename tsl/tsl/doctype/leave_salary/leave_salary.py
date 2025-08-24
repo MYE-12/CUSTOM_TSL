@@ -72,3 +72,6 @@ def check_balance_leaves(employee):
 		actual_leave_balance = 0
 
 	return actual_leave_balance
+
+def update_doc():
+	frappe.db.set_value("Leave Salary","LSA-25-00037","currency","AED",update_modified = False)

@@ -7,7 +7,7 @@ frappe.ui.form.on('Resignation Form', {
 	        frappe.db.get_value('Full and Final Settlement',{'employee': frm.doc.employee },'name')
 				.then(r => {
 				if(r.message && Object.entries(r.message).length === 0){
-					frappe.route_options = { 'employee':frm.doc.employee,'employee_name': frm.doc.employee_name}
+					frappe.route_options = { 'employee':frm.doc.employee,'employee_name': frm.doc.employee_name,'company': frm.doc.company}
 					frappe.set_route('Form','Full and Final Settlement','new-full-and-final-settlement-1')
 					
 				}

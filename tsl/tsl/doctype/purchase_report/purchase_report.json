@@ -13,6 +13,7 @@
   "download",
   "period",
   "section_break_ktl4m",
+  "column_break_zgpa",
   "html"
  ],
  "fields": [
@@ -22,7 +23,8 @@
   },
   {
    "fieldname": "section_break_ktl4m",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "default": "Today",
@@ -50,8 +52,14 @@
   {
    "fieldname": "period",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Overall Achievement",
    "options": "\nMonthly\nQuarterly"
+  },
+  {
+   "fieldname": "column_break_zgpa",
+   "fieldtype": "Column Break",
+   "hidden": 1
   }
  ],
  "grid_page_length": 50,
@@ -59,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-13 20:11:29.937477",
+ "modified": "2025-08-19 16:25:04.001334",
  "modified_by": "Administrator",
  "module": "Tsl",
  "name": "Purchase Report",

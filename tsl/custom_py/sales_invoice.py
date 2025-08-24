@@ -65,7 +65,7 @@ def on_submit(self,method):
 		sod = i.supply_order_data
 		if wod:
 			doc = frappe.get_doc("Work Order Data",wod)
-			if doc.quotation:
+			if doc.quotation and doc.dn_date:
 				doc.status = 'RSI-Repaired and Shipped Invoiced'
 				doc.save(ignore_permissions = True)
 				

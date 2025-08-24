@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Purchase Report', {
 	refresh: function(frm) {
-		if(frappe.session.user != "Administrator" && frappe.session.user != "mohammed.d@tsl-me.com" ){
+		if(frappe.session.user != "Administrator" && frappe.session.user != "erp.co@tsl-me.com" ){
 	        frm.set_df_property('company', 'read_only', 1);
 	
 	    }

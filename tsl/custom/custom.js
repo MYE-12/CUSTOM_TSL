@@ -311,29 +311,29 @@ frappe.ui.form.on('Quotation', {
 		});
 
 
-		if(frm.doc.docstatus == 1 && frm.doc.quotation_type == "Revised Quotation - Supply" || frm.doc.docstatus == 1 && frm.doc.quotation_type == "Customer Quotation - Supply")
+		// if(frm.doc.docstatus == 1 && frm.doc.quotation_type == "Revised Quotation - Supply" || frm.doc.docstatus == 1 && frm.doc.quotation_type == "Customer Quotation - Supply")
 		
-			frappe.call({
-			method: "tsl.custom_py.quotation.get_invoice_sod",
-			args: {
-				"item":frm.doc.items,
-			},
-			callback: function(r) {
-				if(r.message) {
+		// 	frappe.call({
+		// 	method: "tsl.custom_py.quotation.get_invoice_sod",
+		// 	args: {
+		// 		"item":frm.doc.items,
+		// 	},
+		// 	callback: function(r) {
+		// 		if(r.message) {
 				
 					
-					frm.add_custom_button(__('Sales Invoice'), function(){
-						frappe.route_options = {
-							currency: frm.doc.currency,
-							conversion_rate: frm.doc.conversion_rate
-						};
-						frappe.set_route("Form", "Sales Invoice",r.message[0].name);
+		// 			frm.add_custom_button(__('Sales Invoice'), function(){
+		// 				frappe.route_options = {
+		// 					currency: frm.doc.currency,
+		// 					conversion_rate: frm.doc.conversion_rate
+		// 				};
+		// 				frappe.set_route("Form", "Sales Invoice",r.message[0].name);
 
-					})
+		// 			})
 					
-				}
-			}
-		});
+		// 		}
+		// 	}
+		// });
 		
 	// 	if(frm.doc.workflow_state == "Approved By Customer" && !frm.doc.type_of_approval){
 			
@@ -1126,6 +1126,7 @@ frappe.ui.form.on('Quotation', {
 			}, __("Get Items From"), "btn-default");
 	}
 		if (frm.doc.docstatus===0 && frm.doc.quotation_type == "Quotation - Supply Tender" || frm.doc.quotation_type == "Internal Quotation - Supply" ||  frm.doc.quotation_type == "Revised Quotation - Supply") {
+			console.log("hi")
 			frm.add_custom_button(__('Supply Order Data'),
 				function() {
 					new frappe.ui.form.MultiSelectDialog({

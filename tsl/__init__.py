@@ -3,37 +3,37 @@ __version__ = '0.0.1'
 import frappe
 from frappe.model.mapper import get_mapped_doc
 
-@frappe.whitelist()
-def get_revised_po(source):
-	target_doc = frappe.new_doc("Purchase Order")
-	doc = frappe.get_doc("Purchase Order",source)
+# @frappe.whitelist()
+# def get_revised_po(source):
+# 	target_doc = frappe.new_doc("Purchase Order")
+# 	doc = frappe.get_doc("Purchase Order",source)
 
-	def postprocess(source, target_doc):
-		if len(doc.order_history) == 0:
-			target_doc.append("order_history",{
-				"order_type":"Purchase Order",
-				"status":doc.workflow_state,
-				"order_name":doc.name,
-			})
-		else:
-			target_doc.append("order_history",{
-				"order_type":"Revised Purchase Order",
-				"status":doc.workflow_state,
-				"order_name":doc.name,
-			})
+# 	def postprocess(source, target_doc):
+# 		if len(doc.order_history) == 0:
+# 			target_doc.append("order_history",{
+# 				"order_type":"Purchase Order",
+# 				"status":doc.workflow_state,
+# 				"order_name":doc.name,
+# 			})
+# 		else:
+# 			target_doc.append("order_history",{
+# 				"order_type":"Revised Purchase Order",
+# 				"status":doc.workflow_state,
+# 				"order_name":doc.name,
+# 			})
 
-	doclist = get_mapped_doc("Purchase Order",source , {
-		"Purchase Order": {
-			"doctype": "Purchase Order",
+# 	doclist = get_mapped_doc("Purchase Order",source , {
+# 		"Purchase Order": {
+# 			"doctype": "Purchase Order",
 			
-		},
-		"Purchase Order Item": {
-			"doctype": "Purchase Order Item",
+# 		},
+# 		"Purchase Order Item": {
+# 			"doctype": "Purchase Order Item",
 			
-		},
-	}, target_doc,postprocess)
+# 		},
+# 	}, target_doc,postprocess)
 	
-	return doclist
+# 	return doclist
 
 
 # @frappe.whitelist()

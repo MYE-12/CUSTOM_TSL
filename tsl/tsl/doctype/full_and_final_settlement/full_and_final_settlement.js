@@ -30,8 +30,12 @@ frappe.ui.form.on('Full and Final Settlement', {
                                 "leave_balance":r.message
                             },
                             callback(k){
-                                if(k.message ){
-                                      frm.set_value("leave_payment_amount",k.message)
+                                if(k.message){
+                                    var return_value = Math.round(k.message* 100) / 100
+                                    var leave_payment_amount = Math.round(frm.doc.leave_payment_amount* 100) / 100
+                                    if (return_value != leave_payment_amount){
+                                        frm.set_value("leave_payment_amount",k.message)
+                                    }
                                 }
                             }
                         })
@@ -53,17 +57,25 @@ frappe.ui.form.on('Full and Final Settlement', {
                 method:"tsl.custom_py.utils.gratuity_amount",
                 args:{
                     employee:frm.doc.employee,
-					date:frm.doc.last_day_of_work
+					date:frm.doc.last_day_of_work || ''
                 },
                 callback(r){
                     if(r){
                         if(frm.doc.type == "Resignation"){
-                            frm.set_value("gratuity_amount",r.message.resignation_amount)
+                            var resignation_amount = Math.round(r.message.resignation_amount* 100) / 100
+                            var res_gratuity_amount = Math.round(frm.doc.gratuity_amount* 100) / 100
+                            if(resignation_amount != res_gratuity_amount){
+                                frm.set_value("gratuity_amount",r.message.resignation_amount)
+                            }
                             frm.set_value("gratuity_days",r.message.resignation_days)
                         }
                         
                         if(frm.doc.type == "Termination"){
-                            frm.set_value("gratuity_amount",r.message.termination_amount)
+                            var termination_amount = Math.round(r.message.termination_amount* 100) / 100
+                            var term_gratuity_amount = Math.round(frm.doc.gratuity_amount* 100) / 100
+                            if(termination_amount != term_gratuity_amount){
+                                frm.set_value("gratuity_amount",r.message.termination_amount)
+                            }
                             frm.set_value("gratuity_days",r.message.termination_days)
                         }
                     }

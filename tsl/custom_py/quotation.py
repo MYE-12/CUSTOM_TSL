@@ -32,15 +32,15 @@ def get_invoice(item):
 		if si:
 			return si
 
-@frappe.whitelist()
-def get_invoice_sod(item):
-	item_details = json.loads(item)
-	for i in item_details:
-		si = frappe.db.sql(""" select `tabSales Invoice`.name from `tabSales Invoice` 
-		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
-		where ``tabSales Invoice`.docstatus = 1 and tabSales Invoice Item`.supply_order_data = '%s' """ %(i["supply_order_data"]),as_dict =1)
-		if si:
-			return si
+# @frappe.whitelist()
+# def get_invoice_sod(item):
+# 	item_details = json.loads(item)
+# 	for i in item_details:
+# 		si = frappe.db.sql(""" select `tabSales Invoice`.name from `tabSales Invoice` 
+# 		left join `tabSales Invoice Item` on `tabSales Invoice`.name = `tabSales Invoice Item`.parent 
+# 		where ``tabSales Invoice`.docstatus = 1 and tabSales Invoice Item`.supply_order_data = '%s' """ %(i["supply_order_data"]),as_dict =1)
+# 		if si:
+# 			return si
 
 	
 

@@ -288,7 +288,7 @@ def calculate_gratuity(filters):
 					gratuity = (((exp_month/12)+ (exp_days/365)) * per_day * 21) + years
 				else:
 					gratuity = (21 * per_day * 5) + (30 * per_day * (exp_years - 5)) + ((exp_month/12)+ (exp_days/365)) * per_day * 30
-				row = [emp.name,emp.employee_name,emp.date_of_joining,yos,emp.company,currency,emp.basic,0,gratuity,0,0]
+				row = [emp.name,emp.employee_name,emp.date_of_joining,yos,emp.company,currency,emp.basic,0,gratuity,0,gratuity]
 			else:
 				row = [emp.name,emp.employee_name,emp.date_of_joining,yos,emp.company,currency,emp.basic,0,0,0,0]
 			data.append(row)
